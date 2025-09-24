@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -57,9 +55,9 @@ import UserPayment from "./components/User/UserPayment/UserPayment";
 import UserProfile from "./components/User/UserProfile/UserProfile";
 import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
-import SubscriptionList from "./components/Admin/SubscriptionManagement/SubscriptionList";
+// import SubscriptionList from "./components/Admin/SubscriptionManagement/SubscriptionList";
 
-import { useAuth } from "./contexts/AuthContext";
+// import { useAuth } from "./contexts/AuthContext";
 
 function App() {
 
