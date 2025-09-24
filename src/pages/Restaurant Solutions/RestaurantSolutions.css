@@ -1,0 +1,497 @@
+/* Global Styles */
+.restaurant-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.restaurant-page body {
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header Styles */
+.restaurant-page .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.restaurant-page .hamburger {
+  display: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.restaurant-page .navbar h1 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.restaurant-page .auth-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.restaurant-page .auth-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.restaurant-page .signin-btn {
+  background-color: transparent;
+  color: #2c3e50;
+  border: 1px solid #2c3e50 !important;
+}
+
+.restaurant-page .signup-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.restaurant-page .signin-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.restaurant-page .signup-btn:hover {
+  background-color: #c0392b;
+}
+
+.restaurant-page .nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.restaurant-page .nav-links a {
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.restaurant-page .nav-links a:hover {
+  color: #e74c3c;
+}
+
+/* Page Header */
+.restaurant-page .page-header {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 5rem 1rem;
+}
+
+.restaurant-page .page-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.restaurant-page .page-header p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb */
+.restaurant-page .breadcrumb {
+  padding: 1rem 5%;
+  background-color: #f1f1f1;
+}
+
+.restaurant-page .breadcrumb a {
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.restaurant-page .breadcrumb a:hover {
+  text-decoration: underline;
+  color: #e74c3c;
+}
+
+/* Content Section */
+.restaurant-page .content-section {
+  padding: 4rem 5%;
+}
+
+.restaurant-page .section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #2c3e50;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.restaurant-page .section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: #e74c3c;
+}
+
+.restaurant-page .two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.restaurant-page .column-img {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-page .column-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.restaurant-page .column-text h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-page .column-text p {
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-page .benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.restaurant-page .benefit-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.restaurant-page .benefit-item:hover {
+  transform: translateY(-5px);
+}
+
+.restaurant-page .benefit-icon {
+  font-size: 2.5rem;
+  color: #e74c3c;
+  margin-bottom: 1rem;
+}
+
+.restaurant-page .benefit-item h4 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+/* Features Section */
+.restaurant-page .features-section {
+  background-color: #f1f1f1;
+  padding: 4rem 5%;
+}
+
+.restaurant-page .features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.restaurant-page .feature-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.restaurant-page .feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.restaurant-page .feature-img {
+  height: 200px;
+  overflow: hidden;
+}
+
+.restaurant-page .feature-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.restaurant-page .feature-content {
+  padding: 2rem;
+}
+
+.restaurant-page .feature-content h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+/* CTA Section */
+.restaurant-page .cta-section {
+  padding: 5rem 5%;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+    url('https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1465&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.restaurant-page .cta-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-page .cta-section p {
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  font-size: 1.1rem;
+}
+
+.restaurant-page .cta-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: #e74c3c;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.restaurant-page .cta-button:hover {
+  background-color: #c0392b;
+}
+
+/* Testimonials Section */
+.restaurant-page .testimonials-section {
+  padding: 4rem 5%;
+}
+
+.restaurant-page .testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.restaurant-page .testimonial-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.restaurant-page .testimonial-card::before {
+  content: '"';
+  font-size: 5rem;
+  color: #f1f1f1;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  line-height: 1;
+}
+
+.restaurant-page .testimonial-text {
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.restaurant-page .testimonial-author {
+  display: flex;
+  align-items: center;
+}
+
+.restaurant-page .author-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 1rem;
+}
+
+.restaurant-page .author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.restaurant-page .author-details h4 {
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.restaurant-page .author-details p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Footer Styles */
+.restaurant-page footer {
+  background-color: #2c3e50;
+  color: white;
+  padding: 3rem 5% 1rem;
+}
+
+.restaurant-page .footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.restaurant-page .footer-logo h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.restaurant-page .footer-logo p {
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-page .social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.restaurant-page .social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.restaurant-page .social-links a:hover {
+  background-color: #e74c3c;
+}
+
+.restaurant-page .footer-links-section h3 {
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.restaurant-page .footer-links-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #e74c3c;
+}
+
+.restaurant-page .footer-links {
+  list-style: none;
+}
+
+.restaurant-page .footer-links li {
+  margin-bottom: 0.8rem;
+}
+
+.restaurant-page .footer-links a {
+  color: #ddd;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.restaurant-page .footer-links a:hover {
+  color: #e74c3c;
+}
+
+.restaurant-page .footer-contact p {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.restaurant-page .footer-contact i {
+  margin-right: 10px;
+  color: #e74c3c;
+}
+
+.restaurant-page .footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.restaurant-page .footer-bottom-links {
+  margin-bottom: 1rem;
+}
+
+.restaurant-page .footer-bottom-links a {
+  color: #ddd;
+  text-decoration: none;
+  margin: 0 1rem;
+  transition: color 0.3s ease;
+}
+
+.restaurant-page .footer-bottom-links a:hover {
+  color: #e74c3c;
+}
+
+/* Responsive Styles */
+@media (max-width: 968px) {
+  .restaurant-page .two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurant-page .hamburger {
+    display: block;
+  }
+  
+  .restaurant-page .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .restaurant-page .nav-links.active {
+    display: flex;
+  }
+  
+  .restaurant-page .auth-buttons {
+    display: none;
+  }
+}

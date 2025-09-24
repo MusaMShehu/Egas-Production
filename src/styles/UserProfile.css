@@ -1,0 +1,91 @@
+/* src/components/UserProfile.css */
+
+.profile-container {
+  max-width: 800px;
+  margin: 2.5rem auto;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  text-transform: capitalize;
+}
+
+.profile-value {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  color: #222;
+}
+
+.profile-input {
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.profile-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-edit {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background: #15803d;
+}
+
+.btn-save {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-save:hover {
+  background: #1d4ed8;
+}
+
+.btn-cancel {
+  background: #9ca3af;
+  color: #fff;
+}
+
+.btn-cancel:hover {
+  background: #6b7280;
+}

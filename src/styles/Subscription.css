@@ -1,0 +1,271 @@
+/* SubscriptionPlans.css */
+.plans-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.plans-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.plan-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+}
+
+.plan-header {
+  background: #4CAF50;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+.plan-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.plan-details {
+  padding: 20px;
+}
+
+.plan-size {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.frequency-selector, .custom-selector {
+  margin: 15px 0;
+}
+
+.frequency-selector label, .custom-selector label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.frequency-selector select, .custom-selector select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4CAF50;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.subscribe-btn {
+  width: 100%;
+  padding: 12px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.subscribe-btn:hover {
+  background: #45a049;
+}
+
+.subscribe-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Checkout.css */
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.checkout-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.checkout-card h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.checkout-details {
+  margin-bottom: 25px;
+}
+
+.checkout-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.checkout-row.total {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #4CAF50;
+}
+
+.checkout-divider {
+  height: 1px;
+  background: #eee;
+  margin: 15px 0;
+}
+
+.checkout-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.cancel-btn, .confirm-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.cancel-btn {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #e2e2e2;
+}
+
+.confirm-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background: #45a049;
+}
+
+/* ✅ Backdrop */
+.summary-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* ✅ Modal Card */
+.summary-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ✅ Title */
+.summary-card h2 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+/* ✅ Details */
+.summary-card p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* ✅ Action Buttons */
+.summary-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summary-actions button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* Cancel Button */
+.summary-actions button:first-child {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.summary-actions button:first-child:hover {
+  background: #ddd;
+}
+
+/* Confirm Button */
+.summary-actions .confirm-btn {
+  background: #28a745;
+  color: white;
+  font-weight: bold;
+}
+
+.summary-actions .confirm-btn:hover {
+  background: #218838;
+}
+
+/* ✅ Animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

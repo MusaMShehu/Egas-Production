@@ -1,0 +1,188 @@
+.account-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-placeholder {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-icon {
+  font-size: 18px;
+  color: #555;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.login-btn,
+.logout-btn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.logout-btn {
+  background: #dc3545;
+}
+
+
+
+
+
+
+
+
+
+
+.account-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.signin-btn {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background: linear-gradient(135deg, #5d7ce0, #9666d3);
+  transform: translateY(-2px);
+}
+
+.user-info {
+  position: relative;
+}
+
+.profile-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.profile-wrapper:hover {
+  background-color: rgba(110, 142, 251, 0.1);
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.dropdown-arrow {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #666;
+  transition: transform 0.3s;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  min-width: 150px;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f7fa;
+}
+
+.icon-user, .icon-logout {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+/* Simple icon replacements - you can use actual icon fonts or SVGs */
+.icon-user::before {
+  content: "👤";
+}
+
+.icon-logout::before {
+  content: "🚪";
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .user-name {
+    display: none;
+  }
+  
+  .profile-wrapper {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,53 @@
+.plans-container {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  padding: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  background: #fff;
+}
+
+.card h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+}
+
+.card select {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.subscribe-btn{
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #27414b;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.subscribe-btn:hover {
+  background: #13bdb7;
+}

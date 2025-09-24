@@ -1,0 +1,19 @@
+/* Admin Layout */
+
+.user-layout {
+  display: flex;
+  background-color: #f3f4f6;
+  
+}
+
+.user-main {
+  flex: 1; 
+  overflow: auto; 
+  /* margin-left: 13rem;  */
+}
+
+.user-content {
+  padding: 2rem; 
+}
+
+

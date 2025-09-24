@@ -1,0 +1,591 @@
+/* Main container */
+.user-management {
+  padding: 1.5rem;
+}
+
+/* Header */
+.user-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.user-management-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Add User Button */
+.add-user-btn {
+  background-color: #7c3aed; /* purple-600 */
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-user-btn i {
+  margin-right: 0.5rem;
+}
+
+.add-user-btn:hover {
+  background-color: #6d28d9; /* purple-700 */
+}
+
+
+
+
+
+/* User Details style */
+
+.user-details {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Header */
+.user-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-btn {
+  color: #7c3aed;
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.back-btn:hover { color: #5b21b6; }
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn {
+  background-color: #4f46e5;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.edit-btn:hover { background-color: #4338ca; }
+
+.status-btn {
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.status-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.status-btn.deactivate { background-color: #d97706; }
+.status-btn.deactivate:hover { background-color: #b45309; }
+.status-btn.activate { background-color: #16a34a; }
+.status-btn.activate:hover { background-color: #15803d; }
+
+/* Layout */
+.user-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .user-details-content {
+    flex-direction: row;
+  }
+}
+
+.user-details-left {
+  flex: 1;
+}
+.user-details-right {
+  flex: 2;
+}
+
+/* Profile Card */
+.profile-card {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+.profile-pic {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 1rem auto;
+}
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.profile-email {
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.badges {
+  margin-top: 1rem;
+}
+
+.role-badge,
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+.role-badge.admin {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+.role-badge.delivery {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.role-badge.user {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Wallet */
+.wallet-card {
+  background: #f9fafb;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+.wallet-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.wallet-balance {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+/* Info Cards */
+.info-card {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+.info-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+.info-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.info-card dt {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+.info-card dd {
+  font-size: 0.9rem;
+  color: #111827;
+}
+.info-card dd.mono {
+  font-family: monospace;
+}
+
+@media (max-width: 768px) {
+  .info-card dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* User Form Style */
+
+.userform-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.userform-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.userform-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.userform-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #7c3aed;
+  outline: none;
+}
+
+.input-error {
+  border-color: #ef4444;
+}
+
+.error-text {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.checkbox-group input {
+  margin-right: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #f3f4f6;
+}
+
+.btn-submit {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-submit:hover {
+  background: #6d28d9;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+
+/* User List styles */
+
+/* General container */
+.userlist-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Loading state */
+.userlist-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  color: #666;
+  font-size: 1rem;
+}
+.userlist-loading i {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Error state */
+.userlist-error {
+  background: #fee2e2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 6px;
+}
+.userlist-error button {
+  margin-top: 0.5rem;
+  background: #dc2626;
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+}
+
+/* Filters */
+.userlist-filters {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .userlist-filters {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.search-box {
+  position: relative;
+  flex-grow: 1;
+}
+.search-box .search-icon {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  color: #aaa;
+}
+.search-box input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.filter-group select {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Empty state */
+.userlist-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+.userlist-empty i {
+  font-size: 2.5rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+.userlist-empty button {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  color: #6b21a8;
+  cursor: pointer;
+}
+.userlist-empty button:hover {
+  color: #4c1d95;
+}
+
+/* Table */
+.userlist-table-wrapper {
+  overflow-x: auto;
+}
+.userlist-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.userlist-table th, 
+.userlist-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.userlist-table thead {
+  background: #f9fafb;
+}
+.userlist-table th {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* User info */
+.user-info {
+  display: flex;
+  align-items: center;
+}
+.user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+.user-info .user-name {
+  font-weight: 600;
+  color: #111827;
+}
+.user-info .user-wallet {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+  margin-left: 0.25rem;
+}
+
+/* Badges */
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.role-admin { background: #f3e8ff; color: #6b21a8; }
+.role-delivery { background: #dbeafe; color: #1e40af; }
+.role-user { background: #dcfce7; color: #166534; }
+
+.status-active { background: #dcfce7; color: #166534; }
+.status-inactive { background: #fee2e2; color: #b91c1c; }
+
+/* Actions */
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+.actions button i {
+  font-size: 1rem;
+}
+.actions button:hover {
+  opacity: 0.7;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+}
+.modal h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.modal p {
+  color: #444;
+  margin-bottom: 1rem;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.btn-cancel {
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+.btn-delete {
+  background: #dc2626;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-delete:hover {
+  background: #b91c1c;
+}
