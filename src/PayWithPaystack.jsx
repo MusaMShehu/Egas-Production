@@ -6,7 +6,7 @@ const PayWithPaystack = ({ amount, email, orderId, onSuccess }) => {
   const handlePay = async () => {
     try {
       // initialize on backend
-      const { data } = await axios.post('/api/payments/initialize', { amount, email, orderId });
+      const { data } = await axios.post('https://egas-server.onrender.com/api/payments/initialize', { amount, email, orderId });
       const { authorization_url, reference } = data;
 
       // Option A: redirect user to authorization_url
@@ -23,7 +23,7 @@ const PayWithPaystack = ({ amount, email, orderId, onSuccess }) => {
           // Optionally verify server-side
           onSuccess && onSuccess(response);
           // call verify endpoint to be safe
-          axios.get(`/api/payments/verify/${response.reference}`).then(()=>console.log('verified'));
+          axios.get(`https://egas-server.onrender.com/api/payments/verify/${response.reference}`).then(()=>console.log('verified'));
         },
         onClose: () => { console.log('closed') }
       });

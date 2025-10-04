@@ -24,7 +24,7 @@ const UserProfile = () => {
   // useEffect(() => {
   //   if (token) {
   //     setLoading(true);
-  //     axios.get("http://localhost:5000/api/v1/auth/me", {
+  //     axios.get("https://egas-server.onrender.com/api/v1/auth/me", {
   //       headers: { Authorization: `Bearer ${token}` }
   //     })
   //       .then((res) => {
@@ -60,7 +60,7 @@ const UserProfile = () => {
         if (isMounted) setLoading(true);
 
         const response = await axios.get(
-          "http://localhost:5000/api/v1/auth/me",
+          "https://egas-server.onrender.com/api/v1/auth/me",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const UserProfile = () => {
 
   // const handleSave = (e) => {
   //   e.preventDefault();
-  //   axios.put("http://localhost:5000/api/v1/updatedetails/:id", formData, {
+  //   axios.put("https://egas-server.onrender.com/api/v1/updatedetails/:id", formData, {
   //     headers: { Authorization: `Bearer ${token}` }
   //   })
   //     .then((res) => {
@@ -138,7 +138,7 @@ const UserProfile = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:5000/api/v1/updatedetails/${user._id}`,
+        `https://egas-server.onrender.com/api/v1/updatedetails/${user._id}`,
         formData,
         {
           headers: {

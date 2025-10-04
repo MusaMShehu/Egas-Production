@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaTimes, FaFilter, FaEye, FaRedo, FaShoppingCart, FaCreditCard, FaCalendarAlt, FaSpinner } from 'react-icons/fa';
 import './UserHistory.css';
 
 const History = () => {
@@ -11,7 +12,7 @@ const History = () => {
   const [filter, setFilter] = useState('all');
   const [activeItem, setActiveItem] = useState(null);
 
-  const API_BASE_URL = 'http://localhost:5000/api/v1';
+  const API_BASE_URL = 'https://egas-server.onrender.com/api/v1';
 
   // Fetch all history data
   useEffect(() => {
@@ -88,23 +89,23 @@ const History = () => {
   };
 
   const getStatusClass = (status) => {
-    if (!status) return 'status-pending';
+    if (!status) return 'his-status-pending';
     switch (status.toLowerCase()) {
       case 'delivered':
       case 'completed':
       case 'active':
-        return 'status-completed';
+        return 'his-status-completed';
       case 'processing':
       case 'pending':
-        return 'status-pending';
+        return 'his-status-pending';
       case 'cancelled':
-        return 'status-cancelled';
+        return 'his-status-cancelled';
       case 'failed':
-        return 'status-failed';
+        return 'his-status-failed';
       case 'refunded':
-        return 'status-refunded';
+        return 'his-status-refunded';
       default:
-        return 'status-pending';
+        return 'his-status-pending';
     }
   };
 
@@ -145,8 +146,10 @@ const History = () => {
   // Loading
   if (isLoading) {
     return (
-      <div className="his-history-page loading">
-        <div className="his-loading-spinner"></div>
+      <div className="his-history-page his-loading">
+        <div className="his-loading-spinner">
+          <FaSpinner />
+        </div>
         <p>Loading history...</p>
       </div>
     );
@@ -158,17 +161,20 @@ const History = () => {
       <div className="his-dashboard-header">
         <h1>History</h1>
         <div className="his-header-actions">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="his-filter-select"
-          >
-            <option value="all">All {activeTab}</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-            {activeTab === 'payments' && <option value="failed">Failed</option>}
-            {activeTab === 'payments' && <option value="pending">Pending</option>}
-          </select>
+          <div className="his-filter-wrapper">
+            <FaFilter className="his-filter-icon" />
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="his-filter-select"
+            >
+              <option value="all">All {activeTab}</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              {activeTab === 'payments' && <option value="failed">Failed</option>}
+              {activeTab === 'payments' && <option value="pending">Pending</option>}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -177,7 +183,7 @@ const History = () => {
         <div className="his-error-message">
           {error}
           <button onClick={() => setError('')} className="his-close-error">
-            <i className="his-fas fa-times"></i>
+            <FaTimes />
           </button>
         </div>
       )}
@@ -185,22 +191,28 @@ const History = () => {
       {/* Tabs */}
       <div className="his-history-tabs">
         <button
-          className={activeTab === 'orders' ? 'his-tab-active' : ''}
+          className={activeTab === 'orders' ? 'his-tab his-tab-active' : 'his-tab'}
           onClick={() => setActiveTab('orders')}
         >
-          Orders <span className="count-badge">{orders.length}</span>
+          <FaShoppingCart className="his-tab-icon" />
+          <span className="his-tab-text">Orders</span>
+          <span className="his-count-badge">{orders.length}</span>
         </button>
         <button
-          className={activeTab === 'subscriptions' ? 'his-tab-active' : ''}
+          className={activeTab === 'subscriptions' ? 'his-tab his-tab-active' : 'his-tab'}
           onClick={() => setActiveTab('subscriptions')}
         >
-          Subscriptions <span className="his-count-badge">{subscriptions.length}</span>
+          <FaCalendarAlt className="his-tab-icon" />
+          <span className="his-tab-text">Subscriptions</span>
+          <span className="his-count-badge">{subscriptions.length}</span>
         </button>
         <button
-          className={activeTab === 'payments' ? 'his-tab-active' : ''}
+          className={activeTab === 'payments' ? 'his-tab his-tab-active' : 'his-tab'}
           onClick={() => setActiveTab('payments')}
         >
-          Payments <span className="his-count-badge">{payments.length}</span>
+          <FaCreditCard className="his-tab-icon" />
+          <span className="his-tab-text">Payments</span>
+          <span className="his-count-badge">{payments.length}</span>
         </button>
       </div>
 
@@ -216,125 +228,130 @@ const History = () => {
         </div>
 
         {filteredData.length > 0 ? (
-          <table className="his-history-table">
-            <thead>
-              <tr>
-                {activeTab === 'orders' && (
-                  <>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Items</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </>
-                )}
-                {activeTab === 'subscriptions' && (
-                  <>
-                    <th>Plan</th>
-                    <th>Size</th>
-                    <th>Frequency</th>
-                    <th>Price</th>
-                    <th>Period</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </>
-                )}
-                {activeTab === 'payments' && (
-                  <>
-                    <th>Transaction ID</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Method</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((item) => (
-                <tr key={item._id}>
+          <div className="his-table-container">
+            <table className="his-history-table">
+              <thead>
+                <tr>
                   {activeTab === 'orders' && (
                     <>
-                      <td>{item.orderId || 'N/A'}</td>
-                      <td>{formatDate(item.createdAt)}</td>
-                      <td>
-                        {item.items?.length ? (
-                          item.items.map((p, i) => (
-                            <div key={i} className="his-product-item">
-                              {p.quantity} × {p.name}
-                            </div>
-                          ))
-                        ) : (
-                          <div>No items</div>
-                        )}
-                      </td>
-                      <td>{formatCurrency(item.totalAmount)}</td>
-                      <td className={getStatusClass(item.status)}>
-                        {getStatusText(item.status)}
-                      </td>
-                      <td>
-                        <button
-                          className="his-btn-secondary"
-                          onClick={() => viewItemDetails(item)}
-                        >
-                          View
-                        </button>
-                      </td>
+                      <th>Order ID</th>
+                      <th>Date</th>
+                      <th>Items</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
                     </>
                   )}
-
                   {activeTab === 'subscriptions' && (
                     <>
-                      <td>{item.planName || 'N/A'}</td>
-                      <td>{item.size || 'N/A'}</td>
-                      <td>{item.frequency || 'N/A'}</td>
-                      <td>{formatCurrency(item.price)}</td>
-                      <td>
-                        {formatDate(item.startDate)} -{' '}
-                        {item.endDate ? formatDate(item.endDate) : 'Present'}
-                      </td>
-                      <td className={getStatusClass(item.status)}>
-                        {getStatusText(item.status)}
-                      </td>
-                      <td>
-                        <button
-                          className="his-btn-secondary"
-                          onClick={() => viewItemDetails(item)}
-                        >
-                          View
-                        </button>
-                      </td>
+                      <th>Plan</th>
+                      <th>Size</th>
+                      <th>Frequency</th>
+                      <th>Price</th>
+                      <th>Period</th>
+                      <th>Status</th>
+                      <th>Action</th>
                     </>
                   )}
-
                   {activeTab === 'payments' && (
                     <>
-                      <td>{item.transactionId || 'N/A'}</td>
-                      <td>{formatDate(item.createdAt)}</td>
-                      <td>{item.description || 'Payment'}</td>
-                      <td>{formatCurrency(item.amount)}</td>
-                      <td>{getMethodName(item.method)}</td>
-                      <td className={getStatusClass(item.status)}>
-                        {getStatusText(item.status)}
-                        {item.failureReason && ` (${item.failureReason})`}
-                      </td>
-                      <td>
-                        <button
-                          className="his-btn-secondary"
-                          onClick={() => viewItemDetails(item)}
-                        >
-                          View
-                        </button>
-                      </td>
+                      <th>Transaction ID</th>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th>Amount</th>
+                      <th>Method</th>
+                      <th>Status</th>
+                      <th>Action</th>
                     </>
                   )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredData.map((item) => (
+                  <tr key={item._id}>
+                    {activeTab === 'orders' && (
+                      <>
+                        <td data-label="Order ID">{item.orderId || 'N/A'}</td>
+                        <td data-label="Date">{formatDate(item.createdAt)}</td>
+                        <td data-label="Items">
+                          {item.items?.length ? (
+                            item.items.map((p, i) => (
+                              <div key={i} className="his-product-item">
+                                {p.quantity} × {p.name}
+                              </div>
+                            ))
+                          ) : (
+                            <div>No items</div>
+                          )}
+                        </td>
+                        <td data-label="Amount">{formatCurrency(item.totalAmount)}</td>
+                        <td data-label="Status" className={getStatusClass(item.status)}>
+                          {getStatusText(item.status)}
+                        </td>
+                        <td data-label="Action">
+                          <button
+                            className="his-btn-secondary"
+                            onClick={() => viewItemDetails(item)}
+                          >
+                            <FaEye className="his-btn-icon" />
+                            View
+                          </button>
+                        </td>
+                      </>
+                    )}
+
+                    {activeTab === 'subscriptions' && (
+                      <>
+                        <td data-label="Plan">{item.planName || 'N/A'}</td>
+                        <td data-label="Size">{item.size || 'N/A'}</td>
+                        <td data-label="Frequency">{item.frequency || 'N/A'}</td>
+                        <td data-label="Price">{formatCurrency(item.price)}</td>
+                        <td data-label="Period">
+                          {formatDate(item.startDate)} -{' '}
+                          {item.endDate ? formatDate(item.endDate) : 'Present'}
+                        </td>
+                        <td data-label="Status" className={getStatusClass(item.status)}>
+                          {getStatusText(item.status)}
+                        </td>
+                        <td data-label="Action">
+                          <button
+                            className="his-btn-secondary"
+                            onClick={() => viewItemDetails(item)}
+                          >
+                            <FaEye className="his-btn-icon" />
+                            View
+                          </button>
+                        </td>
+                      </>
+                    )}
+
+                    {activeTab === 'payments' && (
+                      <>
+                        <td data-label="Transaction ID">{item.transactionId || 'N/A'}</td>
+                        <td data-label="Date">{formatDate(item.createdAt)}</td>
+                        <td data-label="Description">{item.description || 'Payment'}</td>
+                        <td data-label="Amount">{formatCurrency(item.amount)}</td>
+                        <td data-label="Method">{getMethodName(item.method)}</td>
+                        <td data-label="Status" className={getStatusClass(item.status)}>
+                          {getStatusText(item.status)}
+                          {item.failureReason && ` (${item.failureReason})`}
+                        </td>
+                        <td data-label="Action">
+                          <button
+                            className="his-btn-secondary"
+                            onClick={() => viewItemDetails(item)}
+                          >
+                            <FaEye className="his-btn-icon" />
+                            View
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="his-no-history">
             <p>No {activeTab} history found.</p>
@@ -353,7 +370,7 @@ const History = () => {
                 {activeTab === 'payments' && `Payment #${activeItem.transactionId}`}
               </h2>
               <button className="his-close-btn" onClick={closeItemDetails}>
-                ✕
+                <FaTimes />
               </button>
             </div>
 
@@ -398,12 +415,20 @@ const History = () => {
             </div>
 
             <div className="his-modal-footer">
-              <button className="his-btn-secondary" onClick={closeItemDetails}>Close</button>
+              <button className="his-btn-secondary" onClick={closeItemDetails}>
+                Close
+              </button>
               {activeTab === 'orders' && activeItem.status === 'delivered' && (
-                <button className="his-btn-primary">Reorder</button>
+                <button className="his-btn-primary">
+                  <FaRedo className="his-btn-icon" />
+                  Reorder
+                </button>
               )}
               {activeTab === 'payments' && activeItem.status === 'failed' && (
-                <button className="his-btn-primary">Retry</button>
+                <button className="his-btn-primary">
+                  <FaRedo className="his-btn-icon" />
+                  Retry
+                </button>
               )}
             </div>
           </div>

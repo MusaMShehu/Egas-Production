@@ -4,20 +4,46 @@ import axios from 'axios';
 import './UserSettings.css';
 
 const Settings = () => {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState({
+    language: 'english',
+    currency: 'USD',
+    notifications: {
+      email: true,
+      sms: true,
+      push: false,
+      orderUpdates: true,
+      deliveryNotifications: true,
+      promotionalOffers: true,
+      newsletter: false
+    },
+    privacy: {
+      profileVisibility: 'private',
+      dataSharing: false,
+      locationSharing: true,
+      personalizedAds: false
+    },
+    security: {
+      twoFactor: false,
+      loginAlerts: true,
+      sessionTimeout: 30,
+      biometricAuth: false
+    }
+  });
+  
   const [activeTab, setActiveTab] = useState('general');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server.onrender.com/api/v1';
   const token = localStorage.getItem('token');
 
   // Fetch settings from API
   useEffect(() => {
     const fetchSettings = async () => {
       setIsLoading(true);
+      setError('');
       try {
         const response = await axios.get(`${API_BASE_URL}/settings`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -25,20 +51,30 @@ const Settings = () => {
         setSettings(response.data);
       } catch (err) {
         console.error('Error fetching settings:', err);
-        setError('Failed to load settings. Please try again later.');
+        const errorMessage = err.response?.data?.message || 'Failed to load settings. Please try again later.';
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchSettings();
+    
+    if (token) {
+      fetchSettings();
+    } else {
+      setError('Authentication required. Please log in.');
+      setIsLoading(false);
+    }
   }, [API_BASE_URL, token]);
 
-  // Top-level update (language, currency)
+  // Handle top-level setting changes
   const handleSettingChange = (key, value) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings(prev => ({ 
+      ...prev, 
+      [key]: value 
+    }));
   };
 
-  // Nested updates (notifications, privacy, security)
+  // Handle nested setting changes
   const handleNestedSettingChange = (category, key, value) => {
     setSettings(prev => ({
       ...prev,
@@ -54,6 +90,7 @@ const Settings = () => {
     setIsSaving(true);
     setError('');
     setSuccess('');
+    
     try {
       await axios.put(`${API_BASE_URL}/settings`, settings, {
         headers: {
@@ -62,21 +99,21 @@ const Settings = () => {
         }
       });
       setSuccess('Settings saved successfully!');
-      setTimeout(() => setSuccess(''), 3000);
+      setTimeout(() => setSuccess(''), 5000);
     } catch (err) {
       console.error('Error saving settings:', err);
-      setError('Failed to save settings. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to save settings. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleChangePassword = async () => {
-    // Example: redirect to password change page
+  const handleChangePassword = () => {
     window.location.href = '/change-password';
   };
 
-  const handleUpdateEmail = async () => {
+  const handleUpdateEmail = () => {
     window.location.href = '/update-email';
   };
 
@@ -86,15 +123,19 @@ const Settings = () => {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
+      
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'personal-data.json');
       document.body.appendChild(link);
       link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Error downloading data:', err);
-      setError('Failed to download personal data. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to download personal data. Please try again.';
+      setError(errorMessage);
     }
   };
 
@@ -108,22 +149,28 @@ const Settings = () => {
         window.location.href = '/goodbye';
       } catch (err) {
         console.error('Error deleting account:', err);
-        setError('Failed to delete account. Please try again.');
+        const errorMessage = err.response?.data?.message || 'Failed to delete account. Please try again.';
+        setError(errorMessage);
       }
     }
   };
 
-  if (isLoading || !settings) {
-    return <div className="settings-page loading">Loading settings...</div>;
+  if (isLoading) {
+    return (
+      <div className="set-settings-page loading">
+        <div className="set-loading-spinner"></div>
+        Loading settings...
+      </div>
+    );
   }
 
   return (
-    <div className="settings-page">
-      <div className="dashboard-header">
+    <div className="set-settings-page">
+      <div className="set-dashboard-header">
         <h1>Settings</h1>
-        <div className="header-actions">
+        <div className="set-header-actions">
           <button 
-            className="btn-primary"
+            className="set-btn-primary"
             onClick={handleSaveSettings}
             disabled={isSaving}
           >
@@ -132,51 +179,49 @@ const Settings = () => {
         </div>
       </div>
 
-
-
       {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={() => setError('')} className="close-error">
-            <i className="fas fa-times"></i>
+        <div className="set-error-message">
+          <span>{error}</span>
+          <button onClick={() => setError('')} className="set-close-error">
+            ×
           </button>
         </div>
       )}
 
       {success && (
-        <div className="success-message">
-          {success}
-          <button onClick={() => setSuccess('')} className="close-success">
-            <i className="fas fa-times"></i>
+        <div className="set-success-message">
+          <span>{success}</span>
+          <button onClick={() => setSuccess('')} className="set-close-success">
+            ×
           </button>
         </div>
       )}
 
-      <div className="settings-content">
-        <div className="settings-sidebar">
+      <div className="set-settings-content">
+        <div className="set-settings-sidebar">
           <div 
-            className={`settings-tab ${activeTab === 'general' ? 'active' : ''}`}
+            className={`set-settings-tab ${activeTab === 'general' ? 'active' : ''}`}
             onClick={() => setActiveTab('general')}
           >
             <i className="fas fa-cog"></i>
             General
           </div>
           <div 
-            className={`settings-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+            className={`set-settings-tab ${activeTab === 'notifications' ? 'active' : ''}`}
             onClick={() => setActiveTab('notifications')}
           >
             <i className="fas fa-bell"></i>
             Notifications
           </div>
           <div 
-            className={`settings-tab ${activeTab === 'privacy' ? 'active' : ''}`}
+            className={`set-settings-tab ${activeTab === 'privacy' ? 'active' : ''}`}
             onClick={() => setActiveTab('privacy')}
           >
             <i className="fas fa-shield-alt"></i>
             Privacy & Security
           </div>
           <div 
-            className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`}
+            className={`set-settings-tab ${activeTab === 'account' ? 'active' : ''}`}
             onClick={() => setActiveTab('account')}
           >
             <i className="fas fa-user"></i>
@@ -184,15 +229,16 @@ const Settings = () => {
           </div>
         </div>
 
-        <div className="settings-panel">
+        <div className="set-settings-panel">
           {activeTab === 'general' && (
-            <div className="settings-section">
+            <div className="set-settings-section">
               <h2>General Settings</h2>
-              <div className="setting-item">
-                <label>Language</label>
+              <div className="set-setting-item">
+                <label htmlFor="language">Language</label>
                 <select
+                  id="language"
                   value={settings.language}
-                  onChange={(e) => handleSettingChange('language', 'language', e.target.value)}
+                  onChange={(e) => handleSettingChange('language', e.target.value)}
                   disabled={isSaving}
                 >
                   <option value="english">English</option>
@@ -203,11 +249,12 @@ const Settings = () => {
                   <option value="chinese">Chinese</option>
                 </select>
               </div>
-              <div className="setting-item">
-                <label>Currency</label>
+              <div className="set-setting-item">
+                <label htmlFor="currency">Currency</label>
                 <select
+                  id="currency"
                   value={settings.currency}
-                  onChange={(e) => handleSettingChange('currency', 'currency', e.target.value)}
+                  onChange={(e) => handleSettingChange('currency', e.target.value)}
                   disabled={isSaving}
                 >
                   <option value="JPY">Japanese Yen (¥)</option>
@@ -218,110 +265,99 @@ const Settings = () => {
                   <option value="INR">Indian Rupee (₹)</option>
                 </select>
               </div>
-              <div className="setting-item">
-                <label>Theme</label>
-                <select
-                  defaultValue="light"
-                  disabled={isSaving}
-                >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                  <option value="auto">Auto (System)</option>
-                </select>
-              </div>
             </div>
           )}
 
           {activeTab === 'notifications' && (
-            <div className="settings-section">
+            <div className="set-settings-section">
               <h2>Notification Preferences</h2>
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Notification Channels</h3>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.email}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'email', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'email', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Email Notifications
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.sms}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'sms', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'sms', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     SMS Notifications
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.push}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'push', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'push', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Push Notifications
                   </label>
                 </div>
               </div>
 
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Notification Types</h3>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.orderUpdates}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'orderUpdates', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'orderUpdates', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Order Updates
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.deliveryNotifications}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'deliveryNotifications', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'deliveryNotifications', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Delivery Notifications
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.promotionalOffers}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'promotionalOffers', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'promotionalOffers', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Promotional Offers
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.notifications.newsletter}
-                      onChange={(e) => handleNestedSettingChange('notifications', 'notifications', 'newsletter', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('notifications', 'newsletter', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Newsletter
                   </label>
                 </div>
@@ -330,15 +366,16 @@ const Settings = () => {
           )}
 
           {activeTab === 'privacy' && (
-            <div className="settings-section">
+            <div className="set-settings-section">
               <h2>Privacy & Security</h2>
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Privacy Settings</h3>
-                <div className="setting-item">
-                  <label>Profile Visibility</label>
+                <div className="set-setting-item">
+                  <label htmlFor="profileVisibility">Profile Visibility</label>
                   <select
+                    id="profileVisibility"
                     value={settings.privacy.profileVisibility}
-                    onChange={(e) => handleNestedSettingChange('privacy', 'privacy', 'profileVisibility', e.target.value)}
+                    onChange={(e) => handleNestedSettingChange('privacy', 'profileVisibility', e.target.value)}
                     disabled={isSaving}
                   >
                     <option value="public">Public</option>
@@ -346,87 +383,88 @@ const Settings = () => {
                     <option value="private">Private</option>
                   </select>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.privacy.dataSharing}
-                      onChange={(e) => handleNestedSettingChange('privacy', 'privacy', 'dataSharing', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('privacy', 'dataSharing', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Allow data sharing for analytics
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.privacy.locationSharing}
-                      onChange={(e) => handleNestedSettingChange('privacy', 'privacy', 'locationSharing', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('privacy', 'locationSharing', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Location Sharing (for delivery)
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.privacy.personalizedAds}
-                      onChange={(e) => handleNestedSettingChange('privacy', 'privacy', 'personalizedAds', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('privacy', 'personalizedAds', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Personalized Advertising
                   </label>
                 </div>
               </div>
 
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Security Settings</h3>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.security.twoFactor}
-                      onChange={(e) => handleNestedSettingChange('security', 'security', 'twoFactor', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('security', 'twoFactor', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Enable Two-Factor Authentication
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.security.loginAlerts}
-                      onChange={(e) => handleNestedSettingChange('security', 'security', 'loginAlerts', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('security', 'loginAlerts', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Login Alerts
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label className="checkbox-label">
+                <div className="set-setting-item">
+                  <label className="set-checkbox-label">
                     <input
                       type="checkbox"
                       checked={settings.security.biometricAuth}
-                      onChange={(e) => handleNestedSettingChange('security', 'security', 'biometricAuth', e.target.checked)}
+                      onChange={(e) => handleNestedSettingChange('security', 'biometricAuth', e.target.checked)}
                       disabled={isSaving}
                     />
-                    <span className="checkmark"></span>
+                    <span className="set-checkmark"></span>
                     Biometric Authentication
                   </label>
                 </div>
-                <div className="setting-item">
-                  <label>Session Timeout</label>
+                <div className="set-setting-item">
+                  <label htmlFor="sessionTimeout">Session Timeout</label>
                   <select
+                    id="sessionTimeout"
                     value={settings.security.sessionTimeout}
-                    onChange={(e) => handleNestedSettingChange('security', 'security', 'sessionTimeout', parseInt(e.target.value))}
+                    onChange={(e) => handleNestedSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
                     disabled={isSaving}
                   >
                     <option value={15}>15 minutes</option>
@@ -441,31 +479,31 @@ const Settings = () => {
           )}
 
           {activeTab === 'account' && (
-            <div className="settings-section">
+            <div className="set-settings-section">
               <h2>Account Settings</h2>
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Account Management</h3>
-                <div className="setting-item">
+                <div className="set-setting-item">
                   <button 
-                    className="btn-secondary"
+                    className="set-btn-secondary"
                     onClick={handleChangePassword}
                     disabled={isSaving}
                   >
                     Change Password
                   </button>
                 </div>
-                <div className="setting-item">
+                <div className="set-setting-item">
                   <button 
-                    className="btn-secondary"
+                    className="set-btn-secondary"
                     onClick={handleUpdateEmail}
                     disabled={isSaving}
                   >
                     Update Email Address
                   </button>
                 </div>
-                <div className="setting-item">
+                <div className="set-setting-item">
                   <button 
-                    className="btn-secondary"
+                    className="set-btn-secondary"
                     onClick={handleDownloadData}
                     disabled={isSaving}
                   >
@@ -474,15 +512,15 @@ const Settings = () => {
                 </div>
               </div>
 
-              <div className="settings-group">
+              <div className="set-settings-group">
                 <h3>Danger Zone</h3>
-                <div className="setting-item danger-zone">
-                  <p className="danger-warning">
+                <div className="set-setting-item set-danger-zone">
+                  <p className="set-danger-warning">
                     <i className="fas fa-exclamation-triangle"></i>
                     These actions are irreversible. Please proceed with caution.
                   </p>
                   <button 
-                    className="btn-danger"
+                    className="set-btn-danger"
                     onClick={handleDeleteAccount}
                     disabled={isSaving}
                   >
@@ -493,9 +531,9 @@ const Settings = () => {
             </div>
           )}
 
-          <div className="settings-actions">
+          <div className="set-settings-actions">
             <button 
-              className="btn-primary" 
+              className="set-btn-primary" 
               onClick={handleSaveSettings}
               disabled={isSaving}
             >

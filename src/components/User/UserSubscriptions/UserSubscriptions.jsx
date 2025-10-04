@@ -10,7 +10,7 @@ const Subscriptions = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server.onrender.com';
 
   // ✅ Fetch logged-in user's subscriptions
   useEffect(() => {
@@ -164,7 +164,7 @@ const Subscriptions = () => {
             </div>
             <div className="sub-subscriptions-list">
               {activeSubscriptions.map(subscription => (
-                <div key={subscription._id} className="subscription-card">
+                <div key={subscription._id} className="sub-subscription-card">
                   <div className="sub-subscription-header">
                     <div className="sub-subscription-id">#{subscription._id}</div>
                     <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api/v1/auth",
+  baseURL: process.env.REACT_APP_API_URL || "https://egas-server.onrender.com/api/v1/auth",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

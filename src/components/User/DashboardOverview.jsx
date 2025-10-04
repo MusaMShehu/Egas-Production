@@ -12,7 +12,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./DashboardOverview.css";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://egas-server.onrender.com";
 
 const DashboardOverview = () => {
   const [balance, setBalance] = useState(0);

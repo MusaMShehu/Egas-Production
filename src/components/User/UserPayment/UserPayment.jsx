@@ -32,7 +32,7 @@ const Payments = () => {
     hasPrev: false,
   });
 
-  const API_BASE_URL = "http://localhost:5000/api/v1";
+  const API_BASE_URL = "https://egas-server.onrender.com/api/v1";
 
   const getAuthToken = () => localStorage.getItem("token");
 

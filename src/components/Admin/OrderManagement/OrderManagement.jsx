@@ -25,7 +25,7 @@ const OrderManagement = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/v1/orders');
+      const response = await fetch('https://egas-server.onrender.com/api/v1/orders');
       const data = await response.json();
       
       if (response.ok) {
@@ -42,7 +42,7 @@ const OrderManagement = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/v1/orders/${orderId}/status`, {
+      const response = await fetch(`https://egas-server.onrender.com/api/v1/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const OrderManagement = () => {
 
   const updatePaymentStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`/api/admin/orders/${orderId}/payment-status`, {
+      const response = await fetch(`https://egas-server.onrender.com/api/v1/admin/orders/${orderId}/payment-status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

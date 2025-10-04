@@ -47,7 +47,7 @@ const Profile = () => {
     newsletter: false,
   });
 
-  const API_BASE_URL = "http://localhost:5000/api/v1/auth";
+  const API_BASE_URL = "https://egas-server.onrender.com/api/v1/auth";
 
   // ✅ Fetch user profile from API
   useEffect(() => {

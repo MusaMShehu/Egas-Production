@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaShoppingCart, FaFilter, FaSortAmountDown, FaExclamationTriangle } from 'react-icons/fa';
 import { productAPI } from '../../api/ProductApi';
 import cartAPI from '../../api/cartApi';
-import OrderSummary from '../User/UserOrders/OrderSummary';
 import './ProductSelection.css';
 
 const ProductSelection = () => {
