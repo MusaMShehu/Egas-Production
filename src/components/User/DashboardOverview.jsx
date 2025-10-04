@@ -1,88 +1,220 @@
-// components/Dashboard.js
-import React, { useState } from 'react';
+// components/DashboardOverview.js
+import React, { useEffect, useState } from "react";
+import {
+  FaSearch,
+  FaSyncAlt,
+  FaFire,
+  FaRedo,
+  FaWallet,
+  FaHeadset,
+} from "react-icons/fa";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./DashboardOverview.css";
 
-const DashboardOverview = () => {
-  const [balance, setBalance] = useState(15250);
-  const [searchQuery, setSearchQuery] = useState('');
+const BASE_URL = "http://localhost:5000";
 
-  const refreshBalance = () => {
-    setBalance(prev => prev + 100);
-    setTimeout(() => {
-      alert('Balance refreshed successfully!');
-    }, 500);
+const DashboardOverview = () => {
+  const [balance, setBalance] = useState(0);
+  const [orders, setOrders] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  // ✅ Get logged in user + token from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
+
+  // Axios config with Authorization header
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
-  const orders = [
-    {
-      id: 'EG-1001',
-      date: 'May 15, 2023',
-      product: '12kg Gas Cylinder',
-      quantity: 1,
-      amount: '¥10,500',
-      status: 'Processing',
-      statusClass: 'status-processing'
+  // Calculate next delivery from subscription
+  const calculateNextDelivery = (sub) => {
+    if (!sub) return null;
+    const startDate = new Date(sub.startDate);
+    const now = new Date();
+    let next = new Date(startDate);
+
+    while (next <= now) {
+      if (sub.frequency === "weekly") next.setDate(next.getDate() + 7);
+      if (sub.frequency === "biweekly") next.setDate(next.getDate() + 14);
+      if (sub.frequency === "monthly") next.setMonth(next.getMonth() + 1);
     }
-  ];
+    return next.toLocaleDateString();
+  };
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [walletRes, ordersRes, subsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/api/v1/dashboard/wallet`, axiosConfig),
+          axios.get(`${BASE_URL}/api/v1/dashboard/orders?limit=3`, axiosConfig),
+          axios.get(`${BASE_URL}/api/v1/dashboard/subscriptions?limit=3`, axiosConfig),
+        ]);
+
+        setBalance(walletRes.data.balance || 0);
+        setOrders(ordersRes.data.data || []);
+        setSubscriptions(subsRes.data.data || []);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchDashboardData();
+    } else {
+      navigate("/login"); // redirect if not logged in
+    }
+  }, [token, navigate]);
+
+  const refreshBalance = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/v1/dashboard/wallet/refresh`,
+        axiosConfig
+      );
+      setBalance(res.data.balance);
+    } catch (error) {
+      console.error("Failed to refresh balance", error);
+    }
+  };
+
+  const activeSubscription = subscriptions.find(
+    (sub) => sub?.status?.toLowerCase() === "active"
+  );
+  const nextDelivery = calculateNextDelivery(activeSubscription);
 
   const quickActions = [
-    { icon: 'fa-fire-flame-curved', text: 'Order Gas' },
-    { icon: 'fa-repeat', text: 'Manage Subscription' },
-    { icon: 'fa-wallet', text: 'Top Up Wallet' },
-    { icon: 'fa-headset', text: 'Contact Support' }
+    {
+      icon: <FaFire />,
+      text: "Order Gas",
+      onClick: () => navigate("/dashboard/orders"),
+    },
+    {
+      icon: <FaRedo />,
+      text: "Manage Subscription",
+      onClick: () => navigate("/dashboard/subscriptions"),
+    },
+    { icon: <FaWallet />, text: "Top Up Wallet", onClick: () => navigate("/wallet") },
+    {
+      icon: <FaHeadset />,
+      text: "Contact Support",
+      onClick: () => navigate("/dashboard/support"),
+    },
   ];
+
+  if (loading) {
+    return <div className="overview-loading">Loading dashboard...</div>;
+  }
 
   return (
     <div>
-      <div className="dashboard-header">
-        <h1>Customer Dashboard</h1>
-        <div className="search-bar">
-          <i className="fas fa-search"></i>
-          <input 
-            type="text" 
-            placeholder="Type here to search..." 
+      {/* Header */}
+      <div className="overview-dashboard-header">
+        <h1>Welcome, {user?.firstName || "Customer"} 👋</h1>
+        <div className="overview-search-bar">
+          <FaSearch />
+          <input
+            type="text"
+            placeholder="Type here to search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="stats-container">
-        <div className="stat-card">
+      {/* Stats Section */}
+      <div className="overview-stats-container">
+        <div className="overview-stat-card">
           <h3>Active Orders</h3>
-          <div className="value">1</div>
+          <div className="overview-value">
+            {orders.filter((order) => order?.status?.toLowerCase() === "active").length}
+          </div>
         </div>
-        <div className="stat-card">
+        <div className="overview-stat-card">
           <h3>Upcoming Deliveries</h3>
-          <div className="value">1</div>
-          <p>Next: May 25, 2023</p>
+          <div className="overview-value">{nextDelivery ? 1 : 0}</div>
+          {nextDelivery && <p>Next: {nextDelivery}</p>}
         </div>
-        <div className="stat-card">
+        <div className="overview-stat-card">
           <h3>Subscription Status</h3>
-          <div className="value">Active</div>
-          <span className="status status-active">Monthly Auto-Refill</span>
+          <div className="overview-value">{activeSubscription?.status || "None"}</div>
+          {activeSubscription && (
+            <span
+              className={`overview-status ${
+                activeSubscription?.status?.toLowerCase() === "active"
+                  ? "status-active"
+                  : "status-inactive"
+              }`}
+            >
+              {activeSubscription.plan}
+            </span>
+          )}
         </div>
-        <div className="stat-card">
+        <div className="overview-stat-card">
           <h3>Account Balance</h3>
-          <div className="value">¥{balance.toLocaleString()}</div>
-          <button className="refresh-btn" onClick={refreshBalance}>
-            <i className="fas fa-sync-alt"></i> Refresh
+          <div className="overview-value">₦{balance.toLocaleString()}</div>
+          <button className="overview-refresh-btn" onClick={refreshBalance}>
+            <FaSyncAlt /> Refresh
           </button>
         </div>
       </div>
 
-      <div className="quick-actions">
+      {/* Quick Actions */}
+      <div className="overview-quick-actions">
         {quickActions.map((action, index) => (
-          <button key={index} className="action-btn">
-            <i className={`fas ${action.icon}`}></i>
+          <button key={index} className="overview-action-btn" onClick={action.onClick}>
+            {action.icon}
             <span>{action.text}</span>
           </button>
         ))}
       </div>
 
-      <div className="orders-container">
+      {/* Subscriptions Section */}
+      {subscriptions.length > 0 && (
+        <div className="overview-subscription-container">
+          <h2>Recent Subscriptions</h2>
+          <table className="overview-subscription-table">
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>Next Renewal</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subscriptions.map((sub, index) => {
+                const status = sub?.status?.toLowerCase() || "unknown";
+                return (
+                  <tr key={index}>
+                    <td>{sub?.plan || "N/A"}</td>
+                    <td className={`overview-status-${status}`}>{sub?.status || "N/A"}</td>
+                    <td>{sub?.startDate ? new Date(sub.startDate).toLocaleDateString() : "N/A"}</td>
+                    <td>{sub?.nextRenewal ? new Date(sub.nextRenewal).toLocaleDateString() : "N/A"}</td>
+                    <td>₦{sub?.amount?.toLocaleString() || "0"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Orders Section */}
+      <div className="overview-orders-container">
         <h2>Recent Orders</h2>
-        <table className="orders-table">
+        <table className="overview-orders-table">
           <thead>
             <tr>
               <th>Order ID</th>
@@ -95,58 +227,43 @@ const DashboardOverview = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) => (
-              <tr key={index}>
-                <td>{order.id}</td>
-                <td>{order.date}</td>
-                <td>{order.product}</td>
-                <td>{order.quantity}</td>
-                <td>{order.amount}</td>
-                <td className={order.statusClass}>{order.status}</td>
-                <td><button className="track-btn">Track</button></td>
+            {orders.length > 0 ? (
+              orders.map((order, index) => {
+                const status = order?.status?.toLowerCase() || "unknown";
+                return (
+                  <tr key={index}>
+                    <td>{order?._id}</td>
+                    <td>
+                      {order?.createdAt
+                        ? new Date(order.createdAt).toLocaleDateString()
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {order?.products?.map((p) => p?.product?.name || "Unnamed").join(", ")}
+                    </td>
+                    <td>
+                      {order?.products?.reduce((sum, p) => sum + (p?.quantity || 0), 0)}
+                    </td>
+                    <td>₦{order?.totalAmount?.toLocaleString() || "0"}</td>
+                    <td className={`overview-status-${status}`}>{order?.status || "N/A"}</td>
+                    <td>
+                      <button
+                        className="overview-track-btn"
+                        onClick={() => navigate(`/orders/${order?._id}`)}
+                      >
+                        Track
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="7">No recent orders found.</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-      </div>
-
-      <div className="delivery-status">
-        <h2>Current Delivery Status</h2>
-        <p>Order #EG-1001</p>
-        <p>Estimated delivery: May 18, 2023</p>
-        
-        <div className="status-timeline">
-          <div className="status-step completed">
-            <div className="status-icon">
-              <i className="fas fa-check"></i>
-            </div>
-            <div>Order Placed</div>
-          </div>
-          <div className="status-step completed">
-            <div className="status-icon">
-              <i className="fas fa-check"></i>
-            </div>
-            <div>Shipped</div>
-          </div>
-          <div className="status-step active">
-            <div className="status-icon">
-              <i className="fas fa-truck"></i>
-            </div>
-            <div>In Transit</div>
-          </div>
-          <div className="status-step">
-            <div className="status-icon">
-              <i className="fas fa-home"></i>
-            </div>
-            <div>Delivered</div>
-          </div>
-        </div>
-        
-        <div className="current-status">
-          <strong>Current Status:</strong> In Transit - Near your location
-        </div>
-        
-        <a href="#" className="view-tracking">View Full Tracking</a>
       </div>
     </div>
   );

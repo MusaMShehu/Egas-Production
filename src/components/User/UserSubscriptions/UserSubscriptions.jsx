@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
+import { FaPlus, FaSearch, FaTimes } from 'react-icons/fa';
 
 const Subscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -9,10 +10,9 @@ const Subscriptions = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // ✅ Use environment variable for production
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  // ✅ Fetch only the logged-in user’s subscriptions
+  // ✅ Fetch logged-in user's subscriptions
   useEffect(() => {
     const fetchSubscriptions = async () => {
       setIsLoading(true);
@@ -24,19 +24,22 @@ const Subscriptions = () => {
           return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/subscriptions/my-subscriptions`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/my-subscriptions`, {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
+        const result = await response.json();
+        console.log("Subscriptions API response:", result);
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(result.message || `HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        setSubscriptions(data.subscriptions || []); // expect backend to return { subscriptions: [...] }
+        // ✅ backend sends result.data
+        setSubscriptions(result.data || []);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching subscriptions:', error);
@@ -46,10 +49,10 @@ const Subscriptions = () => {
     };
 
     fetchSubscriptions();
-  }, []);
+  }, [API_BASE_URL]);
 
   const handleCreateNewSubscription = () => {
-    navigate('/subscription-list');
+    navigate('/subscription-plans');
   };
 
   const cancelSubscription = async (subscriptionId) => {
@@ -57,22 +60,22 @@ const Subscriptions = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/cancel`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/cancel`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
         throw new Error(`Failed to cancel subscription: ${response.status}`);
       }
 
-      // Update UI immediately
+      // ✅ Update UI immediately
       setSubscriptions(prev =>
         prev.map(sub =>
-          sub._id === subscriptionId ? { ...sub, status: 'Cancelled' } : sub
+          sub._id === subscriptionId ? { ...sub, status: 'cancelled', cancelledAt: new Date() } : sub
         )
       );
     } catch (error) {
@@ -86,20 +89,21 @@ const Subscriptions = () => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
   const formatCurrency = (amount) => {
-    return `₦${amount.toLocaleString()}`; // ✅ Updated to Naira for Nigeria
+    if (!amount) return '₦0';
+    return `₦${amount.toLocaleString()}`;
   };
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'Active': return 'status-active';
-      case 'Completed': return 'status-completed';
-      case 'Cancelled': return 'status-cancelled';
-      case 'Paused': return 'status-paused';
+      case 'active': return 'status-active';
+      case 'cancelled': return 'status-cancelled';
+      case 'expired': return 'status-expired';
+      case 'pending': return 'status-pending';
       default: return '';
     }
   };
@@ -114,84 +118,88 @@ const Subscriptions = () => {
     }
   };
 
-  // Split subscriptions
-  const activeSubscriptions = subscriptions.filter(sub => 
-    ['Active', 'Paused'].includes(sub.status)
+  // ✅ Split active vs inactive
+  const activeSubscriptions = subscriptions.filter(sub =>
+    ['active', 'pending'].includes(sub.status)
   );
-  const inactiveSubscriptions = subscriptions.filter(sub => 
-    ['Completed', 'Cancelled'].includes(sub.status)
+  const inactiveSubscriptions = subscriptions.filter(sub =>
+    ['cancelled', 'expired'].includes(sub.status)
   );
 
   if (isLoading) {
-    return <div className="subscriptions-page loading">Loading your subscriptions...</div>;
+    return <div className="sub-subscriptions-page loading">Loading your subscriptions...</div>;
   }
 
   return (
-    <div className="subscriptions-page">
-      <div className="dashboard-header">
+    <div className="sub-subscriptions-page">
+      <div className="sub-dashboard-header">
         <h1>My Subscriptions</h1>
-        <div className="header-actions">
-          <div className="search-bar">
-            <i className="fas fa-search"></i>
+        <div className="sub-header-actions">
+          <div className="sub-search-bar">
+            <FaSearch className="sub-search-icon" />
             <input type="text" placeholder="Search subscriptions..." />
           </div>
-          <button className="btn-primary" onClick={handleCreateNewSubscription}>
-            <i className="fas fa-plus"></i> New Subscription
+          <button className="sub-btn-primary" onClick={handleCreateNewSubscription}>
+            <FaPlus className="sub-fas" /> New Subscription
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="error-message">
+        <div className="sub-error-message">
           {error}
           <button onClick={() => setError('')} className="close-error">
-            <i className="fas fa-times"></i>
+            <FaTimes className="sub-fas" />
           </button>
         </div>
       )}
 
-      <div className="content-section">
-        {/* ✅ Active Subscriptions */}
+      <div className="sub-sub-content-section">
+        {/* Active Subscriptions */}
         {activeSubscriptions.length > 0 && (
           <>
-            <div className="section-header">
+            <div className="sub-section-header">
               <h2>Active Subscriptions</h2>
-              <span className="count-badge">{activeSubscriptions.length}</span>
+              <span className="sub-count-badge">{activeSubscriptions.length}</span>
             </div>
-            <div className="subscriptions-list">
+            <div className="sub-subscriptions-list">
               {activeSubscriptions.map(subscription => (
                 <div key={subscription._id} className="subscription-card">
-                  <div className="subscription-header">
-                    <div className="subscription-id">#{subscription._id}</div>
-                    <div className={`subscription-status ${getStatusClass(subscription.status)}`}>
+                  <div className="sub-subscription-header">
+                    <div className="sub-subscription-id">#{subscription._id}</div>
+                    <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
                       {subscription.status}
                     </div>
                   </div>
-                  <div className="subscription-details">
-                    <div className="detail-row">
-                      <span className="detail-label">Plan:</span>
-                      <span className="detail-value">{subscription.name}</span>
+                  <div className="sub-subscription-details">
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Plan:</span>
+                      <span className="sub-detail-value">{subscription.planName}</span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Cylinder Size:</span>
-                      <span className="detail-value">{subscription.size}</span>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Cylinder Size:</span>
+                      <span className="sub-detail-value">{subscription.size || 'N/A'}</span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Price:</span>
-                      <span className="detail-value">
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-value">
                         {formatCurrency(subscription.price)}
                         {subscription.frequency !== 'One-Time' && getFrequencyText(subscription.frequency)}
                       </span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Next Delivery:</span>
-                      <span className="detail-value">{formatDate(subscription.nextDelivery)}</span>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Start Date:</span>
+                      <span className="sub-detail-value">{formatDate(subscription.startDate)}</span>
+                    </div>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">End Date:</span>
+                      <span className="sub-detail-value">{formatDate(subscription.endDate)}</span>
                     </div>
                   </div>
-                  <div className="subscription-actions">
-                    <button className="btn-primary">Manage</button>
+                  <div className="sub-subscription-actions">
+                    <button className="sub-btn-primary">Manage</button>
                     <button 
-                      className="btn-warning" 
+                      className="sub-btn-warning" 
                       onClick={() => cancelSubscription(subscription._id)}
                     >
                       Cancel
@@ -203,47 +211,51 @@ const Subscriptions = () => {
           </>
         )}
 
-        {/* ✅ Inactive Subscriptions */}
+        {/* Inactive Subscriptions */}
         {inactiveSubscriptions.length > 0 && (
           <>
-            <div className="section-header">
+            <div className="sub-section-header">
               <h2>Subscription History</h2>
-              <span className="count-badge">{inactiveSubscriptions.length}</span>
+              <span className="sub-count-badge">{inactiveSubscriptions.length}</span>
             </div>
-            <div className="subscriptions-list">
+            <div className="sub-subscriptions-list">
               {inactiveSubscriptions.map(subscription => (
-                <div key={subscription._id} className="subscription-card">
-                  <div className="subscription-header">
-                    <div className="subscription-id">#{subscription._id}</div>
-                    <div className={`subscription-status ${getStatusClass(subscription.status)}`}>
+                <div key={subscription._id} className="sub-subscription-card">
+                  <div className="sub-subscription-header">
+                    <div className="sub-subscription-id">#{subscription._id}</div>
+                    <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
                       {subscription.status}
                     </div>
                   </div>
-                  <div className="subscription-details">
-                    <div className="detail-row">
-                      <span className="detail-label">Plan:</span>
-                      <span className="detail-value">{subscription.name}</span>
+                  <div className="sub-subscription-details">
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Plan:</span>
+                      <span className="sub-detail-value">{subscription.planName}</span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Cylinder Size:</span>
-                      <span className="detail-value">{subscription.size}</span>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Cylinder Size:</span>
+                      <span className="sub-detail-value">{subscription.size || 'N/A'}</span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Price:</span>
-                      <span className="detail-value">
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-value">
                         {formatCurrency(subscription.price)}
                         {subscription.frequency !== 'One-Time' && getFrequencyText(subscription.frequency)}
                       </span>
                     </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Created:</span>
-                      <span className="detail-value">{formatDate(subscription.createdAt)}</span>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">Start Date:</span>
+                      <span className="sub-detail-value">{formatDate(subscription.startDate)}</span>
+                    </div>
+                    <div className="sub-detail-row">
+                      <span className="sub-detail-label">End Date:</span>
+                      <span className="sub-detail-value">{formatDate(subscription.endDate)}</span>
                     </div>
                   </div>
-                  <div className="subscription-actions">
-                    <button className="btn-secondary">View Details</button>
-                    {subscription.status === 'Completed' && (
-                      <button className="btn-primary">Subscribe Again</button>
+                  <div className="sub-subscription-actions">
+                    <button className="sub-btn-secondary">View Details</button>
+                    {subscription.status === 'expired' && (
+                      <button className="sub-btn-primary">Subscribe Again</button>
                     )}
                   </div>
                 </div>
@@ -252,11 +264,11 @@ const Subscriptions = () => {
           </>
         )}
 
-        {/* ✅ No subscriptions fallback */}
+        {/* No subscriptions fallback */}
         {subscriptions.length === 0 && (
-          <div className="no-subscriptions">
+          <div className="sub-no-subscriptions">
             <p>You don't have any subscriptions yet.</p>
-            <button className="btn-primary" onClick={handleCreateNewSubscription}>
+            <button className="sub-btn-primary" onClick={handleCreateNewSubscription}>
               Create Your First Subscription
             </button>
           </div>

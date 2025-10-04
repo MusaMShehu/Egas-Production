@@ -8,24 +8,41 @@ import { AuthProvider } from './contexts/AuthContext';
 // Public Pages
 import PublicLayout from "./components/public/PublicLayout";
 import Home from "./components/Home/Home";
+  // Home Nested Routes
+import LearnMore from "./pages/Learn More/learnMore";
+import DomesticSolutions from "./pages/Domestic_Solutions/DomesticSolutions";
+import RestaurantSolutions from "./pages/Restaurant_Solutions/RestaurantSolutions";
+import BusinessSolutions from "./pages/Business_Solutions/BusinessSolutions";
+import OpportunitiesLayout from "./components/Layout/opportunitiesLayout";
+
+import DeliveryTeam from './pages/Delivery_Team/delivery-team';
+import MaintenanceServices from './pages/Maintenance_Services/MaintenanceServices';
+import SafetyGuidelines from './pages/Safety_Guidelines/SafetyGuidelines';
+import PricingPlans from './pages/Pricing_Plans/PricingPlans';
+import CustomerTestimonials from './pages/Customer_Testimonials/CustomerTestimonials';
+import FAQ from './pages/FAQ/FAQ';
+import Blog from './pages/blogs/Blog';
+import Careers from './pages/Careers/Careers';
+
 import Products from "./components/Products";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
 import About from "./components/About";
-import Blog from "./pages/blogs/Blog";
-import Business from "./pages/business/Business";
-// import Header from "./components/headers/Header";
-// import Footer from "./components/headers/Footer";
+import Business from "./pages/Business_Solutions/BusinessSolutions";
+
 import "./App.css";
 
 import OrderSummary from "./components/User/UserOrders/OrderSummary";
-import ProductCartPage from "./components/User/UserOrders/ProductCartPage";
-import PaymentGateway from "./components/User/UserOrders/PaymentGateway";
+import ProductCart from "./components/Products/ProductCart";
+
+
+import CallbackPage from './components/CallbackPage';
+import PaymentSuccess from './components/PaymentSuccess';
 
 // User Panel
 // import OverviewPage from "./components/pages/OverviewPage";
 import ProductSelection from "./components/Products/ProductSelectionServer";
-import SubscriptionPlans from "./components/pages/SubscriptionPlans";
+import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
 // import OrderHistoryPage from "./components/pages/OrderHistoryPage";
 // import PaymentsPage from "./components/pages/PaymentsPage";
 // import ProfilePage from "./components/pages/ProfilePage";
@@ -55,9 +72,7 @@ import UserPayment from "./components/User/UserPayment/UserPayment";
 import UserProfile from "./components/User/UserProfile/UserProfile";
 import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
-// import SubscriptionList from "./components/Admin/SubscriptionManagement/SubscriptionList";
 
-// import { useAuth } from "./contexts/AuthContext";
 
 function App() {
 
@@ -65,10 +80,28 @@ function App() {
     <AuthProvider>
       <div className="App">
         <Routes>
+
           {/* Public Routes */}
+
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Navigate to="Home" replace />} />
             <Route path="Home" element={<Home />} />
+            <Route path="/opportunities" element={< OpportunitiesLayout/>} >
+              <Route index element={<Navigate to="learn-more" replace />} />
+              <Route path="learn-more" element={<LearnMore/>} />
+              <Route path="domestic-opportunities" element={<DomesticSolutions/>} />
+              <Route path="restaurant-opportunities" element={<RestaurantSolutions />} />
+              <Route path="business-opportunities" element={<BusinessSolutions />} />
+            </Route>
+            <Route path="delivery-team" element={<DeliveryTeam />} />
+            <Route path="maintenance-services" element={<MaintenanceServices />} />
+            <Route path="safety-guidelines" element={<SafetyGuidelines />} />
+            <Route path="pricing-plans" element={<PricingPlans />} />
+            <Route path="customer-testimonials" element={<CustomerTestimonials />} />
+            <Route path="faq" element={<FAQ />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="careers" element={<Careers />} />
+
             <Route path="products" element={<Products />} />
             <Route path="services" element={<Services />} />
             <Route path="contact" element={<Contact />} />
@@ -76,12 +109,15 @@ function App() {
             <Route path="blog" element={<Blog />} />
             <Route path="business" element={<Business />} />
             <Route path="select_product" element={<ProductSelection />} />
-            <Route path="subscription-list" element={<SubscriptionPlans />} />
+            <Route path="subscription-plans" element={<SubscriptionPlans />} />
             <Route path="order_summary" element={<OrderSummary />} />
           </Route>
 
-          <Route path="/cart" element={<ProductCartPage />} />
-          <Route path="/payment" element={<PaymentGateway />} />
+          <Route path="/cart" element={<ProductCart />} />
+
+          <Route path="/subscription-Plan" element={<SubscriptionPlans />} />
+          <Route path="/payment/callback" element={<CallbackPage />} />
+
 
           {/* 2nd User Panel */}
           <Route path="/dashboard" element={<UserLayout />}>
@@ -90,7 +126,7 @@ function App() {
             <Route path="orders" element={<UserOrders />} />
             <Route path="subscriptions" element={<UserSubscriptions />} />
             <Route path="history" element={<UserHistory />} />
-            <Route path="payment" element={<UserPayment />} />
+            <Route path="payments" element={<UserPayment />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />

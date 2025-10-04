@@ -1,6 +1,25 @@
-// components/Profile.js
-import React, { useState, useEffect } from 'react';
-import './UserProfile.css';
+import React, { useState, useEffect } from "react";
+import { 
+  FaEdit, 
+  FaTimes, 
+  FaCamera, 
+  FaMapMarkerAlt, 
+  FaInfoCircle,
+  FaSave,
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaCalendar,
+  FaVenusMars,
+  FaMapPin,
+  FaMapMarkedAlt,
+  FaBell,
+  FaShoppingBag,
+  FaTruck,
+  FaTag,
+  FaNewspaper
+} from "react-icons/fa";
+import "./UserProfile.css";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -13,7 +32,7 @@ const Profile = () => {
     address: "",
     city: "",
     state: "",
-    gpsCoordinates: "",
+    gpsCoordinates: { type: "Point", coordinates: [0, 0] },
     profilePic: "default.jpg",
     memberSince: "",
   });
@@ -49,7 +68,6 @@ const Profile = () => {
 
         const result = await response.json();
 
-        // ✅ Your backend returns: { success, user }
         if (result.success && result.user) {
           setUser({
             firstName: result.user.firstName || "",
@@ -61,17 +79,18 @@ const Profile = () => {
             address: result.user.address || "",
             city: result.user.city || "",
             state: result.user.state || "",
-            gpsCoordinates: result.user.gpsCoordinates || "",
+            gpsCoordinates: result.user.gpsCoordinates || {
+              type: "Point",
+              coordinates: [0, 0],
+            },
             profilePic: result.user.profilePic || "default.jpg",
             memberSince: result.user.createdAt || "",
           });
 
-          // ✅ Set notification preferences if available
           if (result.user.notificationPreferences) {
             setNotificationPrefs(result.user.notificationPreferences);
           }
 
-          // ✅ Sync localStorage to fix "sign in after refresh" issue
           localStorage.setItem("user", JSON.stringify(result.user));
         } else {
           throw new Error(result.message || "Failed to load profile");
@@ -94,7 +113,7 @@ const Profile = () => {
     const { name, value } = e.target;
     setUser({
       ...user,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -102,10 +121,11 @@ const Profile = () => {
     const { name, checked } = e.target;
     setNotificationPrefs({
       ...notificationPrefs,
-      [name]: checked
+      [name]: checked,
     });
   };
 
+  // ✅ Update current location capture
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       setIsLoading(true);
@@ -114,65 +134,52 @@ const Profile = () => {
           const { latitude, longitude } = position.coords;
           setUser({
             ...user,
-            gpsCoordinates: `${latitude}, ${longitude}`
+            gpsCoordinates: {
+              type: "Point",
+              coordinates: [longitude, latitude],
+            },
           });
           setIsLoading(false);
-          alert('Location captured successfully!');
+          alert("Location captured successfully!");
         },
         (error) => {
-          console.error('Error getting location:', error);
-          setError('Failed to get current location. Please enable location services or enter coordinates manually.');
+          console.error("Error getting location:", error);
+          setError(
+            "Failed to get current location. Please enable location services."
+          );
           setIsLoading(false);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     } else {
-      setError('Geolocation is not supported by this browser.');
+      setError("Geolocation is not supported by this browser.");
     }
   };
 
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      setError('');
-      
-      // Update profile
+      setError("");
+
       const profileResponse = await fetch(`${API_BASE_URL}/profile`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(user)
+        body: JSON.stringify(user),
       });
 
       if (!profileResponse.ok) {
-        throw new Error('Failed to update profile');
+        throw new Error("Failed to update profile");
       }
 
-      // // Update preferences
-      // const prefsResponse = await fetch(`${API_BASE_URL}/profile/preferences`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify(notificationPrefs)
-      // });
-
-      // if (!prefsResponse.ok) {
-      //   throw new Error('Failed to update preferences');
-      // }
-
-      // const prefsResult = await prefsResponse.json();
-      
       setIsEditing(false);
       setIsLoading(false);
-      alert('Profile updated successfully!');
-      
+      alert("Profile updated successfully!");
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setError(error.message || 'Failed to update profile. Please try again.');
+      console.error("Error updating profile:", error);
+      setError(error.message || "Failed to update profile. Please try again.");
       setIsLoading(false);
     }
   };
@@ -183,29 +190,29 @@ const Profile = () => {
       setIsLoading(true);
       try {
         const formData = new FormData();
-        formData.append('profileImage', file);
+        formData.append("profileImage", file);
 
         const response = await fetch(`${API_BASE_URL}/profile/image`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: formData
+          body: formData,
         });
 
         if (!response.ok) {
-          throw new Error('Failed to upload image');
+          throw new Error("Failed to upload image");
         }
 
         const result = await response.json();
         setUser({
           ...user,
-          profilePic: result.data.profilePic
+          profilePic: result.data.profilePic,
         });
-        alert('Profile picture updated successfully!');
+        alert("Profile picture updated successfully!");
       } catch (error) {
-        console.error('Error uploading image:', error);
-        setError('Failed to upload profile picture. Please try again.');
+        console.error("Error uploading image:", error);
+        setError("Failed to upload profile picture. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -213,43 +220,48 @@ const Profile = () => {
   };
 
   const formatMemberSince = (dateString) => {
-    if (!dateString) return 'Member since 2023';
+    if (!dateString) return "Member since 2023";
     const date = new Date(dateString);
-    return `Member since ${date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+    return `Member since ${date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    })}`;
   };
 
   if (isLoading && !isEditing) {
-    return <div className="profile-page loading">Loading profile...</div>;
+    return <div className="prof-profile-page loading">Loading profile...</div>;
   }
 
   return (
-    <div className="profile-page">
-      <div className="dashboard-header">
+    <div className="prof-profile-page">
+      <div className="prof-dashboard-header">
         <h1>Profile Management</h1>
-        <div className="header-actions">
+        <div className="prof-header-actions">
           {!isEditing ? (
-            <button 
-              className="btn-primary"
+            <button
+              className="prof-btn-primary"
               onClick={() => setIsEditing(true)}
               disabled={isLoading}
             >
-              <i className="fas fa-edit"></i> Edit Profile
+              <FaEdit className="prof-btn-icon" />
+              Edit Profile
             </button>
           ) : (
-            <div className="edit-actions">
-              <button 
-                className="btn-secondary"
+            <div className="prof-edit-actions">
+              <button
+                className="prof-btn-secondary"
                 onClick={() => setIsEditing(false)}
                 disabled={isLoading}
               >
                 Cancel
               </button>
-              <button 
-                className="btn-primary"
+              <button
+                className="prof-btn-primary"
                 onClick={handleSave}
                 disabled={isLoading}
               >
-                {isLoading ? 'Saving...' : 'Save Changes'}
+                <FaSave className="prof-btn-icon" />
+                {isLoading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           )}
@@ -257,53 +269,63 @@ const Profile = () => {
       </div>
 
       {error && (
-        <div className="error-message">
+        <div className="prof-error-message">
+          <FaInfoCircle className="prof-error-icon" />
           {error}
-          <button onClick={() => setError('')} className="close-error">
-            <i className="fas fa-times"></i>
+          <button onClick={() => setError("")} className="prof-close-error">
+            <FaTimes />
           </button>
         </div>
       )}
 
-      <div className="profile-content">
-        <div className="profile-card">
-          <div className="profile-header">
-            <div className="profile-image">
-              <img 
-                src={user.profilePic || 'default.jpg'} 
-                alt="Profile" 
+      <div className="prof-profile-content">
+        <div className="prof-profile-card">
+          <div className="prof-profile-header">
+            <div className="prof-profile-image">
+              <img
+                src={user.profilePic || "default.jpg"}
+                alt="Profile"
                 onError={(e) => {
-                  e.target.src = 'default.jpg';
+                  e.target.src = "default.jpg";
                 }}
               />
               {isEditing && (
-                <div className="image-upload-container">
+                <div className="prof-image-upload-container">
                   <input
                     type="file"
                     id="profileImage"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="image-upload-input"
+                    className="prof-image-upload-input"
                     disabled={isLoading}
                   />
-                  <label htmlFor="profileImage" className="edit-image-btn">
-                    <i className="fas fa-camera"></i>
-                    {isLoading ? 'Uploading...' : 'Change Photo'}
+                  <label htmlFor="profileImage" className="prof-edit-image-btn">
+                    <FaCamera className="prof-btn-icon" />
+                    {isLoading ? "Uploading..." : "Change Photo"}
                   </label>
                 </div>
               )}
             </div>
-            <div className="profile-info">
-              <h2>{user.firstName} {user.lastName}</h2>
+            <div className="prof-profile-info">
+              <h2>
+                <FaUser className="prof-title-icon" />
+                {user.firstName} {user.lastName}
+              </h2>
               <p>{formatMemberSince(user.memberSince)}</p>
             </div>
           </div>
 
-          <div className="profile-details">
-            <h3>Personal Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label>First Name</label>
+          <div className="prof-profile-details">
+            <h3>
+              <FaUser className="prof-section-icon" />
+              Personal Information
+            </h3>
+            <div className="prof-detail-grid">
+              <div className="prof-detail-item">
+                <label>
+                  <FaUser className="prof-field-icon" />
+                  First Name
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -313,11 +335,14 @@ const Profile = () => {
                     disabled={isLoading}
                   />
                 ) : (
-                  <span>{user.firstName || 'Not set'}</span>
+                  <span>{user.firstName || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>Last Name</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaUser className="prof-field-icon" />
+                  Last Name
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -327,11 +352,14 @@ const Profile = () => {
                     disabled={isLoading}
                   />
                 ) : (
-                  <span>{user.lastName || 'Not set'}</span>
+                  <span>{user.lastName || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>Email</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaEnvelope className="prof-field-icon" />
+                  Email
+                </label>
                 {isEditing ? (
                   <input
                     type="email"
@@ -341,11 +369,14 @@ const Profile = () => {
                     disabled={isLoading}
                   />
                 ) : (
-                  <span>{user.email || 'Not set'}</span>
+                  <span>{user.email || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>Phone</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaPhone className="prof-field-icon" />
+                  Phone
+                </label>
                 {isEditing ? (
                   <input
                     type="tel"
@@ -356,11 +387,14 @@ const Profile = () => {
                     placeholder="Enter phone number"
                   />
                 ) : (
-                  <span>{user.phone || 'Not set'}</span>
+                  <span>{user.phone || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>Date of Birth</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaCalendar className="prof-field-icon" />
+                  Date of Birth
+                </label>
                 {isEditing ? (
                   <input
                     type="date"
@@ -370,11 +404,14 @@ const Profile = () => {
                     disabled={isLoading}
                   />
                 ) : (
-                  <span>{user.dob || 'Not set'}</span>
+                  <span>{user.dob || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>Gender</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaVenusMars className="prof-field-icon" />
+                  Gender
+                </label>
                 {isEditing ? (
                   <select
                     name="gender"
@@ -389,15 +426,21 @@ const Profile = () => {
                     <option value="prefer-not-to-say">Prefer not to say</option>
                   </select>
                 ) : (
-                  <span>{user.gender || 'Not set'}</span>
+                  <span>{user.gender || "Not set"}</span>
                 )}
               </div>
             </div>
 
-            <h3>Address Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label>Street Address</label>
+            <h3>
+              <FaMapMarkedAlt className="prof-section-icon" />
+              Address Information
+            </h3>
+            <div className="prof-detail-grid">
+              <div className="prof-detail-item">
+                <label>
+                  <FaMapPin className="prof-field-icon" />
+                  Street Address
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -408,11 +451,14 @@ const Profile = () => {
                     placeholder="Street address"
                   />
                 ) : (
-                  <span>{user.address || 'Not set'}</span>
+                  <span>{user.address || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>City</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaMapPin className="prof-field-icon" />
+                  City
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -423,11 +469,14 @@ const Profile = () => {
                     placeholder="City"
                   />
                 ) : (
-                  <span>{user.city || 'Not set'}</span>
+                  <span>{user.city || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item">
-                <label>State</label>
+              <div className="prof-detail-item">
+                <label>
+                  <FaMapPin className="prof-field-icon" />
+                  State
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -438,43 +487,70 @@ const Profile = () => {
                     placeholder="State"
                   />
                 ) : (
-                  <span>{user.state || 'Not set'}</span>
+                  <span>{user.state || "Not set"}</span>
                 )}
               </div>
-              <div className="detail-item-full">
-                <label>GPS Coordinates</label>
+              <div className="prof-detail-item-full">
+                <label>
+                  <FaMapMarkerAlt className="prof-field-icon" />
+                  GPS Coordinates
+                </label>
                 {isEditing ? (
-                  <div className="gps-input-container">
+                  <div className="prof-gps-input-container">
                     <input
                       type="text"
                       name="gpsCoordinates"
-                      value={user.gpsCoordinates}
-                      onChange={handleInputChange}
+                      value={
+                        user.gpsCoordinates?.coordinates
+                          ? `${user.gpsCoordinates.coordinates[1]}, ${user.gpsCoordinates.coordinates[0]}`
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const [lat, lng] = e.target.value
+                          .split(",")
+                          .map((v) => parseFloat(v.trim()));
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                          setUser({
+                            ...user,
+                            gpsCoordinates: {
+                              type: "Point",
+                              coordinates: [lng, lat],
+                            },
+                          });
+                        }
+                      }}
                       disabled={isLoading}
                       placeholder="Latitude, Longitude"
                     />
                     <button
                       type="button"
-                      className="btn-secondary"
+                      className="prof-btn-secondary"
                       onClick={getCurrentLocation}
                       disabled={isLoading}
                     >
-                      <i className="fas fa-location-dot"></i>
+                      <FaMapMarkerAlt className="prof-btn-icon" />
                       Get Current Location
                     </button>
                   </div>
                 ) : (
-                  <span>{user.gpsCoordinates || 'Not set'}</span>
+                  <span>
+                    {user.gpsCoordinates?.coordinates
+                      ? `${user.gpsCoordinates.coordinates[1]}, ${user.gpsCoordinates.coordinates[0]}`
+                      : "Not set"}
+                  </span>
                 )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="preferences-card">
-          <h3>Notification Preferences</h3>
-          <div className="preference-item">
-            <label className="checkbox-label">
+        <div className="prof-preferences-card">
+          <h3>
+            <FaBell className="prof-section-icon" />
+            Notification Preferences
+          </h3>
+          <div className="prof-preference-item">
+            <label className="prof-checkbox-label">
               <input
                 type="checkbox"
                 name="orderUpdates"
@@ -482,12 +558,13 @@ const Profile = () => {
                 onChange={handlePreferenceChange}
                 disabled={!isEditing || isLoading}
               />
-              <span className="checkmark"></span>
+              <span className="prof-checkmark"></span>
+              <FaShoppingBag className="prof-pref-icon" />
               Order Updates
             </label>
           </div>
-          <div className="preference-item">
-            <label className="checkbox-label">
+          <div className="prof-preference-item">
+            <label className="prof-checkbox-label">
               <input
                 type="checkbox"
                 name="deliveryNotifications"
@@ -495,12 +572,13 @@ const Profile = () => {
                 onChange={handlePreferenceChange}
                 disabled={!isEditing || isLoading}
               />
-              <span className="checkmark"></span>
+              <span className="prof-checkmark"></span>
+              <FaTruck className="prof-pref-icon" />
               Delivery Notifications
             </label>
           </div>
-          <div className="preference-item">
-            <label className="checkbox-label">
+          <div className="prof-preference-item">
+            <label className="prof-checkbox-label">
               <input
                 type="checkbox"
                 name="promotionalOffers"
@@ -508,12 +586,13 @@ const Profile = () => {
                 onChange={handlePreferenceChange}
                 disabled={!isEditing || isLoading}
               />
-              <span className="checkmark"></span>
+              <span className="prof-checkmark"></span>
+              <FaTag className="prof-pref-icon" />
               Promotional Offers
             </label>
           </div>
-          <div className="preference-item">
-            <label className="checkbox-label">
+          <div className="prof-preference-item">
+            <label className="prof-checkbox-label">
               <input
                 type="checkbox"
                 name="newsletter"
@@ -521,14 +600,18 @@ const Profile = () => {
                 onChange={handlePreferenceChange}
                 disabled={!isEditing || isLoading}
               />
-              <span className="checkmark"></span>
+              <span className="prof-checkmark"></span>
+              <FaNewspaper className="prof-pref-icon" />
               Newsletter
             </label>
           </div>
 
           {isEditing && (
-            <div className="preferences-note">
-              <p><i className="fas fa-info-circle"></i> Notification preferences will be saved when you click "Save Changes"</p>
+            <div className="prof-preferences-note">
+              <p>
+                <FaInfoCircle className="prof-info-icon" />
+                Notification preferences will be saved when you click "Save Changes"
+              </p>
             </div>
           )}
         </div>

@@ -1,393 +1,404 @@
-// components/Payments.js
-import React, { useState, useEffect } from 'react';
-import './UserPayment.css';
+import React, { useState, useEffect } from "react";
+import { 
+  FaSearch, 
+  FaPlus, 
+  FaTimes, 
+  FaExclamationCircle, 
+  FaWallet, 
+  FaCalendarAlt, 
+  FaChartLine, 
+  FaReceipt,
+  FaChevronLeft,
+  FaChevronRight
+} from "react-icons/fa";
+import "./UserPayment.css";
 
 const Payments = () => {
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [totalSpending, setTotalSpending] = useState(0);
+  const [monthlySpending, setMonthlySpending] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState(5000);
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pages: 1,
+    total: 0,
+    hasNext: false,
+    hasPrev: false,
+  });
 
-  // API base URL - replace with your actual API endpoint
-  const API_BASE_URL = 'https://your-api-url.com/api';
+  const API_BASE_URL = "http://localhost:5000/api/v1";
 
-  // Fetch payment data from API
+  const getAuthToken = () => localStorage.getItem("token");
+
+  const getHeaders = () => {
+    const token = getAuthToken();
+    return {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  };
+
+  // Fetch payment history
+  const fetchPaymentHistory = async (page = 1, limit = 10) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/payments/history?page=${page}&limit=${limit}`,
+        { headers: getHeaders() }
+      );
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+      setPaymentHistory(data.data || []);
+      setPagination(data.pagination || {});
+
+      // Calculate spending from transactions
+      if (data.data) {
+        let total = 0;
+        let monthly = 0;
+        const now = new Date();
+        data.data.forEach((tx) => {
+          if (tx.type === "debit" || tx.status === "success") {
+            total += tx.amount;
+            const txDate = new Date(tx.createdAt);
+            if (
+              txDate.getMonth() === now.getMonth() &&
+              txDate.getFullYear() === now.getFullYear()
+            ) {
+              monthly += tx.amount;
+            }
+          }
+        });
+        setTotalSpending(total);
+        setMonthlySpending(monthly);
+      }
+    } catch (error) {
+      console.error("Error fetching payment history:", error);
+      setError("Failed to load payment history");
+    }
+  };
+
+  // Fetch wallet balance
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/payments/wallet/balance`, {
+        headers: getHeaders(),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+      setWalletBalance(data.balance || 0);
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+      setError("Failed to load wallet balance");
+    }
+  };
+
   useEffect(() => {
-    const fetchPaymentData = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       try {
-        // In a real application, you would use your actual API endpoints
-        // const [paymentsRes, walletRes, methodsRes] = await Promise.all([
-        //   fetch(`${API_BASE_URL}/payments`, {
-        //     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        //   }),
-        //   fetch(`${API_BASE_URL}/wallet`, {
-        //     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        //   }),
-        //   fetch(`${API_BASE_URL}/payment-methods`, {
-        //     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        //   })
-        // ]);
-        
-        // For demonstration, we'll use a timeout to simulate API calls
-        setTimeout(() => {
-          // Mock data that matches typical payment schema
-          const mockPaymentHistory = [
-            {
-              _id: '1',
-              transactionId: 'TX-1001',
-              date: new Date('2023-05-15'),
-              description: '12kg Gas Cylinder Order',
-              amount: 10500,
-              method: 'wallet',
-              status: 'completed',
-              orderId: 'EG-1001'
-            },
-            {
-              _id: '2',
-              transactionId: 'TX-1002',
-              date: new Date('2023-05-10'),
-              description: 'Wallet Top-up',
-              amount: 15000,
-              method: 'bank_transfer',
-              status: 'completed',
-              reference: 'REF-123456'
-            },
-            {
-              _id: '3',
-              transactionId: 'TX-1003',
-              date: new Date('2023-05-05'),
-              description: 'Monthly Subscription',
-              amount: 10500,
-              method: 'auto_debit',
-              status: 'completed',
-              subscriptionId: 'SUB-001'
-            }
-          ];
-
-          const mockWalletBalance = 15250;
-          const mockPaymentMethods = [
-            { id: 'card', name: 'Credit/Debit Card', type: 'card' },
-            { id: 'bank_transfer', name: 'Bank Transfer', type: 'bank' },
-            { id: 'ussd', name: 'USSD', type: 'ussd' },
-            { id: 'wallet', name: 'Wallet', type: 'wallet' }
-          ];
-
-          setPaymentHistory(mockPaymentHistory);
-          setWalletBalance(mockWalletBalance);
-          setPaymentMethods(mockPaymentMethods);
-          setIsLoading(false);
-        }, 1000);
+        await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
       } catch (error) {
-        console.error('Error fetching payment data:', error);
-        setError('Failed to load payment information. Please try again later.');
+        console.error("Error loading data:", error);
+      } finally {
         setIsLoading(false);
       }
     };
-
-    fetchPaymentData();
+    loadData();
   }, []);
 
-  const handleTopUp = async () => {
-    setIsProcessing(true);
-    try {
-      // In a real app, this would initiate a payment with your payment gateway
-      // const response = await fetch(`${API_BASE_URL}/wallet/topup`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify({
-      //     amount: topUpAmount,
-      //     method: paymentMethod
-      //   })
-      // });
-      
-      // const result = await response.json();
-      
-      // For demo purposes, simulate payment processing
-      setTimeout(() => {
-        // Simulate successful payment
-        const newTransaction = {
-          _id: `tx-${Math.floor(Math.random() * 10000)}`,
-          transactionId: `TX-${Math.floor(1000 + Math.random() * 9000)}`,
-          date: new Date(),
-          description: 'Wallet Top-up',
-          amount: topUpAmount,
-          method: paymentMethod,
-          status: 'completed',
-          reference: `REF-${Math.floor(100000 + Math.random() * 900000)}`
-        };
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pagination.pages) return;
+    fetchPaymentHistory(newPage);
+  };
 
-        setWalletBalance(prev => prev + topUpAmount);
-        setPaymentHistory(prev => [newTransaction, ...prev]);
-        setShowTopUpModal(false);
-        setTopUpAmount(5000);
-        setIsProcessing(false);
-        
-        alert(`Successfully topped up ¥${topUpAmount.toLocaleString()}`);
-      }, 2000);
-      
-      // In a real implementation, you would:
-      // 1. For card payments: redirect to payment gateway or show embedded form
-      // 2. For bank transfer: show bank details and wait for confirmation
-      // 3. For USSD: show USSD code instructions
-      
+  // Handle Paystack Top-up
+  const handleTopUp = async () => {
+    if (topUpAmount < 1000) {
+      setError("Minimum top-up amount is ₦1,000");
+      return;
+    }
+
+    setIsProcessing(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/payments/wallet/topup`, {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ amount: topUpAmount }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Top-up failed");
+      }
+
+      const result = await response.json();
+
+      if (result.authorization_url) {
+        window.location.href = result.authorization_url;
+      } else {
+        throw new Error("Paystack authorization URL not received");
+      }
     } catch (error) {
-      console.error('Error processing top-up:', error);
-      setError('Failed to process top-up. Please try again.');
+      console.error("Error processing top-up:", error);
+      setError(error.message || "Failed to process top-up.");
+    } finally {
       setIsProcessing(false);
     }
   };
 
-  const initiatePaymentGateway = (method) => {
-    // This function would handle the redirection to external payment gateways
-    // or show embedded payment forms
-    
-    switch(method) {
-      case 'card':
-        // For card payments, you might:
-        // 1. Show an embedded card form (Stripe, PayPal, etc.)
-        // 2. Or redirect to payment gateway
-        console.log('Initiating card payment...');
-        // window.location.href = `${API_BASE_URL}/payments/card?amount=${topUpAmount}`;
-        break;
-        
-      case 'bank_transfer':
-        // Show bank transfer details
-        console.log('Showing bank transfer details...');
-        break;
-        
-      case 'ussd':
-        // Show USSD code instructions
-        console.log('Showing USSD instructions...');
-        break;
-        
-      default:
-        console.log('Payment method not supported');
-    }
-  };
+  // Filter payments client-side
+  const filteredPayments = paymentHistory.filter(
+    (payment) =>
+      payment.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.status?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
-  };
 
-  const formatCurrency = (amount) => {
-    return `¥${amount.toLocaleString()}`;
-  };
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'completed': return 'status-completed';
-      case 'pending': return 'status-pending';
-      case 'failed': return 'status-failed';
-      case 'refunded': return 'status-refunded';
-      default: return 'status-pending';
-    }
-  };
-
-  const getMethodName = (method) => {
-    switch (method) {
-      case 'card': return 'Credit/Debit Card';
-      case 'bank_transfer': return 'Bank Transfer';
-      case 'ussd': return 'USSD';
-      case 'wallet': return 'Wallet';
-      case 'auto_debit': return 'Auto-Debit';
-      default: return method;
-    }
-  };
-
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'completed': return 'Completed';
-      case 'pending': return 'Pending';
-      case 'failed': return 'Failed';
-      case 'refunded': return 'Refunded';
-      default: return status;
-    }
-  };
-
-  // Calculate monthly spending
-  const currentMonthSpending = paymentHistory
-    .filter(payment => {
-      const paymentDate = new Date(payment.date);
-      const now = new Date();
-      return payment.status === 'completed' && 
-             paymentDate.getMonth() === now.getMonth() && 
-             paymentDate.getFullYear() === now.getFullYear();
-    })
-    .reduce((total, payment) => total + payment.amount, 0);
+  const formatCurrency = (amount) => `₦${amount?.toLocaleString() || "0"}`;
 
   if (isLoading) {
-    return <div className="payments-page loading">Loading payment information...</div>;
+    return (
+      <div className="pay-payments-page loading">
+        <div className="pay-loading-spinner"></div>
+        <p>Loading payment information...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="payments-page">
-      <div className="dashboard-header">
+    <div className="pay-payments-page">
+      <div className="pay-dashboard-header">
         <h1>Payment Management</h1>
-        <div className="header-actions">
-          <div className="search-bar">
-            <i className="fas fa-search"></i>
-            <input type="text" placeholder="Search transactions..." />
+        <div className="pay-header-actions">
+          <div className="pay-search-bar">
+            <FaSearch className="pay-search-icon" />
+            <input
+              type="text"
+              placeholder="Search transactions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
-          <button 
-            className="btn-primary"
+          <button
+            className="pay-btn-primary"
             onClick={() => setShowTopUpModal(true)}
             disabled={isProcessing}
           >
-            <i className="fas fa-plus"></i> Top Up Wallet
+            <FaPlus className="pay-btn-icon" />
+            Top Up Wallet
           </button>
         </div>
       </div>
 
+      {/* Error Message */}
       {error && (
-        <div className="error-message">
+        <div className="pay-error-message">
+          <FaExclamationCircle className="pay-error-icon" />
           {error}
-          <button onClick={() => setError('')} className="close-error">
-            <i className="fas fa-times"></i>
+          <button onClick={() => setError("")} className="pay-close-error">
+            <FaTimes />
           </button>
         </div>
       )}
 
-      <div className="stats-container">
-        <div className="stat-card">
+      {/* Stats */}
+      <div className="pay-stats-container">
+        <div className="pay-stat-card balance-card">
+          <div className="pay-stat-icon">
+            <FaWallet />
+          </div>
           <h3>Wallet Balance</h3>
-          <div className="value">{formatCurrency(walletBalance)}</div>
-          <span className="wallet-status">Active</span>
+          <div className="pay-value">{formatCurrency(walletBalance)}</div>
         </div>
-        <div className="stat-card">
-          <h3>This Month's Spending</h3>
-          <div className="value">{formatCurrency(currentMonthSpending)}</div>
-          <span className="spending-status">
-            {currentMonthSpending > 50000 ? 'Over budget' : 'Within budget'}
-          </span>
+
+        <div className="pay-stat-card spending-card">
+          <div className="pay-stat-icon">
+            <FaCalendarAlt />
+          </div>
+          <h3>This Month Spending</h3>
+          <div className="pay-value">{formatCurrency(monthlySpending)}</div>
         </div>
-        <div className="stat-card">
-          <h3>Payment Methods</h3>
-          <div className="value">{paymentMethods.length}</div>
-          <span className="methods-status">Active</span>
+
+        <div className="pay-stat-card spending-card">
+          <div className="pay-stat-icon">
+            <FaChartLine />
+          </div>
+          <h3>Total Spending</h3>
+          <div className="pay-value">{formatCurrency(totalSpending)}</div>
         </div>
       </div>
 
-      <div className="content-section">
-        <div className="section-header">
+      {/* Payment History */}
+      <div className="pay-content-section">
+        <div className="pay-section-header">
           <h2>Payment History</h2>
-          <span className="count-badge">{paymentHistory.length}</span>
+          <span className="pay-count-badge">{pagination.total} transactions</span>
         </div>
-        
-        {paymentHistory.length > 0 ? (
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Transaction ID</th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Method</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paymentHistory.map((payment) => (
-                <tr key={payment._id}>
-                  <td>{payment.transactionId}</td>
-                  <td>{formatDate(payment.date)}</td>
-                  <td>{payment.description}</td>
-                  <td>{formatCurrency(payment.amount)}</td>
-                  <td>{getMethodName(payment.method)}</td>
-                  <td className={getStatusClass(payment.status)}>
-                    {getStatusText(payment.status)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {filteredPayments.length > 0 ? (
+          <div className="pay-table-container">
+            <div className="pay-table-responsive">
+              <table className="pay-payments-table">
+                <thead>
+                  <tr>
+                    <th>Reference</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPayments.map((payment) => (
+                    <tr key={payment._id || payment.reference}>
+                      <td data-label="Reference">{payment.reference}</td>
+                      <td data-label="Date">{formatDate(payment.createdAt)}</td>
+                      <td data-label="Type">
+                        <span className={`pay-type-badge pay-type-${payment.type}`}>
+                          {payment.type}
+                        </span>
+                      </td>
+                      <td data-label="Amount" className="pay-amount">
+                        {formatCurrency(payment.amount)}
+                      </td>
+                      <td data-label="Status">
+                        <span className={`pay-status-badge pay-status-${payment.status}`}>
+                          {payment.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="pay-pagination">
+              <button
+                className="pay-pagination-btn"
+                disabled={!pagination.hasPrev}
+                onClick={() => handlePageChange(pagination.current - 1)}
+              >
+                <FaChevronLeft />
+                Prev
+              </button>
+
+              <div className="pay-pagination-numbers">
+                {[...Array(Math.min(5, pagination.pages))].map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      className={`pay-pagination-btn ${pagination.current === pageNum ? "active" : ""}`}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                {pagination.pages > 5 && <span className="pay-pagination-ellipsis">...</span>}
+              </div>
+
+              <button
+                className="pay-pagination-btn"
+                disabled={!pagination.hasNext}
+                onClick={() => handlePageChange(pagination.current + 1)}
+              >
+                Next
+                <FaChevronRight />
+              </button>
+            </div>
+          </div>
         ) : (
-          <div className="no-payments">
-            <p>No payment history found.</p>
+          <div className="pay-no-payments">
+            <FaReceipt className="pay-no-payments-icon" />
+            <p>No payment history found</p>
+            {searchTerm && (
+              <button 
+                className="pay-clear-search"
+                onClick={() => setSearchTerm("")}
+              >
+                Clear search
+              </button>
+            )}
           </div>
         )}
       </div>
 
+      {/* Top-up Modal */}
       {showTopUpModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="pay-payment-modal-overlay">
+          <div className="pay-payment-modal-content">
+            <div className="pay-payment-modal-header">
               <h2>Top Up Wallet</h2>
-              <button 
-                className="close-btn" 
+              <button
+                className="pay-close-btn"
                 onClick={() => !isProcessing && setShowTopUpModal(false)}
                 disabled={isProcessing}
               >
-                <i className="fas fa-times"></i>
+                <FaTimes />
               </button>
             </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label htmlFor="amount">Amount (¥)</label>
+            <div className="pay-payment-modal-body">
+              <div className="pay-form-group">
+                <label htmlFor="amount">Amount (₦)</label>
                 <input
                   type="number"
                   id="amount"
                   value={topUpAmount}
-                  onChange={(e) => setTopUpAmount(parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setTopUpAmount(parseInt(e.target.value) || 0)
+                  }
                   min="1000"
                   step="500"
                   disabled={isProcessing}
                 />
+                <small>Minimum amount: ₦1,000</small>
               </div>
-              <div className="form-group">
-                <label htmlFor="method">Payment Method</label>
-                <select 
-                  id="method"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  disabled={isProcessing}
-                >
-                  {paymentMethods.map(method => (
-                    <option key={method.id} value={method.id}>
-                      {method.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
               {isProcessing && (
-                <div className="processing-overlay">
-                  <div className="processing-spinner"></div>
-                  <p>Processing your payment...</p>
-                  <p className="processing-note">
-                    Do not refresh or close this window while processing
-                  </p>
+                <div className="pay-payment-processing-overlay">
+                  <div className="pay-payment-processing-spinner"></div>
+                  <p>Redirecting to Paystack...</p>
                 </div>
               )}
             </div>
-            <div className="modal-footer">
-              <button 
-                type="button" 
-                className="btn-secondary"
+            <div className="pay-payment-modal-footer">
+              <button
+                type="button"
+                className="pay-btn-secondary"
                 onClick={() => setShowTopUpModal(false)}
                 disabled={isProcessing}
               >
                 Cancel
               </button>
-              <button 
-                type="button" 
-                className="btn-primary" 
+              <button
+                type="button"
+                className="pay-btn-primary"
                 onClick={handleTopUp}
                 disabled={isProcessing || topUpAmount < 1000}
               >
-                {isProcessing ? 'Processing...' : 'Confirm Top-up'}
+                {isProcessing
+                  ? "Processing..."
+                  : `Top Up ${formatCurrency(topUpAmount)}`}
               </button>
             </div>
           </div>

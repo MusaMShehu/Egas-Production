@@ -1,5 +1,5 @@
 // api.js
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api/v1/admin';
+const API_BASE_URL = 'http://localhost:5000/api/v1/admin';
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
@@ -67,8 +67,8 @@ export const productAPI = {
   },
 
   // Update a product
-  updateProduct: async (id, productData) => {
-    return apiRequest(`/products/${id}`, {
+  updateProduct: async (_id, productData) => {
+    return apiRequest(`/products/${_id}`, {
       method: 'PUT',
       body: productData,
     });

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import "../../styles/Subscription.css";
+import React, { useState, useEffect } from "react";
+import "../../styles/SubscriptionPlans.css";
 import initializePaystack from "@paystack/inline-js";
 import axios from "axios";
 
-const SubscriptionPlans = ({ user }) => {
+const SubscriptionPlans = () => {
+  const [user, setUser] = useState(null);
   const [customPlan, setCustomPlan] = useState({
     size: "6kg",
     frequency: "Monthly",
@@ -11,16 +12,37 @@ const SubscriptionPlans = ({ user }) => {
   });
 
   const [selectedFrequencies, setSelectedFrequencies] = useState({
-    "Starter Plan": "Monthly",
+    "Basic Plan": "Monthly",
     "Family Plan": "Monthly",
     "Business Plan": "Monthly"
   });
 
-  const [selectedPlan, setSelectedPlan] = useState(null); // ✅ plan user clicked
-  const [showSummary, setShowSummary] = useState(false); // ✅ modal toggle
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch user from localStorage on component mount
+  useEffect(() => {
+    const fetchUserFromStorage = () => {
+      try {
+        const userData = localStorage.getItem("user");
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error("Error fetching user from localStorage:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserFromStorage();
+  }, []);
 
   const presetPlans = [
-    { name: "Starter Plan", size: "6kg", basePrice: 1500 * 6 },
+    { name: "Basic Plan", size: "6kg", basePrice: 1500 * 6 },
     { name: "Family Plan", size: "12kg", basePrice: 1500 * 12 },
     { name: "Business Plan", size: "50kg", basePrice: 1500 * 50 },
   ];
@@ -39,6 +61,7 @@ const SubscriptionPlans = ({ user }) => {
       case "Daily": multiplier = 30; break;
       case "Weekly": multiplier = 4; break;
       case "Bi-Weekly": multiplier = 2; break;
+      case "One-Time": multiplier = 1; break;
       default: multiplier = 1;
     }
     return base * multiplier;
@@ -57,79 +80,197 @@ const SubscriptionPlans = ({ user }) => {
     return kg * basePrice;
   };
 
-  /** 🔹 Proceed to Paystack after confirmation */
+  /** 🔹 Handle subscription/payment */
   const handleSubscribe = async (plan) => {
+    if (!user) {
+      alert("Please log in to subscribe");
+      // Redirect to login page or show login modal
+      window.location.href = "/login";
+      return;
+    }
+
+    if (!user.email) {
+      alert("User email not found. Please log in again.");
+      // Clear invalid user data and redirect
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      return;
+    }
+
+    setIsProcessing(true);
+
     try {
-      const payload = {
-        amount: plan.price,
-        email: user.email,
-        orderId: `${user._id}-${Date.now()}`,
+      const metadata = {
         userId: user._id,
         planName: plan.name,
         size: plan.size,
-        frequency: plan.frequency
+        frequency: plan.frequency,
+        userEmail: user.email,
+        userName: user.name || user.email.split('@')[0]
+      };
+
+      const payload = {
+        amount: plan.price,
+        email: user.email,
+        orderId: `order-${user._id}-${Date.now()}`,
+        userId: user._id,
+        metadata: metadata
       };
 
       const resp = await axios.post(
-        "http://localhost:5000/api/v1/payments/initialize",
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/payments/initialize`,
         payload,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        { 
+          headers: { 
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          } 
+        }
       );
 
-      const { reference } = resp.data;
+      const { authorization_url, reference } = resp.data;
       const paystack = initializePaystack();
 
       const handler = paystack.inlinePay({
         key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
         email: user.email,
-        amount: Math.round(plan.price * 100),
-        reference,
-        metadata: {
-          planName: plan.name,
-          size: plan.size,
-          frequency: plan.frequency,
-          userId: user._id
-        },
+        amount: Math.round(plan.price * 100), 
+        reference: reference,
+        metadata: metadata,
         onSuccess: async (paymentResp) => {
           try {
-            await axios.get(`http://localhost:5000/api/v1/payments/verify/${paymentResp.reference}`);
-            await axios.post("http://localhost:5000/api/v1/subscriptions", {
-              name: plan.name,
-              size: plan.size,
-              frequency: plan.frequency,
-              price: plan.price,
-              reference: paymentResp.reference,
-            }, {
-              headers: { Authorization: `Bearer ${user.token}` }
-            });
+            console.log("Payment successful, verifying...", paymentResp);
+            
+            const verifyResp = await axios.get(
+              `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/payments/verify/${paymentResp.reference}`,
+              { headers: { Authorization: `Bearer ${user.token}` } }
+            );
 
-            alert("Subscription successful!");
+            if (verifyResp.data.ok) {
+              if (plan.frequency === "One-Time") {
+                alert("🎉 Purchase successful! Your order is being processed.");
+              } else {
+                alert("🎉 Subscription successful! Welcome to your new plan.");
+              }
+              
+              // Refresh user data to get updated subscription info
+              await refreshUserData();
+            } else {
+              alert("Payment verification failed. Please contact support.");
+            }
           } catch (err) {
-            console.error("onSuccess handling error:", err.response?.data || err.message || err);
-            alert("Verification/Subscription save failed");
+            console.error("Payment verification error:", err);
+            alert("Payment verification failed. Please contact support with your reference: " + paymentResp.reference);
+          } finally {
+            setIsProcessing(false);
           }
         },
         onClose: () => {
-          alert("Payment window closed.");
+          setIsProcessing(false);
+          console.log("Payment window closed by user");
+        },
+        onError: (error) => {
+          setIsProcessing(false);
+          console.error("Payment error:", error);
+          alert("Payment failed. Please try again.");
         }
       });
 
       handler.openIframe();
+
     } catch (err) {
-      console.error("Initialize payment error:", err.response?.data || err.message || err);
-      alert("Payment initialization failed");
+      setIsProcessing(false);
+      console.error("Payment initialization error:", err);
+      
+      if (err.response?.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      } else if (err.response?.status === 400) {
+        alert("Invalid request: " + (err.response.data.message || "Please check your input"));
+      } else {
+        alert("Payment initialization failed. Please try again.");
+      }
+    }
+  };
+
+  /** 🔹 Refresh user data after successful payment */
+  const refreshUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/profile`,
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      
+      if (response.data) {
+        const updatedUser = { ...user, ...response.data };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
     }
   };
 
   /** 🔹 Show summary before payment */
   const confirmPlan = (plan) => {
+    if (!user) {
+      alert("Please log in to subscribe");
+      window.location.href = "/login";
+      return;
+    }
+
+    if (plan.price <= 0) {
+      alert("Please select a valid plan configuration");
+      return;
+    }
+
     setSelectedPlan(plan);
     setShowSummary(true);
   };
 
+  const getPlanDescription = (plan) => {
+    if (plan.frequency === "One-Time") {
+      return "One-time purchase";
+    }
+    return `${plan.frequency.toLowerCase()} delivery`;
+  };
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="plans-container">
+        <div className="loading-spinner">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="plans-container">
+        <div className="login-prompt">
+          <h1>Choose a Subscription Plan</h1>
+          <div className="login-required">
+            <p>Please log in to view and subscribe to our plans</p>
+            <button 
+              className="login-btn"
+              onClick={() => window.location.href = "/login"}
+            >
+              Log In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="plans-container">
-      <h1>Choose a Subscription Plan</h1>
+      <div className="user-welcome">
+        <h1>Welcome, {user.name || user.email}!</h1>
+        <p className="plan-subtitle">Choose a plan that fits your needs</p>
+      </div>
 
       <div className="plans-grid">
         {/* Preset Plans */}
@@ -139,9 +280,12 @@ const SubscriptionPlans = ({ user }) => {
 
           return (
             <div key={index} className="plan-card">
-              <div className="plan-header"><h2>{plan.name}</h2></div>
+              <div className="plan-header">
+                <h2>{plan.name}</h2>
+                <span className="plan-badge">{frequency}</span>
+              </div>
               <div className="plan-details">
-                <p className="plan-size">{plan.size}</p>
+                <p className="plan-size">🛢️ {plan.size} Cylinder</p>
                 <div className="frequency-selector">
                   <label>Delivery Frequency:</label>
                   <select
@@ -155,13 +299,18 @@ const SubscriptionPlans = ({ user }) => {
                   </select>
                 </div>
                 <p className="price">₦{price.toLocaleString()}</p>
+                <p className="plan-description">{getPlanDescription({ frequency })}</p>
                 <button
                   className="subscribe-btn"
-                  onClick={() =>
-                    confirmPlan({ name: plan.name, size: plan.size, frequency, price })
-                  }
+                  onClick={() => confirmPlan({ 
+                    name: plan.name, 
+                    size: plan.size, 
+                    frequency, 
+                    price 
+                  })}
+                  disabled={isProcessing}
                 >
-                  Subscribe
+                  {isProcessing ? "Processing..." : "Subscribe"}
                 </button>
               </div>
             </div>
@@ -169,8 +318,11 @@ const SubscriptionPlans = ({ user }) => {
         })}
 
         {/* Custom Plan */}
-        <div className="plan-card">
-          <div className="plan-header"><h2>Custom Plan</h2></div>
+        <div className="plan-card custom-plan-card">
+          <div className="plan-header">
+            <h2>Custom Plan</h2>
+            <span className="plan-badge">Flexible</span>
+          </div>
           <div className="plan-details">
             <div className="custom-selector">
               <label>Cylinder Size:</label>
@@ -196,6 +348,7 @@ const SubscriptionPlans = ({ user }) => {
               </select>
             </div>
             <p className="price">₦{calculateCustomPrice().toLocaleString()}</p>
+            <p className="plan-description">{getPlanDescription({ frequency: customPlan.frequency })}</p>
             <button
               className="subscribe-btn"
               onClick={() =>
@@ -206,15 +359,19 @@ const SubscriptionPlans = ({ user }) => {
                   price: calculateCustomPrice(),
                 })
               }
+              disabled={isProcessing}
             >
-              Subscribe Custom
+              {isProcessing ? "Processing..." : "Subscribe Custom"}
             </button>
           </div>
         </div>
 
         {/* One-Time Purchase */}
-        <div className="plan-card">
-          <div className="plan-header"><h2>One-Time Purchase</h2></div>
+        <div className="plan-card one-time-card">
+          <div className="plan-header">
+            <h2>One-Time Purchase</h2>
+            <span className="plan-badge">Single</span>
+          </div>
           <div className="plan-details">
             <div className="custom-selector">
               <label>Cylinder Size:</label>
@@ -229,9 +386,12 @@ const SubscriptionPlans = ({ user }) => {
               </select>
             </div>
             {customPlan.oneTimeSize && (
-              <p className="price">
-                ₦{calculateOneTimePrice(customPlan.oneTimeSize).toLocaleString()}
-              </p>
+              <>
+                <p className="price">
+                  ₦{calculateOneTimePrice(customPlan.oneTimeSize).toLocaleString()}
+                </p>
+                <p className="plan-description">One-time purchase with free delivery</p>
+              </>
             )}
             <button
               className="subscribe-btn"
@@ -243,37 +403,52 @@ const SubscriptionPlans = ({ user }) => {
                   price: calculateOneTimePrice(customPlan.oneTimeSize),
                 })
               }
-              disabled={!customPlan.oneTimeSize}
+              disabled={!customPlan.oneTimeSize || isProcessing}
             >
-              Buy Now
+              {isProcessing ? "Processing..." : "Buy Now"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* ✅ Summary Modal */}
+      {/* Summary Modal */}
       {showSummary && selectedPlan && (
         <div className="summary-modal">
           <div className="summary-card">
-            <h2>Confirm Your Subscription</h2>
-            <p><strong>Plan:</strong> {selectedPlan.name}</p>
-            <p><strong>Size:</strong> {selectedPlan.size}</p>
-            <p><strong>Frequency:</strong> {selectedPlan.frequency}</p>
-            <p><strong>Price:</strong> ₦{selectedPlan.price.toLocaleString()}</p>
+            <h2>Confirm Your Order</h2>
+            <div className="summary-details">
+              <p><strong>Plan:</strong> {selectedPlan.name}</p>
+              <p><strong>Size:</strong> {selectedPlan.size}</p>
+              <p><strong>Type:</strong> {getPlanDescription(selectedPlan)}</p>
+              <p><strong>Price:</strong> ₦{selectedPlan.price.toLocaleString()}</p>
+              <p><strong>Email:</strong> {user.email}</p>
+            </div>
 
             <div className="summary-actions">
-              <button onClick={() => setShowSummary(false)}>Cancel</button>
+              <button 
+                onClick={() => setShowSummary(false)}
+                disabled={isProcessing}
+              >
+                Cancel
+              </button>
               <button
                 className="confirm-btn"
                 onClick={() => {
                   setShowSummary(false);
                   handleSubscribe(selectedPlan);
                 }}
+                disabled={isProcessing}
               >
-                Proceed to Payment
+                {isProcessing ? "Processing..." : "Proceed to Payment"}
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {isProcessing && (
+        <div className="loading-overlay">
+          <div className="loading-spinner">Processing Payment...</div>
         </div>
       )}
     </div>

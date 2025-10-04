@@ -1,226 +1,119 @@
 // components/Settings.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './UserSettings.css';
 
 const Settings = () => {
-  const [settings, setSettings] = useState({
-    language: 'english',
-    currency: 'JPY',
-    notifications: {
-      email: true,
-      sms: true,
-      push: false,
-      orderUpdates: true,
-      deliveryNotifications: true,
-      promotionalOffers: true,
-      newsletter: false
-    },
-    privacy: {
-      profileVisibility: 'private',
-      dataSharing: false,
-      locationSharing: true,
-      personalizedAds: false
-    },
-    security: {
-      twoFactor: false,
-      loginAlerts: true,
-      sessionTimeout: 30,
-      biometricAuth: false
-    }
-  });
-
+  const [settings, setSettings] = useState(null);
   const [activeTab, setActiveTab] = useState('general');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // API base URL - replace with your actual API endpoint
-  const API_BASE_URL = 'https://your-api-url.com/api';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+  const token = localStorage.getItem('token');
 
   // Fetch settings from API
   useEffect(() => {
     const fetchSettings = async () => {
       setIsLoading(true);
       try {
-        // In a real application, you would use your actual API endpoint
-        // const response = await fetch(`${API_BASE_URL}/settings`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-        //   }
-        // });
-        // const data = await response.json();
-        
-        // For demonstration, we'll use a timeout to simulate API call
-        setTimeout(() => {
-          // Mock settings data
-          const mockSettings = {
-            language: 'english',
-            currency: 'JPY',
-            notifications: {
-              email: true,
-              sms: true,
-              push: false,
-              orderUpdates: true,
-              deliveryNotifications: true,
-              promotionalOffers: true,
-              newsletter: false
-            },
-            privacy: {
-              profileVisibility: 'private',
-              dataSharing: false,
-              locationSharing: true,
-              personalizedAds: false
-            },
-            security: {
-              twoFactor: false,
-              loginAlerts: true,
-              sessionTimeout: 30,
-              biometricAuth: false
-            }
-          };
-          setSettings(mockSettings);
-          setIsLoading(false);
-        }, 1000);
-      } catch (error) {
-        console.error('Error fetching settings:', error);
+        const response = await axios.get(`${API_BASE_URL}/settings`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setSettings(response.data);
+      } catch (err) {
+        console.error('Error fetching settings:', err);
         setError('Failed to load settings. Please try again later.');
+      } finally {
         setIsLoading(false);
       }
     };
-
     fetchSettings();
-  }, []);
+  }, [API_BASE_URL, token]);
 
-  const handleSettingChange = (category, key, value) => {
-    setSettings({
-      ...settings,
+  // Top-level update (language, currency)
+  const handleSettingChange = (key, value) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Nested updates (notifications, privacy, security)
+  const handleNestedSettingChange = (category, key, value) => {
+    setSettings(prev => ({
+      ...prev,
       [category]: {
-        ...settings[category],
+        ...prev[category],
         [key]: value
       }
-    });
+    }));
   };
 
-  const handleNestedSettingChange = (category, subCategory, key, value) => {
-    setSettings({
-      ...settings,
-      [category]: {
-        ...settings[category],
-        [subCategory]: {
-          ...settings[category][subCategory],
-          [key]: value
-        }
-      }
-    });
-  };
-
+  // Save settings to API
   const handleSaveSettings = async () => {
     setIsSaving(true);
     setError('');
     setSuccess('');
-    
     try {
-      // In a real app, this would be an API call to save settings
-      // await fetch(`${API_BASE_URL}/settings`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify(settings)
-      // });
-
-      // For demo purposes, simulate API call
-      setTimeout(() => {
-        setIsSaving(false);
-        setSuccess('Settings saved successfully!');
-        
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccess(''), 3000);
-      }, 1000);
-    } catch (error) {
-      console.error('Error saving settings:', error);
+      await axios.put(`${API_BASE_URL}/settings`, settings, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setSuccess('Settings saved successfully!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error('Error saving settings:', err);
       setError('Failed to save settings. Please try again.');
+    } finally {
       setIsSaving(false);
     }
   };
 
-  const handleChangePassword = () => {
-    // Implement change password functionality
-    alert('Change password functionality would open here');
+  const handleChangePassword = async () => {
+    // Example: redirect to password change page
+    window.location.href = '/change-password';
   };
 
-  const handleUpdateEmail = () => {
-    // Implement update email functionality
-    alert('Update email functionality would open here');
+  const handleUpdateEmail = async () => {
+    window.location.href = '/update-email';
   };
 
   const handleDownloadData = async () => {
     try {
-      // In a real app, this would download user data
-      // const response = await fetch(`${API_BASE_URL}/settings/export-data`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   }
-      // });
-      // const blob = await response.blob();
-      // const url = window.URL.createObjectURL(blob);
-      // const a = document.createElement('a');
-      // a.href = url;
-      // a.download = 'personal-data.json';
-      // document.body.appendChild(a);
-      // a.click();
-      // window.URL.revokeObjectURL(url);
-      
-      alert('Personal data download would start here');
-    } catch (error) {
-      console.error('Error downloading data:', error);
+      const response = await axios.get(`${API_BASE_URL}/settings/export-data`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'personal-data.json');
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error('Error downloading data:', err);
       setError('Failed to download personal data. Please try again.');
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      // Implement account deletion
-      alert('Account deletion process would start here');
+      try {
+        await axios.delete(`${API_BASE_URL}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        localStorage.removeItem('token');
+        window.location.href = '/goodbye';
+      } catch (err) {
+        console.error('Error deleting account:', err);
+        setError('Failed to delete account. Please try again.');
+      }
     }
   };
 
-  const resetToDefaults = () => {
-    if (window.confirm('Are you sure you want to reset all settings to default values?')) {
-      const defaultSettings = {
-        language: 'english',
-        currency: 'JPY',
-        notifications: {
-          email: true,
-          sms: true,
-          push: false,
-          orderUpdates: true,
-          deliveryNotifications: true,
-          promotionalOffers: true,
-          newsletter: false
-        },
-        privacy: {
-          profileVisibility: 'private',
-          dataSharing: false,
-          locationSharing: true,
-          personalizedAds: false
-        },
-        security: {
-          twoFactor: false,
-          loginAlerts: true,
-          sessionTimeout: 30,
-          biometricAuth: false
-        }
-      };
-      setSettings(defaultSettings);
-      setSuccess('Settings reset to defaults!');
-      setTimeout(() => setSuccess(''), 3000);
-    }
-  };
-
-  if (isLoading) {
+  if (isLoading || !settings) {
     return <div className="settings-page loading">Loading settings...</div>;
   }
 
@@ -230,14 +123,16 @@ const Settings = () => {
         <h1>Settings</h1>
         <div className="header-actions">
           <button 
-            className="btn-secondary"
-            onClick={resetToDefaults}
+            className="btn-primary"
+            onClick={handleSaveSettings}
             disabled={isSaving}
           >
-            Reset to Defaults
+            {isSaving ? 'Saving...' : 'Save Settings'}
           </button>
         </div>
       </div>
+
+
 
       {error && (
         <div className="error-message">

@@ -1,15 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 const cartAPI = {
   getCart: async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_BASE_URL}/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error) {
@@ -32,28 +30,42 @@ const cartAPI = {
     }
   },
 
-  updateCart: async (updates) => {
+  updateCartItem: async (itemId, quantity) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`${API_BASE_URL}/cart`, updates, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await axios.put(
+        `${API_BASE_URL}/cart/update`,
+        { updates: [{ productId: itemId, quantity }] }, // ✅ matches backend
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update cart');
     }
   },
 
+  removeFromCart: async (itemId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`${API_BASE_URL}/cart/remove/${itemId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to remove item from cart');
+    }
+  },
+
   clearCart: async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.delete(`${API_BASE_URL}/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const response = await axios.delete(`${API_BASE_URL}/cart/clear`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error) {
@@ -62,4 +74,7 @@ const cartAPI = {
   }
 };
 
-export { cartAPI };
+
+
+export default cartAPI;
+

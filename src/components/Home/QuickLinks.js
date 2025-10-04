@@ -1,61 +1,55 @@
 // components/QuickLinks.js
 import React from 'react';
-// import '../pages/blogs/Blog';
-// import '../pages/business/Business';
-// import '../pages/Careers/Careers';
-// import '../pages/Customer Testimonials/CustomerTestimonials';
-// import '../pages/Delivery_Team/delivery-team';
-// import '../pages/Domestic Solutions/DomesticSolutions';
-// import '../pages/FAQ/FAQ';
-// import '../pages/Learn More/learnMore';
-// import '../pages/Maintenace Services/MaintenanceServices';
-// import '../pages/Pricing Plans/PricingPlans';
-// import '../pages/Restaurant Solutions/RestaurantSolutions';
-// import '../pages/Safety Guidelines/SafetyGuidelines';
+import { Link } from 'react-router-dom';
 
 const QuickLinks = () => {
   const linkItems = [
     {
       title: "Our Delivery Team",
-      image: "./images/egas1",
-      link: "Blog.html"
+      image: "/images/Gas Delivery Team_simple_compose.png",
+      path: "/delivery-team"
     },
     {
       title: "Maintenance",
-      image: "images/bg image 1.jpg",
-      link: "MaintenanceServices.html"
+      image: "/images/Gas Cylinder Inspection_simple_compose.png",
+      path: "/maintenance-services"
     },
     {
       title: "Safety Guidelines",
-      image: "images/images 48.jpg",
-      link: "SafetyGuidelines.html"
+      image: "/images/Safety-Checks.png",
+      path: "/safety-guidelines"
     },
     {
       title: "Pricing Plans",
-      image: "images/image 49.jpg",
-      link: "PricingPlan.html"
+      image: "/images/Pricing.jpg",
+      path: "/pricing-plans"
     },
     {
       title: "Customer Testimonials",
-      image: "images/image 50.jpg",
-      link: "CustomerTestimonials.html"
+      image: "/images/Testimonials.jpg",
+      path: "/customer-testimonials"
     },
     {
       title: "FAQ",
-      image: "images/image 52.jpg",
-      link: "FAQ"
+      image: "/images/FAQ.jpg",
+      path: "/faq"
     },
     {
       title: "Our Blog",
-      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1511&q=80",
-      link: "blog.js"
+      image: "/images/img24.jpg",
+      path: "/blog"
     },
     {
       title: "Careers",
-      image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      link: "careers.html"
+      image: "/images/careers.jpg",
+      path: "/careers"
     }
   ];
+
+  // Fallback image in case the image fails to load
+  const handleImageError = (e) => {
+    e.target.src = '/images/placeholder.jpg'; // Add a placeholder image
+  };
 
   return (
     <section className="quick-links">
@@ -66,14 +60,10 @@ const QuickLinks = () => {
       </p>
       <div className="link-grid">
         {linkItems.map((item, index) => (
-          <div 
-            key={index} 
-            className="link-item" 
-            onClick={() => window.location.href = item.link}
-          >
-            <img src={item.image} alt={item.title} />
+          <Link key={index} to={item.path} className="link-item">
+            <img src={item.image} alt={item.title}onError={handleImageError}/>
             <p>{item.title}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaShoppingCart, FaFilter, FaSortAmountDown, FaExclamationTriangle } from 'react-icons/fa';
 import { productAPI } from '../../api/ProductApi';
-import { cartAPI } from '../../api/cartApi';
+import cartAPI from '../../api/cartApi';
 import OrderSummary from '../User/UserOrders/OrderSummary';
 import './ProductSelection.css';
 
@@ -18,23 +19,17 @@ const ProductSelection = () => {
   const [authMessage, setAuthMessage] = useState('');
   const navigate = useNavigate();
 
-  // Check if user is logged in
-  const isLoggedIn = () => {
-    return localStorage.getItem('token') !== null;
-  };
+  // ✅ Check login
+  const isLoggedIn = () => localStorage.getItem('token') !== null;
 
-  // Fetch products from API
+  // ✅ Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const productsData = await productAPI.getAllProducts({
-          isActive: true,
-        });
-
-        // Handle both array and { data: [] } responses
+        const productsData = await productAPI.getAllProducts({ isActive: true });
         const items = Array.isArray(productsData)
           ? productsData
           : productsData?.data || [];
@@ -52,7 +47,7 @@ const ProductSelection = () => {
     fetchProducts();
   }, []);
 
-  // Fetch cart items if user is logged in
+  // ✅ Fetch cart
   useEffect(() => {
     const fetchCartItems = async () => {
       if (isLoggedIn()) {
@@ -68,7 +63,7 @@ const ProductSelection = () => {
     fetchCartItems();
   }, []);
 
-  // Filter and sort products
+  // ✅ Filtering & sorting
   useEffect(() => {
     let result = [...products];
 
@@ -100,18 +95,7 @@ const ProductSelection = () => {
     setFilteredProducts(result);
   }, [products, selectedCategory, searchQuery, sortOption]);
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
-
+  // ✅ Add to cart
   const handleAddToCart = async (product) => {
     if (!isLoggedIn()) {
       setAuthMessage('Please login to your account to add items to cart');
@@ -131,14 +115,10 @@ const ProductSelection = () => {
       const updatedCart = await cartAPI.addToCart({
         productId: product._id,
         quantity: 1,
-        price: product.price,
-        name: product.name,
-        image: product.image,
       });
 
       setCartItems(updatedCart.items || []);
 
-      // Show success message
       setAuthMessage(`Added ${product.name} to cart!`);
       setTimeout(() => setAuthMessage(''), 2000);
     } catch (err) {
@@ -148,52 +128,64 @@ const ProductSelection = () => {
     }
   };
 
-  const handleViewCart = () => {
-    if (!isLoggedIn()) {
-      setAuthMessage('Please login to view your cart');
-      setTimeout(() => {
-        navigate('/login', {
-          state: {
-            message: 'Please login to view your cart',
-            returnUrl: window.location.pathname,
-          },
-        });
-      }, 1500);
-      return;
-    }
-    setShowOrderSummary(true);
-  };
+  // ✅ View cart
 
-  const handleCloseOrderSummary = () => {
-    setShowOrderSummary(false);
-  };
 
-  const handleUpdateCart = async (updates) => {
-    try {
-      const updatedCart = await cartAPI.updateCart(updates);
-      setCartItems(updatedCart.items || []);
-    } catch (err) {
-      console.error('Failed to update cart:', err);
-      setAuthMessage('Failed to update cart. Please try again.');
-      setTimeout(() => setAuthMessage(''), 3000);
-    }
-  };
 
-  const getCartTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + (item.price ?? 0) * item.quantity,
+const handleViewCart = () => {
+  navigate("/cart"); // redirect to Cart page
+};
+  // const handleViewCart = () => {
+  //   if (!isLoggedIn()) {
+  //     setAuthMessage('Please login to view your cart');
+  //     setTimeout(() => {
+  //       navigate('/login', {
+  //         state: {
+  //           message: 'Please login to view your cart',
+  //           returnUrl: window.location.pathname,
+  //         },
+  //       });
+  //     }, 1500);
+  //     return;
+  //   }
+  //   setShowOrderSummary(true);
+  // };
+
+  // // // ✅ Close cart
+  // const handleCloseOrderSummary = () => setShowOrderSummary(false);
+
+  // // ✅ Update cart
+  // const handleUpdateCart = async ({ itemId, quantity }) => {
+  //   try {
+  //     const updatedCart = await cartAPI.updateCartItem(itemId, quantity);
+  //     setCartItems(updatedCart.items || []);
+  //   } catch (err) {
+  //     console.error('Failed to update cart:', err);
+  //     setAuthMessage('Failed to update cart. Please try again.');
+  //     setTimeout(() => setAuthMessage(''), 3000);
+  //   }
+  // };
+
+  // // ✅ Proceed to checkout
+  // const handleProceedToCheckout = () => {
+  //   setShowOrderSummary(false);
+  //   navigate('/cart');
+  // };
+
+  // ✅ Helpers
+  const getCartTotal = () =>
+    cartItems.reduce(
+      (total, item) => total + (item.product?.price ?? 0) * item.quantity,
       0
     );
-  };
 
-  const getCartItemCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
-  };
+  const getCartItemCount = () =>
+    cartItems.reduce((count, item) => count + item.quantity, 0);
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className="pro-sel-loading-container">
+        <div className="pro-sel-loading-spinner"></div>
         <p>Loading products...</p>
       </div>
     );
@@ -201,8 +193,8 @@ const ProductSelection = () => {
 
   if (error) {
     return (
-      <div className="error-container">
-        <i className="fas fa-exclamation-triangle"></i>
+      <div className="pro-sel-error-container">
+        <FaExclamationTriangle className="pro-sel-error-icon" />
         <h3>Error Loading Products</h3>
         <p>{error}</p>
         <button onClick={() => window.location.reload()}>Try Again</button>
@@ -211,70 +203,75 @@ const ProductSelection = () => {
   }
 
   return (
-    <div className="product-selection-container">
+    <div className="pro-sel-container">
       {/* Auth Message */}
       {authMessage && (
         <div
-          className={`auth-message ${
+          className={`pro-sel-auth-message ${
             authMessage.includes('Please login') ? 'error' : 'success'
           }`}
         >
           {authMessage}
           {authMessage.includes('Please login') && (
-            <span className="redirecting">Redirecting to login...</span>
+            <span className="pro-sel-redirecting">Redirecting to login...</span>
           )}
         </div>
       )}
 
       {/* Cart Floating Button */}
-      <div className="cart-floating-button" onClick={handleViewCart}>
-        <i className="fas fa-shopping-cart"></i>
+      <div className="pro-sel-cart-floating-button" onClick={handleViewCart}>
+        <FaShoppingCart className="pro-sel-cart-icon" />
         {getCartItemCount() > 0 && (
-          <span className="cart-badge">{getCartItemCount()}</span>
+          <span className="pro-sel-cart-badge">{getCartItemCount()}</span>
         )}
       </div>
 
-      <header className="page-header">
+      <header className="pro-sel-page-header">
         <h1>Gas & Accessories Store</h1>
         <p>Find the perfect gas products and accessories for your needs</p>
       </header>
 
-      <div className="controls-section">
-        <div className="search-box">
-          <i className="fas fa-search"></i>
+      <div className="pro-sel-controls-section">
+        <div className="pro-sel-search-box">
+          <FaSearch className="pro-sel-search-icon" />
           <input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="filter-controls">
-          <div className="category-filter">
+        <div className="pro-sel-filter-controls">
+          <div className="pro-sel-category-filter">
+            <span className="pro-sel-filter-label">
+              <FaFilter className="pro-sel-filter-icon" />
+              Filter by:
+            </span>
             <button
               className={selectedCategory === 'all' ? 'active' : ''}
-              onClick={() => handleCategoryChange('all')}
+              onClick={() => setSelectedCategory('all')}
             >
               All Products
             </button>
             <button
               className={selectedCategory === 'gas' ? 'active' : ''}
-              onClick={() => handleCategoryChange('gas')}
+              onClick={() => setSelectedCategory('gas')}
             >
               Gas
             </button>
             <button
               className={selectedCategory === 'accessory' ? 'active' : ''}
-              onClick={() => handleCategoryChange('accessory')}
+              onClick={() => setSelectedCategory('accessory')}
             >
               Accessories
             </button>
           </div>
 
-          <div className="sort-filter">
+          <div className="pro-sel-sort-filter">
+            <FaSortAmountDown className="pro-sel-sort-icon" />
             <label htmlFor="sort">Sort by:</label>
-            <select id="sort" value={sortOption} onChange={handleSortChange}>
+            <select id="sort" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
               <option value="name">Name</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -283,35 +280,40 @@ const ProductSelection = () => {
         </div>
       </div>
 
-      <div className="products-grid">
+      {/* Products */}
+      <div className="pro-sel-products-grid">
         {filteredProducts.length === 0 ? (
-          <div className="no-products">
-            <i className="fas fa-search"></i>
+          <div className="pro-sel-no-products">
+            <FaSearch className="pro-sel-no-products-icon" />
             <h3>No products found</h3>
             <p>Try adjusting your search or filter criteria</p>
           </div>
         ) : (
           filteredProducts.map((product) => (
-            <div key={product._id} className="product-card">
-              <div className="product-image">
+            <div key={product._id} className="pro-sel-product-card">
+              <div className="pro-sel-product-image">
                 <img
-                  src={product.image || 'default-product.jpg'}
+                  src={
+                    product.image
+                      ? product.image
+                      : '/images/default-product.jpg'
+                  }
                   alt={product.name}
                   onError={(e) => {
-                    e.target.src = 'default-product.jpg';
+                    e.target.src = '/images/logo.png';
                   }}
                 />
                 {product.stock === 0 && (
-                  <div className="out-of-stock">Out of Stock</div>
+                  <div className="pro-sel-out-of-stock">Out of Stock</div>
                 )}
               </div>
-              <div className="product-info">
+              <div className="pro-sel-product-info">
                 <h3>{product.name}</h3>
-                <p className="product-description">{product.description}</p>
-                <div className="product-meta">
-                  <span className="product-category">{product.category}</span>
+                <p className="pro-sel-product-description">{product.description}</p>
+                <div className="pro-sel-product-meta">
+                  <span className="pro-sel-product-category">{product.category}</span>
                   <span
-                    className={`product-stock ${
+                    className={`pro-sel-product-stock ${
                       product.stock === 0 ? 'out' : 'in'
                     }`}
                   >
@@ -320,11 +322,11 @@ const ProductSelection = () => {
                       : `${product.stock} in stock`}
                   </span>
                 </div>
-                <div className="product-price">
-                  ${(product.price ?? 0).toFixed(2)}
+                <div className="pro-sel-product-price">
+                  ₦{(product.price ?? 0).toFixed(2)}
                 </div>
                 <button
-                  className="add-to-cart-btn"
+                  className="pro-sel-add-to-cart-btn"
                   disabled={product.stock === 0}
                   onClick={() => handleAddToCart(product)}
                 >
@@ -336,17 +338,19 @@ const ProductSelection = () => {
         )}
       </div>
 
-      {/* Order Summary Modal */}
-      {showOrderSummary && (
+      {/* Order Summary */}
+      {/* {showOrderSummary && (
         <OrderSummary
           cartItems={cartItems}
           onClose={handleCloseOrderSummary}
           onUpdateCart={handleUpdateCart}
           total={getCartTotal()}
+          onCheckout={handleProceedToCheckout}
         />
-      )}
+      )} */}
     </div>
   );
 };
 
 export default ProductSelection;
+
