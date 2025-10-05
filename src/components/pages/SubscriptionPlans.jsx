@@ -128,7 +128,7 @@ const SubscriptionPlans = () => {
         }
       );
 
-      // const { authorization_url, reference } = resp.data;
+      const { reference } = resp.data;
       const paystack = initializePaystack();
 
       const handler = paystack.inlinePay({
