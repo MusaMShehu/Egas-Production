@@ -15,9 +15,9 @@ const Careers = () => {
     message: ''
   });
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  // const toggleMenu = () => {
+  //   setMenuOpen(!menuOpen);
+  // };
 
   const toggleJob = (jobId) => {
     if (activeJob === jobId) {

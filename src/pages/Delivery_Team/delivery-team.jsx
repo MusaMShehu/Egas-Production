@@ -4,9 +4,9 @@ import './DeliveryTeam.css'; // We'll create this CSS file
 const DeliveryTeam = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  // const toggleMenu = () => {
+  //   setMenuOpen(!menuOpen);
+  // };
 
   // Team member data
   const teamMembers = [
@@ -92,8 +92,8 @@ const DeliveryTeam = () => {
                 <div className="member-role">{member.role}</div>
                 <p>{member.description}</p>
                 <div className="member-social">
-                  <a href="#"><i className="fab fa-linkedin-in"></i></a>
-                  <a href="#"><i className="fab fa-twitter"></i></a>
+                  <a href="https://linkedin.com"><i className="fab fa-linkedin-in"></i></a>
+                  <a href="https://x.com"><i className="fab fa-twitter"></i></a>
                 </div>
               </div>
             </div>

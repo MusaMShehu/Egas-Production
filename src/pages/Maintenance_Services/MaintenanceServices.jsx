@@ -5,9 +5,9 @@ import './MaintenanceServices.css'; // We'll extract the CSS separately
 const MaintenanceServices = () => {
   const [menuActive, setMenuActive] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+  // const toggleMenu = () => {
+  //   setMenuActive(!menuActive);
+  // };
 
   return (
     <div className="maintenance-page">
@@ -128,7 +128,7 @@ const MaintenanceServices = () => {
                 <li><i className="fas fa-check"></i> Basic cleaning</li>
                 <li><i className="fas fa-times"></i> No priority scheduling</li>
               </ul>
-              <a href="#" className="plan-button">Book Now</a>
+              <a href="/maintenance-plan" className="plan-button">Book Now</a>
             </div>
           </div>
           
@@ -147,7 +147,7 @@ const MaintenanceServices = () => {
                 <li><i className="fas fa-check"></i> Detailed cleaning</li>
                 <li><i className="fas fa-check"></i> Priority scheduling</li>
               </ul>
-              <a href="#" className="plan-button">Subscribe Now</a>
+              <a href="/inspection-plan" className="plan-button">Subscribe Now</a>
             </div>
           </div>
           
@@ -165,7 +165,7 @@ const MaintenanceServices = () => {
                 <li><i className="fas fa-check"></i> Parts discount (15%)</li>
                 <li><i className="fas fa-check"></i> Highest priority scheduling</li>
               </ul>
-              <a href="#" className="plan-button">Subscribe Now</a>
+              <a href="/maintenance-plan" className="plan-button">Subscribe Now</a>
             </div>
           </div>
         </div>

@@ -37,7 +37,6 @@ import ProductCart from "./components/Products/ProductCart";
 
 
 import CallbackPage from './components/CallbackPage';
-import PaymentSuccess from './components/PaymentSuccess';
 
 // User Panel
 // import OverviewPage from "./components/pages/OverviewPage";

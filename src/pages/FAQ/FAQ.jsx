@@ -7,9 +7,9 @@ const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFaqs, setActiveFaqs] = useState([]);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  // const toggleMenu = () => {
+  //   setMenuOpen(!menuOpen);
+  // };
 
   const toggleFaq = (index) => {
     if (activeFaqs.includes(index)) {

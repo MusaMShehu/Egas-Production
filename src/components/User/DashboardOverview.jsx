@@ -80,7 +80,6 @@ const DashboardOverview = () => {
     try {
       const res = await axios.get(
         `${BASE_URL}/api/v1/dashboard/wallet/refresh`,
-        axiosConfig
       );
       setBalance(res.data.balance);
     } catch (error) {

@@ -225,16 +225,16 @@ const SubscriptionPlans = () => {
         return;
       }
 
-      const authorization_url = resp.data.authorization_url;
-      const reference = resp.data.reference;
-      const access_code = resp.data.access_code;
+      // const authorization_url = resp.data.authorization_url;
+      // const reference = resp.data.reference;
+      // const access_code = resp.data.access_code;
 
       // Load paystack script
       await loadPaystackScript();
 
       // Important: inline setup still accepts amount in kobo — convert here for the inline popup display.
       // But backend already initialized the transaction and set a reference; the reference is the source of truth.
-      const amountInKobo = Math.round(Number(planData.price) * 100);
+      // const amountInKobo = Math.round(Number(planData.price) * 100);
 
       // Use the inline popup with the reference returned by your backend
       const handler = window.PaystackPop.setup({
@@ -290,19 +290,19 @@ handler.openIframe();
   };
 
   // small refresh function to reload updated profile (optional)
-  const refreshUserData = async () => {
-    if (!token) return;
-    try {
-      const resp = await axiosInstance.get("/api/v1/users/profile", { headers: { Authorization: `Bearer ${token}` } });
-      if (resp?.data) {
-        const updated = { ...user, ...resp.data };
-        setUser(updated);
-        localStorage.setItem("user", JSON.stringify(updated));
-      }
-    } catch (err) {
-      console.error("Failed to refresh user:", err);
-    }
-  };
+  // const refreshUserData = async () => {
+  //   if (!token) return;
+  //   try {
+  //     const resp = await axiosInstance.get("/api/v1/users/profile", { headers: { Authorization: `Bearer ${token}` } });
+  //     if (resp?.data) {
+  //       const updated = { ...user, ...resp.data };
+  //       setUser(updated);
+  //       localStorage.setItem("user", JSON.stringify(updated));
+  //     }
+  //   } catch (err) {
+  //     console.error("Failed to refresh user:", err);
+  //   }
+  // };
 
   // UI rendering
   if (isLoading || plansLoading) {

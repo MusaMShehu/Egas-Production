@@ -5,9 +5,9 @@ import './RestaurantSolutions.css';
 const RestaurantSolutions = () => {
   const [menuActive, setMenuActive] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+  // const toggleMenu = () => {
+  //   setMenuActive(!menuActive);
+  // };
 
   return (
     <div className="restaurant-page">

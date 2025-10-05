@@ -6,9 +6,9 @@ const SafetyGuidelines = () => {
   const [menuActive, setMenuActive] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
-  const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+  // const toggleMenu = () => {
+  //   setMenuActive(!menuActive);
+  // };
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);

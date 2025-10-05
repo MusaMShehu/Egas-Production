@@ -131,7 +131,7 @@ const Blog = () => {
                     <span key={tag} className="blog-tag">{tag}</span>
                   ))}
                 </div>
-                <a href="#" className="read-more">Read More</a>
+                <a href="/blog-post" className="read-more">Read More</a>
               </div>
             </article>
           ))}
@@ -158,7 +158,7 @@ const Blog = () => {
             <ul className="categories-list">
               {categories.map(category => (
                 <li key={category.name}>
-                  <a href="#">
+                  <a href="/blog-post">
                     {category.name} <span className="category-count">{category.count}</span>
                   </a>
                 </li>
@@ -175,7 +175,7 @@ const Blog = () => {
                     <img src={post.image} alt={post.title} />
                   </div>
                   <div className="recent-post-content">
-                    <h4><a href="#">{post.title}</a></h4>
+                    <h4><a href="/blog-post">{post.title}</a></h4>
                     <div className="recent-post-date">{post.date}</div>
                   </div>
                 </li>
@@ -187,7 +187,7 @@ const Blog = () => {
             <h3>Tags</h3>
             <div className="tags-cloud">
               {tags.map(tag => (
-                <a key={tag} href="#" className="tag-link">{tag}</a>
+                <a key={tag} href="/blog-post" className="tag-link">{tag}</a>
               ))}
             </div>
           </div>
@@ -195,12 +195,12 @@ const Blog = () => {
 
         {/* Pagination */}
         <div className="pagination">
-          <a href="#" className="pagination-button"><i className="fas fa-chevron-left"></i></a>
-          <a href="#" className="pagination-button active">1</a>
-          <a href="#" className="pagination-button">2</a>
-          <a href="#" className="pagination-button">3</a>
-          <a href="#" className="pagination-button">4</a>
-          <a href="#" className="pagination-button"><i className="fas fa-chevron-right"></i></a>
+          <a href="/blog-post" className="pagination-button"><i className="fas fa-chevron-left"></i></a>
+          <a href="/blog-post" className="pagination-button active">1</a>
+          <a href="/blog-post" className="pagination-button">2</a>
+          <a href="/blog-post" className="pagination-button">3</a>
+          <a href="/blog-post" className="pagination-button">4</a>
+          <a href="/blog-post" className="pagination-button"><i className="fas fa-chevron-right"></i></a>
         </div>
 
         {/* Newsletter Section */}

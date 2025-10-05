@@ -7,9 +7,9 @@ const DomesticSolutions = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  // const toggleMenu = () => {
+  //   setMenuOpen(!menuOpen);
+  // };
 
   const toggleFaq = (index) => {
     if (activeFaq === index) {
@@ -44,47 +44,47 @@ const DomesticSolutions = () => {
   ];
 
   // Plans data
-  const plans = [
-    {
-      name: "Basic Plan",
-      price: "₦8,500",
-      period: "/month",
-      description: "For small families (1-3 people)",
-      features: [
-        "12.5kg cylinder",
-        "Monthly delivery",
-        "Free safety inspection",
-        "Priority scheduling",
-        "Email reminders"
-      ]
-    },
-    {
-      name: "Family Plan",
-      price: "₦12,500",
-      period: "/month",
-      description: "For medium families (4-6 people)",
-      features: [
-        "25kg cylinder",
-        "Twice monthly delivery",
-        "Free safety inspection",
-        "Priority scheduling",
-        "SMS & email reminders"
-      ]
-    },
-    {
-      name: "Large Family Plan",
-      price: "₦18,000",
-      period: "/month",
-      description: "For large families (7+ people)",
-      features: [
-        "50kg cylinder",
-        "Weekly delivery",
-        "Free safety inspection",
-        "Highest priority scheduling",
-        "SMS, email & call reminders"
-      ]
-    }
-  ];
+  // const plans = [
+  //   {
+  //     name: "Basic Plan",
+  //     price: "₦8,500",
+  //     period: "/month",
+  //     description: "For small families (1-3 people)",
+  //     features: [
+  //       "12.5kg cylinder",
+  //       "Monthly delivery",
+  //       "Free safety inspection",
+  //       "Priority scheduling",
+  //       "Email reminders"
+  //     ]
+  //   },
+  //   {
+  //     name: "Family Plan",
+  //     price: "₦12,500",
+  //     period: "/month",
+  //     description: "For medium families (4-6 people)",
+  //     features: [
+  //       "25kg cylinder",
+  //       "Twice monthly delivery",
+  //       "Free safety inspection",
+  //       "Priority scheduling",
+  //       "SMS & email reminders"
+  //     ]
+  //   },
+  //   {
+  //     name: "Large Family Plan",
+  //     price: "₦18,000",
+  //     period: "/month",
+  //     description: "For large families (7+ people)",
+  //     features: [
+  //       "50kg cylinder",
+  //       "Weekly delivery",
+  //       "Free safety inspection",
+  //       "Highest priority scheduling",
+  //       "SMS, email & call reminders"
+  //     ]
+  //   }
+  // ];
 
   // FAQ data
   const faqs = [

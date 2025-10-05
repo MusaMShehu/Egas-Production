@@ -102,18 +102,19 @@ const Payments = () => {
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  loadData();
+}, [fetchPaymentHistory, fetchWalletBalance]); // ✅ Added missing dependencies
+
 
   // Handle page change
   const handlePageChange = (newPage) => {

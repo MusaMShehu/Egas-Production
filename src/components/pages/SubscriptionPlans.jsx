@@ -118,7 +118,7 @@ const SubscriptionPlans = () => {
       };
 
       const resp = await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/payments/initialize`,
+        `${process.env.REACT_APP_API_URL}/api/payments/initialize`,
         payload,
         { 
           headers: { 
@@ -128,7 +128,7 @@ const SubscriptionPlans = () => {
         }
       );
 
-      const { authorization_url, reference } = resp.data;
+      // const { authorization_url, reference } = resp.data;
       const paystack = initializePaystack();
 
       const handler = paystack.inlinePay({
@@ -142,7 +142,7 @@ const SubscriptionPlans = () => {
             console.log("Payment successful, verifying...", paymentResp);
             
             const verifyResp = await axios.get(
-              `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/payments/verify/${paymentResp.reference}`,
+              `${process.env.REACT_APP_API_URL}/api/payments/verify/${paymentResp.reference}`,
               { headers: { Authorization: `Bearer ${user.token}` } }
             );
 
@@ -198,7 +198,7 @@ const SubscriptionPlans = () => {
   const refreshUserData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/profile`,
+        `${process.env.REACT_APP_API_URL}/api/users/profile`,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
       

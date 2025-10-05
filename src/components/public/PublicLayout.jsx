@@ -1,9 +1,7 @@
 // src/layouts/PublicLayout.js
-import React, { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, } from "react-router-dom";
 import Header from "../headers/Header";
 import Footer from "../headers/Footer";
-import Navbar from "../headers/Navbar";
 // import "../styles/PublicLayout.css";
 
 const PublicLayout = () => {

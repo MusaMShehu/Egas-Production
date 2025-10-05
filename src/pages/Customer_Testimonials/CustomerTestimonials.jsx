@@ -5,9 +5,9 @@ import './CustomerTestimonials.css';
 const CustomerTestimonials = () => {
   const [menuActive, setMenuActive] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+  // const toggleMenu = () => {
+  //   setMenuActive(!menuActive);
+  // };
 
   return (
     <div className="testimonials-page">

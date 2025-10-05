@@ -7,9 +7,9 @@ const PricingPlans = () => {
   const [activeTab, setActiveTab] = useState('domestic-tab');
   const [activeFaq, setActiveFaq] = useState(null);
 
-  const toggleMenu = () => {
-    setMenuActive(!menuActive);
-  };
+  // const toggleMenu = () => {
+  //   setMenuActive(!menuActive);
+  // };
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -73,7 +73,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Priority scheduling</li>
                   <li><i className="fas fa-check"></i> Email reminders</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -92,7 +92,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Priority scheduling</li>
                   <li><i className="fas fa-check"></i> SMS & email reminders</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -110,7 +110,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Highest priority scheduling</li>
                   <li><i className="fas fa-check"></i> SMS, email & call reminders</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Business hours delivery</li>
                   <li><i className="fas fa-check"></i> Dedicated account manager</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -152,7 +152,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> 24/7 emergency support</li>
                   <li><i className="fas fa-check"></i> Dedicated account manager</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -170,7 +170,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> 24/7 priority support</li>
                   <li><i className="fas fa-check"></i> Dedicated team</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Standard delivery fees apply</li>
                   <li><i className="fas fa-check"></i> Basic safety check</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -212,7 +212,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Priority scheduling</li>
                   <li><i className="fas fa-check"></i> 10% discount on extra cylinders</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
             
@@ -230,7 +230,7 @@ const PricingPlans = () => {
                   <li><i className="fas fa-check"></i> Highest priority scheduling</li>
                   <li><i className="fas fa-check"></i> 2 free emergency deliveries</li>
                 </ul>
-                <a href="#" className="pricing-button">Choose Plan</a>
+                <a href="/subscription-plan" className="pricing-button">Choose Plan</a>
               </div>
             </div>
           </div>

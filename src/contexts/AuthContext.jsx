@@ -88,12 +88,13 @@ export const AuthProvider = ({ children }) => {
 
   // On load, validate token if present
   useEffect(() => {
-    if (token) {
-      fetchProfile(token);
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+  if (token) {
+    fetchProfile(token);
+  } else {
+    setLoading(false);
+  }
+}, [token, fetchProfile]); // ✅ added missing dependency
+
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>

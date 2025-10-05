@@ -14,7 +14,6 @@ const ProductSelection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cartItems, setCartItems] = useState([]);
-  const [showOrderSummary, setShowOrderSummary] = useState(false);
   const [authMessage, setAuthMessage] = useState('');
   const navigate = useNavigate();
 
@@ -172,11 +171,11 @@ const handleViewCart = () => {
   // };
 
   // ✅ Helpers
-  const getCartTotal = () =>
-    cartItems.reduce(
-      (total, item) => total + (item.product?.price ?? 0) * item.quantity,
-      0
-    );
+  // const getCartTotal = () =>
+  //   cartItems.reduce(
+  //     (total, item) => total + (item.product?.price ?? 0) * item.quantity,
+  //     0
+  //   );
 
   const getCartItemCount = () =>
     cartItems.reduce((count, item) => count + item.quantity, 0);

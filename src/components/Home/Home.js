@@ -1,6 +1,5 @@
 // src/components/Home.js
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import Hero from './Hero';
 import Opportunities from './Opportunities';
 import QuickLinks from './QuickLinks';
