@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
   FaSearch, 
   FaPlus, 
@@ -32,7 +32,7 @@ const Payments = () => {
     hasPrev: false,
   });
 
-  const API_BASE_URL = "https://egas-server.onrender.com/api/v1";
+  const API_BASE_URL = "https://egas-server-1.onrender.com/api/v1";
 
   const getAuthToken = () => localStorage.getItem("token");
 
@@ -44,8 +44,8 @@ const Payments = () => {
     };
   };
 
-  // Fetch payment history
-  const fetchPaymentHistory = async (page = 1, limit = 10) => {
+  // Fetch payment history with useCallback to prevent infinite re-renders
+  const fetchPaymentHistory = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await fetch(
         `${API_BASE_URL}/payments/history?page=${page}&limit=${limit}`,
@@ -82,10 +82,10 @@ const Payments = () => {
       console.error("Error fetching payment history:", error);
       setError("Failed to load payment history");
     }
-  };
+  }, []);
 
-  // Fetch wallet balance
-  const fetchWalletBalance = async () => {
+  // Fetch wallet balance with useCallback
+  const fetchWalletBalance = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/payments/wallet/balance`, {
         headers: getHeaders(),
@@ -99,22 +99,21 @@ const Payments = () => {
       console.error("Error fetching wallet balance:", error);
       setError("Failed to load wallet balance");
     }
-  };
+  }, []);
 
   useEffect(() => {
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
-    } catch (error) {
-      console.error("Error loading data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  loadData();
-}, [fetchPaymentHistory, fetchWalletBalance]); // ✅ Added missing dependencies
-
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, [fetchPaymentHistory, fetchWalletBalance]);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -175,6 +174,42 @@ const Payments = () => {
     });
 
   const formatCurrency = (amount) => `₦${amount?.toLocaleString() || "0"}`;
+
+  // Generate pagination numbers correctly
+  const generatePaginationNumbers = () => {
+    const totalPages = pagination.pages;
+    const currentPage = pagination.current;
+    const pages = [];
+    
+    if (totalPages <= 5) {
+      // Show all pages if total pages is 5 or less
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show limited pages with ellipsis
+      if (currentPage <= 3) {
+        // Near the start
+        pages.push(1, 2, 3, 4);
+        if (totalPages > 5) pages.push('ellipsis');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        // Near the end
+        pages.push(1);
+        pages.push('ellipsis');
+        pages.push(totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        // In the middle
+        pages.push(1);
+        pages.push('ellipsis');
+        pages.push(currentPage - 1, currentPage, currentPage + 1);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
 
   if (isLoading) {
     return (
@@ -304,9 +339,10 @@ const Payments = () => {
               </button>
 
               <div className="pay-pagination-numbers">
-                {[...Array(Math.min(5, pagination.pages))].map((_, i) => {
-                  const pageNum = i + 1;
-                  return (
+                {generatePaginationNumbers().map((pageNum, index) => 
+                  pageNum === 'ellipsis' ? (
+                    <span key={`ellipsis-${index}`} className="pay-pagination-ellipsis">...</span>
+                  ) : (
                     <button
                       key={pageNum}
                       className={`pay-pagination-btn ${pagination.current === pageNum ? "active" : ""}`}
@@ -314,9 +350,8 @@ const Payments = () => {
                     >
                       {pageNum}
                     </button>
-                  );
-                })}
-                {pagination.pages > 5 && <span className="pay-pagination-ellipsis">...</span>}
+                  )
+                )}
               </div>
 
               <button

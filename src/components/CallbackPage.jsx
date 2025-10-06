@@ -37,7 +37,7 @@ const CallbackPage = () => {
 
         // Verify payment with backend
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/payments/verify/${paymentReference}`,
+          `${process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com'}/api/v1/payments/verify/${paymentReference}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`

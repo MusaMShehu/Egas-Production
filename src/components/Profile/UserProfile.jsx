@@ -60,7 +60,7 @@ const UserProfile = () => {
         if (isMounted) setLoading(true);
 
         const response = await axios.get(
-          "https://egas-server.onrender.com/api/v1/auth/me",
+          "https://egas-server-1.onrender.com/api/v1/auth/me",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const UserProfile = () => {
 
   // const handleSave = (e) => {
   //   e.preventDefault();
-  //   axios.put("https://egas-server.onrender.com/api/v1/updatedetails/:id", formData, {
+  //   axios.put("https://egas-server-1.onrender.com/api/v1/updatedetails/:id", formData, {
   //     headers: { Authorization: `Bearer ${token}` }
   //   })
   //     .then((res) => {
@@ -138,7 +138,7 @@ const UserProfile = () => {
       }
 
       const response = await axios.put(
-        `https://egas-server.onrender.com/api/v1/updatedetails/${user._id}`,
+        `https://egas-server-1.onrender.com/api/v1/updatedetails/${user._id}`,
         formData,
         {
           headers: {

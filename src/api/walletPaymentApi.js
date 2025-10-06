@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://egas-server.onrender.com/api/v1/payments',
+  baseURL: 'https://egas-server-1.onrender.com/api/v1/payments',
 });
 
 // Attach token automatically

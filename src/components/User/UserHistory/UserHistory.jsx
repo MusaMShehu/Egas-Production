@@ -12,7 +12,7 @@ const History = () => {
   const [filter, setFilter] = useState('all');
   const [activeItem, setActiveItem] = useState(null);
 
-  const API_BASE_URL = 'https://egas-server.onrender.com/api/v1';
+  const API_BASE_URL = 'https://egas-server-1.onrender.com/api/v1';
 
   // Fetch all history data
   useEffect(() => {

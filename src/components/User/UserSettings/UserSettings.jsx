@@ -36,7 +36,7 @@ const Settings = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server.onrender.com/api/v1';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com/api/v1';
   const token = localStorage.getItem('token');
 
   // Fetch settings from API

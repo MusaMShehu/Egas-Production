@@ -51,15 +51,15 @@ import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
 // import DashboardLayout from "./DashboardLayout";
 
 // Admin Panel
-// import AdminLayout from "./components/Admin/AdminLayout";
-// import AdminOverview from "./components/Admin/AdminOverview";
-// import UserManagement from "./components/Admin/UserManagement/UserManagement";
-// import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
-// import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
-// import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
-// import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
-// import AdminReport from "./components/Admin/Reports/AdminReports";
-// import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminOverview from "./components/Admin/AdminOverview";
+import UserManagement from "./components/Admin/UserManagement/UserManagement";
+import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
+import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
+import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
+import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
+import AdminReport from "./components/Admin/Reports/AdminReports";
+import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
 
 // 2nd User Panel
 import UserLayout from "./components/User/UserLayout";
@@ -132,7 +132,7 @@ function App() {
           </Route>
 
           {/* Admin Routes (can also be wrapped with ProtectedRoute if only admins allowed) */}
-          {/* <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
             <Route path="overview" element={<AdminOverview />} />
             <Route path="users" element={<UserManagement />} />
@@ -142,7 +142,7 @@ function App() {
             <Route path="support" element={<SupportManagement />} />
             <Route path="reports" element={<AdminReport />} />
             <Route path="settings" element={<AdminPanelSettings />} />
-          </Route> */}
+          </Route>
           
         </Routes>
       </div>

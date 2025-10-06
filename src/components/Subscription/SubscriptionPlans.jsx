@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 // Stable axios instance
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
+  baseURL: process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com",
   timeout: 30000,
 });
 

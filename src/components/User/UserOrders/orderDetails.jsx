@@ -16,7 +16,7 @@ const OrderDetails = () => {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`https://egas-server.onrender.com/api/orders/${id}`, {
+        const res = await fetch(`https://egas-server-1.onrender.com/api/orders/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

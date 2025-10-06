@@ -18,7 +18,7 @@ const OrderGasPage = ({ user, setUser }) => {
       try {
         setLoading(true);
 
-        const response = await axios.get("/api/v1/products");
+        const response = await axios.get("https://egas-server-1.onrender.com/api/v1/products");
         // Axios automatically parses JSON
         setProducts(response.data);
       } catch (err) {
@@ -59,7 +59,7 @@ const OrderGasPage = ({ user, setUser }) => {
     }
     
     try {
-      const response = await fetch('/api/orders', {
+      const response = await fetch('https://egas-server-1.onrender.com/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const OrderGasPage = ({ user, setUser }) => {
       
       // Add transaction if paid with wallet
       if (paymentMethod === 'wallet') {
-        const transactionResponse = await fetch('/api/transactions', {
+        const transactionResponse = await fetch('https://egas-server-1.onrender.com/api/transactions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

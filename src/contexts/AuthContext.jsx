@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch profile if token exists
   const fetchProfile = async (jwt) => {
     try {
-      const res = await fetch("https://egas-server.onrender.com/api/v1/auth/me", {
+      const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/me", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   // Login
   const login = async (email, password) => {
-    const res = await fetch("https://egas-server.onrender.com/api/v1/auth/login", {
+    const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   // Register
   const register = async (formData) => {
-    const res = await fetch("https://egas-server.onrender.com/api/v1/auth/register", {
+    const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
