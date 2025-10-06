@@ -27,7 +27,7 @@ const DashboardNavbar = ({ onLogout }) => {
               <img
                 src={logo}
                 alt="logo"
-                style={{ width: "80px", height: "70px" }}
+                style={{ width: "50px", height: "50px" }}
               />
             </div>
           </Link>
@@ -45,9 +45,6 @@ const DashboardNavbar = ({ onLogout }) => {
             <FaUserCircle className="logged-nav-icon" /> Profile
           </Link>
           <AccountSection/>
-          {/* <button onClick={logout} className="logged-logout-btn">
-            <FaSignOutAlt className="logged-nav-icon" /> Logout
-          </button> */}
         </div>
 
         {/* Mobile menu button */}

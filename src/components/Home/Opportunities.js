@@ -11,7 +11,7 @@ const Opportunities = () => {
         With our customizable services, you can set up your plan according to your need, budget, 
         and time of delivery. Also at e-gas we offer various services related to gas…
       </p>
-      <Link to="/opportunities" >
+      <Link className="learn-more" to="/opportunities" >
         Learn More
       </Link>
     </section>

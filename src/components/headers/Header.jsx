@@ -26,7 +26,7 @@ const Header = () => {
         </div>
 
         <div className="logo">
-          <img src={logo} alt="logo" style={{ width: "80px", height: "70px" }} />
+          <img src={logo} alt="logo" style={{ width: "45px", height: "40px" }} />
         </div>
 
         <Navbar

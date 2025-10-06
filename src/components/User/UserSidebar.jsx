@@ -1,4 +1,3 @@
-// components/Sidebar.js
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -10,30 +9,41 @@ import {
   FaUser,
   FaHeadset,
   FaCog,
+  FaArrowLeft,
+  FaArrowRight,
   FaBars,
 } from "react-icons/fa";
 import "./UserSidebar.css";
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+const UserSidebar = () => {
+  const [hidden, setHidden] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Detect screen resize to switch between mobile/desktop
+  // Handle screen resizing
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
-        setCollapsed(false); // always expanded on desktop
-      } else {
-        setCollapsed(true); // collapsed by default on mobile
-      }
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setHidden(mobile); // hide on mobile
+      setExpanded(!mobile); // expanded on desktop
     };
-
     window.addEventListener("resize", handleResize);
     handleResize();
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Dispatch sidebar state to layout (for responsive content width)
+  useEffect(() => {
+    const event = new CustomEvent("sidebarStateChange", {
+      detail: { hidden, collapsed: !expanded && !hidden },
+    });
+    window.dispatchEvent(event);
+  }, [hidden, expanded]);
+
+  // NEW: Switch button functions
+  const toggleExpandCollapse = () => setExpanded((prev) => !prev); // for arrows
+  const toggleShowHide = () => setHidden((prev) => !prev); // for hamburger
 
   const menuItems = [
     { path: "overview", icon: <FaTachometerAlt />, label: "Overview" },
@@ -47,31 +57,57 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className={`user-sidebar ${collapsed ? "collapsed" : ""}`}>
-      {/* Show hamburger only on mobile */}
-      {isMobile && (
-        <div className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)}>
-          <FaBars />
-        </div>
-      )}
+    <>
+      <aside
+        className={`user-sidebar ${hidden ? "hidden" : ""} ${
+          expanded ? "expanded" : "collapsed"
+        }`}
+      >
+        <ul className="user-sidebar-menu">
+          {menuItems.map((item) => (
+            <li key={item.path} className="user-menu-item">
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `user-menu-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="user-icon">{item.icon}</span>
+                {(expanded || !isMobile) && (
+                  <span className="user-label">{item.label}</span>
+                )}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </aside>
 
-      <ul className="user-sidebar-menu">
-        {menuItems.map((item) => (
-          <li key={item.path} className="user-menu-item">
-            <NavLink
-              to={item.path}
-              className={({ isActive }) =>
-                `user-menu-link ${isActive ? "active" : ""}`
-              }
-            >
-              <span className="user-icon">{item.icon}</span>
-              {!collapsed && <span className="user-label">{item.label}</span>}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {/* Toggle Controls */}
+      <div className="sidebar-toggle-container">
+       
+
+        {/* HAMBURGER now hides/shows */}
+        {isMobile && (
+          <button
+            className={`hamburger-toggle ${hidden ? "collapsed" : "open"}`}
+            onClick={toggleShowHide}
+            aria-label="Hide/Show Sidebar"
+          >
+            <FaBars />
+          </button>
+        )}
+        
+         {/* ARROW now expands/collapses */}
+        <button
+          className={`sidebar-toggle ${expanded ? "" : "collapsed"}`}
+          onClick={toggleExpandCollapse}
+          aria-label="Expand/Collapse Sidebar"
+        >
+          {expanded ? <FaArrowLeft /> : <FaArrowRight />}
+        </button>
+      </div>
+    </>
   );
 };
 
-export default Sidebar;
+export default UserSidebar;
