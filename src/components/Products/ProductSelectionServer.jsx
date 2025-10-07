@@ -133,49 +133,6 @@ const ProductSelection = () => {
 const handleViewCart = () => {
   navigate("/cart"); // redirect to Cart page
 };
-  // const handleViewCart = () => {
-  //   if (!isLoggedIn()) {
-  //     setAuthMessage('Please login to view your cart');
-  //     setTimeout(() => {
-  //       navigate('/login', {
-  //         state: {
-  //           message: 'Please login to view your cart',
-  //           returnUrl: window.location.pathname,
-  //         },
-  //       });
-  //     }, 1500);
-  //     return;
-  //   }
-  //   setShowOrderSummary(true);
-  // };
-
-  // // // ✅ Close cart
-  // const handleCloseOrderSummary = () => setShowOrderSummary(false);
-
-  // // ✅ Update cart
-  // const handleUpdateCart = async ({ itemId, quantity }) => {
-  //   try {
-  //     const updatedCart = await cartAPI.updateCartItem(itemId, quantity);
-  //     setCartItems(updatedCart.items || []);
-  //   } catch (err) {
-  //     console.error('Failed to update cart:', err);
-  //     setAuthMessage('Failed to update cart. Please try again.');
-  //     setTimeout(() => setAuthMessage(''), 3000);
-  //   }
-  // };
-
-  // // ✅ Proceed to checkout
-  // const handleProceedToCheckout = () => {
-  //   setShowOrderSummary(false);
-  //   navigate('/cart');
-  // };
-
-  // ✅ Helpers
-  // const getCartTotal = () =>
-  //   cartItems.reduce(
-  //     (total, item) => total + (item.product?.price ?? 0) * item.quantity,
-  //     0
-  //   );
 
   const getCartItemCount = () =>
     cartItems.reduce((count, item) => count + item.quantity, 0);
@@ -224,10 +181,9 @@ const handleViewCart = () => {
         )}
       </div>
 
-      <header className="pro-sel-page-header">
-        <h1>Gas & Accessories Store</h1>
-        <p>Find the perfect gas products and accessories for your needs</p>
-      </header>
+      <div className="pro-sel-page-header">
+        <h3>Gas cylinder & accessories</h3>
+      </div>
 
       <div className="pro-sel-controls-section">
         <div className="pro-sel-search-box">
@@ -242,28 +198,32 @@ const handleViewCart = () => {
 
         <div className="pro-sel-filter-controls">
           <div className="pro-sel-category-filter">
-            <span className="pro-sel-filter-label">
-              <FaFilter className="pro-sel-filter-icon" />
-              Filter by:
-            </span>
-            <button
-              className={selectedCategory === 'all' ? 'active' : ''}
-              onClick={() => setSelectedCategory('all')}
-            >
-              All Products
-            </button>
-            <button
-              className={selectedCategory === 'gas' ? 'active' : ''}
-              onClick={() => setSelectedCategory('gas')}
-            >
-              Gas
-            </button>
-            <button
-              className={selectedCategory === 'accessory' ? 'active' : ''}
-              onClick={() => setSelectedCategory('accessory')}
-            >
-              Accessories
-            </button>
+            <div className='pro-sel-filter-label-icon'>
+              <span className="pro-sel-filter-label">
+                <FaFilter className="pro-sel-filter-icon" />
+                Filter by:
+              </span>
+            </div>
+            <div className='pro-sel-categiry-filter-btn'>
+              <button
+                className={selectedCategory === 'all' ? 'active' : ''}
+                onClick={() => setSelectedCategory('all')}
+              >
+                All Products
+              </button>
+              <button
+                className= {selectedCategory === 'gas' ? 'active' : ''}
+                onClick={() => setSelectedCategory('gas')}
+              >
+                Gas
+              </button>
+              <button
+                className={selectedCategory === 'accessory' ? 'active' : ''}
+                onClick={() => setSelectedCategory('accessory')}
+              >
+                Accessories
+              </button>
+            </div>
           </div>
 
           <div className="pro-sel-sort-filter">
@@ -335,17 +295,6 @@ const handleViewCart = () => {
           ))
         )}
       </div>
-
-      {/* Order Summary */}
-      {/* {showOrderSummary && (
-        <OrderSummary
-          cartItems={cartItems}
-          onClose={handleCloseOrderSummary}
-          onUpdateCart={handleUpdateCart}
-          total={getCartTotal()}
-          onCheckout={handleProceedToCheckout}
-        />
-      )} */}
     </div>
   );
 };

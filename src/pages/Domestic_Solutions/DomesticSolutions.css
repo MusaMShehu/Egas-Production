@@ -1,426 +1,581 @@
 /* Global Styles */
-
-
-.domestic-solutions-page {
+.dom-sol-domestic-solutions-page {
   background-color: #f9f9f9;
   color: #333;
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 /* Page Header */
-.page-header {
+.dom-sol-page-header {
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-              url('https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+  url('https://media.istockphoto.com/id/1436956975/photo/chef-pouring-special-sauce-on-pork-ribs-in-the-kitchen.webp?a=1&b=1&s=612x612&w=0&k=20&c=ykqbF2i3cI3zycrE7fX-23K0c6JzaYPtaQXpffa72oM=');
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   color: white;
   text-align: center;
-  padding: 5rem 1rem;
+  padding: 3rem 1rem;
+  position: relative;
 }
 
-.page-header h2 {
+.dom-sol-page-header h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  font-weight: 700;
 }
 
-.page-header p {
+.dom-sol-page-header p {
   font-size: 1.2rem;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
+  line-height: 1.8;
 }
 
 /* Breadcrumb */
-.breadcrumb {
+.dom-sol-breadcrumb {
   padding: 1rem 5%;
   background-color: #f1f1f1;
+  font-size: 0.9rem;
 }
 
-.breadcrumb a {
+.dom-sol-breadcrumb a {
   color: #2c3e50;
+  font-weight: 400;
   text-decoration: none;
+  margin-right: 0.5rem;
+  transition: color 0.3s ease;
 }
 
-.breadcrumb a:hover {
-  text-decoration: underline;
-  color: #e74c3c;
+.dom-sol-breadcrumb a:hover {
+  text-decoration:none;
+  color: aqua;
+  background: #2c3e50;
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+
+.dom-sol-breadcrumb a:not(:last-child)::after {
+  content: '›';
+  margin-left: 0.5rem;
+  color: #666;
 }
 
 /* Content Section */
-.content-section {
-  padding: 4rem 5%;
+.dom-sol-content-section {
+  padding: 1rem 5%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.section-title {
+.dom-sol-section-title {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   color: #2c3e50;
   position: relative;
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  font-size: 2.2rem;
+  font-weight: 600;
 }
 
-.section-title::after {
+.dom-sol-section-title::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
+  width: 350px;
   height: 3px;
-  background-color: #e74c3c;
+  background-color: aqua;
 }
 
-.two-column {
+.dom-sol-two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 2rem;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
 }
 
-.column-img {
-  border-radius: 8px;
+.dom-sol-column-img {
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.column-img img {
+.dom-sol-column-img:hover {
+  transform: scale(1.02);
+}
+
+.dom-sol-column-img img {
   width: 100%;
   height: auto;
   display: block;
+  transition: transform 0.3s ease;
 }
 
-.column-text h3 {
+.dom-sol-column-text h3 {
   color: #2c3e50;
   margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-.column-text p {
+.dom-sol-column-text p {
+  max-width: 500px;
   margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #555;
 }
 
-.benefits-grid {
+.dom-sol-benefits-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
-  margin: 3rem 0;
+  margin: 2rem 0;
 }
 
-.benefit-item {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+.dom-sol-benefit-item {
+  background: rgb(222, 227, 230);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
 }
 
-.benefit-item:hover {
-  transform: translateY(-5px);
+.dom-sol-benefit-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
-.benefit-icon {
-  font-size: 2.5rem;
-  color: #e74c3c;
-  margin-bottom: 1rem;
-}
-
-.benefit-item h4 {
-  margin-bottom: 1rem;
+.dom-sol-benefit-icon {
+  font-size: 3rem;
   color: #2c3e50;
-}
-
-/* Plan Cards */
-.plans-section {
-  background-color: #f1f1f1;
-  padding: 4rem 5%;
-}
-
-.plan-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.plan-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
-.plan-card:hover {
-  transform: translateY(-10px);
+.dom-sol-benefit-item:hover .dom-sol-benefit-icon {
+  transform: scale(1.1);
 }
 
-.plan-header {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.plan-price {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 1rem 0;
-}
-
-.plan-price span {
-  font-size: 1rem;
-  font-weight: 400;
-}
-
-.plan-features {
-  padding: 2rem;
-}
-
-.plan-features ul {
-  list-style: none;
-  margin-bottom: 2rem;
-}
-
-.plan-features li {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.plan-features li:last-child {
-  border-bottom: none;
-}
-
-.plan-features li i {
-  color: #e74c3c;
-  margin-right: 10px;
-}
-
-.plan-button {
-  display: block;
-  width: 100%;
-  padding: 1rem;
-  background-color: #e74c3c;
-  color: white;
-  text-align: center;
-  text-decoration: none;
+.dom-sol-benefit-item h4 {
+  margin-bottom: 1rem;
+  color: rgb(61, 86, 134);
+  font-size: 1.3rem;
   font-weight: 600;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
 }
 
-.plan-button:hover {
-  background-color: #c0392b;
+.dom-sol-benefit-item p {
+  color: #666;
+  line-height: 1.7;
+  font-size: 1rem;
 }
+
 
 /* CTA Section */
-.cta-section {
+.dom-sol-cta-section {
   padding: 5rem 5%;
   text-align: center;
   background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
-              url('https://images.unsplash.com/photo-1536935338788-846bb9981813?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80');
+              url('https://plus.unsplash.com/premium_photo-1680291971376-ccc54aacb22b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y29va2luZ3xlbnwwfHwwfHx8MA%3D%3D');
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   color: white;
+  position: relative;
 }
 
-.cta-section h2 {
-  font-size: 2.2rem;
+.dom-sol-cta-section h2 {
+  font-size: 2.5rem;
   margin-bottom: 1.5rem;
+  font-weight: 700;
 }
 
-.cta-section p {
+.dom-sol-cta-section p {
   max-width: 700px;
-  margin: 0 auto 2rem;
-  font-size: 1.1rem;
+  margin: 0 auto 2.5rem;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  opacity: 0.9;
 }
 
-.cta-button {
+.dom-sol-cta-button {
   display: inline-block;
   padding: 1rem 2rem;
-  background-color: #e74c3c;
-  color: white;
+  background:aqua ;
+  color: #2c3e50;
   text-decoration: none;
   font-weight: 600;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  border: 2px solid transparent;
 }
 
-.cta-button:hover {
-  background-color: #c0392b;
+.dom-sol-cta-button:hover {
+  background: transparent;
+  border-color: aqua;
+  color: aqua;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
 }
 
 /* FAQ Section */
-.faq-section {
-  padding: 4rem 5%;
+.dom-sol-faq-section {
+  padding: 1rem 5%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.faq-item {
+.dom-sol-faq-item {
   margin-bottom: 1.5rem;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
 }
 
-.faq-question {
-  padding: 1.5rem;
-  background-color: #2c3e50;
+.dom-sol-faq-item:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.dom-sol-faq-question {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s ease;
 }
 
-.faq-answer {
-  padding: 1.5rem;
-  display: none;
+.dom-sol-faq-question:hover {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
 }
 
-.faq-active .faq-answer {
-  display: block;
+.dom-sol-faq-answer {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-/* Footer Styles */
-footer {
-  background-color: #2c3e50;
-  color: white;
-  padding: 3rem 5% 1rem;
+.dom-sol-faq-active .dom-sol-faq-answer {
+  padding: 2rem;
+  max-height: 500px;
 }
 
-.footer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+.dom-sol-faq-active .dom-sol-faq-question {
+  background: linear-gradient(135deg, #2ba0c0, #3ceff5);
 }
 
-.footer-logo h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+.dom-sol-faq-answer p {
+  margin: 0;
+  line-height: 1.8;
+  color: #555;
+  font-size: 1rem;
 }
 
-.footer-logo p {
-  margin-bottom: 1.5rem;
+/* Comprehensive Responsive Styles */
+
+/* Large Desktop (1200px and above) */
+@media (min-width: 1200px) {
+  .dom-sol-content-section,
+  .dom-sol-plans-section,
+  .dom-sol-faq-section {
+    padding: 4rem 8%;
+  }
 }
 
-.social-links {
-  display: flex;
-  gap: 1rem;
+/* Desktop (1024px - 1199px) */
+@media (max-width: 1199px) {
+  .dom-sol-content-section,
+  .dom-sol-plans-section,
+  .dom-sol-faq-section {
+    padding: 1rem 5%;
+  }
 }
 
-.social-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  color: white;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
+/* Tablet Landscape (968px - 1023px) */
+@media (max-width: 1023px) {
+  .dom-sol-page-header h2 {
+    font-size: 2.2rem;
+  }
+  
+  .dom-sol-page-header p {
+    font-size: 1.1rem;
+  }
+  
+  .dom-sol-section-title {
+    font-size: 2rem;
+  }
+  
+  .dom-sol-two-column {
+    gap: 2.5rem;
+  }
+  
+  .dom-sol-benefits-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
 }
 
-.social-links a:hover {
-  background-color: #e74c3c;
-}
-
-.footer-links-section h3 {
-  margin-bottom: 1.5rem;
-  position: relative;
-  padding-bottom: 0.5rem;
-}
-
-.footer-links-section h3::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background-color: #e74c3c;
-}
-
-.footer-links {
-  list-style: none;
-}
-
-.footer-links li {
-  margin-bottom: 0.8rem;
-}
-
-.footer-links a {
-  color: #ddd;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: #e74c3c;
-}
-
-.footer-contact p {
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-}
-
-.footer-contact i {
-  margin-right: 10px;
-  color: #e74c3c;
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1.5rem;
-  text-align: center;
-}
-
-.footer-bottom-links {
-  margin-bottom: 1rem;
-}
-
-.footer-bottom-links a {
-  color: #ddd;
-  text-decoration: none;
-  margin: 0 1rem;
-  transition: color 0.3s ease;
-}
-
-.footer-bottom-links a:hover {
-  color: #e74c3c;
-}
-
-/* Responsive Styles */
-@media (max-width: 968px) {
-  .two-column {
+/* Tablet Portrait (768px - 967px) */
+@media (max-width: 967px) {
+  .dom-sol-two-column {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .dom-sol-column-text {
+    order: 2;
+  }
+  
+  .dom-sol-column-img {
+    order: 1;
+  }
+  
+  .dom-sol-page-header {
+    padding: 3rem 1rem;
+    background-attachment: scroll;
+  }
+  
+  .dom-sol-cta-section {
+    background-attachment: scroll;
+    padding: 4rem 5%;
+  }
+  
+  .dom-sol-plan-cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
+/* Large Mobile (576px - 767px) */
+@media (max-width: 767px) {
+  .dom-sol-page-header h2 {
+    font-size: 1.8rem;
   }
   
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    padding: 1rem;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  .dom-sol-page-header p {
+    font-size: 1rem;
   }
   
-  .nav-links.active {
-    display: flex;
+  .dom-sol-section-title {
+    font-size: 1.7rem;
+    margin-bottom: 2rem;
   }
   
-  .auth-buttons {
-    display: none;
+  .dom-sol-content-section,
+  .dom-sol-plans-section,
+  .dom-sol-faq-section {
+    padding: 3rem 5%;
+  }
+  
+  .dom-sol-benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .dom-sol-benefit-item {
+    padding: 2rem 1.5rem;
+  }
+  
+  .dom-sol-benefit-icon {
+    font-size: 2.5rem;
+  }
+  
+  .dom-sol-cta-section h2 {
+    font-size: 2rem;
+  }
+  
+  .dom-sol-cta-section p {
+    font-size: 1.1rem;
+  }
+  
+  .dom-sol-faq-question {
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .dom-sol-faq-active .dom-sol-faq-answer {
+    padding: 1.5rem;
+  }
+}
+
+/* Small Mobile (480px - 575px) */
+@media (max-width: 575px) {
+  .dom-sol-page-header {
+    padding: 2.5rem 1rem;
+  }
+  
+  .dom-sol-page-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .dom-sol-breadcrumb {
+    padding: 0.8rem 5%;
+    font-size: 0.8rem;
+  }
+  
+  .dom-sol-content-section,
+  .dom-sol-plans-section,
+  .dom-sol-faq-section {
+    padding: 2.5rem 4%;
+  }
+  
+  .dom-sol-section-title {
+    font-size: 1.5rem;
+  }
+  
+  .dom-sol-column-text h3 {
+    font-size: 1.5rem;
+  }
+  
+  .dom-sol-column-text p {
+    font-size: 1rem;
+  }
+  
+  .dom-sol-benefit-item {
+    padding: 1.5rem 1rem;
+  }
+  
+  .dom-sol-benefit-item h4 {
+    font-size: 1.2rem;
+  }
+  
+  .dom-sol-plan-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .dom-sol-cta-section {
+    padding: 3rem 4%;
+  }
+  
+  .dom-sol-cta-section h2 {
+    font-size: 1.7rem;
+  }
+  
+  .dom-sol-cta-section p {
+    font-size: 1rem;
+  }
+  
+  .dom-sol-cta-button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* Extra Small Mobile (320px - 479px) */
+@media (max-width: 479px) {
+  .dom-sol-page-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .dom-sol-page-header p {
+    font-size: 0.9rem;
+  }
+  
+  .dom-sol-section-title {
+    font-size: 1.3rem;
+  }
+  
+  .dom-sol-content-section,
+  .dom-sol-plans-section,
+  .dom-sol-faq-section {
+    padding: 2rem 3%;
+  }
+  
+  .dom-sol-benefit-icon {
+    font-size: 2rem;
+  }
+  
+  .dom-sol-benefit-item h4 {
+    font-size: 1.1rem;
+  }
+  
+  .dom-sol-benefit-item p {
+    font-size: 0.9rem;
+  }
+  
+  .dom-sol-faq-question {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .dom-sol-faq-active .dom-sol-faq-answer {
+    padding: 1.25rem;
+  }
+  
+  .dom-sol-faq-answer p {
+    font-size: 0.9rem;
+  }
+
+  .dom-sol-cta-section {
+    margin: 15px;
+    border-radius: 8px;
+    /* padding: 5px 10px; */
+  }
+  
+  .dom-sol-cta-section h2 {
+    font-size: 1.2rem;
+  }
+  
+  .dom-sol-cta-button {
+    max-width: 280px;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .dom-sol-benefit-item:hover {
+    transform: none;
+  }
+  
+  .dom-sol-plan-card:hover {
+    transform: none;
+  }
+  
+  .dom-sol-cta-button:hover {
+    transform: none;
+  }
+  
+  .dom-sol-column-img:hover {
+    transform: none;
+  }
+}
+
+/* High DPI Screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .dom-sol-page-header,
+  .dom-sol-cta-section {
+  }
+}
+
+/* Print Styles */
+@media print {
+  .dom-sol-page-header,
+  .dom-sol-cta-section {
+    background: #2c3e50 !important;
+    color: #000 !important;
+  }
+  
+  .dom-sol-benefit-item,
+  .dom-sol-plan-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .dom-sol-cta-button {
+    display: none !important;
   }
 }

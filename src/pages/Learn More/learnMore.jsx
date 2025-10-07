@@ -12,11 +12,6 @@ import {
 import './LearnMore.css'; 
 
 const LearnMore = () => {
-  const [menuActive, setMenuActive] = useState(false);
-
-  // const toggleMenu = () => {
-  //   setMenuActive(!menuActive);
-  // };
 
   return (
     <div className="learn-more-page">
@@ -37,7 +32,7 @@ const LearnMore = () => {
         <div className="opportunity-cards">
           <div className="opportunity-card">
             <div className="card-img">
-              <img src="https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+              <img src="https://media.istockphoto.com/id/1996314747/photo/woman-smelling-food-cooking-in-a-pot-on-her-kitchen-stove.webp?a=1&b=1&s=612x612&w=0&k=20&c=R8gkqEreyZH4YPuZfNxIPhm8kJwKGzP1ls7COcCTySs="
                 alt="Domestic Solutions"/>
             </div>
             <div className="card-content">
