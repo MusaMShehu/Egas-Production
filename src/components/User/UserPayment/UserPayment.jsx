@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { 
-  FaSearch, 
-  FaPlus, 
-  FaTimes, 
-  FaExclamationCircle, 
-  FaWallet, 
-  FaCalendarAlt, 
-  FaChartLine, 
+import {
+  FaSearch,
+  FaPlus,
+  FaTimes,
+  FaExclamationCircle,
+  FaWallet,
+  FaCalendarAlt,
+  FaChartLine,
   FaReceipt,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
 } from "react-icons/fa";
 import "./UserPayment.css";
 
@@ -35,7 +35,6 @@ const Payments = () => {
   const API_BASE_URL = "https://egas-server-1.onrender.com/api/v1";
 
   const getAuthToken = () => localStorage.getItem("token");
-
   const getHeaders = () => {
     const token = getAuthToken();
     return {
@@ -44,27 +43,26 @@ const Payments = () => {
     };
   };
 
-  // Fetch payment history with useCallback to prevent infinite re-renders
+  // ✅ Fetch Payment History
   const fetchPaymentHistory = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/payments/history?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/payments/wallet/history?page=${page}&limit=${limit}`,
         { headers: getHeaders() }
       );
-
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
       setPaymentHistory(data.data || []);
       setPagination(data.pagination || {});
 
-      // Calculate spending from transactions
+      // Spending calculations
       if (data.data) {
         let total = 0;
         let monthly = 0;
         const now = new Date();
         data.data.forEach((tx) => {
-          if (tx.type === "debit" || tx.status === "success") {
+          if (tx.status === "success") {
             total += tx.amount;
             const txDate = new Date(tx.createdAt);
             if (
@@ -84,13 +82,12 @@ const Payments = () => {
     }
   }, []);
 
-  // Fetch wallet balance with useCallback
+  // ✅ Fetch Wallet Balance
   const fetchWalletBalance = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/payments/wallet/balance`, {
         headers: getHeaders(),
       });
-
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
@@ -101,49 +98,59 @@ const Payments = () => {
     }
   }, []);
 
+  // ✅ Verify redirect after Paystack payment
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reference = urlParams.get("reference");
+    if (reference) {
+      const verifyTopup = async () => {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/payments/wallet/verify?reference=${reference}`,
+            { headers: getHeaders() }
+          );
+          const data = await response.json();
+          if (data.success) {
+            setWalletBalance(data.walletBalance);
+            await fetchPaymentHistory(1);
+            alert("Wallet top-up successful!");
+          }
+        } catch (err) {
+          console.error("Verification failed:", err);
+        } finally {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+      };
+      verifyTopup();
+    }
+  }, [fetchPaymentHistory]);
+
+  // ✅ Load Data
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      try {
-        await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        setIsLoading(false);
-      }
+      await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
+      setIsLoading(false);
     };
     loadData();
   }, [fetchPaymentHistory, fetchWalletBalance]);
 
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > pagination.pages) return;
-    fetchPaymentHistory(newPage);
-  };
-
-  // Handle Paystack Top-up
+  // ✅ Handle Top-up
   const handleTopUp = async () => {
     if (topUpAmount < 1000) {
       setError("Minimum top-up amount is ₦1,000");
       return;
     }
-
     setIsProcessing(true);
     setError("");
-
     try {
       const response = await fetch(`${API_BASE_URL}/payments/wallet/topup`, {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({ amount: topUpAmount }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Top-up failed");
-      }
-
       const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Top-up failed");
 
       if (result.authorization_url) {
         window.location.href = result.authorization_url;
@@ -158,59 +165,17 @@ const Payments = () => {
     }
   };
 
-  // Filter payments client-side
-  const filteredPayments = paymentHistory.filter(
-    (payment) =>
-      payment.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.status?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  // ✅ Helper formatters
   const formatDate = (date) =>
-    new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
+    new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   const formatCurrency = (amount) => `₦${amount?.toLocaleString() || "0"}`;
 
-  // Generate pagination numbers correctly
-  const generatePaginationNumbers = () => {
-    const totalPages = pagination.pages;
-    const currentPage = pagination.current;
-    const pages = [];
-    
-    if (totalPages <= 5) {
-      // Show all pages if total pages is 5 or less
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Show limited pages with ellipsis
-      if (currentPage <= 3) {
-        // Near the start
-        pages.push(1, 2, 3, 4);
-        if (totalPages > 5) pages.push('ellipsis');
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        // Near the end
-        pages.push(1);
-        pages.push('ellipsis');
-        pages.push(totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        // In the middle
-        pages.push(1);
-        pages.push('ellipsis');
-        pages.push(currentPage - 1, currentPage, currentPage + 1);
-        pages.push('ellipsis');
-        pages.push(totalPages);
-      }
-    }
-    
-    return pages;
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pagination.pages) return;
+    fetchPaymentHistory(newPage);
   };
 
+  // ✅ UI Render
   if (isLoading) {
     return (
       <div className="pay-payments-page loading">
@@ -234,148 +199,68 @@ const Payments = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button
-            className="pay-btn-primary"
-            onClick={() => setShowTopUpModal(true)}
-            disabled={isProcessing}
-          >
-            <FaPlus className="pay-btn-icon" />
-            Top Up Wallet
+          <button className="pay-btn-primary" onClick={() => setShowTopUpModal(true)}>
+            <FaPlus className="pay-btn-icon" /> Top Up Wallet
           </button>
         </div>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="pay-error-message">
-          <FaExclamationCircle className="pay-error-icon" />
-          {error}
+          <FaExclamationCircle className="pay-error-icon" /> {error}
           <button onClick={() => setError("")} className="pay-close-error">
             <FaTimes />
           </button>
         </div>
       )}
 
-      {/* Stats */}
+      {/* Wallet Stats */}
       <div className="pay-stats-container">
-        <div className="pay-stat-card balance-card">
-          <div className="pay-stat-icon">
-            <FaWallet />
-          </div>
-          <h3>Wallet Balance</h3>
-          <div className="pay-value">{formatCurrency(walletBalance)}</div>
+        <div className="pay-stat-card">
+          <FaWallet /> <h3>Wallet Balance</h3>
+          <p>{formatCurrency(walletBalance)}</p>
         </div>
-
-        <div className="pay-stat-card spending-card">
-          <div className="pay-stat-icon">
-            <FaCalendarAlt />
-          </div>
-          <h3>This Month Spending</h3>
-          <div className="pay-value">{formatCurrency(monthlySpending)}</div>
+        <div className="pay-stat-card">
+          <FaCalendarAlt /> <h3>This Month</h3>
+          <p>{formatCurrency(monthlySpending)}</p>
         </div>
-
-        <div className="pay-stat-card spending-card">
-          <div className="pay-stat-icon">
-            <FaChartLine />
-          </div>
-          <h3>Total Spending</h3>
-          <div className="pay-value">{formatCurrency(totalSpending)}</div>
+        <div className="pay-stat-card">
+          <FaChartLine /> <h3>Total Spending</h3>
+          <p>{formatCurrency(totalSpending)}</p>
         </div>
       </div>
 
-      {/* Payment History */}
+      {/* Transaction Table */}
       <div className="pay-content-section">
-        <div className="pay-section-header">
-          <h2>Payment History</h2>
-          <span className="pay-count-badge">{pagination.total} transactions</span>
-        </div>
-
-        {filteredPayments.length > 0 ? (
-          <div className="pay-table-container">
-            <div className="pay-table-responsive">
-              <table className="pay-payments-table">
-                <thead>
-                  <tr>
-                    <th>Reference</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPayments.map((payment) => (
-                    <tr key={payment._id || payment.reference}>
-                      <td data-label="Reference">{payment.reference}</td>
-                      <td data-label="Date">{formatDate(payment.createdAt)}</td>
-                      <td data-label="Type">
-                        <span className={`pay-type-badge pay-type-${payment.type}`}>
-                          {payment.type}
-                        </span>
-                      </td>
-                      <td data-label="Amount" className="pay-amount">
-                        {formatCurrency(payment.amount)}
-                      </td>
-                      <td data-label="Status">
-                        <span className={`pay-status-badge pay-status-${payment.status}`}>
-                          {payment.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            <div className="pay-pagination">
-              <button
-                className="pay-pagination-btn"
-                disabled={!pagination.hasPrev}
-                onClick={() => handlePageChange(pagination.current - 1)}
-              >
-                <FaChevronLeft />
-                Prev
-              </button>
-
-              <div className="pay-pagination-numbers">
-                {generatePaginationNumbers().map((pageNum, index) => 
-                  pageNum === 'ellipsis' ? (
-                    <span key={`ellipsis-${index}`} className="pay-pagination-ellipsis">...</span>
-                  ) : (
-                    <button
-                      key={pageNum}
-                      className={`pay-pagination-btn ${pagination.current === pageNum ? "active" : ""}`}
-                      onClick={() => handlePageChange(pageNum)}
-                    >
-                      {pageNum}
-                    </button>
-                  )
-                )}
-              </div>
-
-              <button
-                className="pay-pagination-btn"
-                disabled={!pagination.hasNext}
-                onClick={() => handlePageChange(pagination.current + 1)}
-              >
-                Next
-                <FaChevronRight />
-              </button>
-            </div>
+        <h2>Payment History</h2>
+        {paymentHistory.length === 0 ? (
+          <div className="pay-no-payments">
+            <FaReceipt /> <p>No payment history found</p>
           </div>
         ) : (
-          <div className="pay-no-payments">
-            <FaReceipt className="pay-no-payments-icon" />
-            <p>No payment history found</p>
-            {searchTerm && (
-              <button 
-                className="pay-clear-search"
-                onClick={() => setSearchTerm("")}
-              >
-                Clear search
-              </button>
-            )}
+          <div className="pay-table-container">
+            <table className="pay-payments-table">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paymentHistory.map((p) => (
+                  <tr key={p._id || p.reference}>
+                    <td>{p.reference}</td>
+                    <td>{formatDate(p.createdAt)}</td>
+                    <td>{p.type}</td>
+                    <td>{formatCurrency(p.amount)}</td>
+                    <td>{p.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -386,55 +271,25 @@ const Payments = () => {
           <div className="pay-payment-modal-content">
             <div className="pay-payment-modal-header">
               <h2>Top Up Wallet</h2>
-              <button
-                className="pay-close-btn"
-                onClick={() => !isProcessing && setShowTopUpModal(false)}
-                disabled={isProcessing}
-              >
+              <button onClick={() => setShowTopUpModal(false)} className="pay-close-btn">
                 <FaTimes />
               </button>
             </div>
             <div className="pay-payment-modal-body">
-              <div className="pay-form-group">
-                <label htmlFor="amount">Amount (₦)</label>
-                <input
-                  type="number"
-                  id="amount"
-                  value={topUpAmount}
-                  onChange={(e) =>
-                    setTopUpAmount(parseInt(e.target.value) || 0)
-                  }
-                  min="1000"
-                  step="500"
-                  disabled={isProcessing}
-                />
-                <small>Minimum amount: ₦1,000</small>
-              </div>
-              {isProcessing && (
-                <div className="pay-payment-processing-overlay">
-                  <div className="pay-payment-processing-spinner"></div>
-                  <p>Redirecting to Paystack...</p>
-                </div>
-              )}
+              <label htmlFor="amount">Amount (₦)</label>
+              <input
+                type="number"
+                id="amount"
+                value={topUpAmount}
+                min="1000"
+                onChange={(e) => setTopUpAmount(parseInt(e.target.value) || 0)}
+              />
+              <small>Minimum ₦1,000</small>
             </div>
             <div className="pay-payment-modal-footer">
-              <button
-                type="button"
-                className="pay-btn-secondary"
-                onClick={() => setShowTopUpModal(false)}
-                disabled={isProcessing}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="pay-btn-primary"
-                onClick={handleTopUp}
-                disabled={isProcessing || topUpAmount < 1000}
-              >
-                {isProcessing
-                  ? "Processing..."
-                  : `Top Up ${formatCurrency(topUpAmount)}`}
+              <button onClick={() => setShowTopUpModal(false)}>Cancel</button>
+              <button onClick={handleTopUp} disabled={isProcessing || topUpAmount < 1000}>
+                {isProcessing ? "Processing..." : `Top Up ${formatCurrency(topUpAmount)}`}
               </button>
             </div>
           </div>
