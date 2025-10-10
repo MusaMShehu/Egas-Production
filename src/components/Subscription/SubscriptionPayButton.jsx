@@ -1,23 +1,34 @@
-import { PaystackButton } from 'react-paystack';
+import { usePaystackPayment } from '@paystack/inline-js';
 
 const SubscriptionPayButton = ({ email, amount, metadata }) => {
   const publicKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
-  const reference = new Date().getTime().toString();
-
-  const props = {
+  
+  const config = {
     email,
-    amount: amount * 100,
+    amount: amount * 100, // Convert to kobo
     metadata,
     publicKey,
-    text: 'Subscribe Now',
-    reference,
-    onSuccess: (response) => {
-      window.location.href = `/subscriptions/verify?reference=${response.reference}`;
-    },
-    onClose: () => alert('Payment closed'),
+    reference: new Date().getTime().toString(),
   };
 
-  return <PaystackButton {...props} />;
+  const initializePayment = usePaystackPayment(config);
+
+  const handlePayment = () => {
+    initializePayment({
+      onSuccess: (response) => {
+        window.location.href = `/subscriptions/verify?reference=${response.reference}`;
+      },
+      onClose: () => {
+        alert('Payment closed');
+      },
+    });
+  };
+
+  return (
+    <button onClick={handlePayment} className="subscribe-button">
+      Subscribe Now
+    </button>
+  );
 };
 
 export default SubscriptionPayButton;
