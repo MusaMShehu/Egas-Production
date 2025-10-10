@@ -36,7 +36,8 @@ import OrderSummary from "./components/User/UserOrders/OrderSummary";
 import ProductCart from "./components/Products/ProductCart";
 
 
-import CallbackPage from './components/PaymentSuccess';
+import SubscriptionVerify from './components/Subscription/SubscriptionVerify';
+import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
 
 // User Panel
 // import OverviewPage from "./components/pages/OverviewPage";
@@ -122,7 +123,8 @@ function App() {
           <Route path="/cart" element={<ProductCart />} />
 
           <Route path="/subscription-Plan" element={<SubscriptionPlans />} />
-          {/* <Route path="/payment/callback" element={<CallbackPage />} /> */}
+          <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
+          <Route path="/subscriptions/success" element={<SubscriptionSuccess />} />
 
 
           {/* 2nd User Panel */}
@@ -142,7 +144,7 @@ function App() {
             <Route path="payment/subscribe" element={<SubscriptionPayment />} />
             <Route path="payment/topup" element={<WalletTopup />} />
             <Route path="payment/order" element={<OrderPayment />} />
-            <Route path="payment/callback/:type" element={<PaymentCallback />} />
+            <Route path="payment/callback" element={<PaymentCallback />} />
 
           </Route>
 
