@@ -1,10 +1,9 @@
 // src/components/SubscriptionPlans.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import "../../styles/SubscriptionPlans.css";
+import "./SubscriptionPlan.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-
+import SubscriptionPayButton from "./SubscriptionPayButton"; // Import the Paystack button component
 
 // Stable axios instance
 const axiosInstance = axios.create({
@@ -19,22 +18,28 @@ const SubscriptionPlans = () => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [plans, setPlans] = useState([]);
-  const [customPlan, setCustomPlan] = useState({ size: "6kg", frequency: "Monthly" });
-  const [oneTimePlan, setOneTimePlan] = useState({ size: "" });
+  const [customPlan, setCustomPlan] = useState({ 
+    size: "6kg", 
+    frequency: "Monthly",
+    subscriptionPeriod: 1 
+  });
+  const [oneTimePlan, setOneTimePlan] = useState({ size: "6kg" });
+  const [emergencyPlan, setEmergencyPlan] = useState({ size: "6kg" });
   const [selectedFrequencies, setSelectedFrequencies] = useState({});
+  const [selectedSubscriptionPeriods, setSelectedSubscriptionPeriods] = useState({});
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [plansLoading, setPlansLoading] = useState(true);
   const [error, setError] = useState("");
-  const [debugInfo, setDebugInfo] = useState(null); // shows backend error payload
+  const [debugInfo, setDebugInfo] = useState(null);
+  const [paymentData, setPaymentData] = useState(null); // Store payment data for Paystack button
 
   // add interceptors once
   useEffect(() => {
     const reqId = axiosInstance.interceptors.request.use(
       (cfg) => {
-        // attach token if available
         if (token) cfg.headers = { ...cfg.headers, Authorization: `Bearer ${token}` };
         return cfg;
       },
@@ -76,13 +81,20 @@ const SubscriptionPlans = () => {
 
       const resp = await axiosInstance.get("/api/v1/subscription-plans");
       if (resp?.data?.success) {
-        setPlans(resp.data.data || []);
-        // init frequencies
+        const sortedPlans = (resp.data.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
+        setPlans(sortedPlans);
+        
+        // Initialize default frequencies and subscription periods
         const freqs = {};
-        (resp.data.data || []).forEach((p) => {
-          if (p.type === "preset") freqs[p._id] = p.frequencyOptions?.[0] || "Monthly";
+        const periods = {};
+        sortedPlans.forEach((p) => {
+          if (p.type === "preset") {
+            freqs[p._id] = p.deliveryFrequency?.[0] || "Monthly";
+            periods[p._id] = p.subscriptionPeriod?.[0] || 1;
+          }
         });
         setSelectedFrequencies(freqs);
+        setSelectedSubscriptionPeriods(periods);
       } else {
         console.warn("Unexpected plans response:", resp?.data);
         setError("Failed to load plans");
@@ -104,56 +116,85 @@ const SubscriptionPlans = () => {
     fetchSubscriptionPlans();
   }, [fetchSubscriptionPlans]);
 
-  // load paystack script once
-  const loadPaystackScript = useCallback(() => {
-    return new Promise((resolve, reject) => {
-      if (window.PaystackPop) return resolve(window.PaystackPop);
-
-      const scr = document.createElement("script");
-      scr.src = "https://js.paystack.co/v1/inline.js";
-      scr.async = true;
-      scr.onload = () => {
-        if (window.PaystackPop) resolve(window.PaystackPop);
-        else reject(new Error("Paystack script loaded but window.PaystackPop missing"));
-      };
-      scr.onerror = (e) => reject(new Error("Failed to load Paystack script"));
-      document.body.appendChild(scr);
-    });
-  }, []);
-
-  // helpers: price calculations (frontend uses plan.price in NAIRA)
-  const calculatePrice = (basePrice, pricePerKg, size, frequency) => {
-    const sizeKg = parseInt(String(size || basePrice).replace("kg", ""), 10) || 1;
-    const baseAmount = sizeKg * (pricePerKg ?? 0) || (basePrice ?? 0); // fallback
-    let multiplier = 1;
-    switch (frequency) {
-      case "Daily": multiplier = 30; break;
-      case "Weekly": multiplier = 4; break;
-      case "Bi-Weekly": multiplier = 2; break;
-      case "One-Time": multiplier = 1; break;
-      default: multiplier = 1; // Monthly
-    }
-    return baseAmount * multiplier;
-  };
-
-  const getPlanPrice = (plan, frequency, customSize = null) => {
-    // If backend gives explicit price fields (basePrice, pricePerKg) use them
+  // Price calculation helper
+  const calculatePrice = (plan, size, frequency, subscriptionPeriod = 1) => {
     if (!plan) return 0;
-    if (plan.price) return plan.price; // if the plan already contains price in naira
-    return calculatePrice(plan.basePrice ?? 0, plan.pricePerKg ?? 0, customSize || plan.baseSize, frequency);
+    
+    // Extract numeric size value
+    const sizeKg = parseInt(String(size).replace("kg", ""), 10) || parseInt(size, 10);
+    
+    // Calculate base price
+    let baseAmount = sizeKg * (plan.pricePerKg || 0);
+    
+    // Apply frequency multiplier
+    let frequencyMultiplier = 1;
+    switch (frequency) {
+      case "Daily": frequencyMultiplier = 30; break;
+      case "Weekly": frequencyMultiplier = 4; break;
+      case "Bi-Weekly": frequencyMultiplier = 2; break;
+      default: frequencyMultiplier = 1; // Monthly
+    }
+    
+    // Apply subscription period (months)
+    const totalAmount = baseAmount * frequencyMultiplier * subscriptionPeriod;
+    
+    return Math.round(totalAmount);
   };
 
   const getCustomPlanPrice = () => {
-    const p = plans.find((x) => x.type === "custom");
-    if (!p) return 0;
-    return getPlanPrice(p, customPlan.frequency, customPlan.size);
+    const plan = plans.find((x) => x.type === "custom");
+    if (!plan) return 0;
+    return calculatePrice(plan, customPlan.size, customPlan.frequency, customPlan.subscriptionPeriod);
   };
 
   const getOneTimePlanPrice = () => {
-    if (!oneTimePlan.size) return 0;
-    const p = plans.find((x) => x.type === "one-time");
-    if (!p) return 0;
-    return getPlanPrice(p, "One-Time", oneTimePlan.size);
+    const plan = plans.find((x) => x.type === "one-time");
+    if (!plan) return 0;
+    return calculatePrice(plan, oneTimePlan.size, "One-Time", 1);
+  };
+
+  const getEmergencyPlanPrice = () => {
+    const plan = plans.find((x) => x.type === "emergency");
+    if (!plan) return 0;
+    return calculatePrice(plan, emergencyPlan.size, "One-Time", 1);
+  };
+
+  // Generate size options based on plan type
+  const getSizeOptions = (plan) => {
+    switch (plan.type) {
+      case "custom":
+        const min = plan.cylinderSizeRange?.min || 5;
+        const max = plan.cylinderSizeRange?.max || 100;
+        return Array.from({ length: max - min + 1 }, (_, i) => `${i + min}kg`);
+      
+      case "one-time":
+        return (plan.cylinderSizes || []).map(size => `${size}kg`);
+      
+      case "emergency":
+        return plan.cylinderSizes || ["6kg", "12kg", "25kg", "50kg"];
+      
+      default: // preset
+        return [plan.baseSize];
+    }
+  };
+
+  // Generate frequency options based on plan type
+  const getFrequencyOptions = (plan) => {
+    switch (plan.type) {
+      case "custom":
+        const minDays = plan.deliveryFrequencyRange?.min || 1;
+        const maxDays = plan.deliveryFrequencyRange?.max || 29;
+        return Array.from({ length: maxDays - minDays + 1 }, (_, i) => {
+          const days = i + minDays;
+          return days === 1 ? "Daily" : `${days} days`;
+        });
+      
+      case "preset":
+        return plan.deliveryFrequency || ["Monthly"];
+      
+      default:
+        return ["One-Time"];
+    }
   };
 
   // Retry without reload
@@ -177,132 +218,75 @@ const SubscriptionPlans = () => {
     }
 
     setSelectedPlan(planData);
+    
+    // Prepare payment data for Paystack button
+    const paymentMetadata = {
+      planId: planData.planId,
+      frequency: planData.frequency,
+      size: planData.size,
+      subscriptionPeriod: planData.subscriptionPeriod,
+      userId: user._id,
+      planName: planData.name,
+      planType: planData.planType,
+      price: planData.price
+    };
+
+    setPaymentData({
+      email: user.email,
+      amount: planData.price,
+      metadata: paymentMetadata
+    });
+
     setShowSummary(true);
   };
 
-  // Main: initialize payment with backend and open paystack inline
-  const handleSubscribe = async (planData) => {
-    if (!user || !token) {
-      alert("Please log in");
-      navigate("/login");
-      return;
-    }
-
-    setIsProcessing(true);
-    setError("");
-    setDebugInfo(null);
-
-    // Build payload to match backend validate fields
-    // IMPORTANT: `amount` here is in NAIRA (backend multiplies by 100)
-    const initPayload = {
-      amount: Number(planData.price),     // NAIRA - backend will call *100
-      email: user.email,
-      planId: planData.planId || null,
-      frequency: planData.frequency || null,
-      size: planData.size || null,
-      planName: planData.name || null,
-      // optional extras if you have them:
-      startDate: planData.startDate || null,
-      endDate: planData.endDate || null,
-      price: planData.price || Number(planData.price)
-    };
-
-    console.log("Payment init payload:", initPayload);
-
-    try {
-      const resp = await axiosInstance.post(
-        "/api/v1/payments/initialize",
-        initPayload,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-      );
-
-      console.log("Backend initialization response:", resp?.data);
-      if (!resp?.data?.success) {
-        const msg = resp?.data?.message || "Initialization returned unsuccessful";
-        setError(msg);
-        setDebugInfo(resp?.data || null);
-        setIsProcessing(false);
-        return;
-      }
-
-      // const authorization_url = resp.data.authorization_url;
-      // const reference = resp.data.reference;
-      // const access_code = resp.data.access_code;
-
-      // Load paystack script
-      await loadPaystackScript();
-
-      // Important: inline setup still accepts amount in kobo — convert here for the inline popup display.
-      // But backend already initialized the transaction and set a reference; the reference is the source of truth.
-      // const amountInKobo = Math.round(Number(planData.price) * 100);
-
-      // Use the inline popup with the reference returned by your backend
-      const handler = window.PaystackPop.setup({
-  key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,  
-  email: user.email,
-  amount: Math.round(planData.price * 100), 
-  ref: resp.data.reference, 
-  metadata: {
-    planId: planData.planId,
-    frequency: planData.frequency,
-    size: planData.size,
-    userId: user._id,
-  },
-  // ✅ THIS must be a function
-  callback: function (response) {
+  // Handle payment success
+  const handlePaymentSuccess = async (response) => {
     console.log("Payment successful:", response);
-    // Call backend verify API
-    axiosInstance
-      .get(`/api/v1/payments/verify/${response.reference}`, {
+    setIsProcessing(true);
+    
+    try {
+      // Call backend verify API
+      const verifyRes = await axiosInstance.get(`/api/v1/payments/verify/${response.reference}`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((verifyRes) => {
-        console.log("Verification result:", verifyRes.data);
-        alert("Payment verified successfully!");
-      })
-      .catch((err) => {
-        console.error("Verification failed:", err.response?.data || err.message);
-        alert("Payment verification failed!");
       });
-  },
-  // Optional but recommended
-  onClose: function () {
-    alert("Payment window closed.");
-  },
-});
-
-handler.openIframe();
-
-      // open the inline iframe
-      // Some Paystack SDK versions provide handler.openIframe(); others automatically open.
-      if (typeof handler.openIframe === "function") {
-        handler.openIframe();
+      
+      console.log("Verification result:", verifyRes.data);
+      
+      if (verifyRes.data.success) {
+        alert("Payment verified successfully! Your subscription is now active.");
+        setShowSummary(false);
+        // Optionally redirect to dashboard or success page
+        // navigate("/dashboard");
       } else {
-        console.warn("handler.openIframe not available; popup may open automatically");
+        alert("Payment verification failed. Please contact support.");
       }
     } catch (err) {
-      console.error("Initialize payment error:", err);
-      const backendErr = err?.response?.data;
-      setError(backendErr?.message || err.message || "Payment initialization failed.");
-      setDebugInfo(backendErr || { message: err.message });
+      console.error("Verification failed:", err.response?.data || err.message);
+      alert("Payment verification failed! Please contact support.");
+    } finally {
       setIsProcessing(false);
     }
   };
 
-  // small refresh function to reload updated profile (optional)
-  // const refreshUserData = async () => {
-  //   if (!token) return;
-  //   try {
-  //     const resp = await axiosInstance.get("/api/v1/users/profile", { headers: { Authorization: `Bearer ${token}` } });
-  //     if (resp?.data) {
-  //       const updated = { ...user, ...resp.data };
-  //       setUser(updated);
-  //       localStorage.setItem("user", JSON.stringify(updated));
-  //     }
-  //   } catch (err) {
-  //     console.error("Failed to refresh user:", err);
-  //   }
-  // };
+  // Handle payment close
+  const handlePaymentClose = () => {
+    alert('Payment closed');
+    setIsProcessing(false);
+  };
+
+  // Render plan features
+  const renderFeatures = (features) => {
+    return (
+      <ul className="plan-features">
+        {features?.map((feature, index) => (
+          <li key={index} className={feature.included ? "feature-included" : "feature-excluded"}>
+            <strong>{feature.title}:</strong> {feature.description}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   // UI rendering
   if (isLoading || plansLoading) {
@@ -357,29 +341,43 @@ handler.openIframe();
 
       <div className="plans-grid">
         {plans.map((plan) => {
-          // CUSTOM plan
+          const sizeOptions = getSizeOptions(plan);
+          const frequencyOptions = getFrequencyOptions(plan);
+
+          // Custom Plan
           if (plan.type === "custom") {
             const price = getCustomPlanPrice();
             return (
               <div key={plan._id} className="plan-card custom-plan-card">
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
-                <label>Size</label>
+                {renderFeatures(plan.features)}
+                
+                <label>Cylinder Size</label>
                 <select value={customPlan.size} onChange={(e) => setCustomPlan(prev => ({ ...prev, size: e.target.value }))}>
-                  {plan.sizeOptions?.map((s) => <option key={s} value={s}>{s}</option>)}
+                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <label>Frequency</label>
+
+                <label>Delivery Frequency</label>
                 <select value={customPlan.frequency} onChange={(e) => setCustomPlan(prev => ({ ...prev, frequency: e.target.value }))}>
-                  {plan.frequencyOptions?.map((f) => <option key={f} value={f}>{f}</option>)}
+                  {frequencyOptions.map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
-                <p>₦{price.toLocaleString()}</p>
+
+                <label>Subscription Period (Months)</label>
+                <select value={customPlan.subscriptionPeriod} onChange={(e) => setCustomPlan(prev => ({ ...prev, subscriptionPeriod: parseInt(e.target.value) }))}>
+                  {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
+                </select>
+
+                <div className="plan-price">₦{price.toLocaleString()}</div>
                 <button
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
                     planId: plan._id,
                     name: plan.name,
+                    planType: plan.type,
                     size: customPlan.size,
                     frequency: customPlan.frequency,
+                    subscriptionPeriod: customPlan.subscriptionPeriod,
                     price
                   })}
                 >{isProcessing ? "Processing..." : "Subscribe"}</button>
@@ -387,25 +385,30 @@ handler.openIframe();
             );
           }
 
-          // One-time
+          // One-time Purchase
           if (plan.type === "one-time") {
             const price = getOneTimePlanPrice();
             return (
               <div key={plan._id} className="plan-card one-time-card">
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
-                <label>Size</label>
+                {renderFeatures(plan.features)}
+                
+                <label>Cylinder Size</label>
                 <select value={oneTimePlan.size} onChange={(e) => setOneTimePlan({ size: e.target.value })}>
-                  <option value="">Select Size</option>
-                  {plan.sizeOptions?.map((s) => <option key={s} value={s}>{s}</option>)}
+                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <p>₦{price.toLocaleString()}</p>
-                <button disabled={!oneTimePlan.size || isProcessing}
+
+                <div className="plan-price">₦{price.toLocaleString()}</div>
+                <button 
+                  disabled={isProcessing}
                   onClick={() => confirmPlan({
                     planId: plan._id,
                     name: plan.name,
+                    planType: plan.type,
                     size: oneTimePlan.size,
                     frequency: "One-Time",
+                    subscriptionPeriod: 1,
                     price
                   })}
                 >{isProcessing ? "Processing..." : "Buy Now"}</button>
@@ -413,23 +416,71 @@ handler.openIframe();
             );
           }
 
-          // Preset
-          const freq = selectedFrequencies[plan._id] || plan.frequencyOptions?.[0] || "Monthly";
-          const price = getPlanPrice(plan, freq);
+          // Emergency Plan
+          if (plan.type === "emergency") {
+            const price = getEmergencyPlanPrice();
+            return (
+              <div key={plan._id} className="plan-card emergency-card">
+                <h2>{plan.name} 🚨</h2>
+                <p>{plan.description}</p>
+                {renderFeatures(plan.features)}
+                
+                <label>Cylinder Size</label>
+                <select value={emergencyPlan.size} onChange={(e) => setEmergencyPlan({ size: e.target.value })}>
+                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+
+                <div className="plan-price">₦{price.toLocaleString()}</div>
+                <button 
+                  disabled={isProcessing}
+                  onClick={() => confirmPlan({
+                    planId: plan._id,
+                    name: plan.name,
+                    planType: plan.type,
+                    size: emergencyPlan.size,
+                    frequency: "Emergency",
+                    subscriptionPeriod: 1,
+                    price
+                  })}
+                >{isProcessing ? "Processing..." : "Request Emergency Delivery"}</button>
+              </div>
+            );
+          }
+
+          // Preset Plans (Basic, Family, Business)
+          const frequency = selectedFrequencies[plan._id] || frequencyOptions[0];
+          const subscriptionPeriod = selectedSubscriptionPeriods[plan._id] || plan.subscriptionPeriod?.[0] || 1;
+          const price = calculatePrice(plan, plan.baseSize, frequency, subscriptionPeriod);
+
           return (
             <div key={plan._id} className="plan-card">
               <h2>{plan.name}</h2>
               <p>{plan.description}</p>
-              <label>Frequency</label>
-              <select value={freq} onChange={(e) => setSelectedFrequencies(prev => ({ ...prev, [plan._id]: e.target.value }))}>
-                {plan.frequencyOptions?.map((f) => <option key={f} value={f}>{f}</option>)}
+              {renderFeatures(plan.features)}
+              
+              <div className="plan-details">
+                <p><strong>Base Size:</strong> {plan.baseSize}</p>
+                <p><strong>Price per Kg:</strong> ₦{plan.pricePerKg?.toLocaleString()}</p>
+              </div>
+
+              <label>Delivery Frequency</label>
+              <select value={frequency} onChange={(e) => setSelectedFrequencies(prev => ({ ...prev, [plan._id]: e.target.value }))}>
+                {frequencyOptions.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
-              <p>₦{price.toLocaleString()}</p>
+
+              <label>Subscription Period (Months)</label>
+              <select value={subscriptionPeriod} onChange={(e) => setSelectedSubscriptionPeriods(prev => ({ ...prev, [plan._id]: parseInt(e.target.value) }))}>
+                {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
+              </select>
+
+              <div className="plan-price">₦{price.toLocaleString()}</div>
               <button disabled={isProcessing} onClick={() => confirmPlan({
                 planId: plan._id,
                 name: plan.name,
+                planType: plan.type,
                 size: plan.baseSize,
-                frequency: freq,
+                frequency: frequency,
+                subscriptionPeriod: subscriptionPeriod,
                 price
               })}>{isProcessing ? "Processing..." : "Subscribe"}</button>
             </div>
@@ -438,19 +489,27 @@ handler.openIframe();
       </div>
 
       {/* Summary Modal */}
-      {showSummary && selectedPlan && (
+      {showSummary && selectedPlan && paymentData && (
         <div className="summary-modal">
           <div className="summary-card">
             <h2>Confirm Your Order</h2>
             <p><strong>Plan:</strong> {selectedPlan.name}</p>
+            <p><strong>Type:</strong> {selectedPlan.planType}</p>
             <p><strong>Size:</strong> {selectedPlan.size}</p>
             <p><strong>Frequency:</strong> {selectedPlan.frequency}</p>
-            <p><strong>Price:</strong> ₦{Number(selectedPlan.price).toLocaleString()}</p>
+            {selectedPlan.subscriptionPeriod && (
+              <p><strong>Subscription Period:</strong> {selectedPlan.subscriptionPeriod} month{selectedPlan.subscriptionPeriod > 1 ? 's' : ''}</p>
+            )}
+            <p><strong>Total Price:</strong> ₦{Number(selectedPlan.price).toLocaleString()}</p>
             <div className="summary-actions">
               <button onClick={() => setShowSummary(false)} disabled={isProcessing}>Cancel</button>
-              <button onClick={() => { setShowSummary(false); handleSubscribe(selectedPlan); }} disabled={isProcessing}>
-                {isProcessing ? "Processing..." : "Proceed to Payment"}
-              </button>
+              <SubscriptionPayButton
+                email={paymentData.email}
+                amount={paymentData.amount}
+                metadata={paymentData.metadata}
+                onSuccess={handlePaymentSuccess}
+                onClose={handlePaymentClose}
+              />
             </div>
           </div>
         </div>

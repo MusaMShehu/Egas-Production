@@ -1,75 +1,78 @@
 // src/components/CallbackPage.js
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./CallbackPage.css"; // optional if you want to style it cleanly
 
 const CallbackPage = () => {
-  const [status, setStatus] = useState('processing');
-  const [message, setMessage] = useState('Verifying your payment...');
+  const [status, setStatus] = useState("processing");
+  const [message, setMessage] = useState("Verifying your payment...");
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // Get reference from URL query parameters
         const urlParams = new URLSearchParams(location.search);
-        const reference = urlParams.get('reference');
-        const trxref = urlParams.get('trxref');
+        const reference = urlParams.get("reference") || urlParams.get("trxref");
 
-        if (!reference && !trxref) {
-          setStatus('error');
-          setMessage('No payment reference found in URL');
+        if (!reference) {
+          setStatus("error");
+          setMessage("No payment reference found in URL");
           return;
         }
 
-        const paymentReference = reference || trxref;
-
-        // Get user from localStorage
-        const userData = localStorage.getItem('user');
-        if (!userData) {
-          setStatus('error');
-          setMessage('Please log in to verify payment');
+        // ✅ Get auth token directly from localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setStatus("error");
+          setMessage("You must be logged in to verify this payment");
           return;
         }
 
-        const user = JSON.parse(userData);
+        // ✅ Verify payment with backend using the updated route
+        const API_BASE_URL =
+          process.env.REACT_APP_API_URL ||
+          "https://egas-server-1.onrender.com";
 
-        // Verify payment with backend
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com'}/api/v1/payments/verify/${paymentReference}`,
+          `${API_BASE_URL}/api/v1/payments/wallet/verify?reference=${reference}`,
           {
             headers: {
-              Authorization: `Bearer ${user.token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
         if (response.data.success) {
-          setStatus('success');
-          setMessage('Payment verified successfully!');
+          setStatus("success");
+          setMessage("Payment verified successfully! Your wallet has been updated.");
 
-          // Redirect to success page after 3 seconds
+          // ✅ Update wallet balance in localStorage (optional)
+          if (response.data.walletBalance !== undefined) {
+            localStorage.setItem("walletBalance", response.data.walletBalance);
+          }
+
+          // ✅ Redirect back to Payments page after short delay
           setTimeout(() => {
-            navigate('/payment-success', { 
-              state: { 
-                transaction: response.data.data,
-                message: 'Your payment was successful!'
-              }
+            navigate("/dashboard/payments", {
+              state: {
+                message: "Your wallet has been topped up successfully!",
+              },
             });
           }, 3000);
-
         } else {
-          setStatus('error');
-          setMessage('Payment verification failed. Please contact support.');
+          setStatus("error");
+          setMessage(
+            response.data.message || "Payment verification failed. Please try again."
+          );
         }
-
       } catch (error) {
-        console.error('Payment verification error:', error);
-        setStatus('error');
+        console.error("Payment verification error:", error);
+        setStatus("error");
         setMessage(
-          error.response?.data?.message || 
-          'Payment verification failed. Please contact support.'
+          error.response?.data?.message ||
+            "Payment verification failed. Please contact support."
         );
       }
     };
@@ -81,28 +84,25 @@ const CallbackPage = () => {
     <div className="callback-container">
       <div className="callback-card">
         <div className={`status-icon ${status}`}>
-          {status === 'processing' && '⏳'}
-          {status === 'success' && '✅'}
-          {status === 'error' && '❌'}
+          {status === "processing" && "⏳"}
+          {status === "success" && "✅"}
+          {status === "error" && "❌"}
         </div>
-        
+
         <h2>
-          {status === 'processing' && 'Processing Payment...'}
-          {status === 'success' && 'Payment Successful!'}
-          {status === 'error' && 'Payment Failed'}
+          {status === "processing" && "Processing Payment..."}
+          {status === "success" && "Payment Successful!"}
+          {status === "error" && "Payment Failed"}
         </h2>
-        
+
         <p>{message}</p>
-        
-        {status === 'processing' && (
+
+        {status === "processing" && (
           <div className="loading-spinner">Loading...</div>
         )}
-        
-        {status === 'error' && (
-          <button 
-            className="retry-btn"
-            onClick={() => navigate('/subscription')}
-          >
+
+        {status === "error" && (
+          <button className="retry-btn" onClick={() => navigate("/dashboard/payments")}>
             Try Again
           </button>
         )}

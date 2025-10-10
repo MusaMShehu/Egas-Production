@@ -36,7 +36,7 @@ import OrderSummary from "./components/User/UserOrders/OrderSummary";
 import ProductCart from "./components/Products/ProductCart";
 
 
-import CallbackPage from './components/CallbackPage';
+import CallbackPage from './components/PaymentSuccess';
 
 // User Panel
 // import OverviewPage from "./components/pages/OverviewPage";
@@ -73,10 +73,17 @@ import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
 
 
+import { PaymentProvider } from './contexts/paymentContext';
+import SubscriptionPayment from './components/payments/subscriptionPayment';
+import WalletTopup from './components/payments/walletTopup';
+import OrderPayment from './components/payments/orderPayment';
+import PaymentCallback from './components/payments/paymentCallback';
+
 function App() {
 
   return (
     <AuthProvider>
+      <PaymentProvider>
       <div className="App">
         <Routes>
 
@@ -115,7 +122,7 @@ function App() {
           <Route path="/cart" element={<ProductCart />} />
 
           <Route path="/subscription-Plan" element={<SubscriptionPlans />} />
-          <Route path="/payment/callback" element={<CallbackPage />} />
+          {/* <Route path="/payment/callback" element={<CallbackPage />} /> */}
 
 
           {/* 2nd User Panel */}
@@ -129,6 +136,14 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />
+
+
+              {/* New payment Testing */}
+            <Route path="payment/subscribe" element={<SubscriptionPayment />} />
+            <Route path="payment/topup" element={<WalletTopup />} />
+            <Route path="payment/order" element={<OrderPayment />} />
+            <Route path="payment/callback/:type" element={<PaymentCallback />} />
+
           </Route>
 
           {/* Admin Routes (can also be wrapped with ProtectedRoute if only admins allowed) */}
@@ -146,6 +161,7 @@ function App() {
           
         </Routes>
       </div>
+      </PaymentProvider>
     </AuthProvider>
   );
 }

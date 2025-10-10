@@ -29,7 +29,7 @@ const PaymentSuccess = () => {
             Go to Dashboard
           </Link>
           <button 
-            onClick={() => navigate('/subscription')}
+            onClick={() => navigate('/dashboard')}
             className="btn-secondary"
           >
             Buy Another Plan
