@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./SubscriptionPlan.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import SubscriptionPayButton from "./SubscriptionPayButton"; // Import the Paystack button component
+// import PaystackPop from "@paystack/inline-js";
 
 // Stable axios instance
 const axiosInstance = axios.create({
@@ -34,7 +34,6 @@ const SubscriptionPlans = () => {
   const [plansLoading, setPlansLoading] = useState(true);
   const [error, setError] = useState("");
   const [debugInfo, setDebugInfo] = useState(null);
-  const [paymentData, setPaymentData] = useState(null); // Store payment data for Paystack button
 
   // add interceptors once
   useEffect(() => {
@@ -197,6 +196,58 @@ const SubscriptionPlans = () => {
     }
   };
 
+
+  const initializePayment = async (planData) => {
+  if (!user || !token) {
+    alert("Please log in to subscribe");
+    navigate("/login");
+    return;
+  }
+
+  if (!planData.price || planData.price <= 0) {
+    alert("Please select a valid plan configuration");
+    return;
+  }
+
+  setIsProcessing(true);
+
+  try {
+    // Prepare request body for backend
+    const requestBody = {
+      plan: planData.planId,
+      size: planData.size,
+      frequency: planData.frequency,
+      subscriptionPeriod: planData.subscriptionPeriod,
+    };
+
+    // Send request to backend API
+    const response = await axiosInstance.post("/api/v1/subscriptions", requestBody, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const { success, authorization_url, reference } = response.data;
+
+    if (success && authorization_url) {
+      // Redirect user to Paystack payment page
+      window.location.href = authorization_url;
+    } else {
+      throw new Error("Failed to initialize payment.");
+    }
+  } catch (error) {
+    console.error("Payment initialization error:", error);
+    alert(
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      "Failed to initialize payment. Please try again."
+    );
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
   // Retry without reload
   const handleRetry = () => {
     setError("");
@@ -204,75 +255,16 @@ const SubscriptionPlans = () => {
     fetchSubscriptionPlans();
   };
 
-  // Confirm and show summary
+  // Confirm and initialize payment directly
   const confirmPlan = (planData) => {
-    if (!user || !token) {
-      alert("Please log in to subscribe");
-      navigate("/login");
-      return;
-    }
-
-    if (!planData.price || planData.price <= 0) {
-      alert("Please select a valid plan configuration");
-      return;
-    }
-
     setSelectedPlan(planData);
-    
-    // Prepare payment data for Paystack button
-    const paymentMetadata = {
-      planId: planData.planId,
-      frequency: planData.frequency,
-      size: planData.size,
-      subscriptionPeriod: planData.subscriptionPeriod,
-      userId: user._id,
-      planName: planData.name,
-      planType: planData.planType,
-      price: planData.price
-    };
-
-    setPaymentData({
-      email: user.email,
-      amount: planData.price,
-      metadata: paymentMetadata
-    });
-
     setShowSummary(true);
   };
 
-  // Handle payment success
-  const handlePaymentSuccess = async (response) => {
-    console.log("Payment successful:", response);
-    setIsProcessing(true);
-    
-    try {
-      // Call backend verify API
-      const verifyRes = await axiosInstance.get(`/api/v1/payments/verify/${response.reference}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      console.log("Verification result:", verifyRes.data);
-      
-      if (verifyRes.data.success) {
-        alert("Payment verified successfully! Your subscription is now active.");
-        setShowSummary(false);
-        // Optionally redirect to dashboard or success page
-        // navigate("/dashboard");
-      } else {
-        alert("Payment verification failed. Please contact support.");
-      }
-    } catch (err) {
-      console.error("Verification failed:", err.response?.data || err.message);
-      alert("Payment verification failed! Please contact support.");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Handle payment close
-  const handlePaymentClose = () => {
-    alert('Payment closed');
-    setIsProcessing(false);
+  // Handle final payment confirmation
+  const handlePaymentConfirmation = () => {
+    setShowSummary(false);
+    initializePayment(selectedPlan);
   };
 
   // Render plan features
@@ -489,7 +481,7 @@ const SubscriptionPlans = () => {
       </div>
 
       {/* Summary Modal */}
-      {showSummary && selectedPlan && paymentData && (
+      {showSummary && selectedPlan && (
         <div className="summary-modal">
           <div className="summary-card">
             <h2>Confirm Your Order</h2>
@@ -502,14 +494,12 @@ const SubscriptionPlans = () => {
             )}
             <p><strong>Total Price:</strong> ₦{Number(selectedPlan.price).toLocaleString()}</p>
             <div className="summary-actions">
-              <button onClick={() => setShowSummary(false)} disabled={isProcessing}>Cancel</button>
-              <SubscriptionPayButton
-                email={paymentData.email}
-                amount={paymentData.amount}
-                metadata={paymentData.metadata}
-                onSuccess={handlePaymentSuccess}
-                onClose={handlePaymentClose}
-              />
+              <button onClick={() => setShowSummary(false)} disabled={isProcessing}>
+                Cancel
+              </button>
+              <button onClick={handlePaymentConfirmation} disabled={isProcessing} className="confirm-payment-btn">
+                {isProcessing ? "Initializing Payment..." : "Proceed to Payment"}
+              </button>
             </div>
           </div>
         </div>
@@ -517,7 +507,7 @@ const SubscriptionPlans = () => {
 
       {isProcessing && (
         <div className="loading-overlay">
-          <div className="loading-spinner">Processing Payment...</div>
+          <div className="loading-spinner">Initializing Payment...</div>
         </div>
       )}
     </div>
