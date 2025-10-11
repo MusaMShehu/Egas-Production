@@ -7,14 +7,13 @@ const VerifySubscription = () => {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const reference = params.get("reference");
-  const trxref = params.get("trxref");
-
+  
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("Verifying your payment...");
   const [verificationData, setVerificationData] = useState(null);
 
-  // Use the reference from Paystack (either 'reference' or 'trxref' parameter)
-  const paymentReference = reference || trxref;
+  // Use only reference parameter (no trxref)
+  const paymentReference = reference;
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -39,8 +38,9 @@ const VerifySubscription = () => {
 
         const API_URL = process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com";
         
+        // FIXED: Added proper query parameter with ?reference=
         const { data } = await axios.get(
-          `${API_URL}/api/v1/subscriptions/verify/${paymentReference}`,
+          `${API_URL}/api/v1/subscriptions/verify?reference=${paymentReference}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
