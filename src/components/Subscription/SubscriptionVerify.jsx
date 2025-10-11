@@ -7,26 +7,21 @@ const VerifySubscription = () => {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const reference = params.get("reference");
-  
+
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("Verifying your payment...");
   const [verificationData, setVerificationData] = useState(null);
 
-  // Use only reference parameter (no trxref)
-  const paymentReference = reference;
-
   useEffect(() => {
     const verifyPayment = async () => {
-      if (!paymentReference) {
+      if (!reference) {
         setStatus("error");
         setMessage("Invalid payment reference.");
         return;
       }
 
       try {
-        // Get token from localStorage
         const token = localStorage.getItem("token");
-        
         if (!token) {
           setStatus("error");
           setMessage("Please log in to verify payment.");
@@ -34,17 +29,14 @@ const VerifySubscription = () => {
           return;
         }
 
-        console.log("Verifying payment with reference:", paymentReference);
+        console.log("Verifying payment with reference:", reference);
 
         const API_URL = process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com";
-        
-        // FIXED: Added proper query parameter with ?reference=
+
         const { data } = await axios.get(
-          `${API_URL}/api/v1/subscriptions/verify?reference=${paymentReference}`,
+          `${API_URL}/api/v1/subscriptions/verify?reference=${reference}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
@@ -54,11 +46,12 @@ const VerifySubscription = () => {
           setStatus("success");
           setVerificationData(data.data);
           setMessage("Payment verified successfully! Redirecting...");
-          
+
+          // ✅ Wait briefly, then redirect safely
           setTimeout(() => {
-            // Redirect to success page or dashboard
-            if (data.data.subscriptionId) {
-              navigate(`/subscriptions/success?subscriptionId=${data.data.subscriptionId}`);
+            const id = data.subscriptionId || data.data?._id;
+            if (id) {
+              navigate(`/subscriptions/success?subscriptionId=${id}`);
             } else {
               navigate("/dashboard?payment=success");
             }
@@ -72,14 +65,14 @@ const VerifySubscription = () => {
         setStatus("error");
         setMessage(
           error.response?.data?.message ||
-          error.message ||
-          "An error occurred while verifying your payment."
+            error.message ||
+            "An error occurred while verifying your payment."
         );
       }
     };
 
     verifyPayment();
-  }, [paymentReference, navigate]);
+  }, [reference, navigate]);
 
   return (
     <div
@@ -91,20 +84,27 @@ const VerifySubscription = () => {
         minHeight: "60vh",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
       <div style={{ maxWidth: "500px", margin: "0 auto" }}>
-        <h2 style={{ 
-          color: status === "success" ? "green" : status === "error" ? "red" : "#333",
-          marginBottom: "20px"
-        }}>
+        <h2
+          style={{
+            color:
+              status === "success"
+                ? "green"
+                : status === "error"
+                ? "red"
+                : "#333",
+            marginBottom: "20px",
+          }}
+        >
           {message}
         </h2>
 
         {status === "loading" && (
           <div style={{ marginTop: "20px" }}>
-            <div 
+            <div
               style={{
                 border: "4px solid #f3f3f3",
                 borderTop: "4px solid #3498db",
@@ -112,52 +112,79 @@ const VerifySubscription = () => {
                 width: "40px",
                 height: "40px",
                 animation: "spin 1s linear infinite",
-                margin: "0 auto"
+                margin: "0 auto",
               }}
             />
-            <p style={{ marginTop: "10px" }}>Please wait while we verify your payment...</p>
+            <p style={{ marginTop: "10px" }}>
+              Please wait while we verify your payment...
+            </p>
             <p style={{ fontSize: "14px", color: "#666", marginTop: "5px" }}>
-              Reference: {paymentReference}
+              Reference: {reference}
             </p>
           </div>
         )}
 
         {status === "success" && verificationData && (
-          <div style={{ 
-            background: "#f0fff0", 
-            padding: "20px", 
-            borderRadius: "8px",
-            marginTop: "20px",
-            textAlign: "left"
-          }}>
-            <h3 style={{ color: "green", marginBottom: "15px" }}>✅ Payment Verified Successfully!</h3>
+          <div
+            style={{
+              background: "#f0fff0",
+              padding: "20px",
+              borderRadius: "8px",
+              marginTop: "20px",
+              textAlign: "left",
+            }}
+          >
+            <h3 style={{ color: "green", marginBottom: "15px" }}>
+              ✅ Payment Verified Successfully!
+            </h3>
             <div style={{ lineHeight: "1.6" }}>
-              <p><strong>Reference:</strong> {verificationData.reference || paymentReference}</p>
-              <p><strong>Amount:</strong> ₦{(verificationData.amount / 100).toLocaleString()}</p>
-              {verificationData.planName && <p><strong>Plan:</strong> {verificationData.planName}</p>}
-              <p><strong>Status:</strong> <span style={{ color: "green" }}>{verificationData.status}</span></p>
-              {verificationData.subscriptionId && (
-                <p><strong>Subscription ID:</strong> {verificationData.subscriptionId}</p>
+              <p>
+                <strong>Reference:</strong>{" "}
+                {verificationData.reference || reference}
+              </p>
+              {verificationData.amount && (
+                <p>
+                  <strong>Amount:</strong> ₦
+                  {(verificationData.amount / 100).toLocaleString()}
+                </p>
+              )}
+              {verificationData.planName && (
+                <p>
+                  <strong>Plan:</strong> {verificationData.planName}
+                </p>
+              )}
+              <p>
+                <strong>Status:</strong>{" "}
+                <span style={{ color: "green" }}>
+                  {verificationData.status || "active"}
+                </span>
+              </p>
+              {verificationData._id && (
+                <p>
+                  <strong>Subscription ID:</strong> {verificationData._id}
+                </p>
               )}
             </div>
           </div>
         )}
 
         {status === "error" && (
-          <div style={{ 
-            background: "#fff0f0", 
-            padding: "20px", 
-            borderRadius: "8px",
-            marginTop: "20px"
-          }}>
-            <h3 style={{ color: "red", marginBottom: "15px" }}>❌ Payment Verification Failed</h3>
-            <p style={{ color: "red", marginBottom: "15px" }}>
-              {message}
-            </p>
+          <div
+            style={{
+              background: "#fff0f0",
+              padding: "20px",
+              borderRadius: "8px",
+              marginTop: "20px",
+            }}
+          >
+            <h3 style={{ color: "red", marginBottom: "15px" }}>
+              ❌ Payment Verification Failed
+            </h3>
+            <p style={{ color: "red", marginBottom: "15px" }}>{message}</p>
             <p style={{ fontSize: "14px", color: "#666", marginBottom: "15px" }}>
-              Reference: {paymentReference}
+              Reference: {reference}
             </p>
-            <button 
+            <button
               onClick={() => navigate("/dashboard")}
               style={{
                 padding: "10px 20px",
@@ -166,12 +193,12 @@ const VerifySubscription = () => {
                 border: "none",
                 borderRadius: "4px",
                 cursor: "pointer",
-                marginRight: "10px"
+                marginRight: "10px",
               }}
             >
               Go to Dashboard
             </button>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               style={{
                 padding: "10px 20px",
@@ -179,7 +206,7 @@ const VerifySubscription = () => {
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               Retry Verification
