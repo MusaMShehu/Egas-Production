@@ -12,13 +12,13 @@ const CartPage = () => {
   const [discount, setDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Checkout form state
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('Nigeria');
-  const [paymentMethod, setPaymentMethod] = useState('wallet');
 
   const navigate = useNavigate();
 
@@ -56,6 +56,7 @@ const CartPage = () => {
       shipping: shipping.toFixed(2),
       discount: discount.toFixed(2),
       total: total.toFixed(2),
+      rawTotal: total // For actual payment amount
     };
   };
 
@@ -116,26 +117,22 @@ const CartPage = () => {
     setShowCheckoutForm(true);
   };
 
-  // Checkout submit
-  const handleCheckoutSubmit = async (e) => {
-    e.preventDefault();
+  // Create order first
+  const createOrder = async () => {
     try {
-      if (cartItems.length === 0) {
-        alert('Your cart is empty!');
-        return;
-      }
-
-      // Build correct payload
       const orderPayload = {
         products: cartItems.map((item) => ({
           product: item.product._id,
           quantity: item.quantity,
         })),
-        deliveryAddress: { address, city, postalCode, country },
-        paymentMethod,
+        address: address,
+        city: city,
+        postalCode: postalCode,
+        country: country,
+        deliveryOption: "standard"
       };
 
-      const res = await fetch('http://localhost:5000/api/v1/orders', {
+      const res = await fetch('https://egas-server-1.onrender.com/api/v1/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,57 +141,120 @@ const CartPage = () => {
         body: JSON.stringify(orderPayload),
       });
 
-      if (!res.ok) throw new Error('Failed to create order');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to create order');
+      }
+
       const data = await res.json();
-      const orderId = data.data._id;
-
-      const totalAmount = cartItems.reduce(
-        (total, item) => total + item.product.price * item.quantity,
-        0
-      );
-
-      // Wallet payment
-      if (paymentMethod === 'wallet') {
-        const result = await payWithWallet(orderId, totalAmount);
-        alert('Wallet payment successful!');
-        navigate(`/orders/${result.order._id}`);
-      }
-
-      // Paystack payment
-      if (paymentMethod === 'paystack') {
-        const PaystackPop = (await import('@paystack/inline-js')).default;
-        const paystack = new PaystackPop();
-
-        paystack.newTransaction({
-          key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
-          email: localStorage.getItem('userEmail'),
-          amount: totalAmount * 100,
-          onSuccess: async (transaction) => {
-            alert(`Payment Successful! Ref: ${transaction.reference}`);
-
-            await fetch(
-              `http://localhost:5000/api/v1/orders/${orderId}/pay`,
-              {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({ transactionId: transaction.reference }),
-              }
-            );
-
-            navigate(`/orders/${orderId}`);
-          },
-          onCancel: () => {
-            alert('Payment cancelled');
-          },
-        });
-      }
+      return data.data; // Return the created order
     } catch (err) {
-      console.error('Checkout failed:', err);
-      alert(err.message || 'Checkout failed. Please try again.');
+      console.error('Order creation failed:', err);
+      throw err;
     }
+  };
+
+  // Pay with Wallet
+  const handleWalletPayment = async () => {
+    if (!validateAddress()) return;
+
+    setIsProcessingPayment(true);
+    try {
+      // First create the order
+      const order = await createOrder();
+      
+      // Then pay with wallet using the specific endpoint
+      const res = await fetch(`https://egas-server-1.onrender.com/api/v1/orders/${order._id}/pay/wallet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Wallet payment failed');
+      }
+
+      const result = await res.json();
+      alert('Wallet payment successful!');
+      setShowCheckoutForm(false);
+      navigate(`/orders/${order._id}`);
+      
+    } catch (err) {
+      console.error('Wallet payment failed:', err);
+      alert(err.message || 'Wallet payment failed. Please try again.');
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
+  // Pay with Paystack
+  const handlePaystackPayment = async () => {
+    if (!validateAddress()) return;
+
+    setIsProcessingPayment(true);
+    try {
+      // Create order with paystack payment method
+      const orderPayload = {
+        products: cartItems.map((item) => ({
+          product: item.product._id,
+          quantity: item.quantity,
+        })),
+        address: address,
+        city: city,
+        postalCode: postalCode,
+        country: country,
+        deliveryOption: "standard",
+        paymentMethod: "paystack"
+      };
+
+      const res = await fetch('https://egas-server-1.onrender.com/api/v1/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to create order');
+      }
+
+      const data = await res.json();
+      
+      // Redirect to Paystack payment page
+      if (data.authorization_url) {
+        window.location.href = data.authorization_url;
+      } else {
+        throw new Error('Payment initialization failed');
+      }
+      
+    } catch (err) {
+      console.error('Paystack payment failed:', err);
+      alert(err.message || 'Paystack payment failed. Please try again.');
+      setIsProcessingPayment(false);
+    }
+  };
+
+  // Validate address fields
+  const validateAddress = () => {
+    if (!address.trim()) {
+      alert('Please enter your address');
+      return false;
+    }
+    if (!city.trim()) {
+      alert('Please enter your city');
+      return false;
+    }
+    if (!postalCode.trim()) {
+      alert('Please enter your postal code');
+      return false;
+    }
+    return true;
   };
 
   if (loading) {
@@ -326,32 +386,35 @@ const CartPage = () => {
         <div className="checkout-modal">
           <div className="checkout-form-container">
             <h2>Checkout</h2>
-            <form onSubmit={handleCheckoutSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
               <div className="form-group">
-                <label>Address</label>
+                <label>Address *</label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
+                  placeholder="Enter your full address"
                 />
               </div>
               <div className="form-group">
-                <label>City</label>
+                <label>City *</label>
                 <input
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
+                  placeholder="Enter your city"
                 />
               </div>
               <div className="form-group">
-                <label>Postal Code</label>
+                <label>Postal Code *</label>
                 <input
                   type="text"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
                   required
+                  placeholder="Enter postal code"
                 />
               </div>
               <div className="form-group">
@@ -363,24 +426,35 @@ const CartPage = () => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label>Payment Method</label>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="wallet">Pay from Wallet</option>
-                  <option value="paystack">Pay directly via Paystack</option>
-                </select>
+              
+              <div className="payment-buttons-container">
+                <h3>Choose Payment Method</h3>
+                <div className="payment-buttons">
+                  <button 
+                    type="button"
+                    className="payment-btn wallet-btn"
+                    onClick={handleWalletPayment}
+                    disabled={isProcessingPayment}
+                  >
+                    {isProcessingPayment ? 'Processing...' : 'Pay with Wallet Balance'}
+                  </button>
+                  <button 
+                    type="button"
+                    className="payment-btn paystack-btn"
+                    onClick={handlePaystackPayment}
+                    disabled={isProcessingPayment}
+                  >
+                    {isProcessingPayment ? 'Processing...' : 'Pay with Paystack'}
+                  </button>
+                </div>
               </div>
+
               <div className="checkout-actions">
-                <button type="submit" className="confirm-btn">
-                  Confirm Order
-                </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowCheckoutForm(false)}
+                  disabled={isProcessingPayment}
                 >
                   Cancel
                 </button>

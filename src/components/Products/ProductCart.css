@@ -403,6 +403,75 @@
   margin-bottom: 20px;
 }
 
+
+
+
+/* Payment Buttons Styles */
+.payment-buttons-container {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.payment-buttons-container h3 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+}
+
+.payment-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-btn {
+  padding: 15px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.payment-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wallet-btn {
+  background: #28a745;
+  color: white;
+}
+
+.wallet-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.paystack-btn {
+  background: #0055ff;
+  color: white;
+}
+
+.paystack-btn:hover:not(:disabled) {
+  background: #0044cc;
+}
+
+/* Checkout form adjustments */
+.checkout-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+
+
+
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

@@ -34,6 +34,7 @@ import "./App.css";
 
 import OrderSummary from "./components/User/UserOrders/OrderSummary";
 import ProductCart from "./components/Products/ProductCart";
+import VerifyOrder from "./components/Products/verifyOrder";
 
 
 import SubscriptionVerify from './components/Subscription/SubscriptionVerify';
@@ -121,6 +122,7 @@ function App() {
           </Route>
 
           <Route path="/cart" element={<ProductCart />} />
+          <Route path="/orders/verify" element={<VerifyOrder />} />
 
           <Route path="/subscription-Plan" element={<SubscriptionPlans />} />
           <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
