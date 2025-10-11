@@ -51,11 +51,12 @@ const VerifySubscription = () => {
           setTimeout(() => {
             const id = data.subscriptionId || data.data?._id;
             if (id) {
-              navigate(`/subscriptions/success?subscriptionId=${id}`);
-            } else {
-              navigate("/dashboard?payment=success");
+              navigate('/dashboard/subscriptions');
             }
-          }, 2000);
+            //  else {
+            //   navigate("/dashboard?payment=success");
+            // }
+          }, 5000);
         } else {
           setStatus("error");
           setMessage(data?.message || "Payment verification failed.");
