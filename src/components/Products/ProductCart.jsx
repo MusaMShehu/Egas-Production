@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import cartAPI from '../../api/cartApi';
-import { payWithWallet } from '../../api/walletPaymentApi';
 import { useNavigate } from 'react-router-dom';
 import './ProductCart.css';
 
@@ -13,6 +12,7 @@ const CartPage = () => {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   // Checkout form state
   const [address, setAddress] = useState('');
@@ -115,88 +115,15 @@ const CartPage = () => {
       return;
     }
     setShowCheckoutForm(true);
+    setSelectedPaymentMethod(null); // Reset payment method when opening form
   };
 
-  // Create order first
-  const createOrder = async () => {
-    try {
-      const orderPayload = {
-        products: cartItems.map((item) => ({
-          product: item.product._id,
-          quantity: item.quantity,
-        })),
-        address: address,
-        city: city,
-        postalCode: postalCode,
-        country: country,
-        deliveryOption: "standard"
-      };
-
-      const res = await fetch('https://egas-server-1.onrender.com/api/v1/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(orderPayload),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to create order');
-      }
-
-      const data = await res.json();
-      return data.data; // Return the created order
-    } catch (err) {
-      console.error('Order creation failed:', err);
-      throw err;
-    }
-  };
-
-  // Pay with Wallet
-  const handleWalletPayment = async () => {
+  // Create order with selected payment method
+  const createOrder = async (paymentMethod) => {
     if (!validateAddress()) return;
 
     setIsProcessingPayment(true);
     try {
-      // First create the order
-      const order = await createOrder();
-      
-      // Then pay with wallet using the specific endpoint
-      const res = await fetch(`https://egas-server-1.onrender.com/api/v1/orders/${order._id}/pay/wallet`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Wallet payment failed');
-      }
-
-      const result = await res.json();
-      alert('Wallet payment successful!');
-      setShowCheckoutForm(false);
-      navigate(`/orders/${order._id}`);
-      
-    } catch (err) {
-      console.error('Wallet payment failed:', err);
-      alert(err.message || 'Wallet payment failed. Please try again.');
-    } finally {
-      setIsProcessingPayment(false);
-    }
-  };
-
-  // Pay with Paystack
-  const handlePaystackPayment = async () => {
-    if (!validateAddress()) return;
-
-    setIsProcessingPayment(true);
-    try {
-      // Create order with paystack payment method
       const orderPayload = {
         products: cartItems.map((item) => ({
           product: item.product._id,
@@ -207,7 +134,7 @@ const CartPage = () => {
         postalCode: postalCode,
         country: country,
         deliveryOption: "standard",
-        paymentMethod: "paystack"
+        paymentMethod: paymentMethod // Set payment method based on button clicked
       };
 
       const res = await fetch('https://egas-server-1.onrender.com/api/v1/orders', {
@@ -225,18 +152,85 @@ const CartPage = () => {
       }
 
       const data = await res.json();
+      return data;
       
-      // Redirect to Paystack payment page
-      if (data.authorization_url) {
-        window.location.href = data.authorization_url;
-      } else {
-        throw new Error('Payment initialization failed');
+    } catch (err) {
+      console.error('Order creation failed:', err);
+      throw err;
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
+  // Handle Wallet Payment
+  // Handle Wallet Payment
+const handleWalletPayment = async () => {
+  setSelectedPaymentMethod('wallet');
+  try {
+    const result = await createOrder('wallet');
+    
+    if (result.success) {
+      alert('Order placed successfully with wallet payment!');
+      setShowCheckoutForm(false);
+      
+      // Show order details before redirecting
+      const orderDetails = result.data;
+      const orderSummary = `
+Order Placed Successfully!
+
+Order ID: ${orderDetails._id}
+Total Amount: ₦${orderDetails.totalAmount?.toFixed(2) || totals.total}
+Payment Method: Wallet Balance
+Status: ${orderDetails.orderStatus || 'confirmed'}
+
+You will be redirected to your order details in 4 seconds...
+      `;
+      
+      alert(orderSummary);
+      
+      // Clear cart after successful order
+      await clearCart();
+      
+      // Wait 4 seconds before redirecting to show the order details
+      setTimeout(() => {
+        navigate('/dashboard/orders');
+      }, 4000);
+    }
+    
+  } catch (err) {
+    console.error('Wallet payment failed:', err);
+    alert(err.message || 'Wallet payment failed. Please try again.');
+  }
+};
+
+  // Handle Paystack Payment
+  const handlePaystackPayment = async () => {
+    setSelectedPaymentMethod('paystack');
+    try {
+      const result = await createOrder('paystack');
+      
+      if (result.success) {
+        // Redirect to Paystack payment page
+        if (result.authorization_url) {
+          window.location.href = result.authorization_url;
+        } else {
+          throw new Error('Payment initialization failed');
+        }
       }
       
     } catch (err) {
       console.error('Paystack payment failed:', err);
       alert(err.message || 'Paystack payment failed. Please try again.');
-      setIsProcessingPayment(false);
+    }
+  };
+
+  // Clear cart after successful order
+  const clearCart = async () => {
+    try {
+      await cartAPI.clearCart();
+      setCartItems([]);
+    } catch (err) {
+      console.error('Failed to clear cart:', err);
     }
   };
 
@@ -386,6 +380,10 @@ const CartPage = () => {
         <div className="checkout-modal">
           <div className="checkout-form-container">
             <h2>Checkout</h2>
+            <div className="checkout-info">
+              <p><strong>Total Amount:</strong> ₦{totals.total}</p>
+              <p><strong>Items:</strong> {cartItems.length} product(s)</p>
+            </div>
             <form onSubmit={(e) => e.preventDefault()}>
               <div className="form-group">
                 <label>Address *</label>
@@ -432,28 +430,36 @@ const CartPage = () => {
                 <div className="payment-buttons">
                   <button 
                     type="button"
-                    className="payment-btn wallet-btn"
+                    className={`payment-btn wallet-btn ${selectedPaymentMethod === 'wallet' ? 'selected' : ''}`}
                     onClick={handleWalletPayment}
                     disabled={isProcessingPayment}
                   >
-                    {isProcessingPayment ? 'Processing...' : 'Pay with Wallet Balance'}
+                    {isProcessingPayment && selectedPaymentMethod === 'wallet' ? 'Processing...' : 'Pay with Wallet Balance'}
                   </button>
                   <button 
                     type="button"
-                    className="payment-btn paystack-btn"
+                    className={`payment-btn paystack-btn ${selectedPaymentMethod === 'paystack' ? 'selected' : ''}`}
                     onClick={handlePaystackPayment}
                     disabled={isProcessingPayment}
                   >
-                    {isProcessingPayment ? 'Processing...' : 'Pay with Paystack'}
+                    {isProcessingPayment && selectedPaymentMethod === 'paystack' ? 'Processing...' : 'Pay with Paystack'}
                   </button>
                 </div>
+                {selectedPaymentMethod && (
+                  <p className="payment-selected-message">
+                    Selected: <strong>{selectedPaymentMethod === 'wallet' ? 'Wallet Balance' : 'Paystack'}</strong>
+                  </p>
+                )}
               </div>
 
               <div className="checkout-actions">
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setShowCheckoutForm(false)}
+                  onClick={() => {
+                    setShowCheckoutForm(false);
+                    setSelectedPaymentMethod(null);
+                  }}
                   disabled={isProcessingPayment}
                 >
                   Cancel

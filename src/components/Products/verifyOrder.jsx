@@ -51,11 +51,9 @@ const VerifyOrder = () => {
           setTimeout(() => {
             const id = data.orderId || data.data?._id;
             if (id) {
-              navigate(`/orders/${id}`);
-            } else {
-              navigate('/orders');
-            }
-          }, 5000);
+              navigate('/dashboard/orders');
+            } 
+          }, 4000);
         } else {
           setStatus("error");
           setMessage(data?.message || "Payment verification failed.");
