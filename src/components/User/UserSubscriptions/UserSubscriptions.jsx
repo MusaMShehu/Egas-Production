@@ -2,12 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
-import { FaPlus, FaSearch, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaTimes, FaEllipsisV } from 'react-icons/fa';
+import { pauseSubscription } from '../../../services/subscriptionService';
 
 const Subscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState(null);
   const navigate = useNavigate();
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com';
@@ -38,7 +42,6 @@ const Subscriptions = () => {
           throw new Error(result.message || `HTTP error! status: ${response.status}`);
         }
 
-        // ✅ backend sends result.data
         setSubscriptions(result.data || []);
         setIsLoading(false);
       } catch (error) {
@@ -55,8 +58,62 @@ const Subscriptions = () => {
     navigate('/subscription-plans');
   };
 
+  const toggleDropdown = (subscriptionId) => {
+    setActiveDropdown(activeDropdown === subscriptionId ? null : subscriptionId);
+  };
+
+  const closeDropdown = () => {
+    setActiveDropdown(null);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setActiveDropdown(null);
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleViewDetails = (subscription) => {
+    setSelectedSubscription(subscription);
+    setShowDetailsModal(true);
+    closeDropdown();
+  };
+
+  const handlePausePlan = async (subscriptionId) => {
+    if (!window.confirm('Are you sure you want to pause this subscription?')) {
+      closeDropdown();
+      return;
+    }
+
+    try {
+      const result = await pauseSubscription(subscriptionId);
+      
+      if (result.success) {
+        // Update UI immediately
+        setSubscriptions(prev =>
+          prev.map(sub =>
+            sub._id === subscriptionId ? { ...sub, status: 'paused', pausedAt: new Date() } : sub
+          )
+        );
+        alert('Subscription paused successfully');
+      } else {
+        throw new Error(result.message || 'Failed to pause subscription');
+      }
+    } catch (error) {
+      console.error('Error pausing subscription:', error);
+      setError(error.message || 'Failed to pause subscription. Please try again.');
+    } finally {
+      closeDropdown();
+    }
+  };
+
   const cancelSubscription = async (subscriptionId) => {
-    if (!window.confirm('Are you sure you want to cancel this subscription?')) return;
+    if (!window.confirm('Are you sure you want to cancel this subscription?')) {
+      closeDropdown();
+      return;
+    }
 
     try {
       const token = localStorage.getItem('token');
@@ -72,15 +129,16 @@ const Subscriptions = () => {
         throw new Error(`Failed to cancel subscription: ${response.status}`);
       }
 
-      // ✅ Update UI immediately
       setSubscriptions(prev =>
         prev.map(sub =>
           sub._id === subscriptionId ? { ...sub, status: 'cancelled', cancelledAt: new Date() } : sub
         )
       );
+      closeDropdown();
     } catch (error) {
       console.error('Error cancelling subscription:', error);
       setError('Failed to cancel subscription. Please try again.');
+      closeDropdown();
     }
   };
 
@@ -104,6 +162,7 @@ const Subscriptions = () => {
       case 'cancelled': return 'status-cancelled';
       case 'expired': return 'status-expired';
       case 'pending': return 'status-pending';
+      case 'paused': return 'status-paused';
       default: return '';
     }
   };
@@ -114,7 +173,7 @@ const Subscriptions = () => {
       case 'Weekly': return '/week';
       case 'Bi-Weekly': return '/2 weeks';
       case 'One-Time': return 'one-time';
-      default: return '';
+      default: return frequency || 'N/A';
     }
   };
 
@@ -123,7 +182,7 @@ const Subscriptions = () => {
     ['active', 'pending'].includes(sub.status)
   );
   const inactiveSubscriptions = subscriptions.filter(sub =>
-    ['cancelled', 'expired'].includes(sub.status)
+    ['cancelled', 'expired', 'paused'].includes(sub.status)
   );
 
   if (isLoading) {
@@ -166,25 +225,59 @@ const Subscriptions = () => {
               {activeSubscriptions.map(subscription => (
                 <div key={subscription._id} className="sub-subscription-card">
                   <div className="sub-subscription-header">
-                    <div className="sub-subscription-id">#{subscription._id}</div>
-                    <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
-                      {subscription.status}
+                    <div className="sub-subscription-id">#{subscription._id?.slice(-8)}</div>
+                    <div className="sub-subscription-header-right">
+                      <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
+                        {subscription.status}
+                      </div>
+                      <div className="sub-dropdown-container">
+                        <button 
+                          className="sub-dropdown-toggle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown(subscription._id);
+                          }}
+                        >
+                          <FaEllipsisV />
+                        </button>
+                        {activeDropdown === subscription._id && (
+                          <div className="sub-dropdown-menu">
+                            <button 
+                              className="sub-dropdown-item"
+                              onClick={() => handleViewDetails(subscription)}
+                            >
+                              View Subscription Details
+                            </button>
+                            <button 
+                              className="sub-dropdown-item"
+                              onClick={() => handlePausePlan(subscription._id)}
+                            >
+                              Pause Plan
+                            </button>
+                            <button 
+                              className="sub-dropdown-item sub-dropdown-item-danger"
+                              onClick={() => cancelSubscription(subscription._id)}
+                            >
+                              Cancel Subscription
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="sub-subscription-details">
                     <div className="sub-detail-row">
-                      <span className="sub-detail-label">Plan:</span>
-                      <span className="sub-detail-value">{subscription.planName}</span>
+                      <span className="sub-detail-label">Plan Name:</span>
+                      <span className="sub-detail-value">{subscription.planName || 'N/A'}</span>
                     </div>
                     <div className="sub-detail-row">
                       <span className="sub-detail-label">Cylinder Size:</span>
                       <span className="sub-detail-value">{subscription.size || 'N/A'}</span>
                     </div>
                     <div className="sub-detail-row">
-                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-label">Delivery Frequency:</span>
                       <span className="sub-detail-value">
-                        {formatCurrency(subscription.price)}
-                        {subscription.frequency !== 'One-Time' && getFrequencyText(subscription.frequency)}
+                        {subscription.frequency ? getFrequencyText(subscription.frequency) : 'N/A'}
                       </span>
                     </div>
                     <div className="sub-detail-row">
@@ -195,15 +288,6 @@ const Subscriptions = () => {
                       <span className="sub-detail-label">End Date:</span>
                       <span className="sub-detail-value">{formatDate(subscription.endDate)}</span>
                     </div>
-                  </div>
-                  <div className="sub-subscription-actions">
-                    <button className="sub-btn-primary">Manage</button>
-                    <button 
-                      className="sub-btn-warning" 
-                      onClick={() => cancelSubscription(subscription._id)}
-                    >
-                      Cancel
-                    </button>
                   </div>
                 </div>
               ))}
@@ -222,25 +306,57 @@ const Subscriptions = () => {
               {inactiveSubscriptions.map(subscription => (
                 <div key={subscription._id} className="sub-subscription-card">
                   <div className="sub-subscription-header">
-                    <div className="sub-subscription-id">#{subscription._id}</div>
-                    <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
-                      {subscription.status}
+                    <div className="sub-subscription-id">#{subscription._id?.slice(-8)}</div>
+                    <div className="sub-subscription-header-right">
+                      <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
+                        {subscription.status}
+                      </div>
+                      <div className="sub-dropdown-container">
+                        <button 
+                          className="sub-dropdown-toggle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown(subscription._id);
+                          }}
+                        >
+                          <FaEllipsisV />
+                        </button>
+                        {activeDropdown === subscription._id && (
+                          <div className="sub-dropdown-menu">
+                            <button 
+                              className="sub-dropdown-item"
+                              onClick={() => handleViewDetails(subscription)}
+                            >
+                              View Details
+                            </button>
+                            {subscription.status === 'expired' && (
+                              <button className="sub-dropdown-item">
+                                Subscribe Again
+                              </button>
+                            )}
+                            {subscription.status === 'paused' && (
+                              <button className="sub-dropdown-item">
+                                Resume Plan
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="sub-subscription-details">
                     <div className="sub-detail-row">
-                      <span className="sub-detail-label">Plan:</span>
-                      <span className="sub-detail-value">{subscription.planName}</span>
+                      <span className="sub-detail-label">Plan Name:</span>
+                      <span className="sub-detail-value">{subscription.planName || 'N/A'}</span>
                     </div>
                     <div className="sub-detail-row">
                       <span className="sub-detail-label">Cylinder Size:</span>
                       <span className="sub-detail-value">{subscription.size || 'N/A'}</span>
                     </div>
                     <div className="sub-detail-row">
-                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-label">Delivery Frequency:</span>
                       <span className="sub-detail-value">
-                        {formatCurrency(subscription.price)}
-                        {subscription.frequency !== 'One-Time' && getFrequencyText(subscription.frequency)}
+                        {subscription.frequency ? getFrequencyText(subscription.frequency) : 'N/A'}
                       </span>
                     </div>
                     <div className="sub-detail-row">
@@ -251,12 +367,6 @@ const Subscriptions = () => {
                       <span className="sub-detail-label">End Date:</span>
                       <span className="sub-detail-value">{formatDate(subscription.endDate)}</span>
                     </div>
-                  </div>
-                  <div className="sub-subscription-actions">
-                    <button className="sub-btn-secondary">View Details</button>
-                    {subscription.status === 'expired' && (
-                      <button className="sub-btn-primary">Subscribe Again</button>
-                    )}
                   </div>
                 </div>
               ))}
@@ -274,6 +384,103 @@ const Subscriptions = () => {
           </div>
         )}
       </div>
+
+      {/* Subscription Details Modal */}
+      {showDetailsModal && selectedSubscription && (
+        <div className="sub-modal-overlay">
+          <div className="sub-modal">
+            <div className="sub-modal-header">
+              <h3>Subscription Details</h3>
+              <button 
+                className="sub-modal-close"
+                onClick={() => setShowDetailsModal(false)}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="sub-modal-content">
+              <div className="sub-detail-section">
+                <h4>Subscription Information</h4>
+                <div className="sub-detail-grid">
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Subscription ID:</span>
+                    <span className="sub-detail-value">#{selectedSubscription._id}</span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Status:</span>
+                    <span className={`sub-detail-value ${getStatusClass(selectedSubscription.status)}`}>
+                      {selectedSubscription.status}
+                    </span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Plan Name:</span>
+                    <span className="sub-detail-value">{selectedSubscription.planName || 'N/A'}</span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Cylinder Size:</span>
+                    <span className="sub-detail-value">{selectedSubscription.size || 'N/A'}</span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Delivery Frequency:</span>
+                    <span className="sub-detail-value">
+                      {selectedSubscription.frequency ? getFrequencyText(selectedSubscription.frequency) : 'N/A'}
+                    </span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Price:</span>
+                    <span className="sub-detail-value">
+                      {formatCurrency(selectedSubscription.price)}
+                      {selectedSubscription.frequency && selectedSubscription.frequency !== 'One-Time' && 
+                        getFrequencyText(selectedSubscription.frequency)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="sub-detail-section">
+                <h4>Dates</h4>
+                <div className="sub-detail-grid">
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Start Date:</span>
+                    <span className="sub-detail-value">{formatDate(selectedSubscription.startDate)}</span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">End Date:</span>
+                    <span className="sub-detail-value">{formatDate(selectedSubscription.endDate)}</span>
+                  </div>
+                  {selectedSubscription.cancelledAt && (
+                    <div className="sub-detail-item">
+                      <span className="sub-detail-label">Cancelled At:</span>
+                      <span className="sub-detail-value">{formatDate(selectedSubscription.cancelledAt)}</span>
+                    </div>
+                  )}
+                  {selectedSubscription.pausedAt && (
+                    <div className="sub-detail-item">
+                      <span className="sub-detail-label">Paused At:</span>
+                      <span className="sub-detail-value">{formatDate(selectedSubscription.pausedAt)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {selectedSubscription.description && (
+                <div className="sub-detail-section">
+                  <h4>Description</h4>
+                  <p>{selectedSubscription.description}</p>
+                </div>
+              )}
+            </div>
+            <div className="sub-modal-actions">
+              <button 
+                className="sub-btn-secondary"
+                onClick={() => setShowDetailsModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

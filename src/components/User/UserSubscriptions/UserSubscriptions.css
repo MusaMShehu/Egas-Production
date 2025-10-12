@@ -84,7 +84,7 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   font-weight: 600;
   transition: all 0.3s ease;
   width: 100%;
@@ -92,7 +92,7 @@
 }
 
 .sub-btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #007bff, #508bca);
   color: #fff;
 }
 
@@ -172,13 +172,14 @@
 /* CARD HEADER */
 .sub-subscription-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
 
 .sub-subscription-id {
+  display: none;
   font-weight: 700;
   color: #007bff;
   font-size: 1rem;
@@ -226,15 +227,15 @@
 }
 
 .sub-detail-label {
-  color: #374151;
+  color: #363d48;
   font-weight: 600;
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 .sub-detail-value {
-  color: #0864e6;
+  color: #1d5572;
   font-weight: 500;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   text-align: right;
 }
 
@@ -276,6 +277,185 @@
   color: #6b7280;
   font-size: 1rem;
 }
+
+
+/* ======================
+   NEW STYLE 
+====================== */
+/* Dropdown Styles */
+.sub-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.sub-dropdown-toggle {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #666;
+  transition: background-color 0.2s;
+}
+
+.sub-dropdown-toggle:hover {
+  background-color: #f5f5f5;
+}
+
+.sub-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.sub-dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sub-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.sub-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.sub-dropdown-item-danger {
+  color: #dc3545;
+}
+
+.sub-dropdown-item-danger:hover {
+  background-color: #fff5f5;
+}
+
+.sub-subscription-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Modal Styles */
+.sub-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: 20px;
+}
+
+.sub-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.sub-modal-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.sub-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sub-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.sub-modal-close:hover {
+  background-color: #f5f5f5;
+}
+
+.sub-modal-content {
+  padding: 24px;
+}
+
+.sub-detail-section {
+  margin-bottom: 24px;
+}
+
+.sub-detail-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sub-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sub-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sub-modal-actions {
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Status Styles */
+.status-paused {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sub-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sub-modal {
+    margin: 20px;
+    max-height: calc(100vh - 40px);
+  }
+}
+
+
+
 
 /* ======================
    RESPONSIVE STYLES

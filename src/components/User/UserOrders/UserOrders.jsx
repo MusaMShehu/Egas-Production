@@ -139,15 +139,13 @@ const Orders = () => {
       day: 'numeric'
     });
 
-  // const formatCurrency = (amount) => `₦${amount.toLocaleString()}`;
   const formatCurrency = (value) => {
-  if (typeof value !== "number") return "₦0.00";
-  return value.toLocaleString("en-NG", {
-    style: "currency",
-    currency: "NGN"
-  });
-};
-
+    if (typeof value !== "number") return "₦0.00";
+    return value.toLocaleString("en-NG", {
+      style: "currency",
+      currency: "NGN"
+    });
+  };
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -160,6 +158,37 @@ const Orders = () => {
     }
   };
 
+  const getPaymentStatusClass = (status) => {
+    switch (status) {
+      case 'paid': return 'payment-status-paid';
+      case 'pending': return 'payment-status-pending';
+      case 'failed': return 'payment-status-failed';
+      case 'refunded': return 'payment-status-refunded';
+      default: return 'payment-status-pending';
+    }
+  };
+
+  const getDeliveryOptionText = (option) => {
+    switch (option) {
+      case 'standard': return 'Standard Delivery';
+      case 'express': return 'Express Delivery';
+      case 'same-day': return 'Same Day Delivery';
+      default: return option || 'Standard Delivery';
+    }
+  };
+
+  // Helper function to get product names
+  const getProductNames = (products) => {
+    if (!products || products.length === 0) return 'No products';
+    return products.map(product => product.name).join(', ');
+  };
+
+  // Helper function to get total quantity
+  const getTotalQuantity = (products) => {
+    if (!products || products.length === 0) return 0;
+    return products.reduce((total, product) => total + (product.quantity || 1), 0);
+  };
+
   const activeOrders = orders.filter(order =>
     ['processing', 'shipped', 'in-transit'].includes(order.orderStatus)
   );
@@ -168,8 +197,7 @@ const Orders = () => {
     ['delivered', 'cancelled'].includes(order.orderStatus)
   );
 
-  if (isLoading) return <div className="userorder-page-oading"> <FaSpinner className="loading-icon" /> Loading orders...</div>;
-  
+  if (isLoading) return <div className="userorder-page-loading"> <FaSpinner className="loading-icon" /> Loading orders...</div>;
 
   return (
     <div className="userorder-orders-page">
@@ -203,39 +231,66 @@ const Orders = () => {
               <h2>Active Orders</h2>
               <span className="userorder-count-badge">{activeOrders.length}</span>
             </div>
-            <div className="userorder-orders-list">
+            <div className="userorder-orders-grid">
+              {/* Table Header */}
+              <div className="userorder-grid-header">
+                <div className="userorder-grid-cell">Product Name</div>
+                <div className="userorder-grid-cell">Quantity</div>
+                <div className="userorder-grid-cell">Delivery Option</div>
+                <div className="userorder-grid-cell">Payment Status</div>
+                <div className="userorder-grid-cell">Order Status</div>
+                <div className="userorder-grid-cell">Total Amount</div>
+                <div className="userorder-grid-cell">Actions</div>
+              </div>
+
+              {/* Table Rows */}
               {activeOrders.map((order) => (
-                <div key={order._id} className="userorder-order-card">
-                  <div className="userorder-order-header">
-                    <div className="userorder-order-id">Order #{order.orderId}</div>
-                    <div className={`userorder-order-status ${getStatusClass(order.orderStatus)}`}>
+                <div key={order._id} className="userorder-grid-row">
+                  <div className="userorder-grid-cell">
+                    <div className="userorder-product-names">
+                      {getProductNames(order.products)}
+                    </div>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-quantity-badge">
+                      {getTotalQuantity(order.products)}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-delivery-option">
+                      {getDeliveryOptionText(order.deliveryOption)}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className={`userorder-payment-status ${getPaymentStatusClass(order.paymentStatus)}`}>
+                      {order.paymentStatus || 'pending'}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className={`userorder-order-status ${getStatusClass(order.orderStatus)}`}>
                       {order.orderStatus}
-                    </div>
+                    </span>
                   </div>
-                  <div className="userorder-order-details">
-                    <div className="userorder-order-date">Placed on: {formatDate(order.createdAt)}</div>
-                    <div className="userorder-order-products">
-                      {order.products.map((product, idx) => (
-                        <div key={idx} className="userorder-product-item">
-                          {product.quantity} x {product.name}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="userorder-order-total">Total: {formatCurrency(order.totalAmount)}</div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-total-amount">
+                      {formatCurrency(order.totalAmount)}
+                    </span>
                   </div>
-                  <div className="userorder-order-actions">
-                    <button className="userorder-btn-primary" onClick={() => viewOrderDetails(order)}>
-                      View Details
-                    </button>
-                    <button className="userorder-btn-secondary">
-                      Track Order
-                    </button>
-                    <button 
-                      className="userorder-btn-warning" 
-                      onClick={() => cancelOrder(order._id)}
-                    >
-                      Cancel Order
-                    </button>
+                  <div className="userorder-grid-cell">
+                    <div className="userorder-grid-actions">
+                      <button 
+                        className="userorder-btn-primary userorder-btn-sm"
+                        onClick={() => viewOrderDetails(order)}
+                      >
+                        View Details
+                      </button>
+                      <button 
+                        className="userorder-btn-warning userorder-btn-sm"
+                        onClick={() => cancelOrder(order._id)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -250,35 +305,65 @@ const Orders = () => {
               <h2>Order History</h2>
               <span className="userorder-count-badge">{previousOrders.length}</span>
             </div>
-            <div className="userorder-orders-list">
+            <div className="userorder-orders-grid">
+              {/* Table Header */}
+              <div className="userorder-grid-header">
+                <div className="userorder-grid-cell">Product Name</div>
+                <div className="userorder-grid-cell">Quantity</div>
+                <div className="userorder-grid-cell">Delivery Option</div>
+                <div className="userorder-grid-cell">Payment Status</div>
+                <div className="userorder-grid-cell">Order Status</div>
+                <div className="userorder-grid-cell">Total Amount</div>
+                <div className="userorder-grid-cell">Actions</div>
+              </div>
+
+              {/* Table Rows */}
               {previousOrders.map((order) => (
-                <div key={order._id} className="userorder-order-card">
-                  <div className="userorder-order-header">
-                    <div className="userorder-order-id">Order #{order.orderId}</div>
-                    <div className={`userorder-order-status ${getStatusClass(order.orderStatus)}`}>
+                <div key={order._id} className="userorder-grid-row">
+                  <div className="userorder-grid-cell">
+                    <div className="userorder-product-names">
+                      {getProductNames(order.products)}
+                    </div>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-quantity-badge">
+                      {getTotalQuantity(order.products)}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-delivery-option">
+                      {getDeliveryOptionText(order.deliveryOption)}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className={`userorder-payment-status ${getPaymentStatusClass(order.paymentStatus)}`}>
+                      {order.paymentStatus || 'pending'}
+                    </span>
+                  </div>
+                  <div className="userorder-grid-cell">
+                    <span className={`userorder-order-status ${getStatusClass(order.orderStatus)}`}>
                       {order.orderStatus}
-                    </div>
+                    </span>
                   </div>
-                  <div className="userorder-order-details">
-                    <div className="userorder-order-date">Placed on: {formatDate(order.createdAt)}</div>
-                    <div className="userorder-order-products">
-                      {order.products.map((product, idx) => (
-                        <div key={idx} className="userorder-product-item">
-                          {product.quantity} x {product.name}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="userorder-order-total">Total: {formatCurrency(order.totalAmount)}</div>
+                  <div className="userorder-grid-cell">
+                    <span className="userorder-total-amount">
+                      {formatCurrency(order.totalAmount)}
+                    </span>
                   </div>
-                  <div className="userorder-order-actions">
-                    <button className="userorder-btn-primary" onClick={() => viewOrderDetails(order)}>
-                      View Details
-                    </button>
-                    {order.orderStatus === 'delivered' && (
-                      <button className="userorder-btn-secondary">
-                        Reorder
+                  <div className="userorder-grid-cell">
+                    <div className="userorder-grid-actions">
+                      <button 
+                        className="userorder-btn-primary userorder-btn-sm"
+                        onClick={() => viewOrderDetails(order)}
+                      >
+                        View Details
                       </button>
-                    )}
+                      {order.orderStatus === 'delivered' && (
+                        <button className="userorder-btn-secondary userorder-btn-sm">
+                          Reorder
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -307,6 +392,48 @@ const Orders = () => {
             </div>
             <div className="userorder-modal-body">
               <div className="userorder-detail-section">
+                <h3>Order Summary</h3>
+                <div className="userorder-summary-grid">
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Product Name:</span>
+                    <span className="userorder-summary-value">
+                      {getProductNames(activeOrder.products)}
+                    </span>
+                  </div>
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Total Quantity:</span>
+                    <span className="userorder-summary-value">
+                      {getTotalQuantity(activeOrder.products)}
+                    </span>
+                  </div>
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Delivery Option:</span>
+                    <span className="userorder-summary-value">
+                      {getDeliveryOptionText(activeOrder.deliveryOption)}
+                    </span>
+                  </div>
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Payment Status:</span>
+                    <span className={`userorder-summary-value ${getPaymentStatusClass(activeOrder.paymentStatus)}`}>
+                      {activeOrder.paymentStatus}
+                    </span>
+                  </div>
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Order Status:</span>
+                    <span className={`userorder-summary-value ${getStatusClass(activeOrder.orderStatus)}`}>
+                      {activeOrder.orderStatus}
+                    </span>
+                  </div>
+                  <div className="userorder-summary-item">
+                    <span className="userorder-summary-label">Total Amount:</span>
+                    <span className="userorder-summary-value userorder-total-amount">
+                      {formatCurrency(activeOrder.totalAmount)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="userorder-detail-section">
                 <h3>Products</h3>
                 {activeOrder.products.map((product, idx) => (
                   <div key={idx} className="userorder-product-detail">
@@ -316,8 +443,8 @@ const Orders = () => {
                   </div>
                 ))}
                 <div className="userorder-order-summary">
-                  <div>Subtotal: {formatCurrency(activeOrder.totalAmount - activeOrder.deliveryFee)}</div>
-                  <div>Delivery Fee: {formatCurrency(activeOrder.deliveryFee)}</div>
+                  <div>Subtotal: {formatCurrency(activeOrder.totalAmount - (activeOrder.deliveryFee || 0))}</div>
+                  <div>Delivery Fee: {formatCurrency(activeOrder.deliveryFee || 0)}</div>
                   <div className="userorder-total-amount">Total: {formatCurrency(activeOrder.totalAmount)}</div>
                 </div>
               </div>
@@ -342,15 +469,16 @@ const Orders = () => {
                         value={editForm.deliveryOption}
                         onChange={handleEditChange}
                       >
-                        <option value="standard">Standard</option>
-                        <option value="express">Express</option>
+                        <option value="standard">Standard Delivery</option>
+                        <option value="express">Express Delivery</option>
+                        <option value="same-day">Same Day Delivery</option>
                       </select>
                     </div>
                   </>
                 ) : (
                   <>
                     <p><strong>Delivery Address:</strong> {activeOrder.deliveryAddress}</p>
-                    <p><strong>Delivery Option:</strong> {activeOrder.deliveryOption}</p>
+                    <p><strong>Delivery Option:</strong> {getDeliveryOptionText(activeOrder.deliveryOption)}</p>
                   </>
                 )}
                 <p><strong>Estimated Delivery:</strong> {formatDate(activeOrder.deliveryDate)}</p>
@@ -375,23 +503,8 @@ const Orders = () => {
                 ) : (
                   <p><strong>Payment Method:</strong> {activeOrder.paymentMethod}</p>
                 )}
-                <p><strong>Payment Status:</strong> {activeOrder.paymentStatus}</p>
+                <p><strong>Payment Status:</strong> <span className={getPaymentStatusClass(activeOrder.paymentStatus)}>{activeOrder.paymentStatus}</span></p>
                 <p><strong>Total Amount:</strong> {formatCurrency(activeOrder.totalAmount)}</p>
-              </div>
-              
-              <div className="userorder-detail-section">
-                <h3>Tracking Information</h3>
-                <div className="userorder-tracking-progress">
-                  <div className="userorder-progress-bar">
-                    <div 
-                      className="userorder-progress-fill" 
-                      style={{width: `${activeOrder.tracking.progress}%`}}
-                    ></div>
-                  </div>
-                  <div className="userorder-tracking-status">
-                    {activeOrder.tracking.status} - {activeOrder.tracking.location}
-                  </div>
-                </div>
               </div>
             </div>
             <div className="userorder-modal-footer">
