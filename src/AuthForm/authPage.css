@@ -336,21 +336,6 @@ input:focus, select:focus {
   text-decoration: underline;
 }
 
-p {
-  text-align: center;
-  margin-top: 20px;
-}
-
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .auth-auth-card {

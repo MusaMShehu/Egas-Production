@@ -270,9 +270,9 @@ const SubscriptionPlans = () => {
   // Render plan features
   const renderFeatures = (features) => {
     return (
-      <ul className="plan-features">
+      <ul className="subs-plan-plan-features">
         {features?.map((feature, index) => (
-          <li key={index} className={feature.included ? "feature-included" : "feature-excluded"}>
+          <li key={index} className={feature.included ? "subs-plan-feature-included" : "subs-plan-feature-excluded"}>
             <strong>{feature.title}:</strong> {feature.description}
           </li>
         ))}
@@ -283,16 +283,16 @@ const SubscriptionPlans = () => {
   // UI rendering
   if (isLoading || plansLoading) {
     return (
-      <div className="plans-container">
-        <div className="loading-spinner">Loading plans...</div>
+      <div className="subs-plan-plans-container">
+        <div className="subs-plan-loading-spinner">Loading plans...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="plans-container">
-        <div className="error-message">
+      <div className="subs-plan-plans-container">
+        <div className="subs-plan-error-message">
           <h2>Error</h2>
           <p>{error}</p>
           <div style={{ marginTop: 12 }}>
@@ -313,11 +313,11 @@ const SubscriptionPlans = () => {
 
   if (!user || !token) {
     return (
-      <div className="plans-container">
-        <div className="login-prompt">
+      <div className="subs-plan-plans-container">
+        <div className="subs-plan-login-prompt">
           <h1>Choose a Subscription Plan</h1>
           <p>Please log in to view and subscribe to our plans</p>
-          <button onClick={() => navigate("/login")}>Log In</button>
+          <button onClick={() => navigate("/auth")}>Log In</button>
         </div>
       </div>
     );
@@ -325,25 +325,24 @@ const SubscriptionPlans = () => {
 
   // render plan cards
   return (
-    <div className="plans-container">
-      <div className="user-welcome">
-        <h1>Welcome, {user.name || user.email}!</h1>
-        <p className="plan-subtitle">Choose a plan that fits your needs</p>
+    <div className="subs-plan-plans-container">
+      <div className="subs-plan-user-welcome">
+        <h3 className="sub-plan-subtitle">Choose a plan that fits your needs</h3>
       </div>
 
-      <div className="plans-grid">
+      <div className="subs-plan-plans-grid">
         {plans.map((plan) => {
           const sizeOptions = getSizeOptions(plan);
           const frequencyOptions = getFrequencyOptions(plan);
 
           // Custom Plan
-          if (plan.type === "custom") {
+          if (plan.type === "subs-plan-custom") {
             const price = getCustomPlanPrice();
             return (
-              <div key={plan._id} className="plan-card custom-plan-card">
+              <div key={plan._id} className="subs-plan-plan-card subs-plan-custom-plan-card">
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
-                {renderFeatures(plan.features)}
+                {/* {renderFeatures(plan.features)} */}
                 
                 <label>Cylinder Size</label>
                 <select value={customPlan.size} onChange={(e) => setCustomPlan(prev => ({ ...prev, size: e.target.value }))}>
@@ -360,7 +359,7 @@ const SubscriptionPlans = () => {
                   {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
                 </select>
 
-                <div className="plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
                 <button
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -381,17 +380,17 @@ const SubscriptionPlans = () => {
           if (plan.type === "one-time") {
             const price = getOneTimePlanPrice();
             return (
-              <div key={plan._id} className="plan-card one-time-card">
+              <div key={plan._id} className="subs-plan-plan-card subs-plan-one-time-card">
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
-                {renderFeatures(plan.features)}
+                {/* {renderFeatures(plan.features)} */}
                 
                 <label>Cylinder Size</label>
                 <select value={oneTimePlan.size} onChange={(e) => setOneTimePlan({ size: e.target.value })}>
                   {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
 
-                <div className="plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
                 <button 
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -412,17 +411,17 @@ const SubscriptionPlans = () => {
           if (plan.type === "emergency") {
             const price = getEmergencyPlanPrice();
             return (
-              <div key={plan._id} className="plan-card emergency-card">
+              <div key={plan._id} className="subs-plan-plan-card subs-plan-emergency-card">
                 <h2>{plan.name} 🚨</h2>
                 <p>{plan.description}</p>
-                {renderFeatures(plan.features)}
+                {/* {renderFeatures(plan.features)} */}
                 
                 <label>Cylinder Size</label>
                 <select value={emergencyPlan.size} onChange={(e) => setEmergencyPlan({ size: e.target.value })}>
                   {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
 
-                <div className="plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
                 <button 
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -445,12 +444,12 @@ const SubscriptionPlans = () => {
           const price = calculatePrice(plan, plan.baseSize, frequency, subscriptionPeriod);
 
           return (
-            <div key={plan._id} className="plan-card">
+            <div key={plan._id} className="subs-plan-plan-card">
               <h2>{plan.name}</h2>
               <p>{plan.description}</p>
-              {renderFeatures(plan.features)}
+              {/* {renderFeatures(plan.features)} */}
               
-              <div className="plan-details">
+              <div className="subs-plan-plan-details">
                 <p><strong>Base Size:</strong> {plan.baseSize}</p>
                 <p><strong>Price per Kg:</strong> ₦{plan.pricePerKg?.toLocaleString()}</p>
               </div>
@@ -465,7 +464,7 @@ const SubscriptionPlans = () => {
                 {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
               </select>
 
-              <div className="plan-price">₦{price.toLocaleString()}</div>
+              <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
               <button disabled={isProcessing} onClick={() => confirmPlan({
                 planId: plan._id,
                 name: plan.name,
@@ -482,8 +481,8 @@ const SubscriptionPlans = () => {
 
       {/* Summary Modal */}
       {showSummary && selectedPlan && (
-        <div className="summary-modal">
-          <div className="summary-card">
+        <div className="subs-plan-summary-modal">
+          <div className="subs-plan-summary-card">
             <h2>Confirm Your Order</h2>
             <p><strong>Plan:</strong> {selectedPlan.name}</p>
             <p><strong>Type:</strong> {selectedPlan.planType}</p>
@@ -493,11 +492,11 @@ const SubscriptionPlans = () => {
               <p><strong>Subscription Period:</strong> {selectedPlan.subscriptionPeriod} month{selectedPlan.subscriptionPeriod > 1 ? 's' : ''}</p>
             )}
             <p><strong>Total Price:</strong> ₦{Number(selectedPlan.price).toLocaleString()}</p>
-            <div className="summary-actions">
+            <div className="subs-plan-summary-actions">
               <button onClick={() => setShowSummary(false)} disabled={isProcessing}>
                 Cancel
               </button>
-              <button onClick={handlePaymentConfirmation} disabled={isProcessing} className="confirm-payment-btn">
+              <button onClick={handlePaymentConfirmation} disabled={isProcessing} className="subs-plan-confirm-payment-btn">
                 {isProcessing ? "Initializing Payment..." : "Proceed to Payment"}
               </button>
             </div>
@@ -506,8 +505,8 @@ const SubscriptionPlans = () => {
       )}
 
       {isProcessing && (
-        <div className="loading-overlay">
-          <div className="loading-spinner">Initializing Payment...</div>
+        <div className="subs-plan-loading-overlay">
+          <div className="subs-plan-loading-spinner">Initializing Payment...</div>
         </div>
       )}
     </div>
