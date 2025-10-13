@@ -8,7 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 // Public Pages
 import PublicLayout from "./components/public/PublicLayout";
 import Home from "./components/Home/Home";
-  // Home Nested Routes
+  // Home Nested Routes of public pages
 import LearnMore from "./pages/Learn More/learnMore";
 import DomesticSolutions from "./pages/Domestic_Solutions/DomesticSolutions";
 import RestaurantSolutions from "./pages/Restaurant_Solutions/RestaurantSolutions";
@@ -32,25 +32,25 @@ import Business from "./pages/Business_Solutions/BusinessSolutions";
 
 import "./App.css";
 
+// authentication
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+import AuthPage from "./AuthForm/authPage";
+import ForgotPassword from './AuthForm/forgotPassword';
+
+
+// Order Section
 import OrderSummary from "./components/User/UserOrders/OrderSummary";
 import ProductCart from "./components/Products/ProductCart";
 import VerifyOrder from "./components/Products/verifyOrder";
 
-
+// Subscription Section
 import SubscriptionVerify from './components/Subscription/SubscriptionVerify';
 import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
 
-// User Panel
-// import OverviewPage from "./components/pages/OverviewPage";
+// Subscription and Product Selection Pages from Server
 import ProductSelection from "./components/Products/ProductSelectionServer";
 import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
-// import OrderHistoryPage from "./components/pages/OrderHistoryPage";
-// import PaymentsPage from "./components/pages/PaymentsPage";
-// import ProfilePage from "./components/pages/ProfilePage";
-// import SupportPage from "./components/pages/SupportPage";
-// import SettingsPage from "./components/pages/SettingsPage";
-// import ProtectedRoute from "./components/ProtectedRoute";
-// import DashboardLayout from "./DashboardLayout";
+
 
 // Admin Panel
 import AdminLayout from "./components/Admin/AdminLayout";
@@ -80,6 +80,7 @@ import SubscriptionPayment from './components/payments/subscriptionPayment';
 import WalletTopup from './components/payments/walletTopup';
 import OrderPayment from './components/payments/orderPayment';
 import PaymentCallback from './components/payments/paymentCallback';
+
 
 function App() {
 
@@ -128,6 +129,9 @@ function App() {
           <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
           <Route path="/subscriptions/success" element={<SubscriptionSuccess />} />
 
+
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* 2nd User Panel */}
           <Route path="/dashboard" element={<UserLayout />}>
