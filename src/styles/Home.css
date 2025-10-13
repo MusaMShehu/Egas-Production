@@ -33,7 +33,7 @@
   padding: 0.8rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: 25px;
 }
 
 .hero button:hover {
@@ -65,8 +65,8 @@
 .learn-more{
   text-decoration: none;
   padding: 0.8rem 1rem;
-  border-radius: 10px;
-  background-color:aqua ;
+  border-radius: 25px;
+  background-color:#5ffff9 ;
   text-align: center;
   color: #2c3e50 ;
   font-weight: 600;
@@ -75,7 +75,7 @@
 }
 .learn-more:hover{
   background-color: #2c3e50;
-  color:aqua;
+  color:#5ffff9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: 0.2s ease-in;
 }

@@ -138,7 +138,7 @@ const DomesticSolutions = () => {
       <section className="dom-sol-cta-section">
         <h2>Ready for Hassle-Free Gas Delivery?</h2>
         <p>Join thousands of households that trust e-GAS for their cooking needs. Sign up today and get your first month at 20% off!</p>
-        <a href="/register" className="dom-sol-cta-button">Get Started Now</a>
+        <a href="/auth" className="dom-sol-cta-button">Get Started Now</a>
       </section>
     </div>
   );

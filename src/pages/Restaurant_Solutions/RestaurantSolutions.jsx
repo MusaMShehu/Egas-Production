@@ -34,7 +34,7 @@ const RestaurantSolutions = () => {
           <div className="rest-column-text">
             <h3>Keep Your Kitchen Running</h3>
             <p>
-              For restaurants, consistent gas supply isn't just a convenience—it's essential for business operations. Our restaurant solutions are designed to ensure you never run out of gas during peak hours.
+              For restaurants, consistent gas supply isn't just a convenience, it's essential for business operations. Our restaurant solutions are designed to ensure you never run out of gas during peak hours.
             </p>
             <p>
               We understand the unique demands of food service businesses, which is why we offer specialized high-volume cylinders, flexible delivery schedules, and emergency support to keep your kitchen running smoothly.
@@ -126,7 +126,7 @@ const RestaurantSolutions = () => {
       </section>
 
       {/* ===== Testimonials Section ===== */}
-      <section className="rest-testimonials-section">
+      {/* <section className="rest-testimonials-section">
         <h2 className="rest-section-title">What Restaurant Owners Say</h2>
         
         <div className="rest-testimonials-grid">
@@ -175,7 +175,7 @@ const RestaurantSolutions = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ===== CTA Section ===== */}
       <section className="rest-cta-section">
@@ -183,7 +183,7 @@ const RestaurantSolutions = () => {
         <p>
           Join hundreds of restaurants that trust e-GAS for their cooking needs. Sign up today and get your first month at discounted rate!
         </p>
-        <Link to="/register" className="rest-cta-button">
+        <Link to="/auth" className="rest-cta-button">
           Get Started Now
         </Link>
       </section>

@@ -92,31 +92,31 @@ const Business = () => {
   ];
 
   return (
-    <div className="business-page">
+    <div className="bus-sol-business-page">
 
       {/* Page Header */}
-      <section className="page-header">
+      <section className="bus-sol-page-header">
         <h2>Business Solutions</h2>
         <p>Tailored gas supply solutions for hotels, commercial enterprises and corporate organization</p>
       </section>
 
       {/* Breadcrumb */}
-      <div className="breadcrumb">
+      <div className="bus-sol-breadcrumb">
         <Link to="/">Home</Link>
         <Link to="/opportunities">Learn More</Link>
         Business Solutions
       </div>
 
       {/* Content Section */}
-      <section className="content-section">
-        <div className="two-column">
-          <div className="column-img">
+      <section className="bus-sol-content-section">
+        <div className="bus-sol-two-column">
+          <div className="bus-sol-column-img">
             <img 
-              src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" 
+              src="https://media.istockphoto.com/id/1293914533/photo/business-woman-team-in-local-cheese-production-company.jpg?s=612x612&w=0&k=20&c=CFq4DM8BX1mlAkV9Rao3vn4MFQZ-QLxRDko0NIOtBDE=" 
               alt="Business Solutions" 
             />
           </div>
-          <div className="column-text">
+          <div className="bus-sol-column-text">
             <h3>Customized Gas Solutions for Your Business</h3>
             <p>At e-GAS, we understand that businesses have unique gas requirements that differ from residential needs. Our commercial solutions are designed to ensure uninterrupted supply, cost efficiency, and complete safety compliance for your operations.</p>
             <p>Whether you run a restaurant, hotel, manufacturing facility, or any other business and corporate organization that relies on gas, we have the expertise and infrastructure to meet your specific needs with reliable, scalable solutions.</p>
@@ -124,13 +124,13 @@ const Business = () => {
         </div>
 
         {/* Benefits Section */}
-        <h2 className="section-title">Why Choose e-GAS for Your Business?</h2>
-        <div className="benefits-grid">
+        <h2 className="bus-sol-section-title">Why Choose e-GAS for Your Business?</h2>
+        <div className="bus-sol-benefits-grid">
           {benefits.map((benefit, index) => {
             const IconComponent = benefit.icon;
             return (
-              <div key={index} className="benefit-item">
-                <div className="benefit-icon">
+              <div key={index} className="bus-sol-benefit-item">
+                <div className="bus-sol-benefit-icon">
                   <IconComponent />
                 </div>
                 <h4>{benefit.title}</h4>
@@ -141,14 +141,14 @@ const Business = () => {
         </div>
 
         {/* Industries Section */}
-        <section className="industries-section">
-          <h2 className="section-title">Industries We Serve</h2>
-          <div className="industries-grid">
+        <section className="bus-sol-industries-section">
+          <h2 className="bus-sol-section-title">Industries We Serve</h2>
+          <div className="bus-sol-industries-grid">
             {industries.map((industry, index) => {
               const IconComponent = industry.icon;
               return (
-                <div key={index} className="industry-card">
-                  <div className="industry-icon">
+                <div key={index} className="bus-sol-industry-card">
+                  <div className="bus-sol-industry-icon">
                     <IconComponent />
                   </div>
                   <h3>{industry.title}</h3>
@@ -160,22 +160,22 @@ const Business = () => {
         </section>
 
         {/* Solutions Section */}
-        <section className="solutions-section">
-          <h2 className="section-title">Our Business Solutions</h2>
-          <div className="solutions-accordion">
+        <section className="bus-sol-solutions-section">
+          <h2 className="bus-sol-section-title">Our Business Solutions</h2>
+          <div className="bus-sol-solutions-accordion">
             {solutions.map((solution, index) => (
               <div 
                 key={index} 
-                className={`solution-item ${activeSolution === index ? 'solution-active' : ''}`}
+                className={`bus-sol-solution-item ${activeSolution === index ? 'bus-sol-solution-active' : ''}`}
               >
                 <div 
-                  className="solution-header"
+                  className="bus-sol-solution-header"
                   onClick={() => toggleSolution(index)}
                 >
                   {solution.title}
                   {activeSolution === index ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
-                <div className="solution-content">
+                <div className="bus-sol-solution-content">
                   <p>{solution.content}</p>
                 </div>
               </div>
@@ -184,10 +184,10 @@ const Business = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="cta-section">
+        <section className="bus-sol-cta-section">
           <h2>Ready to Optimize Your Business Gas Supply?</h2>
           <p>Join hundreds of businesses that trust e-GAS for their commercial gas needs. Our experts will create a customized solution that fits your specific requirements and budget.</p>
-          <a href="/contact" className="cta-button">Get a Business Quote</a>
+          <a href="/auth" className="bus-sol-cta-button">Get Started Now</a>
         </section>
       </section>
     </div>

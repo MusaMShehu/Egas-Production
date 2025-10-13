@@ -1,200 +1,254 @@
-/* src/components/Business/Business.css */
-/* Business Page Specific Styles */
-.page-header {
+
+/* Base responsive settings */
+.bus-sol-business-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.bus-sol-page-header {
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url('https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80');
+    url('https://media.istockphoto.com/id/1412964683/photo/power-plant-foreman-folding-arms-and-looking-at-camera.jpg?s=612x612&w=0&k=20&c=slBGhQjutMcQj1eCNhcE9ctc4xKtJlJIpJgGRpETPYs=');
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   color: white;
   text-align: center;
-  padding: 5rem 1rem;
+  padding: 4rem 1rem;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.page-header h2 {
-  font-size: 2.5rem;
+.bus-sol-page-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   margin-bottom: 1rem;
+  line-height: 1.2;
 }
 
-.page-header p {
-  font-size: 1.2rem;
-  max-width: 800px;
+.bus-sol-page-header p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  max-width: min(800px, 90%);
   margin: 0 auto;
+  line-height: 1.6;
 }
 
-.breadcrumb {
+.bus-sol-breadcrumb {
   padding: 1rem 5%;
   background-color: #f1f1f1;
+  font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.breadcrumb a {
+.bus-sol-breadcrumb a {
   color: #2c3e50;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.breadcrumb a:hover {
+.bus-sol-breadcrumb a:hover {
   text-decoration: underline;
-  color: #e74c3c;
+  color: #086dd3;
 }
 
-.content-section {
-  padding: 4rem 5%;
+.bus-sol-breadcrumb a::after {
+  margin-left: 0.5rem;
+  color: #666;
 }
 
-.section-title {
+.bus-sol-breadcrumb a:last-child::after {
+  content: '';
+}
+
+.bus-sol-content-section {
+  padding: clamp(1.5rem, 5vw, 3rem) 5%;
+}
+
+.bus-sol-section-title {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(2rem, 4vw, 2.5rem);
   color: #2c3e50;
   position: relative;
   padding-bottom: 1rem;
+  font-size: clamp(1rem, 3vw, 1.5rem);
 }
 
-.section-title::after {
+.bus-sol-section-title::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
+  width: min(80px, 15vw);
   height: 3px;
   background-color: #e74c3c;
 }
 
-.two-column {
+.bus-sol-two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: clamp(1.5rem, 3vw, 3rem);
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
 }
 
-.column-img {
+.bus-sol-column-img {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  order: 1;
 }
 
-.column-img img {
+.bus-sol-column-img img {
   width: 100%;
   height: auto;
   display: block;
+  transition: transform 0.3s ease;
 }
 
-.column-text h3 {
+.bus-sol-column-img:hover img {
+  transform: scale(1.02);
+}
+
+.bus-sol-column-text {
+  order: 2;
+}
+
+.bus-sol-column-text h3 {
   color: #2c3e50;
   margin-bottom: 1.5rem;
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
 }
 
-.column-text p {
+.bus-sol-column-text p {
   margin-bottom: 1.5rem;
+  line-height: 1.7;
+  text-align: justify;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
 }
 
-/* Update icon styles in Business.css */
-.benefit-icon,
-.industry-icon {
-  font-size: 2.5rem;
-  color: #ff6b00; /* Your theme color */
+/* Benefits Section */
+.bus-sol-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(1.5rem, 3vw, 2rem);
+  margin: clamp(1.5rem, 4vw, 2rem) 0;
+}
+
+.bus-sol-benefit-item {
+  background: rgb(237, 239, 238);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: 8px;
+  border: 1px solid rgb(214, 214, 214);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bus-sol-benefit-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.bus-sol-benefit-icon,
+.bus-sol-industry-icon {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  color: #3b5066;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.benefit-icon svg,
-.industry-icon svg {
+.bus-sol-benefit-icon svg,
+.bus-sol-industry-icon svg {
   width: 1em;
   height: 1em;
 }
 
-.solution-header svg {
-  transition: transform 0.3s ease;
-}
-
-.solution-active .solution-header svg {
-  transform: rotate(180deg);
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin: 3rem 0;
-}
-
-.benefit-item {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.benefit-item:hover {
-  transform: translateY(-5px);
-}
-
-.benefit-icon {
-  font-size: 2.5rem;
-  color: #e74c3c;
-  margin-bottom: 1rem;
-}
-
-.benefit-item h4 {
+.bus-sol-benefit-item h4 {
   margin-bottom: 1rem;
   color: #2c3e50;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
 }
 
-.industries-section {
+.bus-sol-benefit-item p {
+  line-height: 1.6;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
+
+/* Industries Section */
+.bus-sol-industries-section {
   background-color: #f1f1f1;
-  padding: 4rem 5%;
+  padding: clamp(1.5rem, 4vw, 3rem) 5%;
+  margin: clamp(1rem, 4vw, 1rem) 0;
 }
 
-.industries-grid {
+.bus-sol-industries-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(1.5rem, 3vw, 2rem);
 }
 
-.industry-card {
+.bus-sol-industry-card {
   background: white;
-  padding: 2rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.industry-card:hover {
+.bus-sol-industry-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.industry-icon {
-  font-size: 2.5rem;
-  color: #e74c3c;
-  margin-bottom: 1rem;
-}
-
-.industry-card h3 {
+.bus-sol-industry-card h3 {
   margin-bottom: 1rem;
   color: #2c3e50;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
 }
 
-.solutions-section {
-  padding: 4rem 5%;
+.bus-sol-industry-card p {
+  line-height: 1.6;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
 }
 
-.solutions-accordion {
-  max-width: 800px;
+/* Solutions Section */
+.bus-sol-solutions-section {
+  padding: clamp(1.5rem, 4vw, 3rem) 5%;
+}
+
+.bus-sol-solutions-accordion {
+  max-width: min(800px, 100%);
   margin: 0 auto;
 }
 
-.solution-item {
-  margin-bottom: 1.5rem;
+.bus-sol-solution-item {
+  margin-bottom: 1rem;
   background: white;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.solution-header {
-  padding: 1.5rem;
+.bus-sol-solution-item:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.bus-sol-solution-header {
+  padding: clamp(1rem, 2vw, 1.5rem);
   background-color: #2c3e50;
   color: white;
   cursor: pointer;
@@ -202,66 +256,224 @@
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-}
-
-.solution-content {
-  padding: 1.5rem;
-  display: none;
-}
-
-.solution-active .solution-content {
-  display: block;
-}
-
-.cta-section {
-  padding: 5rem 5%;
-  text-align: center;
-  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
-    url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.cta-section h2 {
-  font-size: 2.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.cta-section p {
-  max-width: 700px;
-  margin: 0 auto 2rem;
-  font-size: 1.1rem;
-}
-
-.cta-button {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #e74c3c;
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  border-radius: 4px;
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
   transition: background-color 0.3s ease;
 }
 
-.cta-button:hover {
-  background-color: #c0392b;
+.bus-sol-solution-header:hover {
+  background-color: #34495e;
 }
 
-@media (max-width: 968px) {
-  .two-column {
-    grid-template-columns: 1fr;
+.bus-sol-solution-header svg {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.bus-sol-solution-active .bus-sol-solution-header svg {
+  transform: rotate(180deg);
+}
+
+.bus-sol-solution-content {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.bus-sol-solution-active .bus-sol-solution-content {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  max-height: 500px;
+}
+
+.bus-sol-solution-content p {
+  line-height: 1.7;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  margin: 0;
+}
+
+/* CTA Section */
+.bus-sol-cta-section {
+  padding: clamp(2rem, 6vw, 5rem) 5%;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+    url('https://media.istockphoto.com/id/1264936036/photo/controlling-gas-pressure.jpg?s=612x612&w=0&k=20&c=303SIZeTzeskY_bosv6GUm_Y4g5lmB93AO-ZAPNJgko=');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+  border-radius: 10px;
+  margin-top: clamp(1rem, 3vw, 1rem);
+}
+
+.bus-sol-cta-section h2 {
+  font-size: clamp(1.2rem, 2vw, 2rem);
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.bus-sol-cta-section p {
+  max-width: min(700px, 90%);
+  margin: 0 auto 2rem;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+  line-height: 1.6;
+}
+
+.bus-sol-cta-button {
+  display: inline-block;
+  padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  background-color: #3b5066;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-size: clamp(0.9rem, 1.8vw, 2rem);
+  border: 2px solid #3b5066;
+}
+
+.bus-sol-cta-button:hover {
+  background-color: #5ffff9;
+  border-color: #3b5066;
+  color: #2c3e50;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .bus-sol-page-header {
+    padding: 2.5rem 1rem;
+    min-height: 35vh;
+  }
+  
+  .bus-sol-content-section {
+    padding: 3rem 5%;
   }
 }
 
 @media (max-width: 768px) {
-  .page-header h2 {
-    font-size: 2rem;
+  .bus-sol-page-header {
+    padding: 2rem 1rem;
+    min-height: 30vh;
+    background-attachment: scroll;
   }
   
-  .benefits-grid,
-  .industries-grid {
+  .bus-sol-two-column {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .bus-sol-column-img {
+    order: 1;
+  }
+  
+  .bus-sol-column-text {
+    order: 2;
+  }
+  
+  .bus-sol-benefits-grid,
+  .bus-sol-industries-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .bus-sol-solution-header {
+    padding: 1.2rem;
+  }
+  
+  .bus-sol-cta-section {
+    background-attachment: scroll;
+    padding: 3rem 5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .bus-sol-page-header {
+    padding: 1.5rem 1rem;
+    min-height: 25vh;
+  }
+  
+  .bus-sol-breadcrumb {
+    padding: 0.8rem 5%;
+    font-size: 0.8rem;
+  }
+  
+  .bus-sol-content-section {
+    padding: 2rem 5%;
+  }
+  
+  .bus-sol-benefit-item,
+  .bus-sol-industry-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .bus-sol-solution-header {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .bus-sol-solution-active .bus-sol-solution-content {
+    padding: 1rem;
+  }
+  
+  .bus-sol-cta-section {
+    padding: 2rem 5%;
+  }
+  
+  .bus-sol-cta-button {
+    max-width: 300px;
+    text-align: center;
+  }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+  .bus-sol-benefit-item:hover,
+  .bus-sol-industry-card:hover,
+  .bus-sol-solution-item:hover {
+    transform: none;
+  }
+  
+  .bus-sol-benefit-item:active,
+  .bus-sol-industry-card:active {
+    transform: scale(0.98);
+  }
+  
+  .bus-sol-cta-button:active {
+    transform: scale(0.98);
+  }
+}
+
+/* High-resolution displays */
+@media (min-resolution: 192dpi) {
+  .bus-sol-page-header,
+  .bus-sol-cta-section {
+    background-size: cover;
+  }
+}
+
+/* Print styles */
+@media print {
+  .bus-sol-business-page {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .bus-sol-page-header,
+  .bus-sol-cta-section {
+    background: none !important;
+    color: black !important;
+  }
+  
+  .bus-sol-benefit-item,
+  .bus-sol-industry-card,
+  .bus-sol-solution-item {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  .bus-sol-cta-button {
+    display: none !important;
   }
 }

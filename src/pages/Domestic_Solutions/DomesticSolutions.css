@@ -127,6 +127,7 @@
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
   line-height: 1.5;
+  text-align: justify;
   color: #555;
 }
 
@@ -429,7 +430,7 @@
   .dom-sol-content-section,
   .dom-sol-plans-section,
   .dom-sol-faq-section {
-    padding: 2.5rem 4%;
+    padding: 2rem 4%;
   }
   
   .dom-sol-section-title {
@@ -438,10 +439,12 @@
   
   .dom-sol-column-text h3 {
     font-size: 1.5rem;
+    padding: 0 0.6rem;
   }
   
   .dom-sol-column-text p {
     font-size: 1rem;
+    padding: 0 0.6rem;
   }
   
   .dom-sol-benefit-item {

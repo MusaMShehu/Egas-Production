@@ -128,7 +128,7 @@ const LearnMore = () => {
         <p>
           Join thousands of satisfied customers who have made the switch to e-GAS for their gas supply needs. Register today and get your first delivery at a discounted rate!
         </p>
-        <Link to="/register" className="cta-button">
+        <Link to="/auth" className="cta-button">
           Get Started Now
         </Link>
       </section>
