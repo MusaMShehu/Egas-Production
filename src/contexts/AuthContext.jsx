@@ -1,9 +1,8 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useCallback } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Restore both token and user from localStorage on init
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
@@ -11,8 +10,8 @@ export const AuthProvider = ({ children }) => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Fetch profile if token exists
-  const fetchProfile = async (jwt) => {
+  // ✅ Memoized fetchProfile to prevent infinite re-renders
+  const fetchProfile = useCallback(async (jwt) => {
     try {
       const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/me", {
         method: "GET",
@@ -32,13 +31,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
     } catch (err) {
       console.error("Profile fetch failed:", err.message);
-      logout(); // invalidate token if rejected
+      logout();
     } finally {
-      setLoading(false); // ✅ FIXED (was true before)
+      setLoading(false);
     }
-  };
+  }, []); // ✅ empty dependency array
 
-  // Login
+  // ✅ Login
   const login = async (email, password) => {
     const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/login", {
       method: "POST",
@@ -50,7 +49,6 @@ export const AuthProvider = ({ children }) => {
     if (res.ok) {
       setUser(data.user);
       setToken(data.token);
-
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
     } else {
@@ -58,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register
+  // ✅ Register
   const register = async (formData) => {
     const res = await fetch("https://egas-server-1.onrender.com/api/v1/auth/register", {
       method: "POST",
@@ -70,7 +68,6 @@ export const AuthProvider = ({ children }) => {
     if (res.ok) {
       setUser(data.user);
       setToken(data.token);
-
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
     } else {
@@ -78,23 +75,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout
-  const logout = () => {
+  // ✅ Logout (fully resets)
+  const logout = useCallback(() => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-  };
+  }, []);
 
-  // On load, validate token if present
+  // ✅ Validate token on load (only once)
   useEffect(() => {
-  if (token) {
-    fetchProfile(token);
-  } else {
-    setLoading(false);
-  }
-}, [token, fetchProfile]); // ✅ added missing dependency
-
+    if (token) {
+      fetchProfile(token);
+    } else {
+      setLoading(false);
+    }
+  }, [token, fetchProfile]);
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>

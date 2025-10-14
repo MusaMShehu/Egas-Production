@@ -54,14 +54,14 @@
   color: white;
   text-decoration: none;
   font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 25px;
   transition: all 0.3s ease;
 }
 
 .logged-nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fbbf24;
+  background-color: #5ffff9;
+  color: #2c3e50;
 }
 
 .logged-nav-icon {
@@ -172,6 +172,7 @@
     padding: 0 1.5rem;
   }
   
+  
   .logged-navbar-menu {
     display: flex;
   }
@@ -190,3 +191,11 @@
     gap: 2rem;
   }
 }
+
+/* moving the logo to middle */
+/* @media (max-width: 768px){
+  .logged-navbar-brand{
+    margin-left: 45%;
+  }
+  
+} */

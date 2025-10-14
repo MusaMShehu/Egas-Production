@@ -8,8 +8,7 @@ import {
   FaHome,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import AccountSection from "./AccountSection";
-import LoginModal from "./LoginModal";
+import LoggedAccountSection from "./LoggedAccountSection";
 import { useAuth } from "../../contexts/AuthContext";
 import logo from "../../images/logos.png";
 import "./LoggedinNavbar.css";
@@ -22,7 +21,7 @@ const DashboardNavbar = ({ onLogout }) => {
       <div className="logged-navbar-container">
         {/* Left section: Logo */}
         <div className="logged-navbar-brand">
-          <Link to="/dashboard" className="logged-navbar-logo">
+          <Link to="/" className="logged-navbar-logo">
             <div className="logo">
               <img
                 src={logo}
@@ -38,13 +37,13 @@ const DashboardNavbar = ({ onLogout }) => {
           <Link to="/" className="logged-nav-link">
             <FaHome className="logged-nav-icon" /> Home
           </Link>
-          <Link to="/notifications" className="logged-nav-link">
+          {/* <Link to="/notifications" className="logged-nav-link">
             <FaBell className="logged-nav-icon" /> Notifications
-          </Link>
+          </Link> */}
           <Link to="/dashboard/profile" className="logged-nav-link">
             <FaUserCircle className="logged-nav-icon" /> Profile
           </Link>
-          <AccountSection/>
+          <LoggedAccountSection/>
         </div>
 
         {/* Mobile menu button */}
@@ -62,19 +61,19 @@ const DashboardNavbar = ({ onLogout }) => {
       {menuOpen && (
         <div className="logged-mobile-menu">
           <Link
-            to="/dashboard"
+            to="/"
             className="logged-mobile-nav-link"
             onClick={() => setMenuOpen(false)}
           >
             <FaHome className="logged-nav-icon" /> Home
           </Link>
-          <Link
+          {/* <Link
             to="/notifications"
             className="logged-mobile-nav-link"
             onClick={() => setMenuOpen(false)}
           >
             <FaBell className="logged-nav-icon" /> Notifications
-          </Link>
+          </Link> */}
           <Link
             to="/profile"
             className="logged-mobile-nav-link"

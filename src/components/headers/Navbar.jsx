@@ -22,8 +22,11 @@ const Navbar = ({ isMenuOpen, location, user, authLoading }) => {
         About
       </Link>
       {!authLoading && user && (
-        <Link to="/dashboard" className={isActive("/dashboard")}>
-          Dashboard
+        <Link
+          to="/dashboard"
+          className={`dashboard-menu-link ${isActive("/dashboard")}`}
+        >
+          Go To Dashboard
         </Link>
       )}
     </nav>

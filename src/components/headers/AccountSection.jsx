@@ -20,13 +20,13 @@ const AccountSection = ({ onLoginClick }) => {
 
           <span className="user-name">{user.firstName || user.email}</span>
 
-          <button className="logout-btn" onClick={logout}>
+          <button className="acc-sec-logout-btn" onClick={logout}>
             Logout
           </button>
         </div>
       ) : (
         <button className="login-btn" onClick={onLoginClick}>
-          Sign In
+          Sign in
         </button>
       )}
     </div>

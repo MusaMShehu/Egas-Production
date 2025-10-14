@@ -42,19 +42,36 @@ header {
   color: #5ffff9;
 }
 
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: #5ffff9;
-  transition: width 0.3s ease;
+.nav-links .active{
+  max-width: 100px;
+  background: #5ffff9;
+  padding: 8px 15px;
+  border-radius: 30px;
+  color: #2c3e50;
 }
 
-.nav-links a:hover::after {
-  width: 100%;
+.nav-links .active:hover{
+  color: #2c3e50;
+  transition: ease-out 0.2s;
+}
+
+.nav-links .dashboard-menu-link{
+  /* margin-left: 80px; */
+  max-width: 160px;
+  background: #5ffff9;
+  border-radius: 8px;
+  color: #2c3e50;
+  padding: 8px 15px;
+}
+
+.nav-links .dashboard-menu-link:hover{
+  background: #2c3e50;
+  color: #5ffff9;
+  border: 1px solid #5ffff9;
+}
+
+.nav-links .dashboard-menu-link::after{
+  display: none;
 }
 
 a {
@@ -131,20 +148,23 @@ button {
     
 }
 
-.logout-btn {
-  margin-left: 10px;
-  padding: 5px 12px;
+.acc-sec-logout-btn {
+  padding: 8px 25px;
   border: none;
-  border-radius: 6px;
-  background-color: #e63946;
-  color: white;
+  background: #dc3545;
+  color: #2c3e50;
+  font-size: 1rem;
+  border-radius: 30px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.3s ease;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 500;
 }
 
-.logout-btn:hover {
-  background-color: #d62828;
+.acc-sec-logout-btn:hover{
+background: red;
+color: #eee;
 }
 
 
@@ -168,6 +188,8 @@ button {
 .user-name {
   font-size: 0.95rem;
   font-weight: 500;
+  color: #fff;
+  margin-bottom: 10px;
 }
 
 /* Dropdown menu */
