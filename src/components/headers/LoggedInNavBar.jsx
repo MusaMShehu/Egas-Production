@@ -75,21 +75,13 @@ const DashboardNavbar = ({ onLogout }) => {
             <FaBell className="logged-nav-icon" /> Notifications
           </Link> */}
           <Link
-            to="/profile"
+            to="/dashboard/profile"
             className="logged-mobile-nav-link"
             onClick={() => setMenuOpen(false)}
           >
             <FaUserCircle className="logged-nav-icon" /> Profile
           </Link>
-          <button
-            onClick={() => {
-              onLogout();
-              setMenuOpen(false);
-            }}
-            className="logged-mobile-logout-btn"
-          >
-            <FaSignOutAlt className="logged-nav-icon" /> Logout
-          </button>
+          <LoggedAccountSection/>
         </div>
       )}
     </nav>
