@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
 import { FaPlus, FaSearch, FaTimes, FaEllipsisV } from 'react-icons/fa';
-import { pauseSubscription } from '../../../services/subscriptionService';
 
 const Subscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -88,13 +87,30 @@ const Subscriptions = () => {
     }
 
     try {
-      const result = await pauseSubscription(subscriptionId);
-      
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/pause`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error messages from backend
+        if (result.message) {
+          throw new Error(result.message);
+        }
+        throw new Error(`Failed to pause subscription: ${response.status}`);
+      }
+
       if (result.success) {
-        // Update UI immediately
+        // Update UI with the data returned from backend
         setSubscriptions(prev =>
           prev.map(sub =>
-            sub._id === subscriptionId ? { ...sub, status: 'paused', pausedAt: new Date() } : sub
+            sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
         alert('Subscription paused successfully');
@@ -109,15 +125,15 @@ const Subscriptions = () => {
     }
   };
 
-  const cancelSubscription = async (subscriptionId) => {
-    if (!window.confirm('Are you sure you want to cancel this subscription?')) {
+  const handleResumePlan = async (subscriptionId) => {
+    if (!window.confirm('Are you sure you want to resume this subscription?')) {
       closeDropdown();
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/cancel`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/resume`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -125,19 +141,77 @@ const Subscriptions = () => {
         },
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
+        // Handle specific error messages from backend
+        if (result.message) {
+          throw new Error(result.message);
+        }
+        throw new Error(`Failed to resume subscription: ${response.status}`);
+      }
+
+      if (result.success) {
+        // Update UI with the data returned from backend
+        setSubscriptions(prev =>
+          prev.map(sub =>
+            sub._id === subscriptionId ? { ...sub, ...result.data } : sub
+          )
+        );
+        alert('Subscription resumed successfully');
+      } else {
+        throw new Error(result.message || 'Failed to resume subscription');
+      }
+    } catch (error) {
+      console.error('Error resuming subscription:', error);
+      setError(error.message || 'Failed to resume subscription. Please try again.');
+    } finally {
+      closeDropdown();
+    }
+  };
+
+  const cancelSubscription = async (subscriptionId) => {
+    if (!window.confirm('Are you sure you want to cancel this subscription? This action cannot be undone.')) {
+      closeDropdown();
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/cancel-my`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error messages from backend
+        if (result.message) {
+          throw new Error(result.message);
+        }
         throw new Error(`Failed to cancel subscription: ${response.status}`);
       }
 
-      setSubscriptions(prev =>
-        prev.map(sub =>
-          sub._id === subscriptionId ? { ...sub, status: 'cancelled', cancelledAt: new Date() } : sub
-        )
-      );
+      if (result.success) {
+        // Update UI with the data returned from backend
+        setSubscriptions(prev =>
+          prev.map(sub =>
+            sub._id === subscriptionId ? { ...sub, ...result.data } : sub
+          )
+        );
+        alert('Subscription cancelled successfully');
+      } else {
+        throw new Error(result.message || 'Failed to cancel subscription');
+      }
+      
       closeDropdown();
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      setError('Failed to cancel subscription. Please try again.');
+      setError(error.message || 'Failed to cancel subscription. Please try again.');
       closeDropdown();
     }
   };
@@ -248,12 +322,14 @@ const Subscriptions = () => {
                             >
                               View Subscription Details
                             </button>
-                            <button 
-                              className="sub-dropdown-item"
-                              onClick={() => handlePausePlan(subscription._id)}
-                            >
-                              Pause Plan
-                            </button>
+                            {subscription.status === 'active' && (
+                              <button 
+                                className="sub-dropdown-item"
+                                onClick={() => handlePausePlan(subscription._id)}
+                              >
+                                Pause Plan
+                              </button>
+                            )}
                             <button 
                               className="sub-dropdown-item sub-dropdown-item-danger"
                               onClick={() => cancelSubscription(subscription._id)}
@@ -335,7 +411,10 @@ const Subscriptions = () => {
                               </button>
                             )}
                             {subscription.status === 'paused' && (
-                              <button className="sub-dropdown-item">
+                              <button 
+                                className="sub-dropdown-item"
+                                onClick={() => handleResumePlan(subscription._id)}
+                              >
                                 Resume Plan
                               </button>
                             )}
@@ -471,6 +550,28 @@ const Subscriptions = () => {
               )}
             </div>
             <div className="sub-modal-actions">
+              {selectedSubscription.status === 'paused' && (
+                <button 
+                  className="sub-btn-primary"
+                  onClick={() => {
+                    handleResumePlan(selectedSubscription._id);
+                    setShowDetailsModal(false);
+                  }}
+                >
+                  Resume Subscription
+                </button>
+              )}
+              {selectedSubscription.status === 'active' && (
+                <button 
+                  className="sub-btn-secondary"
+                  onClick={() => {
+                    handlePausePlan(selectedSubscription._id);
+                    setShowDetailsModal(false);
+                  }}
+                >
+                  Pause Subscription
+                </button>
+              )}
               <button 
                 className="sub-btn-secondary"
                 onClick={() => setShowDetailsModal(false)}

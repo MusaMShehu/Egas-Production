@@ -102,35 +102,37 @@ const Orders = () => {
   };
 
   // ✅ Cancel order
-  const cancelOrder = async (orderId) => {
-    if (!window.confirm('Are you sure you want to cancel this order?')) return;
+ const cancelOrder = async (_id) => {
+  if (!window.confirm('Are you sure you want to cancel this order?')) return;
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        setOrders(prev =>
-          prev.map(order =>
-            order._id === orderId ? { ...order, orderStatus: 'cancelled' } : order
-          )
-        );
-        if (activeOrder && activeOrder._id === orderId) {
-          setActiveOrder({ ...activeOrder, orderStatus: 'cancelled' });
-        }
-      } else {
-        setError('Failed to cancel order');
+  try {
+    const response = await fetch(`${API_BASE_URL}/orders/${_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    } catch (err) {
-      console.error('Error cancelling order:', err);
-      setError('Failed to cancel order. Please try again.');
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      setOrders(prev =>
+        prev.map(order =>
+          order._id === _id ? { ...order, orderStatus: 'cancelled' } : order
+        )
+      );
+
+      if (activeOrder && activeOrder._id === _id) {
+        setActiveOrder({ ...activeOrder, orderStatus: 'cancelled' });
+      }
+    } else {
+      setError(result.message || 'Failed to cancel order');
     }
-  };
+  } catch (err) {
+    console.error('Error cancelling order:', err);
+    setError('Failed to cancel order. Please try again.');
+  }
+};
+
 
   const formatDate = (date) =>
     new Date(date).toLocaleDateString('en-NG', {
