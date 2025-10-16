@@ -34,8 +34,13 @@ const WalletTopupCallback = () => {
         );
 
         const data = await response.json();
+        console.log("Verification response:", data);
+
         if (data.success) {
-          const paymentAmount = data?.data?.amount || data?.amount || 0;
+          // Get amount from backend (convert if Paystack returns kobo)
+          const paymentAmount =
+            (data?.data?.amount || data?.amount || 0) / 100;
+
           setStatus("success");
           setMessage(
             data.message || "Payment successful! Your wallet has been updated."
@@ -79,7 +84,7 @@ const WalletTopupCallback = () => {
           <h2>Top-up Successful 🎉</h2>
           <p>{message}</p>
           <h3>
-            Amount: <span>${amount.toFixed(2)}</span>
+            Amount: <span>₦{amount.toFixed(2)}</span>
           </h3>
           <button className="btn-primary" onClick={handleGoToDashboard}>
             Go to Dashboard
