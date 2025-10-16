@@ -74,12 +74,12 @@ import UserProfile from "./components/User/UserProfile/UserProfile";
 import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
 
-
 import { PaymentProvider } from './contexts/paymentContext';
-import SubscriptionPayment from './components/payments/subscriptionPayment';
-import WalletTopup from './components/payments/walletTopup';
-import OrderPayment from './components/payments/orderPayment';
-import PaymentCallback from './components/payments/paymentCallback';
+
+// import SubscriptionPayment from './components/payments/subscriptionPayment';
+// import WalletTopup from './components/payments/walletTopup';
+// import OrderPayment from './components/payments/orderPayment';
+// import PaymentCallback from './components/payments/paymentCallback';
 
 // Wallet Topup verify/Callback
 import WalletTopupCallback from './components/payments/walletTopupCallback';
@@ -156,10 +156,10 @@ function App() {
 
 
               {/* New payment Testing */}
-            <Route path="payment/subscribe" element={<SubscriptionPayment />} />
+            {/* <Route path="payment/subscribe" element={<SubscriptionPayment />} />
             <Route path="payment/topup" element={<WalletTopup />} />
             <Route path="payment/order" element={<OrderPayment />} />
-            <Route path="payment/callback" element={<PaymentCallback />} />
+            <Route path="payment/callback" element={<PaymentCallback />} /> */}
 
           </Route>
 
