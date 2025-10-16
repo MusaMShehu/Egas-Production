@@ -58,10 +58,10 @@ const Payments = () => {
       if (!token) return;
 
       const response = await fetch(
-        `${API_BASE_URL}/payments/history?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/payments/wallet/history?page=${page}&limit=${limit}`,
         { 
           headers: getHeaders(),
-          credentials: 'include'
+          // credentials: 'include'
         }
       );
 
@@ -128,7 +128,7 @@ const Payments = () => {
 
       const response = await fetch(`${API_BASE_URL}/payments/wallet/balance`, {
         headers: getHeaders(),
-        credentials: 'include'
+        // credentials: 'include'
       });
 
       if (!response.ok) {
