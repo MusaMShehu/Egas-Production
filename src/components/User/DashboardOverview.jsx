@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO, isAfter } from 'date-fns';
 import { 
-  FaChartLine, // Replaced FaTrendingUp with FaChartLine
+  FaChartLine,
   FaShoppingCart, 
   FaFileInvoiceDollar, 
   FaWallet, 
@@ -35,20 +35,19 @@ const dashboardAPI = {
 // Status configuration
 const statusConfig = {
   order: {
-    paid: { className: 'status-success', label: 'Paid' },
+    completed: { className: 'status-success', label: 'Completed' },
     processing: { className: 'status-warning', label: 'Processing' },
-    delivering: { className: 'status-info', label: 'Delivering' },
-    active: { className: 'status-success', label: 'Active' }
+    'in-transit': { className: 'status-info', label: 'In Transit' },
+    cancelled: { className: 'status-error', label: 'Cancelled' }
   },
   subscription: {
     active: { className: 'status-success', label: 'Active' },
     paused: { className: 'status-warning', label: 'Paused' },
     expired: { className: 'status-error', label: 'Expired' }
   },
-  wallet_topup: {
-    successful: { className: 'status-success', label: 'Successful' },
-    pending: { className: 'status-warning', label: 'Pending' },
-    failed: { className: 'status-error', label: 'Failed' }
+  wallet_transaction: {
+    Credit: { className: 'status-success', label: 'Credit' },
+    Debit: { className: 'status-info', label: 'Debit' }
   }
 };
 
@@ -56,21 +55,33 @@ const statusConfig = {
 const activityIcons = {
   order: FaShoppingCart,
   subscription: FaFileInvoiceDollar,
-  wallet_topup: FaWallet
+  wallet_transaction: FaWallet
 };
 
-// Format currency
+// Format currency - UPDATED to Naira
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-NG', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'NGN'
   }).format(amount || 0);
+};
+
+// Format currency without symbol - for clean display
+const formatCurrencyClean = (amount) => {
+  return new Intl.NumberFormat('en-NG').format(amount || 0);
 };
 
 // Format date
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
-  return format(parseISO(dateString), 'MMM dd, yyyy');
+  
+  try {
+    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
+    return format(date, 'MMM dd, yyyy');
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return 'Invalid Date';
+  }
 };
 
 // Get status chip
@@ -103,7 +114,7 @@ const ErrorMessage = ({ message, onRetry }) => (
   </div>
 );
 
-// Stat Card Component
+// Stat Card Component - UPDATED to show ₦ symbol
 const StatCard = ({ title, value, subtitle, icon, color = 'primary' }) => (
   <div className={`stat-card stat-card-${color}`}>
     <div className="stat-content">
@@ -121,7 +132,7 @@ const StatCard = ({ title, value, subtitle, icon, color = 'primary' }) => (
 
 // Delivery Status Component
 const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
-  const isUpcoming = nextDeliveryDate && isAfter(parseISO(nextDeliveryDate), new Date());
+  const isUpcoming = nextDeliveryDate && isAfter(new Date(nextDeliveryDate), new Date());
   
   return (
     <div className="card">
@@ -181,7 +192,7 @@ const RecentActivities = ({ activities }) => {
             return (
               <div key={index} className="activity-item">
                 <div className="activity-icon">
-                  <IconComponent />
+                  {IconComponent ? <IconComponent /> : <FaHistory />}
                 </div>
                 <div className="activity-content">
                   <div className="activity-header">
@@ -228,7 +239,7 @@ const SpendingChart = ({ spendingByMonth }) => {
               <div key={index} className="spending-item">
                 <div className="spending-header">
                   <span className="spending-month">{monthName}</span>
-                  <span className="spending-amount">{formatCurrency(item.total)}</span>
+                  <span className="spending-amount">₦{formatCurrencyClean(item.total)}</span>
                 </div>
                 <div className="spending-bar">
                   <div 
@@ -312,10 +323,10 @@ const DashboardOverview = () => {
     activeOrderCount,
     nextDeliveryDate,
     subscriptionCount,
-    activeSubscriptions,
+    activeSubscriptions = [],
     walletBalance,
-    spendingByMonth,
-    recentActivities
+    spendingByMonth = [],
+    recentActivities = []
   } = dashboardData;
 
   return (
@@ -328,7 +339,7 @@ const DashboardOverview = () => {
         </button>
       </div>
 
-      {/* Main Stats Grid */}
+      {/* Main Stats Grid - UPDATED to show Naira */}
       <div className="stats-grid">
         <StatCard
           title="Total Spent"
@@ -386,7 +397,7 @@ const DashboardOverview = () => {
                 <div className="breakdown-total">
                   <span>Total</span>
                   <span className="total-amount">
-                    {formatCurrency(thisMonthSpent + topupMonthly)}
+                    {formatCurrency(orderMonthly + subscriptionMonthly + topupMonthly)}
                   </span>
                 </div>
               </div>
@@ -437,6 +448,10 @@ const DashboardOverview = () => {
                 <div className="quick-stat">
                   <span>Monthly Subscriptions</span>
                   <span className="stat-amount">{formatCurrency(subscriptionMonthly)}</span>
+                </div>
+                <div className="quick-stat">
+                  <span>Monthly Top-ups</span>
+                  <span className="stat-amount">{formatCurrency(topupMonthly)}</span>
                 </div>
               </div>
             </div>
