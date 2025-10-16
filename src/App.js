@@ -138,6 +138,10 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
+           {/* Wallet Topup callback/verify route */}
+            <Route path="/payment/wallet-topup/verify" element={<WalletTopupCallback />} />
+
+
           {/* 2nd User Panel */}
           <Route path="/dashboard" element={<UserLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
@@ -156,10 +160,6 @@ function App() {
             <Route path="payment/topup" element={<WalletTopup />} />
             <Route path="payment/order" element={<OrderPayment />} />
             <Route path="payment/callback" element={<PaymentCallback />} />
-
-            {/* Wallet Topup callback/verify route */}
-            <Route path="/payment/wallet-topup/verify" element={<WalletTopupCallback />} />
-
 
           </Route>
 
