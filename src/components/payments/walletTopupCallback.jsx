@@ -23,7 +23,7 @@ const WalletTopupCallback = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/api/v1/payments/verify/${reference}`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/payments/wallet/verify?reference=${reference}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
