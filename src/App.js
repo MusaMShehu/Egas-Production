@@ -81,6 +81,11 @@ import WalletTopup from './components/payments/walletTopup';
 import OrderPayment from './components/payments/orderPayment';
 import PaymentCallback from './components/payments/paymentCallback';
 
+// Wallet Topup verify/Callback
+import WalletTopupCallback from './components/payments/walletTopupCallback';
+
+
+
 
 function App() {
 
@@ -151,6 +156,10 @@ function App() {
             <Route path="payment/topup" element={<WalletTopup />} />
             <Route path="payment/order" element={<OrderPayment />} />
             <Route path="payment/callback" element={<PaymentCallback />} />
+
+            {/* Wallet Topup callback/verify route */}
+            <Route path="/payment/wallet-topup/verify" element={<WalletTopupCallback />} />
+
 
           </Route>
 
