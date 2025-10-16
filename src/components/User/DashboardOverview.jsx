@@ -17,7 +17,7 @@ import './Dashboard.css';
 const dashboardAPI = {
   getDashboardStats: async () => {
     const token = localStorage.getItem('token');
-    const response = await fetch('https://egas-ng.onrender.com/api/v1/dashboard/overview', {
+    const response = await fetch('https://egas-server-1.onrender.com/api/v1/dashboard/overview', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
