@@ -38,8 +38,7 @@ const WalletTopupCallback = () => {
 
         if (data.success) {
           // Get amount from backend (convert if Paystack returns kobo)
-          const paymentAmount =
-            (data?.data?.amount || data?.amount || 0) / 100;
+          const paymentAmount = (data?.data?.amount || data?.amount || 0) / 100;
 
           setStatus("success");
           setMessage(
@@ -84,7 +83,7 @@ const WalletTopupCallback = () => {
           <h2>Top-up Successful 🎉</h2>
           <p>{message}</p>
           <h3>
-            Amount: <span>₦{amount.toFixed(2)}</span>
+            Amount: <span>₦{Number(amount).toLocaleString()}</span>
           </h3>
           <button className="btn-primary" onClick={handleGoToDashboard}>
             Go to Dashboard
