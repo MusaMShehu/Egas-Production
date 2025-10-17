@@ -38,7 +38,7 @@ const WalletTopupCallback = () => {
 
         if (data.success) {
           // Get amount from backend (convert if Paystack returns kobo)
-          const paymentAmount = (data?.data?.amount || data?.amount || 0) / 100;
+          const paymentAmount = (data?.data?.amount || data?.amount || 0);
 
           setStatus("success");
           setMessage(
