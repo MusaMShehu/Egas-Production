@@ -1,55 +1,57 @@
 // components/OrderList.js
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faExclamationTriangle, 
+  faBoxOpen, 
+  faSync 
+} from '@fortawesome/free-solid-svg-icons';
+import OrderCard from './OrderCard';
 
-const OrderList = ({ orders, loading, error, onViewOrder, onUpdateOrderStatus }) => {
-  const [updatingOrderId, setUpdatingOrderId] = useState(null);
+const OrderList = ({ 
+  orders, 
+  loading, 
+  error, 
+  selectedOrders,
+  onViewOrder, 
+  onUpdateOrderStatus, 
+  onOrderSelect,
+  onSelectAll,
+  permissions 
+}) => {
+  const [updatingOrder, setUpdatingOrder] = useState(null);
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    setUpdatingOrderId(orderId);
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    setUpdatingOrder(orderId);
     const result = await onUpdateOrderStatus(orderId, newStatus);
-    setUpdatingOrderId(null);
+    setUpdatingOrder(null);
     
-    if (!result.success) {
+    if (result.success) {
+      // Optional: Show success notification
+    } else {
+      // Optional: Show error notification
       alert(result.message);
     }
   };
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'processing': return 'status-processing';
-      case 'shipped': return 'status-shipped';
-      case 'in-transit': return 'status-in-transit';
-      case 'delivered': return 'status-delivered';
-      case 'cancelled': return 'status-cancelled';
-      default: return 'status-default';
-    }
-  };
-
-  const getPaymentStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'completed': return 'payment-completed';
-      case 'pending': return 'payment-pending';
-      case 'failed': return 'payment-failed';
-      default: return 'payment-default';
-    }
-  };
+  const allSelected = orders.length > 0 && orders.every(order => selectedOrders.has(order._id));
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <i className="fas fa-spinner fa-spin"></i>
-        <span>Loading orders...</span>
+      <div className="aom-loading-container">
+        <div className="aom-loading-spinner"></div>
+        <p>Loading orders...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="error-container">
-        <i className="fas fa-exclamation-circle"></i>
+      <div className="aom-error-container">
+        <FontAwesomeIcon icon={faExclamationTriangle} className="aom-error-icon" />
         <p>{error}</p>
-        <button onClick={() => window.location.reload()} className="btn-retry">
-          Try Again
+        <button onClick={() => window.location.reload()} className="aom-btn-retry">
+          Retry
         </button>
       </div>
     );
@@ -57,86 +59,49 @@ const OrderList = ({ orders, loading, error, onViewOrder, onUpdateOrderStatus })
 
   if (orders.length === 0) {
     return (
-      <div className="empty-state">
-        <i className="fas fa-box-open"></i>
+      <div className="aom-empty-state">
+        <FontAwesomeIcon icon={faBoxOpen} className="aom-empty-icon" />
         <h3>No orders found</h3>
-        <p>Try adjusting your filters or check back later for new orders.</p>
+        <p>Try adjusting your filters or search criteria</p>
       </div>
     );
   }
 
   return (
-    <div className="order-list-container">
-      <div className="order-grid">
+    <div className="aom-order-list-container">
+      <div className="aom-order-list-header">
+        <div className="aom-select-all">
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={(e) => onSelectAll(e.target.checked)}
+            disabled={!permissions?.canBulkUpdate}
+          />
+          <span>Select All</span>
+        </div>
+        <div className="aom-header-columns">
+          <span className="aom-col-order">Order</span>
+          <span className="aom-col-customer">Customer</span>
+          <span className="aom-col-amount">Amount</span>
+          <span className="aom-col-status">Status</span>
+          <span className="aom-col-payment">Payment</span>
+          <span className="aom-col-date">Date</span>
+          <span className="aom-col-actions">Actions</span>
+        </div>
+      </div>
+
+      <div className="aom-order-list">
         {orders.map(order => (
-          <div key={order._id} className="order-card">
-            <div className="order-card-header">
-              <div className="order-id">#{order.orderId}</div>
-              <div className="order-date">
-                {new Date(order.createdAt).toLocaleDateString()}
-              </div>
-            </div>
-            
-            <div className="order-card-body">
-              <div className="customer-info">
-                <div className="customer-name">
-                  {order.user?.firstName} {order.user?.lastName}
-                </div>
-                <div className="customer-email">{order.user?.email}</div>
-              </div>
-              
-              <div className="order-details">
-                <div className="order-item">
-                  <span className="label">Items:</span>
-                  <span className="value">{order.products.length} product(s)</span>
-                </div>
-                <div className="order-item">
-                  <span className="label">Total:</span>
-                  <span className="value">₦{order.totalAmount?.toLocaleString()}</span>
-                </div>
-                <div className="order-item">
-                  <span className="label">Payment:</span>
-                  <span className={`payment-badge ${getPaymentStatusBadgeClass(order.paymentStatus)}`}>
-                    {order.paymentStatus}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="order-status-section">
-                <div className={`status-badge ${getStatusBadgeClass(order.orderStatus)}`}>
-                  {order.orderStatus}
-                </div>
-                
-                <div className="status-actions">
-                  <select
-                    value={order.orderStatus}
-                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    disabled={updatingOrderId === order._id}
-                    className="status-select"
-                  >
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="in-transit">In Transit</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                  
-                  {updatingOrderId === order._id && (
-                    <i className="fas fa-spinner fa-spin updating-spinner"></i>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            <div className="order-card-footer">
-              <button
-                onClick={() => onViewOrder(order)}
-                className="btn-view-details"
-              >
-                <i className="fas fa-eye"></i> View Details
-              </button>
-            </div>
-          </div>
+          <OrderCard
+            key={order._id}
+            order={order}
+            isSelected={selectedOrders.has(order._id)}
+            onSelect={onOrderSelect}
+            onView={onViewOrder}
+            onStatusUpdate={handleStatusUpdate}
+            updating={updatingOrder === order._id}
+            permissions={permissions}
+          />
         ))}
       </div>
     </div>

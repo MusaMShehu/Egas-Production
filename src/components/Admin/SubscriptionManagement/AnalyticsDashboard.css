@@ -1,0 +1,749 @@
+/* components/AnalyticsDashboard.css */
+.asm-analytics-dashboard {
+  padding: 20px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Dashboard Header */
+.asm-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e1e5e9;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.asm-dashboard-header h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.asm-btn-back {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asm-btn-back:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.asm-time-range-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.asm-time-range-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.asm-time-range-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Loading State */
+.asm-loading-analytics {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.asm-loading-analytics .asm-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: asm-spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes asm-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.asm-loading-analytics p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Overview Cards */
+.asm-overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.asm-stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.asm-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.asm-stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.asm-stat-icon.asm-total {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.asm-stat-icon.asm-active {
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+}
+
+.asm-stat-icon.asm-revenue {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.asm-stat-icon.asm-growth {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.asm-stat-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.asm-stat-info p {
+  margin: 0 0 6px 0;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.asm-stat-percentage {
+  font-size: 12px;
+  color: #27ae60;
+  font-weight: 600;
+  background: #d4edda;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.asm-stat-trend {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+/* Analytics Grid */
+.asm-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.asm-chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+}
+
+.asm-chart-card h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 12px;
+}
+
+/* Distribution Chart */
+.asm-distribution-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.asm-distribution-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.asm-distribution-bar {
+  flex: 1;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.asm-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #3498db, #2980b9);
+}
+
+.asm-bar-fill.asm-revenue {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.asm-distribution-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 150px;
+  gap: 8px;
+}
+
+.asm-type-name {
+  font-weight: 500;
+  color: #2c3e50;
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+.asm-type-count {
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Status Grid */
+.asm-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.asm-status-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #ddd;
+}
+
+.asm-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.asm-status-indicator.asm-status-active {
+  background: #27ae60;
+  border-color: #27ae60;
+}
+
+.asm-status-indicator.asm-status-paused {
+  background: #f39c12;
+  border-color: #f39c12;
+}
+
+.asm-status-indicator.asm-status-cancelled {
+  background: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.asm-status-indicator.asm-status-expired {
+  background: #95a5a6;
+  border-color: #95a5a6;
+}
+
+.asm-status-indicator.asm-status-pending {
+  background: #3498db;
+  border-color: #3498db;
+}
+
+.asm-status-item.asm-status-active {
+  border-left-color: #27ae60;
+}
+
+.asm-status-item.asm-status-paused {
+  border-left-color: #f39c12;
+}
+
+.asm-status-item.asm-status-cancelled {
+  border-left-color: #e74c3c;
+}
+
+.asm-status-item.asm-status-expired {
+  border-left-color: #95a5a6;
+}
+
+.asm-status-item.asm-status-pending {
+  border-left-color: #3498db;
+}
+
+.asm-status-name {
+  flex: 1;
+  font-weight: 500;
+  color: #2c3e50;
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+.asm-status-count {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.asm-status-percentage {
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Frequency List */
+.asm-frequency-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asm-frequency-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.asm-frequency-name {
+  min-width: 100px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.asm-frequency-bar {
+  flex: 1;
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.asm-frequency-count {
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Revenue List */
+.asm-revenue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.asm-revenue-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.asm-revenue-type {
+  min-width: 100px;
+  font-weight: 500;
+  color: #2c3e50;
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+.asm-revenue-amount {
+  min-width: 100px;
+  font-weight: 600;
+  color: #27ae60;
+  font-size: 14px;
+  text-align: right;
+}
+
+.asm-revenue-bar {
+  flex: 1;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+/* Summary Section */
+.asm-summary-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+}
+
+.asm-summary-section h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 12px;
+}
+
+.asm-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.asm-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.asm-metric-item label {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.asm-metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .asm-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .asm-analytics-dashboard {
+    padding: 15px;
+  }
+
+  .asm-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .asm-dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .asm-overview-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .asm-stat-card {
+    padding: 20px;
+  }
+
+  .asm-stat-info h3 {
+    font-size: 24px;
+  }
+
+  .asm-analytics-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .asm-chart-card {
+    padding: 20px;
+  }
+
+  .asm-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .asm-distribution-label {
+    min-width: 120px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .asm-frequency-item,
+  .asm-revenue-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .asm-frequency-bar,
+  .asm-revenue-bar {
+    width: 100%;
+  }
+
+  .asm-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .asm-metric-value {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .asm-analytics-dashboard {
+    padding: 10px;
+  }
+
+  .asm-stat-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .asm-stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .asm-chart-card {
+    padding: 16px;
+  }
+
+  .asm-distribution-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .asm-distribution-bar {
+    width: 100%;
+  }
+}
+
+/* Animation for bar fills */
+@keyframes asm-slideIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.asm-bar-fill {
+  transform-origin: left;
+  animation: asm-slideIn 0.8s ease-out;
+}
+
+/* Hover effects for interactive elements */
+.asm-stat-card,
+.asm-chart-card,
+.asm-summary-section {
+  transition: all 0.3s ease;
+}
+
+.asm-stat-card:hover,
+.asm-chart-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom scrollbar for charts */
+.asm-chart-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.asm-chart-card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.asm-chart-card::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.asm-chart-card::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Print styles */
+@media print {
+  .asm-analytics-dashboard {
+    background: white;
+    padding: 0;
+  }
+
+  .asm-btn-back,
+  .asm-time-range-selector {
+    display: none;
+  }
+
+  .asm-stat-card,
+  .asm-chart-card,
+  .asm-summary-section {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .asm-overview-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .asm-analytics-dashboard {
+    background: #1a1a1a;
+    color: #e9ecef;
+  }
+
+  .asm-dashboard-header h1 {
+    color: #e9ecef;
+  }
+
+  .asm-stat-card,
+  .asm-chart-card,
+  .asm-summary-section {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e9ecef;
+  }
+
+  .asm-stat-info h3 {
+    color: #e9ecef;
+  }
+
+  .asm-stat-info p {
+    color: #a0aec0;
+  }
+
+  .asm-distribution-bar,
+  .asm-frequency-bar,
+  .asm-revenue-bar {
+    background: #4a5568;
+  }
+
+  .asm-status-item {
+    background: #2d3748;
+    color: #e9ecef;
+  }
+
+  .asm-metric-item {
+    background: #2d3748;
+    color: #e9ecef;
+  }
+
+  .asm-type-name,
+  .asm-status-name,
+  .asm-frequency-name,
+  .asm-revenue-type {
+    color: #e9ecef;
+  }
+
+  .asm-type-count,
+  .asm-frequency-count,
+  .asm-status-percentage {
+    color: #a0aec0;
+  }
+
+  .asm-time-range-select {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e9ecef;
+  }
+
+  .asm-chart-card h3,
+  .asm-summary-section h3 {
+    color: #e9ecef;
+    border-bottom-color: #4a5568;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .asm-stat-card,
+  .asm-chart-card,
+  .asm-summary-section {
+    border: 2px solid #000;
+  }
+
+  .asm-bar-fill {
+    background: #000;
+  }
+
+  .asm-stat-percentage {
+    background: #000;
+    color: #fff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .asm-stat-card,
+  .asm-chart-card,
+  .asm-summary-section,
+  .asm-bar-fill {
+    transition: none;
+    animation: none;
+  }
+  
+  .asm-stat-card:hover,
+  .asm-chart-card:hover {
+    transform: none;
+  }
+}

@@ -1,64 +1,63 @@
 // components/SubscriptionDetails.js
 import React, { useState } from 'react';
+import { 
+  FaArrowLeft, 
+  FaPause, 
+  FaPlay, 
+  FaTimes, 
+  FaTrash, 
+  FaSpinner, 
+  FaBoxOpen,
+  FaHistory,
+  FaUser,
+  FaTruck,
+  FaInfoCircle
+} from 'react-icons/fa';
+import RoleBasedAccess from './RoleBasedAccess';
+import './SubscriptionDetails.css';
 
-const SubscriptionDetails = ({ subscription, onBack, onUpdateSubscription, onDeleteSubscription }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: subscription.name || '',
-    size: subscription.size || '6kg',
-    frequency: subscription.frequency || 'Monthly',
-    price: subscription.price || 0
-  });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+const SubscriptionDetails = ({
+  subscription,
+  onBack,
+  onUpdateSubscription,
+  onDeleteSubscription,
+  onPauseSubscription,
+  onResumeSubscription,
+  onCancelSubscription,
+  userRole
+}) => {
+  const [activeTab, setActiveTab] = useState('details');
+  const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'price' ? parseFloat(value) || 0 : value
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
+  const handleAction = async (action) => {
+    setActionLoading(action);
+    setLoading(true);
     
-    if (!formData.size) newErrors.size = 'Cylinder size is required';
-    if (!formData.frequency) newErrors.frequency = 'Frequency is required';
-    
-    if (!formData.price || formData.price <= 0) {
-      newErrors.price = 'Price must be greater than 0';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    const result = await onUpdateSubscription(subscription._id, formData);
-    
-    if (result.success) {
-      setIsEditing(false);
-    } else {
-      setErrors({ submit: result.message });
-    }
-    
-    setIsSubmitting(false);
-  };
-
-  const handleDelete = async () => {
-    const result = await onDeleteSubscription(subscription._id);
-    if (result.success) {
-      onBack();
-    } else {
-      alert(result.message);
+    try {
+      switch (action) {
+        case 'pause':
+          await onPauseSubscription(subscription._id);
+          break;
+        case 'resume':
+          await onResumeSubscription(subscription._id);
+          break;
+        case 'cancel':
+          if (window.confirm('Are you sure you want to cancel this subscription?')) {
+            await onCancelSubscription(subscription._id);
+          }
+          break;
+        case 'delete':
+          if (window.confirm('Are you sure you want to delete this subscription? This action cannot be undone.')) {
+            await onDeleteSubscription(subscription._id);
+          }
+          break;
+        default:
+          break;
+      }
+    } finally {
+      setActionLoading(null);
+      setLoading(false);
     }
   };
 
@@ -70,248 +69,349 @@ const SubscriptionDetails = ({ subscription, onBack, onUpdateSubscription, onDel
     });
   };
 
-  const getFrequencyBadgeClass = (frequency) => {
-    switch (frequency) {
-      case 'Daily': return 'frequency-daily';
-      case 'Weekly': return 'frequency-weekly';
-      case 'Bi-Weekly': return 'frequency-biweekly';
-      case 'Monthly': return 'frequency-monthly';
-      case 'One-Time': return 'frequency-onetime';
-      default: return 'frequency-default';
-    }
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN'
+    }).format(amount);
   };
 
-  const getSizeBadgeClass = (size) => {
-    switch (size) {
-      case '6kg': return 'size-small';
-      case '12kg': return 'size-medium';
-      case '50kg': return 'size-large';
-      default: return 'size-default';
-    }
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      active: { class: 'asm-status-active', label: 'Active' },
+      paused: { class: 'asm-status-paused', label: 'Paused' },
+      cancelled: { class: 'asm-status-cancelled', label: 'Cancelled' },
+      expired: { class: 'asm-status-expired', label: 'Expired' },
+      pending: { class: 'asm-status-pending', label: 'Pending' }
+    };
+    
+    const config = statusConfig[status] || { class: 'asm-status-default', label: status };
+    return <span className={`asm-status-badge ${config.class}`}>{config.label}</span>;
   };
 
-  if (isEditing) {
-    return (
-      <div className="subscription-details-container">
-        <div className="details-header">
-          <button onClick={() => setIsEditing(false)} className="btn-back">
-            <i className="fas fa-arrow-left"></i> Back to Details
-          </button>
-          <h2>Edit Subscription</h2>
-        </div>
+  const getRemainingDays = () => {
+    if (subscription.status === 'paused' && subscription.remainingDays !== null) {
+      return subscription.remainingDays;
+    }
+    
+    if (subscription.endDate) {
+      const now = new Date();
+      const end = new Date(subscription.endDate);
+      const diffTime = end - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return Math.max(diffDays, 0);
+    }
+    
+    return null;
+  };
 
-        {errors.submit && (
-          <div className="error-message">
-            <i className="fas fa-exclamation-circle"></i>
-            {errors.submit}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="subscription-form">
-          <div className="form-group">
-            <label htmlFor="name">Plan Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="e.g., Custom Plan, Premium Package"
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="size">Cylinder Size *</label>
-              <select
-                id="size"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                className={errors.size ? 'error' : ''}
-              >
-                <option value="6kg">6kg</option>
-                <option value="12kg">12kg</option>
-                <option value="50kg">50kg</option>
-              </select>
-              {errors.size && <span className="error-text">{errors.size}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="frequency">Delivery Frequency *</label>
-              <select
-                id="frequency"
-                name="frequency"
-                value={formData.frequency}
-                onChange={handleChange}
-                className={errors.frequency ? 'error' : ''}
-              >
-                <option value="Daily">Daily</option>
-                <option value="Weekly">Weekly</option>
-                <option value="Bi-Weekly">Bi-Weekly</option>
-                <option value="Monthly">Monthly</option>
-                <option value="One-Time">One-Time</option>
-              </select>
-              {errors.frequency && <span className="error-text">{errors.frequency}</span>}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="price">Price (₦) *</label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className={errors.price ? 'error' : ''}
-            />
-            {errors.price && <span className="error-text">{errors.price}</span>}
-          </div>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              onClick={() => setIsEditing(false)}
-              className="btn-cancel"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-submit"
-            >
-              {isSubmitting && <i className="fas fa-spinner fa-spin"></i>}
-              Update Subscription
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
+  const remainingDays = getRemainingDays();
 
   return (
-    <div className="subscription-details-container">
-      <div className="details-header">
-        <button onClick={onBack} className="btn-back">
-          <i className="fas fa-arrow-left"></i> Back to Subscriptions
+    <div className="asm-subscription-details">
+      <div className="asm-details-header">
+        <button onClick={onBack} className="asm-btn asm-btn-back">
+          <FaArrowLeft className="asm-icon" /> Back to List
         </button>
-        <div className="header-actions">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="btn-edit"
-          >
-            <i className="fas fa-edit"></i> Edit
-          </button>
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="btn-delete"
-          >
-            <i className="fas fa-trash"></i> Delete
-          </button>
-        </div>
-      </div>
-
-      <div className="details-content">
-        <div className="details-card">
-          <h3>Subscription Details</h3>
-          <div className="details-grid">
-            <div className="detail-item">
-              <span className="label">Plan Name:</span>
-              <span className="value">{subscription.name || 'Custom Subscription'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Cylinder Size:</span>
-              <span className={`value size-badge ${getSizeBadgeClass(subscription.size)}`}>
-                {subscription.size}
-              </span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Frequency:</span>
-              <span className={`value frequency-badge ${getFrequencyBadgeClass(subscription.frequency)}`}>
-                {subscription.frequency}
-              </span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Price:</span>
-              <span className="value price">₦{subscription.price?.toLocaleString()}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">Created:</span>
-              <span className="value">{formatDate(subscription.createdAt)}</span>
-            </div>
-          </div>
-        </div>
-
-        {subscription.userId && (
-          <div className="details-card">
-            <h3>Customer Information</h3>
-            <div className="details-grid">
-              <div className="detail-item">
-                <span className="label">Name:</span>
-                <span className="value">
-                  {subscription.userId.firstName} {subscription.userId.lastName}
-                </span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Email:</span>
-                <span className="value">{subscription.userId.email}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Phone:</span>
-                <span className="value">{subscription.userId.phone || 'Not provided'}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="details-card">
-          <h3>Billing Information</h3>
-          <div className="billing-summary">
-            <div className="billing-item">
-              <span className="label">Base Price:</span>
-              <span className="value">₦{subscription.price?.toLocaleString()}</span>
-            </div>
-            <div className="billing-item">
-              <span className="label">Delivery Fee:</span>
-              <span className="value">₦0</span>
-            </div>
-            <div className="billing-item total">
-              <span className="label">Total:</span>
-              <span className="value">₦{subscription.price?.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Confirm Delete</h3>
-            <p>
-              Are you sure you want to delete this subscription? This action cannot be undone.
-            </p>
-            <div className="modal-actions">
+        <h1>Subscription Details</h1>
+        <div className="asm-header-actions">
+          {subscription.status === 'active' && (
+            <RoleBasedAccess permission="subscriptions:update">
               <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="btn-cancel"
+                onClick={() => handleAction('pause')}
+                className="asm-btn asm-btn-warning"
+                disabled={loading}
               >
+                {actionLoading === 'pause' ? (
+                  <FaSpinner className="asm-icon asm-spin" />
+                ) : (
+                  <FaPause className="asm-icon" />
+                )}
+                Pause
+              </button>
+            </RoleBasedAccess>
+          )}
+          
+          {subscription.status === 'paused' && (
+            <RoleBasedAccess permission="subscriptions:update">
+              <button
+                onClick={() => handleAction('resume')}
+                className="asm-btn asm-btn-success"
+                disabled={loading}
+              >
+                {actionLoading === 'resume' ? (
+                  <FaSpinner className="asm-icon asm-spin" />
+                ) : (
+                  <FaPlay className="asm-icon" />
+                )}
+                Resume
+              </button>
+            </RoleBasedAccess>
+          )}
+          
+          {(subscription.status === 'active' || subscription.status === 'paused') && (
+            <RoleBasedAccess permission="subscriptions:update">
+              <button
+                onClick={() => handleAction('cancel')}
+                className="asm-btn asm-btn-warning"
+                disabled={loading}
+              >
+                {actionLoading === 'cancel' ? (
+                  <FaSpinner className="asm-icon asm-spin" />
+                ) : (
+                  <FaTimes className="asm-icon" />
+                )}
                 Cancel
               </button>
-              <button
-                onClick={handleDelete}
-                className="btn-confirm-delete"
-              >
-                Delete
-              </button>
+            </RoleBasedAccess>
+          )}
+          
+          <RoleBasedAccess permission="subscriptions:delete">
+            <button
+              onClick={() => handleAction('delete')}
+              className="asm-btn asm-btn-danger"
+              disabled={loading}
+            >
+              {actionLoading === 'delete' ? (
+                <FaSpinner className="asm-icon asm-spin" />
+              ) : (
+                <FaTrash className="asm-icon" />
+              )}
+              Delete
+            </button>
+          </RoleBasedAccess>
+        </div>
+      </div>
+
+      <div className="asm-details-overview">
+        <div className="asm-overview-card">
+          <div className="asm-overview-main">
+            <h2>{subscription.planName}</h2>
+            <div className="asm-subscription-meta">
+              <span className="asm-reference">Ref: {subscription.reference}</span>
+              {getStatusBadge(subscription.status)}
             </div>
           </div>
+          <div className="asm-overview-price">
+            <div className="asm-price-amount">{formatCurrency(subscription.price)}</div>
+            <div className="asm-price-period">{subscription.frequency}</div>
+          </div>
         </div>
-      )}
+
+        {remainingDays !== null && (
+          <div className="asm-remaining-days-card">
+            <div className="asm-days-count">{remainingDays}</div>
+            <div className="asm-days-label">Days Remaining</div>
+          </div>
+        )}
+      </div>
+
+      <div className="asm-details-tabs">
+        <nav className="asm-tab-nav">
+          <button
+            className={`asm-tab-button ${activeTab === 'details' ? 'asm-active' : ''}`}
+            onClick={() => setActiveTab('details')}
+          >
+            <FaInfoCircle className="asm-icon" /> Details
+          </button>
+          <button
+            className={`asm-tab-button ${activeTab === 'customer' ? 'asm-active' : ''}`}
+            onClick={() => setActiveTab('customer')}
+          >
+            <FaUser className="asm-icon" /> Customer
+          </button>
+          <button
+            className={`asm-tab-button ${activeTab === 'deliveries' ? 'asm-active' : ''}`}
+            onClick={() => setActiveTab('deliveries')}
+          >
+            <FaTruck className="asm-icon" /> Deliveries
+          </button>
+          <button
+            className={`asm-tab-button ${activeTab === 'history' ? 'asm-active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            <FaHistory className="asm-icon" /> History
+          </button>
+        </nav>
+
+        <div className="asm-tab-content">
+          {activeTab === 'details' && (
+            <div className="asm-details-grid">
+              <div className="asm-detail-item">
+                <label>Plan Type</label>
+                <span className="asm-plan-type">{subscription.planType}</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>Cylinder Size</label>
+                <span>{subscription.size}</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>Frequency</label>
+                <span>{subscription.frequency}</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>Subscription Period</label>
+                <span>{subscription.subscriptionPeriod} month(s)</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>Start Date</label>
+                <span>{formatDate(subscription.startDate)}</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>End Date</label>
+                <span>{subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}</span>
+              </div>
+              <div className="asm-detail-item">
+                <label>Created</label>
+                <span>{formatDate(subscription.createdAt)}</span>
+              </div>
+              {subscription.updatedAt && (
+                <div className="asm-detail-item">
+                  <label>Last Updated</label>
+                  <span>{formatDate(subscription.updatedAt)}</span>
+                </div>
+              )}
+              {subscription.pausedAt && (
+                <div className="asm-detail-item">
+                  <label>Paused Since</label>
+                  <span>{formatDate(subscription.pausedAt)}</span>
+                </div>
+              )}
+              {subscription.cancelledAt && (
+                <div className="asm-detail-item">
+                  <label>Cancelled At</label>
+                  <span>{formatDate(subscription.cancelledAt)}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'customer' && subscription.userId && (
+            <div className="asm-customer-info">
+              <div className="asm-customer-header">
+                <h3>Customer Information</h3>
+              </div>
+              <div className="asm-details-grid">
+                <div className="asm-detail-item">
+                  <label>Name</label>
+                  <span>{subscription.userId.firstName} {subscription.userId.lastName}</span>
+                </div>
+                <div className="asm-detail-item">
+                  <label>Email</label>
+                  <span>{subscription.userId.email}</span>
+                </div>
+                <div className="asm-detail-item">
+                  <label>Phone</label>
+                  <span>{subscription.userId.phone || 'N/A'}</span>
+                </div>
+                <div className="asm-detail-item">
+                  <label>Address</label>
+                  <span>{subscription.userId.address || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'deliveries' && (
+            <div className="asm-deliveries-list">
+              <div className="asm-section-header">
+                <h3>Delivery History</h3>
+                <span className="asm-delivery-count">
+                  {subscription.deliveries?.length || 0} deliveries
+                </span>
+              </div>
+              
+              {subscription.deliveries && subscription.deliveries.length > 0 ? (
+                <div className="asm-deliveries-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {subscription.deliveries.map(delivery => (
+                        <tr key={delivery._id}>
+                          <td>{delivery.orderId}</td>
+                          <td>{formatDate(delivery.createdAt)}</td>
+                          <td>
+                            <span className={`asm-status-badge asm-status-${delivery.orderStatus?.toLowerCase()}`}>
+                              {delivery.orderStatus}
+                            </span>
+                          </td>
+                          <td>{formatCurrency(delivery.totalAmount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="asm-empty-state">
+                  <FaBoxOpen className="asm-icon asm-empty-icon" />
+                  <p>No deliveries found for this subscription</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'history' && (
+            <div className="asm-history-list">
+              <div className="asm-section-header">
+                <h3>Subscription History</h3>
+              </div>
+              
+              <div className="asm-timeline">
+                <div className="asm-timeline-item">
+                  <div className="asm-timeline-marker"></div>
+                  <div className="asm-timeline-content">
+                    <h4>Subscription Created</h4>
+                    <p>{formatDate(subscription.createdAt)}</p>
+                  </div>
+                </div>
+
+                {subscription.pauseHistory?.map((pause, index) => (
+                  <div key={index} className="asm-timeline-item">
+                    <div className="asm-timeline-marker asm-paused"></div>
+                    <div className="asm-timeline-content">
+                      <h4>Subscription Paused</h4>
+                      <p>Paused: {formatDate(pause.pausedAt)}</p>
+                      {pause.resumedAt && (
+                        <p>Resumed: {formatDate(pause.resumedAt)}</p>
+                      )}
+                      {pause.durationMs && (
+                        <p>Duration: {Math.round(pause.durationMs / (1000 * 60 * 60 * 24))} days</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {subscription.cancelledAt && (
+                  <div className="asm-timeline-item">
+                    <div className="asm-timeline-marker asm-cancelled"></div>
+                    <div className="asm-timeline-content">
+                      <h4>Subscription Cancelled</h4>
+                      <p>{formatDate(subscription.cancelledAt)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {subscription.updatedAt && subscription.updatedAt !== subscription.createdAt && (
+                  <div className="asm-timeline-item">
+                    <div className="asm-timeline-marker asm-updated"></div>
+                    <div className="asm-timeline-content">
+                      <h4>Subscription Updated</h4>
+                      <p>Last updated: {formatDate(subscription.updatedAt)}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -9,22 +9,34 @@ import {
   FaChartLine, 
   FaReceipt,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaShoppingBag,
+  FaSync
 } from "react-icons/fa";
 import "./UserPayment.css";
 
 const Payments = () => {
-  const [paymentHistory, setPaymentHistory] = useState([]);
-  const [walletBalance, setWalletBalance] = useState(0);
-  const [totalSpending, setTotalSpending] = useState(0);
-  const [monthlySpending, setMonthlySpending] = useState(0);
+  const [paymentData, setPaymentData] = useState({
+    walletBalance: 0,
+    totalSpent: 0,
+    thisMonthSpent: 0,
+    orderTotal: 0,
+    subscriptionTotal: 0,
+    topupTotal: 0,
+    orderMonthly: 0,
+    subscriptionMonthly: 0,
+    topupMonthly: 0,
+    recentActivities: [],
+    spendingByMonth: []
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState(5000);
   const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [paginationInfo, setPaginationInfo] = useState({ // Renamed from pagination
+  const [activeTab, setActiveTab] = useState("all"); // "all", "orders", "subscriptions", "wallet"
+  const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
     pages: 1,
     total: 0,
@@ -32,7 +44,7 @@ const Payments = () => {
     hasPrev: false,
   });
 
-  const API_BASE_URL = "https://egas-server-1.onrender.com/api/v1";
+  const API_BASE_URL = "https://egas-server-1.onrender.com";
 
   const getAuthToken = useCallback(() => {
     const token = localStorage.getItem("token");
@@ -51,17 +63,16 @@ const Payments = () => {
     };
   }, [getAuthToken]);
 
-  // Fetch payment history with useCallback
-  const fetchPaymentHistory = useCallback(async (page = 1, limit = 10) => {
+  // Fetch dashboard data which includes all payment information
+  const fetchPaymentData = useCallback(async () => {
     try {
       const token = getAuthToken();
       if (!token) return;
 
       const response = await fetch(
-        `${API_BASE_URL}/payments/wallet/history?page=${page}&limit=${limit}`,
+        `${API_BASE_URL}/api/v1/dashboard/overview`,
         { 
           headers: getHeaders(),
-          // credentials: 'include'
         }
       );
 
@@ -76,88 +87,33 @@ const Payments = () => {
       const data = await response.json();
       
       if (!data.success) {
-        throw new Error(data.message || "Failed to fetch payment history");
+        throw new Error(data.message || "Failed to fetch payment data");
       }
 
-      setPaymentHistory(data.data || []);
-      setPaginationInfo(data.pagination || {
+      setPaymentData(data.data || {});
+      
+      // Calculate pagination for activities
+      const activities = data.data.recentActivities || [];
+      setPaginationInfo({
         current: 1,
-        pages: 1,
-        total: 0,
-        hasNext: false,
+        pages: Math.ceil(activities.length / 10),
+        total: activities.length,
+        hasNext: activities.length > 10,
         hasPrev: false,
       });
 
-      // Calculate spending from transactions
-      if (data.data && Array.isArray(data.data)) {
-        let total = 0;
-        let monthly = 0;
-        const now = new Date();
-        
-        data.data.forEach((tx) => {
-          if (tx.type === "debit" || tx.status === "success") {
-            const amount = parseFloat(tx.amount) || 0;
-            total += amount;
-            
-            if (tx.createdAt) {
-              const txDate = new Date(tx.createdAt);
-              if (
-                txDate.getMonth() === now.getMonth() &&
-                txDate.getFullYear() === now.getFullYear()
-              ) {
-                monthly += amount;
-              }
-            }
-          }
-        });
-        
-        setTotalSpending(total);
-        setMonthlySpending(monthly);
-      }
     } catch (error) {
-      console.error("Error fetching payment history:", error);
-      setError(error.message || "Failed to load payment history");
+      console.error("Error fetching payment data:", error);
+      setError(error.message || "Failed to load payment data");
     }
-  }, [API_BASE_URL, getAuthToken, getHeaders]); // Added dependencies
-
-  // Fetch wallet balance with useCallback
-  const fetchWalletBalance = useCallback(async () => {
-    try {
-      const token = getAuthToken();
-      if (!token) return;
-
-      const response = await fetch(`${API_BASE_URL}/payments/wallet/balance`, {
-        headers: getHeaders(),
-        // credentials: 'include'
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          setError("Session expired. Please log in again.");
-          return;
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch wallet balance");
-      }
-
-      setWalletBalance(parseFloat(data.balance) || 0);
-    } catch (error) {
-      console.error("Error fetching wallet balance:", error);
-      setError(error.message || "Failed to load wallet balance");
-    }
-  }, [API_BASE_URL, getAuthToken, getHeaders]); // Added dependencies
+  }, [API_BASE_URL, getAuthToken, getHeaders]);
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       setError(""); // Clear previous errors
       try {
-        await Promise.all([fetchPaymentHistory(1), fetchWalletBalance()]);
+        await fetchPaymentData();
       } catch (error) {
         console.error("Error loading data:", error);
         setError("Failed to load payment data");
@@ -166,13 +122,7 @@ const Payments = () => {
       }
     };
     loadData();
-  }, [fetchPaymentHistory, fetchWalletBalance]); // Dependencies are now stable
-
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > paginationInfo.pages) return;
-    fetchPaymentHistory(newPage);
-  };
+  }, [fetchPaymentData]);
 
   // Handle Paystack Top-up
   const handleTopUp = async () => {
@@ -191,7 +141,7 @@ const Payments = () => {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/payments/wallet/topup`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/payments/wallet/topup`, {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({ amount: topUpAmount }),
@@ -222,13 +172,22 @@ const Payments = () => {
     }
   };
 
-  // Filter payments client-side
-  const filteredPayments = paymentHistory.filter(
-    (payment) =>
-      payment.reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.status?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter activities based on search term and active tab
+  const filteredActivities = paymentData.recentActivities
+    ?.filter((activity) => {
+      const matchesSearch = 
+        activity.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.status?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesTab = 
+        activeTab === "all" || 
+        (activeTab === "orders" && activity.type === "order") ||
+        (activeTab === "subscriptions" && activity.type === "subscription") ||
+        (activeTab === "wallet" && activity.type === "wallet_transaction");
+      
+      return matchesSearch && matchesTab;
+    }) || [];
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
@@ -237,6 +196,8 @@ const Payments = () => {
         year: "numeric",
         month: "short",
         day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
       });
     } catch (error) {
       return 'Invalid Date';
@@ -248,40 +209,33 @@ const Payments = () => {
     return `₦${numAmount.toLocaleString()}`;
   };
 
-  // Generate pagination numbers correctly
-  const generatePaginationNumbers = () => {
-    const totalPages = paginationInfo.pages || 1;
-    const currentPage = paginationInfo.current || 1;
-    const pages = [];
-    
-    if (totalPages <= 5) {
-      // Show all pages if total pages is 5 or less
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Show limited pages with ellipsis
-      if (currentPage <= 3) {
-        // Near the start
-        for (let i = 1; i <= 4; i++) pages.push(i);
-        if (totalPages > 5) pages.push('ellipsis');
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        // Near the end
-        pages.push(1);
-        pages.push('ellipsis');
-        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
-      } else {
-        // In the middle
-        pages.push(1);
-        pages.push('ellipsis');
-        pages.push(currentPage - 1, currentPage, currentPage + 1);
-        pages.push('ellipsis');
-        pages.push(totalPages);
-      }
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'order':
+        return <FaShoppingBag />;
+      case 'subscription':
+        return <FaSync />;
+      case 'wallet_transaction':
+        return <FaWallet />;
+      default:
+        return <FaReceipt />;
+    }
+  };
+
+  const getStatusColor = (status, type) => {
+    if (type === 'wallet_transaction') {
+      return status?.toLowerCase() === 'credit' ? 'success' : 'warning';
     }
     
-    return pages;
+    const statusLower = status?.toLowerCase();
+    if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'active') {
+      return 'success';
+    } else if (statusLower === 'pending' || statusLower === 'processing') {
+      return 'pending';
+    } else if (statusLower === 'failed' || statusLower === 'cancelled' || statusLower === 'expired') {
+      return 'failed';
+    }
+    return 'pending';
   };
 
   if (isLoading) {
@@ -336,7 +290,7 @@ const Payments = () => {
             <FaWallet />
           </div>
           <h3>Wallet Balance</h3>
-          <div className="pay-value">{formatCurrency(walletBalance)}</div>
+          <div className="pay-value">{formatCurrency(paymentData.walletBalance)}</div>
         </div>
 
         <div className="pay-stat-card spending-card">
@@ -344,7 +298,11 @@ const Payments = () => {
             <FaCalendarAlt />
           </div>
           <h3>This Month Spending</h3>
-          <div className="pay-value">{formatCurrency(monthlySpending)}</div>
+          <div className="pay-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
+          <div className="pay-stat-breakdown">
+            <span>Orders: {formatCurrency(paymentData.orderMonthly)}</span>
+            <span>Subscriptions: {formatCurrency(paymentData.subscriptionMonthly)}</span>
+          </div>
         </div>
 
         <div className="pay-stat-card spending-card">
@@ -352,7 +310,22 @@ const Payments = () => {
             <FaChartLine />
           </div>
           <h3>Total Spending</h3>
-          <div className="pay-value">{formatCurrency(totalSpending)}</div>
+          <div className="pay-value">{formatCurrency(paymentData.totalSpent)}</div>
+          <div className="pay-stat-breakdown">
+            <span>Orders: {formatCurrency(paymentData.orderTotal)}</span>
+            <span>Subscriptions: {formatCurrency(paymentData.subscriptionTotal)}</span>
+          </div>
+        </div>
+
+        <div className="pay-stat-card topup-card">
+          <div className="pay-stat-icon">
+            <FaPlus />
+          </div>
+          <h3>Total Top-ups</h3>
+          <div className="pay-value">{formatCurrency(paymentData.topupTotal)}</div>
+          <div className="pay-stat-breakdown">
+            <span>This month: {formatCurrency(paymentData.topupMonthly)}</span>
+          </div>
         </div>
       </div>
 
@@ -360,38 +333,72 @@ const Payments = () => {
       <div className="pay-content-section">
         <div className="pay-section-header">
           <h2>Payment History</h2>
-          <span className="pay-count-badge">{paginationInfo.total || 0} transactions</span>
+          <div className="pay-tab-container">
+            <button 
+              className={`pay-tab ${activeTab === "all" ? "active" : ""}`}
+              onClick={() => setActiveTab("all")}
+            >
+              All Transactions
+            </button>
+            <button 
+              className={`pay-tab ${activeTab === "orders" ? "active" : ""}`}
+              onClick={() => setActiveTab("orders")}
+            >
+              Orders
+            </button>
+            <button 
+              className={`pay-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+              onClick={() => setActiveTab("subscriptions")}
+            >
+              Subscriptions
+            </button>
+            <button 
+              className={`pay-tab ${activeTab === "wallet" ? "active" : ""}`}
+              onClick={() => setActiveTab("wallet")}
+            >
+              Wallet
+            </button>
+          </div>
+          <span className="pay-count-badge">{filteredActivities.length} transactions</span>
         </div>
 
-        {filteredPayments.length > 0 ? (
+        {filteredActivities.length > 0 ? (
           <div className="pay-table-container">
             <div className="pay-table-responsive">
               <table className="pay-payments-table">
                 <thead>
                   <tr>
-                    <th>Reference</th>
-                    <th>Date</th>
                     <th>Type</th>
+                    <th>Description</th>
+                    <th>Date</th>
                     <th>Amount</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPayments.map((payment) => (
-                    <tr key={payment._id || payment.reference}>
-                      <td data-label="Reference">{payment.reference || 'N/A'}</td>
-                      <td data-label="Date">{formatDate(payment.createdAt)}</td>
+                  {filteredActivities.map((activity, index) => (
+                    <tr key={`${activity.type}-${index}-${activity.createdAt}`}>
                       <td data-label="Type">
-                        <span className={`pay-type-badge pay-type-${payment.type}`}>
-                          {payment.type || 'unknown'}
-                        </span>
+                        <div className="pay-activity-type">
+                          {getActivityIcon(activity.type)}
+                          <span className="pay-type-text">
+                            {activity.type === 'order' ? 'Order' : 
+                             activity.type === 'subscription' ? 'Subscription' : 
+                             'Wallet Transaction'}
+                          </span>
+                        </div>
                       </td>
+                      <td data-label="Description" className="pay-activity-title">
+                        {activity.title || 'N/A'}
+                      </td>
+                      <td data-label="Date">{formatDate(activity.createdAt)}</td>
                       <td data-label="Amount" className="pay-amount">
-                        {formatCurrency(payment.amount)}
+                        {activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? '+' : ''}
+                        {formatCurrency(activity.amount)}
                       </td>
                       <td data-label="Status">
-                        <span className={`pay-status-badge pay-status-${payment.status}`}>
-                          {payment.status || 'pending'}
+                        <span className={`pay-status-badge pay-status-${getStatusColor(activity.status, activity.type)}`}>
+                          {activity.status || 'pending'}
                         </span>
                       </td>
                     </tr>
@@ -399,50 +406,11 @@ const Payments = () => {
                 </tbody>
               </table>
             </div>
-
-            {/* Pagination */}
-            {paginationInfo.pages > 1 && (
-              <div className="pay-pagination">
-                <button
-                  className="pay-pagination-btn"
-                  disabled={!paginationInfo.hasPrev}
-                  onClick={() => handlePageChange(paginationInfo.current - 1)}
-                >
-                  <FaChevronLeft />
-                  Prev
-                </button>
-
-                <div className="pay-pagination-numbers">
-                  {generatePaginationNumbers().map((pageNum, index) => 
-                    pageNum === 'ellipsis' ? (
-                      <span key={`ellipsis-${index}`} className="pay-pagination-ellipsis">...</span>
-                    ) : (
-                      <button
-                        key={pageNum}
-                        className={`pay-pagination-btn ${paginationInfo.current === pageNum ? "active" : ""}`}
-                        onClick={() => handlePageChange(pageNum)}
-                      >
-                        {pageNum}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <button
-                  className="pay-pagination-btn"
-                  disabled={!paginationInfo.hasNext}
-                  onClick={() => handlePageChange(paginationInfo.current + 1)}
-                >
-                  Next
-                  <FaChevronRight />
-                </button>
-              </div>
-            )}
           </div>
         ) : (
           <div className="pay-no-payments">
             <FaReceipt className="pay-no-payments-icon" />
-            <p>No payment history found</p>
+            <p>No {activeTab !== "all" ? activeTab : ""} transactions found</p>
             {searchTerm && (
               <button 
                 className="pay-clear-search"

@@ -59,6 +59,7 @@ import UserManagement from "./components/Admin/UserManagement/UserManagement";
 import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
 import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
 import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
+import AdminDeliveryManagement from "./components/Admin/DeliveryManagement/DeliveryManagement";
 import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
 import AdminReport from "./components/Admin/Reports/AdminReports";
 import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
@@ -83,6 +84,7 @@ import { PaymentProvider } from './contexts/paymentContext';
 
 // Wallet Topup verify/Callback
 import WalletTopupCallback from './components/payments/walletTopupCallback';
+import DeliveryAgentPortal from "./components/Admin/DeliveryManagement/DeliveryAgentPortal";
 
 
 
@@ -171,6 +173,8 @@ function App() {
             <Route path="orders" element={<OrderManagement />} />
             <Route path="products" element={<ProductManagement />} />
             <Route path="subscriptions" element={<SubscriptionManagement />} />
+            <Route path="deliveries" element={<AdminDeliveryManagement />} />
+            <Route path="delivery-agent" element={<DeliveryAgentPortal />} />
             <Route path="support" element={<SupportManagement />} />
             <Route path="reports" element={<AdminReport />} />
             <Route path="settings" element={<AdminPanelSettings />} />

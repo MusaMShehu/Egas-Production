@@ -1,128 +1,541 @@
-import React from 'react';
-// import ReportChart from './ReportChart';
+// components/reports/UserReports.js
+import React, { useMemo, useState } from 'react';
 import MetricsGrid from './MetricsGrid';
 import DataTable from './DataTable';
+// import ReportChart from './ReportChart';
 
-const UserReports = ({ data, dateRange }) => {
-  const metrics = [
+const UserReports = ({ 
+  data, 
+  dateRange, 
+  filters, 
+  searchQuery,
+  sortConfig,
+  onSort,
+  viewMode = 'dashboard'
+}) => {
+  const [selectedSegment, setSelectedSegment] = useState('all');
+  const [analyticsView, setAnalyticsView] = useState('growth');
+
+  const processedData = useMemo(() => {
+    // Apply filters and processing logic
+    return {
+      ...data,
+      // Add any data processing here
+    };
+  }, [data, filters, searchQuery]);
+
+  const growthMetrics = [
     {
       title: 'Total Users',
-      value: (data.totalUsers || 0).toLocaleString(),
-      change: data.usersChange || 0,
+      value: (processedData.totalUsers || 0).toLocaleString(),
+      change: processedData.usersChange || 0,
       icon: 'fas fa-users',
-      color: 'blue'
-    },
-    {
-      title: 'New Registrations',
-      value: (data.newUsers || 0).toLocaleString(),
-      change: data.registrationChange || 0,
-      icon: 'fas fa-user-plus',
-      color: 'green'
+      color: 'blue',
+      trend: processedData.usersTrend || 'up',
+      subtitle: `${processedData.newUsers || 0} new this period`
     },
     {
       title: 'Active Users',
-      value: (data.activeUsers || 0).toLocaleString(),
-      change: data.activeChange || 0,
+      value: (processedData.activeUsers || 0).toLocaleString(),
+      change: processedData.activeChange || 0,
       icon: 'fas fa-user-check',
-      color: 'purple'
+      color: 'green',
+      trend: processedData.activeTrend || 'up',
+      subtitle: `${processedData.dailyActive || 0} daily active`
+    },
+    {
+      title: 'New Registrations',
+      value: (processedData.newUsers || 0).toLocaleString(),
+      change: processedData.registrationChange || 0,
+      icon: 'fas fa-user-plus',
+      color: 'purple',
+      trend: processedData.registrationTrend || 'up',
+      subtitle: `${processedData.verifiedUsers || 0} verified`
     },
     {
       title: 'Conversion Rate',
-      value: `${(data.conversionRate || 0).toFixed(1)}%`,
-      change: data.conversionChange || 0,
+      value: `${(processedData.conversionRate || 0).toFixed(1)}%`,
+      change: processedData.conversionChange || 0,
       icon: 'fas fa-percentage',
-      color: 'orange'
+      color: 'orange',
+      trend: processedData.conversionTrend || 'up',
+      subtitle: 'Visitor to user'
     }
   ];
 
-  const chartData = {
-    labels: data.dailyUsers?.map(item => item.date) || [],
+  const engagementMetrics = [
+    {
+      title: 'Avg. Session Duration',
+      value: `${(processedData.avgSessionDuration || 0).toFixed(1)}min`,
+      change: processedData.sessionChange || 0,
+      icon: 'fas fa-clock',
+      color: 'teal',
+      trend: processedData.sessionTrend || 'up'
+    },
+    {
+      title: 'Pages per Visit',
+      value: (processedData.pagesPerVisit || 0).toFixed(1),
+      change: processedData.pagesChange || 0,
+      icon: 'fas fa-file',
+      color: 'indigo',
+      trend: processedData.pagesTrend || 'up'
+    },
+    {
+      title: 'Bounce Rate',
+      value: `${(processedData.bounceRate || 0).toFixed(1)}%`,
+      change: processedData.bounceChange || 0,
+      icon: 'fas fa-sign-out-alt',
+      color: 'red',
+      trend: processedData.bounceTrend || 'down'
+    },
+    {
+      title: 'Returning Users',
+      value: `${(processedData.returningRate || 0).toFixed(1)}%`,
+      change: processedData.returningChange || 0,
+      icon: 'fas fa-redo',
+      color: 'green',
+      trend: processedData.returningTrend || 'up'
+    }
+  ];
+
+  const userGrowthData = {
+    labels: processedData.dailyUsers?.map(item => {
+      const date = new Date(item.date);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }) || [],
     datasets: [
       {
         label: 'New Registrations',
-        data: data.dailyUsers?.map(item => item.newUsers) || [],
+        data: processedData.dailyUsers?.map(item => item.newUsers) || [],
         borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)'
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        fill: true,
+        tension: 0.4
       },
       {
         label: 'Active Users',
-        data: data.dailyUsers?.map(item => item.activeUsers) || [],
+        data: processedData.dailyUsers?.map(item => item.activeUsers) || [],
         borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)'
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Returning Users',
+        data: processedData.dailyUsers?.map(item => item.returningUsers) || [],
+        borderColor: '#8B5CF6',
+        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+        fill: true,
+        tension: 0.4
       }
     ]
   };
 
   const userDemographics = {
-    labels: data.userDemographics?.map(item => item.group) || [],
+    labels: processedData.userDemographics?.map(item => item.group) || [],
     datasets: [
       {
-        data: data.userDemographics?.map(item => item.count) || [],
+        data: processedData.userDemographics?.map(item => item.percentage) || [],
         backgroundColor: [
           '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444',
           '#6366F1', '#EC4899', '#14B8A6', '#F97316', '#06B6D4'
-        ]
+        ],
+        borderWidth: 2,
+        borderColor: '#fff'
       }
     ]
   };
 
-  return (
-    <div className="user-report">
-      <div className="report-header">
-        <h2>User Analytics Report</h2>
-        <p className="report-period">
-          {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
-        </p>
+  const acquisitionChannels = {
+    labels: processedData.acquisitionSources?.map(item => item.source) || [],
+    datasets: [
+      {
+        label: 'Users',
+        data: processedData.acquisitionSources?.map(item => item.users) || [],
+        backgroundColor: '#3B82F6'
+      },
+      {
+        label: 'Conversion Rate',
+        data: processedData.acquisitionSources?.map(item => item.conversionRate) || [],
+        backgroundColor: '#10B981',
+        type: 'line',
+        yAxisID: 'y1'
+      }
+    ]
+  };
+
+  const userSegments = ['all', 'new', 'active', 'returning', 'inactive', 'premium'];
+
+  const renderDashboardView = () => (
+    <>
+      <div className="user-controls">
+        <div className="control-group">
+          <label>User Segment:</label>
+          <select 
+            value={selectedSegment} 
+            onChange={(e) => setSelectedSegment(e.target.value)}
+          >
+            {userSegments.map(segment => (
+              <option key={segment} value={segment}>
+                {segment === 'all' ? 'All Users' : segment.charAt(0).toUpperCase() + segment.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="analytics-view-toggle">
+          <button 
+            className={`view-btn ${analyticsView === 'growth' ? 'active' : ''}`}
+            onClick={() => setAnalyticsView('growth')}
+          >
+            Growth Metrics
+          </button>
+          <button 
+            className={`view-btn ${analyticsView === 'engagement' ? 'active' : ''}`}
+            onClick={() => setAnalyticsView('engagement')}
+          >
+            Engagement Metrics
+          </button>
+        </div>
       </div>
 
-      <MetricsGrid metrics={metrics} />
+      <MetricsGrid metrics={analyticsView === 'growth' ? growthMetrics : engagementMetrics} />
 
       {/* <div className="chart-grid">
         <div className="chart-section">
           <ReportChart
-            title="User Growth Trend"
-            data={chartData}
+            title="User Growth Trends"
+            data={userGrowthData}
             type="line"
             height={300}
+            showStats={true}
           />
         </div>
+        
         <div className="chart-section">
           <ReportChart
             title="User Demographics"
             data={userDemographics}
             type="doughnut"
             height={300}
+            options={{
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }}
+          />
+        </div>
+        
+        <div className="chart-section">
+          <ReportChart
+            title="Acquisition Channels Performance"
+            data={acquisitionChannels}
+            type="bar"
+            height={300}
+            options={{
+              scales: {
+                y: {
+                  type: 'linear',
+                  display: true,
+                  position: 'left',
+                  title: {
+                    display: true,
+                    text: 'Number of Users'
+                  }
+                },
+                y1: {
+                  type: 'linear',
+                  display: true,
+                  position: 'right',
+                  title: {
+                    display: true,
+                    text: 'Conversion Rate %'
+                  },
+                  grid: {
+                    drawOnChartArea: false,
+                  },
+                  ticks: {
+                    callback: function(value) {
+                      return value + '%';
+                    }
+                  }
+                }
+              }
+            }}
           />
         </div>
       </div> */}
 
       <div className="data-tables">
         <div className="table-section">
-          <h3>User Acquisition Sources</h3>
+          <div className="table-header">
+            <h3>User Acquisition Sources</h3>
+            <span className="table-info">
+              Top performing channels
+            </span>
+          </div>
           <DataTable
-            columns={['Source', 'Users', 'Conversion Rate', 'Cost per Acquisition']}
-            rows={data.acquisitionSources?.map(source => [
-              source.source,
+            columns={['Source', 'Users', 'Conversion Rate', 'Cost per Acquisition', 'LTV', 'ROI']}
+            rows={processedData.acquisitionSources?.map(source => [
+              <div className="source-info">
+                <div className="source-name">{source.source}</div>
+                <div className="source-type">{source.type}</div>
+              </div>,
               source.users.toLocaleString(),
-              `${source.conversionRate}%`,
-              `₦${source.cpa.toLocaleString()}`
+              <div className="conversion-rate">
+                <span className={source.conversionRate > 5 ? 'text-green-600' : source.conversionRate < 2 ? 'text-red-600' : ''}>
+                  {source.conversionRate}%
+                </span>
+              </div>,
+              `₦${source.cpa.toLocaleString()}`,
+              `₦${source.ltv.toLocaleString()}`,
+              <div className="roi-indicator">
+                <span className={source.roi > 300 ? 'text-green-600' : source.roi < 100 ? 'text-red-600' : ''}>
+                  {source.roi}%
+                </span>
+              </div>
             ]) || []}
+            sortable={true}
+            searchable={true}
+            pagination={true}
           />
         </div>
 
         <div className="table-section">
           <h3>User Activity by Tier</h3>
           <DataTable
-            columns={['User Tier', 'Users', 'Avg. Orders', 'Avg. Spend']}
-            rows={data.userTiers?.map(tier => [
-              tier.tier,
+            columns={['User Tier', 'Users', 'Avg. Sessions', 'Avg. Orders', 'Avg. Spend', 'Retention Rate']}
+            rows={processedData.userTiers?.map(tier => [
+              <div className="tier-info">
+                <div className="tier-name">{tier.tier}</div>
+                <div className="tier-criteria">{tier.criteria}</div>
+              </div>,
               tier.users.toLocaleString(),
+              tier.avgSessions.toFixed(1),
               tier.avgOrders.toFixed(1),
-              `₦${tier.avgSpend.toLocaleString()}`
+              `₦${tier.avgSpend.toLocaleString()}`,
+              <div className="retention-rate">
+                <div className="rate-bar">
+                  <div 
+                    className="rate-fill" 
+                    style={{ width: `${tier.retentionRate}%` }}
+                  ></div>
+                </div>
+                <span>{tier.retentionRate}%</span>
+              </div>
             ]) || []}
+            sortable={true}
+            searchable={true}
+            pagination={true}
           />
         </div>
       </div>
+
+      {/* User Behavior Insights */}
+      <div className="behavior-insights">
+        <h3>User Behavior & Patterns</h3>
+        <div className="insights-grid">
+          <div className="insight-card">
+            <i className="fas fa-mobile-alt"></i>
+            <div className="insight-content">
+              <h4>Device Usage</h4>
+              <div className="device-breakdown">
+                {processedData.deviceUsage?.map(device => (
+                  <div key={device.type} className="device-item">
+                    <span className="device-type">{device.type}</span>
+                    <span className="device-percentage">{device.percentage}%</span>
+                  </div>
+                )) || []}
+              </div>
+            </div>
+          </div>
+          
+          <div className="insight-card">
+            <i className="fas fa-map-marker-alt"></i>
+            <div className="insight-content">
+              <h4>Geographic Distribution</h4>
+              <div className="location-breakdown">
+                {processedData.geographicData?.slice(0, 5).map(location => (
+                  <div key={location.region} className="location-item">
+                    <span className="location-name">{location.region}</span>
+                    <span className="location-users">{location.users} users</span>
+                  </div>
+                )) || []}
+              </div>
+            </div>
+          </div>
+          
+          <div className="insight-card">
+            <i className="fas fa-chart-bar"></i>
+            <div className="insight-content">
+              <h4>Peak Activity Times</h4>
+              <div className="activity-times">
+                {processedData.peakTimes?.map(time => (
+                  <div key={time.hour} className="time-slot">
+                    <span className="time-hour">{time.hour}:00</span>
+                    <span className="time-activity">{time.activity}% active</span>
+                  </div>
+                )) || []}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* User Lifecycle */}
+      <div className="lifecycle-analysis">
+        <h3>User Lifecycle Analysis</h3>
+        <div className="lifecycle-stages">
+          <div className="stage-card">
+            <div className="stage-header acquisition">
+              <i className="fas fa-bullseye"></i>
+              <h4>Acquisition</h4>
+            </div>
+            <div className="stage-metrics">
+              <div className="stage-metric">
+                <span className="metric-value">{processedData.acquisitionRate || 0}%</span>
+                <span className="metric-label">Conversion Rate</span>
+              </div>
+              <div className="stage-metric">
+                <span className="metric-value">₦{(processedData.acquisitionCost || 0).toLocaleString()}</span>
+                <span className="metric-label">Avg. Cost</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stage-card">
+            <div className="stage-header activation">
+              <i className="fas fa-play-circle"></i>
+              <h4>Activation</h4>
+            </div>
+            <div className="stage-metrics">
+              <div className="stage-metric">
+                <span className="metric-value">{processedData.activationRate || 0}%</span>
+                <span className="metric-label">Activation Rate</span>
+              </div>
+              <div className="stage-metric">
+                <span className="metric-value">{processedData.timeToActivate || 0} days</span>
+                <span className="metric-label">Time to Activate</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stage-card">
+            <div className="stage-header retention">
+              <i className="fas fa-redo"></i>
+              <h4>Retention</h4>
+            </div>
+            <div className="stage-metrics">
+              <div className="stage-metric">
+                <span className="metric-value">{processedData.retentionRate || 0}%</span>
+                <span className="metric-label">30-day Retention</span>
+              </div>
+              <div className="stage-metric">
+                <span className="metric-value">{processedData.churnRate || 0}%</span>
+                <span className="metric-label">Churn Rate</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="stage-card">
+            <div className="stage-header revenue">
+              <i className="fas fa-dollar-sign"></i>
+              <h4>Revenue</h4>
+            </div>
+            <div className="stage-metrics">
+              <div className="stage-metric">
+                <span className="metric-value">₦{(processedData.arpu || 0).toLocaleString()}</span>
+                <span className="metric-label">ARPU</span>
+              </div>
+              <div className="stage-metric">
+                <span className="metric-value">₦{(processedData.ltv || 0).toLocaleString()}</span>
+                <span className="metric-label">Lifetime Value</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderDetailedView = () => (
+    <div className="detailed-view">
+      <DataTable
+        columns={[
+          'User ID', 'Name', 'Email', 'Signup Date', 'Last Active',
+          'Status', 'Orders', 'Total Spend', 'User Tier', 'Actions'
+        ]}
+        rows={processedData.detailedUsers?.map(user => [
+          <div className="user-id">{user.id}</div>,
+          <div className="user-info">
+            <div className="user-name">{user.name}</div>
+            <div className="user-phone">{user.phone}</div>
+          </div>,
+          user.email,
+          new Date(user.signupDate).toLocaleDateString(),
+          <div className="last-active">
+            {user.lastActive ? new Date(user.lastActive).toLocaleDateString() : 'Never'}
+            {user.isOnline && <span className="online-indicator"></span>}
+          </div>,
+          <span className={`status-badge ${user.status.toLowerCase()}`}>
+            {user.status}
+          </span>,
+          user.orders,
+          `₦${user.totalSpend.toLocaleString()}`,
+          <span className={`user-tier ${user.tier.toLowerCase()}`}>
+            {user.tier}
+          </span>,
+          <div className="user-actions">
+            <button className="btn-action-small" title="View Profile">
+              <i className="fas fa-eye"></i>
+            </button>
+            <button className="btn-action-small" title="Edit User">
+              <i className="fas fa-edit"></i>
+            </button>
+            <button className="btn-action-small" title="Message User">
+              <i className="fas fa-envelope"></i>
+            </button>
+          </div>
+        ]) || []}
+        sortable={true}
+        searchable={true}
+        pagination={true}
+        itemsPerPage={25}
+        selectable={true}
+      />
+    </div>
+  );
+
+  return (
+    <div className="user-report">
+      <div className="report-header">
+        <div className="header-content">
+          <h2>User Analytics Dashboard</h2>
+          <p className="report-period">
+            {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
+          </p>
+        </div>
+        <div className="report-actions">
+          <div className="summary-cards">
+            <div className="summary-card primary">
+              <div className="summary-label">User Satisfaction</div>
+              <div className="summary-value">
+                {(processedData.satisfactionScore || 0).toFixed(1)}/5
+              </div>
+            </div>
+            <div className="summary-card success">
+              <div className="summary-label">Net Promoter Score</div>
+              <div className="summary-value">
+                {processedData.npsScore || 0}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {viewMode === 'dashboard' ? renderDashboardView() : renderDetailedView()}
     </div>
   );
 };

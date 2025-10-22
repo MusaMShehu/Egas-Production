@@ -47,7 +47,7 @@ const Profile = () => {
     newsletter: false,
   });
 
-  const API_BASE_URL = "https://egas-server-1.onrender.com/api/v1/auth";
+  const API_BASE_URL = "https://egas-server-1.onrender.com";
 
   // ✅ Fetch user profile from API
   useEffect(() => {
@@ -56,7 +56,7 @@ const Profile = () => {
       setError("");
 
       try {
-        const response = await fetch(`${API_BASE_URL}/me`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -161,7 +161,7 @@ const Profile = () => {
       setIsLoading(true);
       setError("");
 
-      const profileResponse = await fetch(`${API_BASE_URL}/profile`, {
+      const profileResponse = await fetch(`${API_BASE_URL}/api/v1/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -185,39 +185,49 @@ const Profile = () => {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setIsLoading(true);
-      try {
-        const formData = new FormData();
-        formData.append("profileImage", file);
+  const file = e.target.files[0];
+  const token = localStorage.getItem("token");
 
-        const response = await fetch(`${API_BASE_URL}/profile/image`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formData,
-        });
+  // 👇 Ensure you have a valid user ID
+  const userId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
 
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
-        }
+  if (!file || !userId) {
+    console.error("Missing file or user ID:", { file, userId });
+    setError("User information not found. Please log in again.");
+    return;
+  }
 
-        const result = await response.json();
-        setUser({
-          ...user,
-          profilePic: result.data.profilePic,
-        });
-        alert("Profile picture updated successfully!");
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        setError("Failed to upload profile picture. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+  setIsLoading(true);
+  try {
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/picture/${userId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image");
     }
-  };
+
+    const result = await response.json();
+    setUser({
+      ...user,
+      profilePic: result.data.profilePic,
+    });
+    alert("Profile picture updated successfully!");
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    setError("Failed to upload profile picture. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const formatMemberSince = (dateString) => {
     if (!dateString) return "Member since 2023";

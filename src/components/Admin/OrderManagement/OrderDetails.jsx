@@ -1,270 +1,310 @@
 // components/OrderDetails.js
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faArrowLeft, 
+  faPrint, 
+  faDownload 
+} from '@fortawesome/free-solid-svg-icons';
 
-const OrderDetails = ({ order, onBack, onUpdateOrderStatus, onUpdatePaymentStatus }) => {
-  const [updatingOrder, setUpdatingOrder] = useState(false);
-  const [updatingPayment, setUpdatingPayment] = useState(false);
+const OrderDetails = ({ 
+  order, 
+  onBack, 
+  onUpdateOrderStatus, 
+  onUpdatePaymentStatus, 
+  onUpdateTracking,
+  permissions 
+}) => {
+  const [activeTab, setActiveTab] = useState('details');
+  const [trackingData, setTrackingData] = useState(order.tracking || {});
 
-  const handleOrderStatusChange = async (newStatus) => {
-    setUpdatingOrder(true);
-    const result = await onUpdateOrderStatus(order._id, newStatus);
-    setUpdatingOrder(false);
-    
-    if (!result.success) {
-      alert(result.message);
-    }
-  };
-
-  const handlePaymentStatusChange = async (newStatus) => {
-    setUpdatingPayment(true);
-    const result = await onUpdatePaymentStatus(order._id, newStatus);
-    setUpdatingPayment(false);
-    
-    if (!result.success) {
-      alert(result.message);
-    }
-  };
-
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'processing': return 'status-processing';
-      case 'shipped': return 'status-shipped';
-      case 'in-transit': return 'status-in-transit';
-      case 'delivered': return 'status-delivered';
-      case 'cancelled': return 'status-cancelled';
-      default: return 'status-default';
-    }
-  };
-
-  const getPaymentStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'completed': return 'payment-completed';
-      case 'pending': return 'payment-pending';
-      case 'failed': return 'payment-failed';
-      default: return 'payment-default';
-    }
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN'
+    }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Not specified';
-    return new Date(dateString).toLocaleString();
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const handleStatusUpdate = async (newStatus, type) => {
+    if (type === 'order') {
+      await onUpdateOrderStatus(order._id, newStatus);
+    } else {
+      await onUpdatePaymentStatus(order._id, newStatus);
+    }
+  };
+
+  const handleTrackingUpdate = async () => {
+    await onUpdateTracking(order._id, trackingData);
   };
 
   return (
-    <div className="order-details-container">
-      <div className="order-details-header">
-        <button onClick={onBack} className="btn-back">
-          <i className="fas fa-arrow-left"></i> Back to Orders
+    <div className="aom-order-details">
+      <div className="aom-details-header">
+        <button onClick={onBack} className="aom-btn-back">
+          <FontAwesomeIcon icon={faArrowLeft} />
+          Back to Orders
         </button>
-        <h2>Order Details: #{order.orderId}</h2>
+        <h1>Order Details: {order.orderId}</h1>
+        <div className="aom-order-actions">
+          <button className="aom-btn-print">
+            <FontAwesomeIcon icon={faPrint} /> Print
+          </button>
+          <button className="aom-btn-export">
+            <FontAwesomeIcon icon={faDownload} /> Export
+          </button>
+        </div>
       </div>
 
-      <div className="order-details-content">
-        <div className="order-info-grid">
-          {/* Customer Information */}
-          <div className="info-card">
-            <h3>Customer Information</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="label">Name:</span>
-                <span className="value">{order.user?.firstName} {order.user?.lastName}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">Email:</span>
-                <span className="value">{order.user?.email}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">Phone:</span>
-                <span className="value">{order.user?.phone || 'Not provided'}</span>
-              </div>
+      <div className="aom-details-overview">
+        <div className="aom-overview-card">
+          <h3>Order Information</h3>
+          <div className="aom-overview-grid">
+            <div>
+              <label>Order ID</label>
+              <p>{order.orderId}</p>
+            </div>
+            <div>
+              <label>Reference</label>
+              <p>{order.reference || 'N/A'}</p>
+            </div>
+            <div>
+              <label>Date</label>
+              <p>{formatDate(order.createdAt)}</p>
+            </div>
+            <div>
+              <label>Delivery Option</label>
+              <p className={`aom-delivery-option ${order.deliveryOption}`}>
+                {order.deliveryOption === 'express' ? 'Express Delivery' : 'Standard Delivery'}
+              </p>
             </div>
           </div>
+        </div>
 
-          {/* Order Status */}
-          <div className="info-card">
-            <h3>Order Status</h3>
-            <div className="status-controls">
-              <div className={`status-badge large ${getStatusBadgeClass(order.orderStatus)}`}>
-                {order.orderStatus}
-              </div>
-              
+        <div className="aom-status-controls">
+          {permissions?.canEditOrder && (
+            <div className="aom-status-control">
+              <label>Order Status</label>
               <select
                 value={order.orderStatus}
-                onChange={(e) => handleOrderStatusChange(e.target.value)}
-                disabled={updatingOrder}
-                className="status-select"
+                onChange={(e) => handleStatusUpdate(e.target.value, 'order')}
               >
                 <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
                 <option value="in-transit">In Transit</option>
                 <option value="delivered">Delivered</option>
                 <option value="cancelled">Cancelled</option>
               </select>
-              
-              {updatingOrder && <i className="fas fa-spinner fa-spin"></i>}
             </div>
-          </div>
+          )}
 
-          {/* Payment Information */}
-          <div className="info-card">
-            <h3>Payment Information</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="label">Method:</span>
-                <span className="value">{order.paymentMethod}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">Status:</span>
-                <span className={`payment-badge ${getPaymentStatusBadgeClass(order.paymentStatus)}`}>
-                  {order.paymentStatus}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="label">Total Amount:</span>
-                <span className="value">₦{order.totalAmount?.toLocaleString()}</span>
-              </div>
-            </div>
-            
-            <div className="payment-controls">
+          {permissions?.canEditPayment && (
+            <div className="aom-status-control">
+              <label>Payment Status</label>
               <select
                 value={order.paymentStatus}
-                onChange={(e) => handlePaymentStatusChange(e.target.value)}
-                disabled={updatingPayment}
-                className="status-select"
+                onChange={(e) => handleStatusUpdate(e.target.value, 'payment')}
               >
                 <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
                 <option value="failed">Failed</option>
               </select>
-              
-              {updatingPayment && <i className="fas fa-spinner fa-spin"></i>}
             </div>
-          </div>
+          )}
+        </div>
+      </div>
 
-          {/* Delivery Information */}
-          <div className="info-card">
-            <h3>Delivery Information</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="label">Address:</span>
-                <span className="value">{order.deliveryAddress}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">Option:</span>
-                <span className="value">{order.deliveryOption}</span>
-              </div>
-              <div className="info-item">
-                <span className="label">Fee:</span>
-                <span className="value">₦{order.deliveryFee?.toLocaleString()}</span>
-              </div>
-              {order.deliveryDate && (
-                <div className="info-item">
-                  <span className="label">Estimated Delivery:</span>
-                  <span className="value">{formatDate(order.deliveryDate)}</span>
-                </div>
-              )}
-            </div>
-          </div>
+      <div className="aom-details-tabs">
+        <nav className="aom-tab-nav">
+          <button
+            className={activeTab === 'details' ? 'aom-active' : ''}
+            onClick={() => setActiveTab('details')}
+          >
+            Order Details
+          </button>
+          <button
+            className={activeTab === 'products' ? 'aom-active' : ''}
+            onClick={() => setActiveTab('products')}
+          >
+            Products ({order.products?.length || 0})
+          </button>
+          <button
+            className={activeTab === 'tracking' ? 'aom-active' : ''}
+            onClick={() => setActiveTab('tracking')}
+          >
+            Tracking
+          </button>
+          <button
+            className={activeTab === 'customer' ? 'aom-active' : ''}
+            onClick={() => setActiveTab('customer')}
+          >
+            Customer
+          </button>
+        </nav>
 
-          {/* Order Items */}
-          <div className="info-card full-width">
-            <h3>Order Items</h3>
-            <div className="order-items-table">
-              <div className="table-header">
-                <div className="col-product">Product</div>
-                <div className="col-quantity">Quantity</div>
-                <div className="col-price">Price</div>
-                <div className="col-total">Total</div>
+        <div className="aom-tab-content">
+          {activeTab === 'details' && (
+            <div className="aom-details-content">
+              <div className="aom-details-section">
+                <h3>Delivery Address</h3>
+                <p>{order.deliveryAddress}</p>
               </div>
-              
-              {order.products?.map((item, index) => (
-                <div key={index} className="table-row">
-                  <div className="col-product">
-                    {item.product?.name || `Product ${index + 1}`}
-                  </div>
-                  <div className="col-quantity">{item.quantity}</div>
-                  <div className="col-price">₦{item.price?.toLocaleString()}</div>
-                  <div className="col-total">
-                    ₦{(item.quantity * item.price)?.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-              
-              <div className="table-footer">
-                <div className="col-product"></div>
-                <div className="col-quantity"></div>
-                <div className="col-price">Subtotal:</div>
-                <div className="col-total">
-                  ₦{(order.totalAmount - order.deliveryFee)?.toLocaleString()}
-                </div>
-              </div>
-              
-              <div className="table-footer">
-                <div className="col-product"></div>
-                <div className="col-quantity"></div>
-                <div className="col-price">Delivery Fee:</div>
-                <div className="col-total">₦{order.deliveryFee?.toLocaleString()}</div>
-              </div>
-              
-              <div className="table-footer total">
-                <div className="col-product"></div>
-                <div className="col-quantity"></div>
-                <div className="col-price">Total:</div>
-                <div className="col-total">₦{order.totalAmount?.toLocaleString()}</div>
-              </div>
-            </div>
-          </div>
 
-          {/* Tracking Information */}
-          {order.tracking && (
-            <div className="info-card">
-              <h3>Tracking Information</h3>
-              <div className="info-grid">
-                <div className="info-item">
-                  <span className="label">Status:</span>
-                  <span className="value">{order.tracking.status}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Location:</span>
-                  <span className="value">{order.tracking.location}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Progress:</span>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${order.tracking.progress}%` }}
-                    ></div>
-                  </div>
-                  <span className="value">{order.tracking.progress}%</span>
+              <div className="aom-details-section">
+                <h3>Payment Information</h3>
+                <div className="aom-payment-info">
+                  <p><strong>Method:</strong> {order.paymentMethod}</p>
+                  <p><strong>Status:</strong> 
+                    <span className={`aom-status-badge ${order.paymentStatus}`}>
+                      {order.paymentStatus}
+                    </span>
+                  </p>
+                  <p><strong>Total Amount:</strong> {formatCurrency(order.totalAmount)}</p>
+                  <p><strong>Delivery Fee:</strong> {formatCurrency(order.deliveryFee)}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Order Timeline */}
-          <div className="info-card">
-            <h3>Order Timeline</h3>
-            <div className="timeline">
-              <div className="timeline-item">
-                <div className="timeline-marker"></div>
-                <div className="timeline-content">
-                  <h4>Order Created</h4>
-                  <p>{formatDate(order.createdAt)}</p>
+          {activeTab === 'products' && (
+            <div className="aom-products-content">
+              <table className="aom-products-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.products?.map((item, index) => (
+                    <tr key={index}>
+                      <td>
+                        <div className="aom-product-info">
+                          <span className="aom-product-name">
+                            {item.product?.name || 'Product Name'}
+                          </span>
+                        </div>
+                      </td>
+                      <td>{item.quantity}</td>
+                      <td>{formatCurrency(item.price)}</td>
+                      <td>{formatCurrency(item.quantity * item.price)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan="3">Subtotal</td>
+                    <td>{formatCurrency(order.totalAmount - order.deliveryFee)}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="3">Delivery Fee</td>
+                    <td>{formatCurrency(order.deliveryFee)}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="3"><strong>Total</strong></td>
+                    <td><strong>{formatCurrency(order.totalAmount)}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
+
+          {activeTab === 'tracking' && (
+            <div className="aom-tracking-content">
+              <div className="aom-tracking-form">
+                <h3>Update Tracking Information</h3>
+                <div className="aom-form-group">
+                  <label>Status</label>
+                  <input
+                    type="text"
+                    value={trackingData.status || ''}
+                    onChange={(e) => setTrackingData({
+                      ...trackingData,
+                      status: e.target.value
+                    })}
+                    placeholder="Current status"
+                  />
                 </div>
+                <div className="aom-form-group">
+                  <label>Location</label>
+                  <input
+                    type="text"
+                    value={trackingData.location || ''}
+                    onChange={(e) => setTrackingData({
+                      ...trackingData,
+                      location: e.target.value
+                    })}
+                    placeholder="Current location"
+                  />
+                </div>
+                <div className="aom-form-group">
+                  <label>Progress (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={trackingData.progress || 0}
+                    onChange={(e) => setTrackingData({
+                      ...trackingData,
+                      progress: parseInt(e.target.value)
+                    })}
+                  />
+                </div>
+                <button onClick={handleTrackingUpdate} className="aom-btn-save">
+                  Update Tracking
+                </button>
               </div>
-              
-              {order.orderStatus !== 'processing' && (
-                <div className="timeline-item">
-                  <div className="timeline-marker"></div>
-                  <div className="timeline-content">
-                    <h4>Order Processed</h4>
-                    <p>{formatDate(order.updatedAt)}</p>
+
+              {order.tracking && (
+                <div className="aom-tracking-display">
+                  <h3>Current Tracking</h3>
+                  <div className="aom-tracking-progress">
+                    <div className="aom-progress-bar">
+                      <div 
+                        className="aom-progress-fill"
+                        style={{ width: `${order.tracking.progress || 0}%` }}
+                      ></div>
+                    </div>
+                    <span>{order.tracking.progress || 0}% Complete</span>
                   </div>
+                  <p><strong>Status:</strong> {order.tracking.status}</p>
+                  <p><strong>Location:</strong> {order.tracking.location}</p>
                 </div>
               )}
             </div>
-          </div>
+          )}
+
+          {activeTab === 'customer' && (
+            <div className="aom-customer-content">
+              <div className="aom-customer-info">
+                <h3>Customer Information</h3>
+                <div className="aom-info-grid">
+                  <div>
+                    <label>Name</label>
+                    <p>{order.user?.firstName} {order.user?.lastName}</p>
+                  </div>
+                  <div>
+                    <label>Email</label>
+                    <p>{order.user?.email}</p>
+                  </div>
+                  <div>
+                    <label>Phone</label>
+                    <p>{order.user?.phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
