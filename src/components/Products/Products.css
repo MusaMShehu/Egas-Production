@@ -1,7 +1,7 @@
 /* src/components/Products/Products.css */
 /* Products Page Specific Styles */
 .page-hero {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../images/image\ 56.jpg');
+  /* background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../images/image/ 56.jpg'); */
   background-size: cover;
   background-position: center;
   color: white;
