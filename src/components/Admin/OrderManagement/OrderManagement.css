@@ -51,7 +51,7 @@
   border-color: #adb5bd;
 }
 
-/* Filter Styles */
+/* Filter Styles
 .aom-order-filters {
   background: white;
   border-radius: 8px;
@@ -182,7 +182,7 @@
 
 .aom-active-filters {
   color: #007bff;
-}
+} */
 
 /* Order List Styles */
 .aom-order-list-container {
@@ -610,7 +610,7 @@
   }
 }
 
-/* Order Details Styles */
+/* Order Details Styles
 .aom-order-details {
   background: white;
   border-radius: 8px;
@@ -771,4 +771,4 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
-}
+} */

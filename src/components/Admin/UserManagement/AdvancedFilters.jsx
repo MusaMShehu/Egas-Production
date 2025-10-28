@@ -8,8 +8,8 @@ const AdvancedFilters = ({ filters, onFiltersChange, availableRoles }) => {
   // In a real app, you would fetch these from your API
   useEffect(() => {
     // Mock data - replace with actual API call
-    setCities(['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix']);
-    setStates(['California', 'Texas', 'New York', 'Florida', 'Illinois']);
+    setCities(['Maiduguri', 'Damaturu', 'Jere']);
+    setStates(['Borno', 'Yobe']);
   }, []);
 
   const handleFilterChange = (key, value) => {

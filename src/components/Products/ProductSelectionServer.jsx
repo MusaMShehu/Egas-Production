@@ -98,7 +98,7 @@ const ProductSelection = () => {
     if (!isLoggedIn()) {
       setAuthMessage('Please login to your account to add items to cart');
       setTimeout(() => {
-        navigate('/login', {
+        navigate('/auth', {
           state: {
             message: 'Please login to add items to your cart',
             returnUrl: window.location.pathname,

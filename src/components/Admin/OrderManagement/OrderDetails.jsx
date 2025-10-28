@@ -6,6 +6,8 @@ import {
   faPrint, 
   faDownload 
 } from '@fortawesome/free-solid-svg-icons';
+import './OrderDetails.css';
+
 
 const OrderDetails = ({ 
   order, 

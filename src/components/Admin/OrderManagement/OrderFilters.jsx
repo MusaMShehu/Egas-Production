@@ -8,6 +8,7 @@ import {
   FaSortAmountUp,
   FaFilter
 } from 'react-icons/fa';
+import './OrderFilters.css';
 
 const OrderFilters = ({ filters, onFilterChange, orderCount }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);

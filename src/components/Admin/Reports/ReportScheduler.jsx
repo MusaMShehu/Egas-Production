@@ -32,7 +32,7 @@ const ReportScheduler = ({
 
   const fetchSchedules = async () => {
     try {
-      const response = await fetch('/api/admin/reports/schedules');
+      const response = await fetch('http://localhost:5000/api/admin/reports/schedules');
       const data = await response.json();
       if (response.ok) {
         setSchedules(data);

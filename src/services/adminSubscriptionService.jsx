@@ -1,10 +1,9 @@
-// services/adminSubscriptionService.js
 import axios from "axios";
 
 // =============================
 // ✅ Configuration
 // =============================
-const API_BASE_URL = "http://localhost:5000"; // 🔧 Update if using different backend URL
+const API_BASE_URL = "http://localhost:5000"; 
 
 // ✅ Safely get token from localStorage
 const getToken = () => {
@@ -113,20 +112,22 @@ const adminSubscriptionService = {
   },
 
   // Pause subscription
+  
   async pauseAdminSubscription(id) {
-    const response = await api.put(`/api/v1/admin/subscriptions/${id}/pause`);
+    const response = await api.put(`/api/v1/admin/subscriptions/${id}/pause`, {});
     return response.data;
   },
+  
 
   // Resume subscription
   async resumeAdminSubscription(id) {
-    const response = await api.put(`/api/v1/admin/subscriptions/${id}/resume`);
+    const response = await api.put(`/api/v1/admin/subscriptions/${id}/resume`, {});
     return response.data;
   },
 
   // Cancel subscription
   async cancelAdminSubscription(id) {
-    const response = await api.put(`/api/v1/admin/subscriptions/${id}/cancel`);
+    const response = await api.put(`/api/v1/admin/subscriptions/${id}/cancel`, {});
     return response.data;
   },
 

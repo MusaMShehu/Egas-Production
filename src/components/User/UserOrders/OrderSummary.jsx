@@ -1,34 +1,79 @@
 import React from 'react';
 import '../../Products/ProductSelection.css';
+import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) return;
+    
+    const product = cartItems.find(item => item.productId === productId);
     
     onUpdateCart({
       items: cartItems.map(item =>
         item.productId === productId ? { ...item, quantity: newQuantity } : item
       )
     });
+
+    if (newQuantity > product.quantity) {
+      successToast(`Increased ${product.name} quantity to ${newQuantity}`);
+    } else {
+      infoToast(`Decreased ${product.name} quantity to ${newQuantity}`);
+    }
   };
 
   const handleRemoveItem = (productId) => {
-    onUpdateCart({
-      items: cartItems.filter(item => item.productId !== productId)
-    });
+    const productToRemove = cartItems.find(item => item.productId === productId);
+    
+    if (productToRemove) {
+      onUpdateCart({
+        items: cartItems.filter(item => item.productId !== productId)
+      });
+      warningToast(`Removed ${productToRemove.name} from cart`);
+    }
   };
 
   const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      errorToast('Cannot proceed to checkout with empty cart');
+      return;
+    }
+
+    infoToast('Redirecting to checkout...');
     // Redirect to checkout page
-    window.location.href = '/checkout';
+    setTimeout(() => {
+      window.location.href = '/checkout';
+    }, 1000);
+  };
+
+  const handleContinueShopping = () => {
+    infoToast('Continuing shopping...');
+    onClose();
+  };
+
+  const handleCloseCart = () => {
+    if (cartItems.length > 0) {
+      infoToast('Cart closed. Your items are saved.');
+    } else {
+      infoToast('Cart closed');
+    }
+    onClose();
+  };
+
+  const getTotalItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const handleImageError = (e, productName) => {
+    e.target.src = 'default-product.jpg';
+    warningToast(`Could not load image for ${productName}, using default image`);
   };
 
   return (
     <div className="order-summary-overlay">
       <div className="order-summary-modal">
         <div className="order-summary-header">
-          <h2>Your Cart</h2>
-          <button className="close-btn" onClick={onClose}>
+          <h2>Your Cart {cartItems.length > 0 && `(${getTotalItems()} items)`}</h2>
+          <button className="close-btn" onClick={handleCloseCart}>
             <i className="fas fa-times"></i>
           </button>
         </div>
@@ -38,7 +83,7 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
             <div className="empty-cart">
               <i className="fas fa-shopping-cart"></i>
               <p>Your cart is empty</p>
-              <button className="continue-shopping" onClick={onClose}>
+              <button className="continue-shopping" onClick={handleContinueShopping}>
                 Continue Shopping
               </button>
             </div>
@@ -50,9 +95,7 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                     <img 
                       src={item.image || 'default-product.jpg'} 
                       alt={item.name}
-                      onError={(e) => {
-                        e.target.src = 'default-product.jpg';
-                      }}
+                      onError={(e) => handleImageError(e, item.name)}
                     />
                     <div className="item-details">
                       <h4>{item.name}</h4>
@@ -62,12 +105,14 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                       <button
                         onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
                         disabled={item.quantity <= 1}
+                        title="Decrease quantity"
                       >
                         -
                       </button>
                       <span>{item.quantity}</span>
                       <button
                         onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                        title="Increase quantity"
                       >
                         +
                       </button>
@@ -78,6 +123,7 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                     <button
                       className="remove-item"
                       onClick={() => handleRemoveItem(item.productId)}
+                      title={`Remove ${item.name} from cart`}
                     >
                       <i className="fas fa-trash"></i>
                     </button>
@@ -101,12 +147,26 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
               </div>
 
               <div className="checkout-actions">
-                <button className="continue-shopping" onClick={onClose}>
+                <button 
+                  className="continue-shopping" 
+                  onClick={handleContinueShopping}
+                >
                   Continue Shopping
                 </button>
-                <button className="checkout-btn" onClick={handleCheckout}>
-                  Proceed to Checkout
+                <button 
+                  className="checkout-btn" 
+                  onClick={handleCheckout}
+                >
+                  Proceed to Checkout (${total.toFixed(2)})
                 </button>
+              </div>
+
+              {/* Additional helpful info */}
+              <div className="cart-help-info">
+                <p>
+                  <i className="fas fa-info-circle"></i>
+                  Your cart will be saved for later
+                </p>
               </div>
             </>
           )}

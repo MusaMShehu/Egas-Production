@@ -4,6 +4,10 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from './contexts/AuthContext';
+import { SnackbarProvider } from './contexts/SnackbarContext';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 // Public Pages
 import PublicLayout from "./components/public/PublicLayout";
@@ -54,7 +58,7 @@ import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
 
 // Admin Panel
 import AdminLayout from "./components/Admin/AdminLayout";
-import AdminOverview from "./components/Admin/AdminOverview";
+import AdminDashboard from "./components/Admin/AdminDashboard";
 import UserManagement from "./components/Admin/UserManagement/UserManagement";
 import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
 import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
@@ -75,6 +79,10 @@ import UserProfile from "./components/User/UserProfile/UserProfile";
 import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
 
+import CustomerDeliveryHistory from "./components/Admin/DeliveryManagement/CustomerDeliveryHistoryConfirmation";
+
+
+
 import { PaymentProvider } from './contexts/paymentContext';
 
 // import SubscriptionPayment from './components/payments/subscriptionPayment';
@@ -92,16 +100,24 @@ import DeliveryAgentPortal from "./components/Admin/DeliveryManagement/DeliveryA
 function App() {
 
   return (
+
     <AuthProvider>
       <PaymentProvider>
+        <SnackbarProvider>
       <div className="App">
+        <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme="colored"
+        pauseOnHover
+        closeOnClick />
         <Routes>
 
           {/* Public Routes */}
 
           <Route path="/" element={<PublicLayout />}>
-            <Route index element={<Navigate to="Home" replace />} />
-            <Route path="Home" element={<Home />} />
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<Home />} />
             <Route path="/opportunities" element={< OpportunitiesLayout/>} >
               <Route index element={<Navigate to="learn-more" replace />} />
               <Route path="learn-more" element={<LearnMore/>} />
@@ -155,6 +171,7 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />
+            <Route path="delivery" element={<CustomerDeliveryHistory />} />
 
 
               {/* New payment Testing */}
@@ -168,7 +185,7 @@ function App() {
           {/* Admin Routes (can also be wrapped with ProtectedRoute if only admins allowed) */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<AdminOverview />} />
+            <Route path="overview" element={<AdminDashboard />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="orders" element={<OrderManagement />} />
             <Route path="products" element={<ProductManagement />} />
@@ -182,6 +199,7 @@ function App() {
           
         </Routes>
       </div>
+      </SnackbarProvider>
       </PaymentProvider>
     </AuthProvider>
   );

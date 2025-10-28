@@ -14,6 +14,7 @@ import {
   FaSync
 } from "react-icons/fa";
 import "./UserPayment.css";
+import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const Payments = () => {
   const [paymentData, setPaymentData] = useState({
@@ -50,6 +51,7 @@ const Payments = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Authentication token not found. Please log in again.");
+      warningToast("Please log in to access payment features");
       return null;
     }
     return token;
@@ -69,6 +71,8 @@ const Payments = () => {
       const token = getAuthToken();
       if (!token) return;
 
+      infoToast("Loading your payment information...");
+
       const response = await fetch(
         `${API_BASE_URL}/api/v1/dashboard/overview`,
         { 
@@ -78,7 +82,9 @@ const Payments = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError("Session expired. Please log in again.");
+          const errorMsg = "Session expired. Please log in again.";
+          setError(errorMsg);
+          warningToast(errorMsg);
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,9 +108,13 @@ const Payments = () => {
         hasPrev: false,
       });
 
+      successToast("Payment data loaded successfully!");
+      
     } catch (error) {
       console.error("Error fetching payment data:", error);
-      setError(error.message || "Failed to load payment data");
+      const errorMsg = error.message || "Failed to load payment data";
+      setError(errorMsg);
+      errorToast(errorMsg);
     }
   }, [API_BASE_URL, getAuthToken, getHeaders]);
 
@@ -116,7 +126,9 @@ const Payments = () => {
         await fetchPaymentData();
       } catch (error) {
         console.error("Error loading data:", error);
-        setError("Failed to load payment data");
+        const errorMsg = "Failed to load payment data";
+        setError(errorMsg);
+        errorToast(errorMsg);
       } finally {
         setIsLoading(false);
       }
@@ -127,17 +139,22 @@ const Payments = () => {
   // Handle Paystack Top-up
   const handleTopUp = async () => {
     if (topUpAmount < 1000) {
-      setError("Minimum top-up amount is ₦1,000");
+      const errorMsg = "Minimum top-up amount is ₦1,000";
+      setError(errorMsg);
+      warningToast(errorMsg);
       return;
     }
 
     setIsProcessing(true);
     setError("");
+    infoToast(`Processing wallet top-up of ₦${topUpAmount.toLocaleString()}...`);
 
     try {
       const token = getAuthToken();
       if (!token) {
-        setError("Authentication required");
+        const errorMsg = "Authentication required";
+        setError(errorMsg);
+        warningToast("Please log in to top up your wallet");
         return;
       }
 
@@ -159,14 +176,19 @@ const Payments = () => {
       }
 
       if (result.authorization_url) {
+        successToast("Redirecting to Paystack for payment...");
         // Redirect to Paystack
-        window.location.href = result.authorization_url;
+        setTimeout(() => {
+          window.location.href = result.authorization_url;
+        }, 1500);
       } else {
         throw new Error("Paystack authorization URL not received");
       }
     } catch (error) {
       console.error("Error processing top-up:", error);
-      setError(error.message || "Failed to process top-up.");
+      const errorMsg = error.message || "Failed to process top-up.";
+      setError(errorMsg);
+      errorToast(errorMsg);
     } finally {
       setIsProcessing(false);
     }
@@ -238,6 +260,49 @@ const Payments = () => {
     return 'pending';
   };
 
+  const handleOpenTopUpModal = () => {
+    setShowTopUpModal(true);
+    infoToast("Opening wallet top-up form...");
+  };
+
+  const handleCloseTopUpModal = () => {
+    if (!isProcessing) {
+      setShowTopUpModal(false);
+      infoToast("Top-up cancelled");
+    }
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    infoToast(`Showing ${tab === "all" ? "all transactions" : tab + " transactions"}`);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value) {
+      infoToast(`Searching for "${e.target.value}"...`);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    successToast("Search cleared");
+  };
+
+  const handleAmountChange = (e) => {
+    const value = Math.max(0, parseInt(e.target.value) || 0);
+    setTopUpAmount(value);
+    
+    if (value > 0 && value < 1000) {
+      warningToast("Minimum top-up amount is ₦1,000");
+    }
+  };
+
+  const handleCancelTopUp = () => {
+    setShowTopUpModal(false);
+    infoToast("Top-up cancelled");
+  };
+
   if (isLoading) {
     return (
       <div className="pay-payments-page loading">
@@ -258,12 +323,21 @@ const Payments = () => {
               type="text"
               placeholder="Search transactions..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
             />
+            {searchTerm && (
+              <button 
+                className="pay-clear-search-btn"
+                onClick={handleClearSearch}
+                title="Clear search"
+              >
+                <FaTimes />
+              </button>
+            )}
           </div>
           <button
             className="pay-btn-primary"
-            onClick={() => setShowTopUpModal(true)}
+            onClick={handleOpenTopUpModal}
             disabled={isProcessing}
           >
             <FaPlus className="pay-btn-icon" />
@@ -291,6 +365,7 @@ const Payments = () => {
           </div>
           <h3>Wallet Balance</h3>
           <div className="pay-value">{formatCurrency(paymentData.walletBalance)}</div>
+          <div className="pay-stat-note">Available for purchases</div>
         </div>
 
         <div className="pay-stat-card spending-card">
@@ -336,25 +411,25 @@ const Payments = () => {
           <div className="pay-tab-container">
             <button 
               className={`pay-tab ${activeTab === "all" ? "active" : ""}`}
-              onClick={() => setActiveTab("all")}
+              onClick={() => handleTabChange("all")}
             >
               All Transactions
             </button>
             <button 
               className={`pay-tab ${activeTab === "orders" ? "active" : ""}`}
-              onClick={() => setActiveTab("orders")}
+              onClick={() => handleTabChange("orders")}
             >
               Orders
             </button>
             <button 
               className={`pay-tab ${activeTab === "subscriptions" ? "active" : ""}`}
-              onClick={() => setActiveTab("subscriptions")}
+              onClick={() => handleTabChange("subscriptions")}
             >
               Subscriptions
             </button>
             <button 
               className={`pay-tab ${activeTab === "wallet" ? "active" : ""}`}
-              onClick={() => setActiveTab("wallet")}
+              onClick={() => handleTabChange("wallet")}
             >
               Wallet
             </button>
@@ -414,9 +489,17 @@ const Payments = () => {
             {searchTerm && (
               <button 
                 className="pay-clear-search"
-                onClick={() => setSearchTerm("")}
+                onClick={handleClearSearch}
               >
                 Clear search
+              </button>
+            )}
+            {!searchTerm && activeTab !== "all" && (
+              <button 
+                className="pay-show-all"
+                onClick={() => handleTabChange("all")}
+              >
+                Show all transactions
               </button>
             )}
           </div>
@@ -431,7 +514,7 @@ const Payments = () => {
               <h2>Top Up Wallet</h2>
               <button
                 className="pay-close-btn"
-                onClick={() => !isProcessing && setShowTopUpModal(false)}
+                onClick={handleCloseTopUpModal}
                 disabled={isProcessing}
               >
                 <FaTimes />
@@ -444,14 +527,18 @@ const Payments = () => {
                   type="number"
                   id="amount"
                   value={topUpAmount}
-                  onChange={(e) =>
-                    setTopUpAmount(Math.max(0, parseInt(e.target.value) || 0))
-                  }
+                  onChange={handleAmountChange}
                   min="1000"
                   step="500"
                   disabled={isProcessing}
+                  placeholder="Enter amount"
                 />
                 <small>Minimum amount: ₦1,000</small>
+                {topUpAmount >= 1000 && (
+                  <div className="pay-amount-preview">
+                    You are topping up: <strong>{formatCurrency(topUpAmount)}</strong>
+                  </div>
+                )}
               </div>
               {isProcessing && (
                 <div className="pay-payment-processing-overlay">
@@ -464,7 +551,7 @@ const Payments = () => {
               <button
                 type="button"
                 className="pay-btn-secondary"
-                onClick={() => setShowTopUpModal(false)}
+                onClick={handleCancelTopUp}
                 disabled={isProcessing}
               >
                 Cancel

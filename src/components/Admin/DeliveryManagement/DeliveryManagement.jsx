@@ -44,7 +44,7 @@ const AdminDeliveryManagement = () => {
         ...filters,
       }).toString();
 
-      const response = await fetch(`/api/v1/deliveries?${queryParams}`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -64,7 +64,7 @@ const AdminDeliveryManagement = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/v1/deliveries/stats', {
+      const response = await fetch('http://localhost:5000/api/v1/admin/delivery/stats', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -78,21 +78,31 @@ const AdminDeliveryManagement = () => {
     }
   };
 
-  const fetchAgents = async () => {
-    try {
-      const response = await fetch('/api/v1/users?role=delivery_agent', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setAgents(data.data);
+
+const fetchAgents = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/v1/admin/users?role=delivery', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    } catch (error) {
-      console.error('Error fetching agents:', error);
+    });
+    const data = await response.json();
+    console.log("Agents API response:", data);
+
+    if (data.success) {
+      const agentsArray = Array.isArray(data.data)
+        ? data.data
+        : data.data?.users || [];
+      setAgents(agentsArray);
+    } else {
+      setAgents([]);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching agents:', error);
+    setAgents([]);
+  }
+};
+
 
   const handleAssignAgent = (delivery) => {
     setSelectedDelivery(delivery);
@@ -107,7 +117,7 @@ const AdminDeliveryManagement = () => {
     }
 
     try {
-      const response = await fetch(`/api/v1/deliveries/${selectedDelivery._id}/assign`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${selectedDelivery._id}/assign`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +142,7 @@ const AdminDeliveryManagement = () => {
 
   const generateSchedules = async () => {
     try {
-      const response = await fetch('/api/v1/deliveries/generate-schedules', {
+      const response = await fetch('http://localhost:5000/api/v1/admin/delivery/generate-schedules', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

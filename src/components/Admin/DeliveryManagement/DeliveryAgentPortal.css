@@ -390,7 +390,7 @@
 .adm-form-select,
 .adm-form-textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 2px solid #ecf0f1;
   border-radius: 8px;
   font-size: 1rem;
@@ -438,6 +438,52 @@
 
 .adm-snackbar.warning {
   background: #f39c12;
+}
+
+
+/* Tab badges */
+.adm-tab-badge {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+}
+
+/* Status-specific styles */
+.adm-status-assigned {
+  background: #ff9800;
+  color: white;
+}
+
+.adm-status-accepted {
+  background: #2196f3;
+  color: white;
+}
+
+.adm-status-out_for_delivery {
+  background: #9c27b0;
+  color: white;
+}
+
+.adm-status-delivered {
+  background: #4caf50;
+  color: white;
+}
+
+.adm-status-failed {
+  background: #f44336;
+  color: white;
+}
+
+.adm-retry-badge {
+  background: #ff5722;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: inline-block;
 }
 
 /* Responsive Design */

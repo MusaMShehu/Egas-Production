@@ -20,9 +20,11 @@ import {
   FaNewspaper
 } from "react-icons/fa";
 import "./UserProfile.css";
+import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const Profile = () => {
   const [user, setUser] = useState({
+    id: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -35,6 +37,7 @@ const Profile = () => {
     gpsCoordinates: { type: "Point", coordinates: [0, 0] },
     profilePic: "default.jpg",
     memberSince: "",
+    createdAt: "", // Added createdAt field
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -54,6 +57,7 @@ const Profile = () => {
     const fetchUserProfile = async () => {
       setIsLoading(true);
       setError("");
+      infoToast("Loading your profile information...");
 
       try {
         const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
@@ -67,31 +71,46 @@ const Profile = () => {
         }
 
         const result = await response.json();
+        console.log("Fetched user data:", result); // Debug log
 
         if (result.success && result.user) {
-          setUser({
-            firstName: result.user.firstName || "",
-            lastName: result.user.lastName || "",
-            email: result.user.email || "",
-            phone: result.user.phone || "",
-            dob: result.user.dob || "",
-            gender: result.user.gender || "",
-            address: result.user.address || "",
-            city: result.user.city || "",
-            state: result.user.state || "",
-            gpsCoordinates: result.user.gpsCoordinates || {
+          const userData = result.user;
+          const userProfileData = {
+            id: userData._id || userData.id || "",
+            firstName: userData.firstName || "",
+            lastName: userData.lastName || "",
+            email: userData.email || "",
+            phone: userData.phone || "",
+            dob: userData.dob || "",
+            gender: userData.gender || "",
+            address: userData.address || "",
+            city: userData.city || "",
+            state: userData.state || "",
+            gpsCoordinates: userData.gpsCoordinates || {
               type: "Point",
               coordinates: [0, 0],
             },
-            profilePic: result.user.profilePic || "default.jpg",
-            memberSince: result.user.createdAt || "",
-          });
+            profilePic: userData.profilePic || "default.jpg",
+            memberSince: userData.createdAt || userData.memberSince || "",
+            createdAt: userData.createdAt || "", // Store createdAt separately
+          };
 
-          if (result.user.notificationPreferences) {
-            setNotificationPrefs(result.user.notificationPreferences);
+          setUser(userProfileData);
+
+          if (userData.notificationPreferences) {
+            setNotificationPrefs(userData.notificationPreferences);
           }
 
-          localStorage.setItem("user", JSON.stringify(result.user));
+          // Update localStorage with complete user data
+          localStorage.setItem("user", JSON.stringify({
+            ...userData,
+            id: userData._id || userData.id,
+            profilePic: userData.profilePic || "default.jpg",
+            createdAt: userData.createdAt
+          }));
+
+          console.log("User data set:", userProfileData);
+          successToast("Profile loaded successfully!");
         } else {
           throw new Error(result.message || "Failed to load profile");
         }
@@ -99,15 +118,20 @@ const Profile = () => {
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching profile:", error);
-        setError(
-          error.message || "Failed to load profile. Please try again later."
-        );
+        const errorMsg = error.message || "Failed to load profile. Please try again later.";
+        setError(errorMsg);
+        errorToast(errorMsg);
         setIsLoading(false);
       }
     };
 
     fetchUserProfile();
   }, []);
+
+  // Debug effect to log user state changes
+  useEffect(() => {
+    console.log("Current user state:", user);
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,12 +147,15 @@ const Profile = () => {
       ...notificationPrefs,
       [name]: checked,
     });
+    infoToast(`${name.split(/(?=[A-Z])/).join(' ')} ${checked ? 'enabled' : 'disabled'}`);
   };
 
   // ✅ Update current location capture
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       setIsLoading(true);
+      infoToast("Getting your current location...");
+      
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -140,19 +167,21 @@ const Profile = () => {
             },
           });
           setIsLoading(false);
-          alert("Location captured successfully!");
+          successToast("Location captured successfully!");
         },
         (error) => {
           console.error("Error getting location:", error);
-          setError(
-            "Failed to get current location. Please enable location services."
-          );
+          const errorMsg = "Failed to get current location. Please enable location services.";
+          setError(errorMsg);
+          errorToast(errorMsg);
           setIsLoading(false);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     } else {
-      setError("Geolocation is not supported by this browser.");
+      const errorMsg = "Geolocation is not supported by this browser.";
+      setError(errorMsg);
+      warningToast(errorMsg);
     }
   };
 
@@ -160,6 +189,7 @@ const Profile = () => {
     try {
       setIsLoading(true);
       setError("");
+      infoToast("Saving profile changes...");
 
       const profileResponse = await fetch(`${API_BASE_URL}/api/v1/auth/profile`, {
         method: "PUT",
@@ -174,68 +204,253 @@ const Profile = () => {
         throw new Error("Failed to update profile");
       }
 
+      // Refetch user data after successful save to ensure consistency
+      const refreshedResponse = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (refreshedResponse.ok) {
+        const refreshedResult = await refreshedResponse.json();
+        if (refreshedResult.success && refreshedResult.user) {
+          const refreshedUser = refreshedResult.user;
+          setUser(prev => ({
+            ...prev,
+            profilePic: refreshedUser.profilePic || prev.profilePic,
+            createdAt: refreshedUser.createdAt || prev.createdAt
+          }));
+          
+          localStorage.setItem("user", JSON.stringify(refreshedUser));
+        }
+      }
+
       setIsEditing(false);
       setIsLoading(false);
-      alert("Profile updated successfully!");
+      successToast("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
-      setError(error.message || "Failed to update profile. Please try again.");
+      const errorMsg = error.message || "Failed to update profile. Please try again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
       setIsLoading(false);
     }
   };
 
+  // ✅ Fixed handleImageUpload function with proper persistence
   const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  const token = localStorage.getItem("token");
+    const file = e.target.files[0];
+    const token = localStorage.getItem("token");
 
-  // 👇 Ensure you have a valid user ID
-  const userId = user?.id || JSON.parse(localStorage.getItem("user"))?.id;
+    // Get user ID from multiple sources
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const userId = user?.id || storedUser?._id || storedUser?.id;
 
-  if (!file || !userId) {
-    console.error("Missing file or user ID:", { file, userId });
-    setError("User information not found. Please log in again.");
-    return;
-  }
-
-  setIsLoading(true);
-  try {
-    const formData = new FormData();
-    formData.append("profilePic", file);
-
-    const response = await fetch(`${API_BASE_URL}/api/v1/users/picture/${userId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to upload image");
+    if (!file) {
+      const errorMsg = "Please select a file to upload.";
+      setError(errorMsg);
+      warningToast(errorMsg);
+      return;
     }
 
-    const result = await response.json();
-    setUser({
-      ...user,
-      profilePic: result.data.profilePic,
-    });
-    alert("Profile picture updated successfully!");
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    setError("Failed to upload profile picture. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+    if (!userId) {
+      console.error("User ID not found:", { userId, storedUser, user });
+      const errorMsg = "User information not found. Please log in again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
+      return;
+    }
 
+    // Validate file type and size
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
 
-  const formatMemberSince = (dateString) => {
-    if (!dateString) return "Member since 2023";
-    const date = new Date(dateString);
-    return `Member since ${date.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    })}`;
+    if (!validTypes.includes(file.type)) {
+      const errorMsg = "Please select a valid image file (JPEG, PNG, GIF).";
+      setError(errorMsg);
+      warningToast(errorMsg);
+      return;
+    }
+
+    if (file.size > maxSize) {
+      const errorMsg = "Image size must be less than 5MB.";
+      setError(errorMsg);
+      warningToast(errorMsg);
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    infoToast("Uploading profile picture...");
+
+    try {
+      const formData = new FormData();
+      formData.append("profilePic", file);
+
+      console.log("Uploading profile picture for user:", userId);
+      
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/picture/${userId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log("Upload response:", result);
+
+      // Handle different possible response structures
+      const newProfilePic = result.data?.profilePic || 
+                           result.profilePic || 
+                           result.user?.profilePic || 
+                           result.imageUrl;
+
+      if (!newProfilePic) {
+        throw new Error("No profile picture URL in response");
+      }
+
+      // Ensure we have a full URL if the backend returns a relative path
+      let finalProfilePic = newProfilePic;
+      if (!newProfilePic.startsWith('http') && !newProfilePic.startsWith('blob:') && newProfilePic !== "default.jpg") {
+        finalProfilePic = `${API_BASE_URL}${newProfilePic.startsWith('/') ? '' : '/'}${newProfilePic}`;
+      }
+
+      // Update user state with new profile picture
+      setUser(prevUser => ({
+        ...prevUser,
+        profilePic: finalProfilePic
+      }));
+
+      // Update localStorage with the new profile picture
+      const updatedUser = { 
+        ...storedUser, 
+        profilePic: finalProfilePic,
+        id: userId 
+      };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      // Refetch user data to ensure everything is synchronized
+      const refreshResponse = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (refreshResponse.ok) {
+        const refreshResult = await refreshResponse.json();
+        if (refreshResult.success && refreshResult.user) {
+          localStorage.setItem("user", JSON.stringify(refreshResult.user));
+        }
+      }
+
+      successToast("Profile picture updated successfully!");
+      
+      // Force refresh by clearing input
+      e.target.value = "";
+
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      const errorMsg = error.message || "Failed to upload profile picture. Please try again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ✅ Improved image URL handling with cache busting
+  const getProfilePicUrl = () => {
+    if (!user.profilePic || user.profilePic === "default.jpg") {
+      return "default.jpg";
+    }
+    
+    // If it's already a full URL, add timestamp for cache busting
+    if (user.profilePic.startsWith('http')) {
+      return `${user.profilePic}?t=${Date.now()}`;
+    }
+    
+    // If it's a relative path, make it absolute with cache busting
+    return `${API_BASE_URL}${user.profilePic.startsWith('/') ? '' : '/'}${user.profilePic}?t=${Date.now()}`;
+  };
+
+  // ✅ Fixed member since date formatting
+  const formatMemberSince = () => {
+    // Try multiple possible date sources in order of priority
+    const dateString = user.createdAt || user.memberSince;
+    
+    if (!dateString) {
+      return "Member since 2023";
+    }
+
+    try {
+      const date = new Date(dateString);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid date string:", dateString);
+        return "Member since 2023";
+      }
+      
+      return `Member since ${date.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Member since 2023";
+    }
+  };
+
+  // ✅ Format date for display in form fields
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+      
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error("Error formatting date for input:", error);
+      return "";
+    }
+  };
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    infoToast("Edit mode enabled. Make your changes and click Save.");
+  };
+
+  const handleEditCancel = () => {
+    setIsEditing(false);
+    warningToast("Edit cancelled. Changes were not saved.");
+  };
+
+  const handleClearError = () => {
+    setError("");
+    infoToast("Error message cleared");
+  };
+
+  const handleGPSManualInput = (e) => {
+    const value = e.target.value;
+    const [lat, lng] = value.split(",").map((v) => parseFloat(v.trim()));
+    
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setUser({
+        ...user,
+        gpsCoordinates: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+      });
+      infoToast("GPS coordinates updated manually");
+    }
   };
 
   if (isLoading && !isEditing) {
@@ -250,7 +465,7 @@ const Profile = () => {
           {!isEditing ? (
             <button
               className="prof-btn-primary"
-              onClick={() => setIsEditing(true)}
+              onClick={handleEditStart}
               disabled={isLoading}
             >
               <FaEdit className="prof-btn-icon" />
@@ -260,7 +475,7 @@ const Profile = () => {
             <div className="prof-edit-actions">
               <button
                 className="prof-btn-secondary"
-                onClick={() => setIsEditing(false)}
+                onClick={handleEditCancel}
                 disabled={isLoading}
               >
                 Cancel
@@ -282,7 +497,7 @@ const Profile = () => {
         <div className="prof-error-message">
           <FaInfoCircle className="prof-error-icon" />
           {error}
-          <button onClick={() => setError("")} className="prof-close-error">
+          <button onClick={handleClearError} className="prof-close-error">
             <FaTimes />
           </button>
         </div>
@@ -293,11 +508,14 @@ const Profile = () => {
           <div className="prof-profile-header">
             <div className="prof-profile-image">
               <img
-                src={user.profilePic || "default.jpg"}
+                src={getProfilePicUrl()}
                 alt="Profile"
                 onError={(e) => {
+                  console.error("Image failed to load:", user.profilePic);
                   e.target.src = "default.jpg";
+                  warningToast("Profile image failed to load, using default image");
                 }}
+                onLoad={() => console.log("Image loaded successfully:", user.profilePic)}
               />
               {isEditing && (
                 <div className="prof-image-upload-container">
@@ -313,6 +531,9 @@ const Profile = () => {
                     <FaCamera className="prof-btn-icon" />
                     {isLoading ? "Uploading..." : "Change Photo"}
                   </label>
+                  <div className="prof-upload-hint">
+                    Supported formats: JPEG, PNG, GIF (Max 5MB)
+                  </div>
                 </div>
               )}
             </div>
@@ -321,7 +542,12 @@ const Profile = () => {
                 <FaUser className="prof-title-icon" />
                 {user.firstName} {user.lastName}
               </h2>
-              <p>{formatMemberSince(user.memberSince)}</p>
+              <p>{formatMemberSince()}</p>
+              {isEditing && (
+                <div className="prof-user-id">
+                  User ID: {user.id || "Not available"}
+                </div>
+              )}
             </div>
           </div>
 
@@ -343,6 +569,7 @@ const Profile = () => {
                     value={user.firstName}
                     onChange={handleInputChange}
                     disabled={isLoading}
+                    placeholder="Enter first name"
                   />
                 ) : (
                   <span>{user.firstName || "Not set"}</span>
@@ -360,6 +587,7 @@ const Profile = () => {
                     value={user.lastName}
                     onChange={handleInputChange}
                     disabled={isLoading}
+                    placeholder="Enter last name"
                   />
                 ) : (
                   <span>{user.lastName || "Not set"}</span>
@@ -377,6 +605,7 @@ const Profile = () => {
                     value={user.email}
                     onChange={handleInputChange}
                     disabled={isLoading}
+                    placeholder="Enter email address"
                   />
                 ) : (
                   <span>{user.email || "Not set"}</span>
@@ -409,7 +638,7 @@ const Profile = () => {
                   <input
                     type="date"
                     name="dob"
-                    value={user.dob}
+                    value={formatDateForInput(user.dob)}
                     onChange={handleInputChange}
                     disabled={isLoading}
                   />
@@ -515,20 +744,7 @@ const Profile = () => {
                           ? `${user.gpsCoordinates.coordinates[1]}, ${user.gpsCoordinates.coordinates[0]}`
                           : ""
                       }
-                      onChange={(e) => {
-                        const [lat, lng] = e.target.value
-                          .split(",")
-                          .map((v) => parseFloat(v.trim()));
-                        if (!isNaN(lat) && !isNaN(lng)) {
-                          setUser({
-                            ...user,
-                            gpsCoordinates: {
-                              type: "Point",
-                              coordinates: [lng, lat],
-                            },
-                          });
-                        }
-                      }}
+                      onChange={handleGPSManualInput}
                       disabled={isLoading}
                       placeholder="Latitude, Longitude"
                     />

@@ -95,11 +95,14 @@ const OrderManagement = () => {
       return { success: false, message: 'Unauthorized to update order status' };
     }
 
+    const token = localStorage.getItem("token")?.replace(/^"|"$/g, "");
+
     try {
-      const response = await fetch(`https://egas-server.onrender.com/api/v1/orders/${orderId}/status`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ orderStatus: newStatus }),
       });
@@ -129,11 +132,14 @@ const OrderManagement = () => {
       return { success: false, message: 'Unauthorized to update payment status' };
     }
 
+      const token = localStorage.getItem("token")?.replace(/^"|"$/g, "");
+
     try {
-      const response = await fetch(`https://egas-server.onrender.com/api/v1/admin/orders/${orderId}/payment-status`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/orders/${orderId}/payment-status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ paymentStatus: newStatus }),
       });
@@ -157,13 +163,16 @@ const OrderManagement = () => {
       return { success: false, message: 'Network error. Please try again.' };
     }
   };
+  
+  const token = localStorage.getItem("token")?.replace(/^"|"$/g, "");
 
   const updateTracking = async (orderId, trackingData) => {
     try {
-      const response = await fetch(`https://egas-server.onrender.com/api/v1/orders/${orderId}/tracking`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/orders/${orderId}/tracking`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ tracking: trackingData }),
       });
@@ -192,12 +201,16 @@ const OrderManagement = () => {
     if (!permissions[userRole]?.canBulkUpdate) {
       return { success: false, message: 'Unauthorized for bulk operations' };
     }
+    
+    
+    const token = localStorage.getItem("token")?.replace(/^"|"$/g, "");
 
     try {
-      const response = await fetch(`https://egas-server.onrender.com/api/v1/admin/orders/bulk-status`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/orders/bulk-status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ orderIds, orderStatus: newStatus }),
       });

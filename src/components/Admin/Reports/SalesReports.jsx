@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from 'react';
 import MetricsGrid from './MetricsGrid';
 import DataTable from './DataTable';
-// import ReportChart from './ReportChart';
 
 const SalesReports = ({ 
   data, 
@@ -16,12 +15,44 @@ const SalesReports = ({
   const [selectedMetric, setSelectedMetric] = useState('revenue');
 
   const processedData = useMemo(() => {
-    // Apply filters and processing logic
+    if (!data) {
+      return {
+        totalSales: 0,
+        totalOrders: 0,
+        averageOrderValue: 0,
+        conversionRate: 0,
+        refundRate: 0,
+        satisfactionScore: 0,
+        salesChange: 0,
+        ordersChange: 0,
+        aovChange: 0,
+        conversionChange: 0,
+        refundChange: 0,
+        satisfactionChange: 0,
+        dailySales: [],
+        topProducts: [],
+        salesByCategory: [],
+        paymentMethods: [],
+        deliveryPerformance: [],
+        bestProduct: null,
+        underperformingCategories: [],
+        lowConversionProducts: [],
+        dailyAverage: 0,
+        successRate: 0,
+        detailedOrders: []
+      };
+    }
+    
     return {
       ...data,
-      // Add any data processing here
+      dailySales: data.dailySales || [],
+      topProducts: data.topProducts || [],
+      salesByCategory: data.salesByCategory || [],
+      paymentMethods: data.paymentMethods || [],
+      deliveryPerformance: data.deliveryPerformance || [],
+      detailedOrders: data.detailedOrders || []
     };
-  }, [data, filters, searchQuery]);
+  }, [data]);
 
   const metrics = [
     {
@@ -30,7 +61,7 @@ const SalesReports = ({
       change: processedData.salesChange || 0,
       icon: 'fas fa-shopping-cart',
       color: 'blue',
-      trend: processedData.salesTrend || 'up',
+      trend: (processedData.salesChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.totalOrders || 0} orders`
     },
     {
@@ -39,7 +70,7 @@ const SalesReports = ({
       change: processedData.ordersChange || 0,
       icon: 'fas fa-receipt',
       color: 'green',
-      trend: processedData.ordersTrend || 'up',
+      trend: (processedData.ordersChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.newCustomers || 0} new customers`
     },
     {
@@ -48,7 +79,7 @@ const SalesReports = ({
       change: processedData.aovChange || 0,
       icon: 'fas fa-chart-line',
       color: 'purple',
-      trend: processedData.aovTrend || 'up',
+      trend: (processedData.aovChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Per order'
     },
     {
@@ -57,7 +88,7 @@ const SalesReports = ({
       change: processedData.conversionChange || 0,
       icon: 'fas fa-percentage',
       color: 'orange',
-      trend: processedData.conversionTrend || 'up',
+      trend: (processedData.conversionChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Visitor to customer'
     },
     {
@@ -66,7 +97,7 @@ const SalesReports = ({
       change: processedData.refundChange || 0,
       icon: 'fas fa-undo',
       color: 'red',
-      trend: processedData.refundTrend || 'down',
+      trend: (processedData.refundChange || 0) <= 0 ? 'down' : 'up',
       subtitle: `${processedData.totalRefunds || 0} refunds`
     },
     {
@@ -75,75 +106,10 @@ const SalesReports = ({
       change: processedData.satisfactionChange || 0,
       icon: 'fas fa-smile',
       color: 'teal',
-      trend: processedData.satisfactionTrend || 'up',
+      trend: (processedData.satisfactionChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.totalReviews || 0} reviews`
     }
   ];
-
-  const chartData = {
-    labels: processedData.dailySales?.map(item => {
-      const date = new Date(item.date);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }) || [],
-    datasets: [
-      {
-        label: 'Sales Revenue',
-        data: processedData.dailySales?.map(item => item.amount) || [],
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Orders',
-        data: processedData.dailySales?.map(item => item.orders) || [],
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Average Order Value',
-        data: processedData.dailySales?.map(item => item.averageValue) || [],
-        borderColor: '#8B5CF6',
-        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-        fill: true,
-        tension: 0.4,
-        hidden: true
-      }
-    ]
-  };
-
-  const paymentMethodData = {
-    labels: processedData.paymentMethods?.map(item => item.method) || [],
-    datasets: [
-      {
-        data: processedData.paymentMethods?.map(item => item.percentage) || [],
-        backgroundColor: [
-          '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444',
-          '#6366F1', '#EC4899', '#14B8A6', '#F97316', '#06B6D4'
-        ],
-        borderWidth: 2,
-        borderColor: '#fff'
-      }
-    ]
-  };
-
-  const deliveryPerformanceData = {
-    labels: processedData.deliveryPerformance?.map(item => item.option) || [],
-    datasets: [
-      {
-        label: 'On Time Delivery',
-        data: processedData.deliveryPerformance?.map(item => item.onTimeRate) || [],
-        backgroundColor: '#10B981'
-      },
-      {
-        label: 'Average Delivery Time',
-        data: processedData.deliveryPerformance?.map(item => item.avgTime) || [],
-        backgroundColor: '#3B82F6'
-      }
-    ]
-  };
 
   const renderDashboardView = () => (
     <>
@@ -174,46 +140,6 @@ const SalesReports = ({
         </div>
       </div>
 
-      {/* <div className="chart-grid">
-        <div className="chart-section full-width">
-          <ReportChart
-            title="Sales Performance Trend"
-            data={chartData}
-            type="line"
-            height={350}
-            showStats={true}
-            onDataPointClick={(point) => {
-              console.log('Clicked point:', point);
-            }}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="Payment Methods Distribution"
-            data={paymentMethodData}
-            type="doughnut"
-            height={300}
-            options={{
-              plugins: {
-                legend: {
-                  position: 'bottom'
-                }
-              }
-            }}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="Delivery Performance"
-            data={deliveryPerformanceData}
-            type="bar"
-            height={300}
-          />
-        </div>
-      </div> */}
-
       <div className="data-tables">
         <div className="table-section">
           <div className="table-header">
@@ -238,12 +164,12 @@ const SalesReports = ({
               <span className={`category-tag ${product.category}`}>
                 {product.category}
               </span>,
-              product.unitsSold.toLocaleString(),
-              `₦${product.revenue.toLocaleString()}`,
-              `₦${product.averagePrice.toLocaleString()}`,
-              <span className={product.growth >= 0 ? 'text-green-600' : 'text-red-600'}>
-                <i className={`fas fa-arrow-${product.growth >= 0 ? 'up' : 'down'}`}></i>
-                {Math.abs(product.growth)}%
+              (product.unitsSold || 0).toLocaleString(),
+              `₦${(product.revenue || 0).toLocaleString()}`,
+              `₦${(product.averagePrice || 0).toLocaleString()}`,
+              <span className={(product.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
+                <i className={`fas fa-arrow-${(product.growth || 0) >= 0 ? 'up' : 'down'}`}></i>
+                {Math.abs(product.growth || 0)}%
               </span>
             ]) || []}
             sortable={true}
@@ -262,19 +188,19 @@ const SalesReports = ({
                 <div className="category-name">{cat.category}</div>
                 <div className="category-products">{cat.products} products</div>
               </div>,
-              `₦${cat.sales.toLocaleString()}`,
-              cat.units.toLocaleString(),
+              `₦${(cat.sales || 0).toLocaleString()}`,
+              (cat.units || 0).toLocaleString(),
               <div className="market-share">
                 <div className="share-bar">
                   <div 
                     className="share-fill" 
-                    style={{ width: `${cat.marketShare}%` }}
+                    style={{ width: `${cat.marketShare || 0}%` }}
                   ></div>
                 </div>
-                <span>{cat.marketShare}%</span>
+                <span>{(cat.marketShare || 0)}%</span>
               </div>,
-              <span className={cat.growth >= 0 ? 'text-green-600' : 'text-red-600'}>
-                {cat.growth >= 0 ? '+' : ''}{cat.growth}%
+              <span className={(cat.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
+                {(cat.growth || 0) >= 0 ? '+' : ''}{(cat.growth || 0)}%
               </span>
             ]) || []}
             sortable={true}
@@ -291,7 +217,7 @@ const SalesReports = ({
             <i className="fas fa-trophy"></i>
             <div className="insight-content">
               <h4>Best Performing</h4>
-              <p>{processedData.bestProduct?.name || 'N/A'} with ₦{processedData.bestProduct?.revenue?.toLocaleString() || '0'} revenue</p>
+              <p>{processedData.bestProduct?.name || 'N/A'} with ₦{(processedData.bestProduct?.revenue || 0).toLocaleString()} revenue</p>
             </div>
           </div>
           <div className="insight-card warning">
@@ -330,8 +256,8 @@ const SalesReports = ({
           <div className="products-count">
             {order.products} items
           </div>,
-          `₦${order.amount.toLocaleString()}`,
-          <span className={`status-badge ${order.status.toLowerCase()}`}>
+          `₦${(order.amount || 0).toLocaleString()}`,
+          <span className={`status-badge ${(order.status || 'pending').toLowerCase()}`}>
             {order.status}
           </span>,
           <span className={`payment-method ${order.paymentMethod}`}>
@@ -364,7 +290,7 @@ const SalesReports = ({
         <div className="header-content">
           <h2>Sales Performance Dashboard</h2>
           <p className="report-period">
-            {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
+            {dateRange?.startDate?.toLocaleDateString() || 'N/A'} - {dateRange?.endDate?.toLocaleDateString() || 'N/A'}
           </p>
         </div>
         <div className="report-actions">

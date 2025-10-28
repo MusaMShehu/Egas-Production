@@ -7,7 +7,7 @@ import SubscriptionReports from './SubscriptionReports';
 import FinancialReports from './FinancialReports';
 import ReportFilters from './ReportFilters';
 import ExportOptions from './ExportOptions';
-import RealTimeMetrics from './RealTimemetrics';
+// import RealTimeMetrics from './RealTimemetrics';
 import ReportScheduler from './ReportScheduler';
 import CustomReportBuilder from './CustomReportBuilder';
 import SavedReports from './SavedReports';
@@ -33,8 +33,8 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState({});
   const [realTimeData, setRealTimeData] = useState({});
-  const [viewMode, setViewMode] = useState('dashboard'); // dashboard, detailed, comparative
-  const [timeFrame, setTimeFrame] = useState('30d'); // 7d, 30d, 90d, 1y, custom
+  const [viewMode, setViewMode] = useState('dashboard'); 
+  const [timeFrame, setTimeFrame] = useState('30d'); 
   const [autoRefresh, setAutoRefresh] = useState(false);
 
   // Real-time data polling
@@ -51,44 +51,74 @@ const Reports = () => {
   }, [activeReport, dateRange, filters, timeFrame]);
 
   const fetchReportData = async () => {
-    try {
-      setLoading(true);
-      
-      const queryParams = new URLSearchParams({
-        startDate: dateRange.startDate.toISOString(),
-        endDate: dateRange.endDate.toISOString(),
-        timeFrame,
-        viewMode,
-        ...filters
-      });
+  try {
+    setLoading(true);
 
-      if (searchQuery) {
-        queryParams.append('search', searchQuery);
-      }
-
-      if (sortConfig.key) {
-        queryParams.append('sortBy', sortConfig.key);
-        queryParams.append('sortOrder', sortConfig.direction);
-      }
-
-      const response = await fetch(`http://localhost:5000/api/v1/admin/reports/${activeReport}?${queryParams}`);
-      const data = await response.json();
-      
-      if (response.ok) {
-        setReportData(data);
-      } else {
-        console.error('Failed to fetch report data:', data.message);
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-    } finally {
-      setLoading(false);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      return;
     }
-  };
+
+    const queryParams = new URLSearchParams({
+      startDate: dateRange.startDate.toISOString(),
+      endDate: dateRange.endDate.toISOString(),
+      timeFrame,
+      viewMode,
+      ...filters
+    });
+
+    if (searchQuery) {
+      queryParams.append("search", searchQuery);
+    }
+
+    if (sortConfig.key) {
+      queryParams.append("sortBy", sortConfig.key);
+      queryParams.append("sortOrder", sortConfig.direction);
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/api/v1/admin/reports/${activeReport}?${queryParams}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // ✅ IMPORTANT FIX
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setReportData(data);
+    } else {
+      console.error("Failed to fetch report data:", data.message || data.error);
+    }
+
+  } catch (error) {
+    console.error("Network error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const fetchRealTimeData = async () => {
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
     try {
-      const response = await fetch('http://localhost:5000/api/v1/admin/reports/realtime-metrics');
+      const response = await fetch('http://localhost:5000/api/v1/admin/reports/realtime-metrics',
+         {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // ✅ IMPORTANT FIX
+        }
+      }
+      );
       const data = await response.json();
       if (response.ok) {
         setRealTimeData(data);
@@ -307,11 +337,11 @@ const Reports = () => {
       </div>
 
       {/* Real-time Metrics */}
-      <RealTimeMetrics 
+      {/* <RealTimeMetrics 
         data={realTimeData}
         autoRefresh={autoRefresh}
         onAutoRefreshToggle={setAutoRefresh}
-      />
+      /> */}
 
       {/* Quick Actions */}
       <div className="quick-actions-bar">

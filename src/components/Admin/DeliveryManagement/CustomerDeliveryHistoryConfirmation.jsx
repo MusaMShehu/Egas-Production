@@ -9,7 +9,7 @@ import {
   FaClock,
   FaTruck
 } from 'react-icons/fa';
-import './styles/customer-delivery.css';
+import './CustomerDeliveryHistory.css';
 
 const CustomerDeliveryHistory = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -28,7 +28,7 @@ const CustomerDeliveryHistory = () => {
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/v1/deliveries/my-deliveries?page=${page}&limit=10`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/my-deliveries?page=${page}&limit=10`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -48,7 +48,7 @@ const CustomerDeliveryHistory = () => {
 
   const handleConfirmDelivery = async () => {
     try {
-      const response = await fetch(`/api/v1/deliveries/${selectedDelivery._id}/confirm`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${selectedDelivery._id}/confirm`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const CustomerDeliveryHistory = () => {
   return (
     <div className="adm-customer-delivery">
       <div className="adm-customer-header">
-        <h1 className="adm-customer-title">My Delivery History</h1>
+        <h1 className="adm-customer-title">My Delivery Schedules</h1>
       </div>
 
       <div className="adm-deliveries-list">

@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from 'react';
 import MetricsGrid from './MetricsGrid';
 import DataTable from './DataTable';
-// import ReportChart from './ReportChart';
 
 const SubscriptionReports = ({ 
   data, 
@@ -17,22 +16,56 @@ const SubscriptionReports = ({
   const [metricView, setMetricView] = useState('overview');
 
   const processedData = useMemo(() => {
-    let filteredData = { ...data };
-    
-    // Apply plan type filter
-    if (selectedPlanType !== 'all') {
-      filteredData = {
-        ...filteredData,
-        planPerformance: data.planPerformance?.filter(plan => plan.type === selectedPlanType),
-        subscriptionTrend: data.subscriptionTrend?.map(period => ({
-          ...period,
-          // Filter trend data if needed
-        }))
+    if (!data) {
+      return {
+        totalSubscriptions: 0,
+        activeSubscriptions: 0,
+        trialSubscriptions: 0,
+        mrr: 0,
+        renewalRate: 0,
+        churnRate: 0,
+        arpu: 0,
+        subscriptionsChange: 0,
+        activeChange: 0,
+        mrrChange: 0,
+        renewalChange: 0,
+        churnChange: 0,
+        arpuChange: 0,
+        ltv: 0,
+        ltvChange: 0,
+        cac: 0,
+        cacChange: 0,
+        ltvCacRatio: 0,
+        ratioChange: 0,
+        subscriptionTrend: [],
+        planDistribution: [],
+        revenueTrend: [],
+        planPerformance: [],
+        upcomingRenewals: [],
+        retentionRate: 0,
+        retentionChange: 0,
+        netGrowth: 0,
+        growthRate: 0,
+        revenueHealth: 0,
+        revenueGrowth: 0,
+        churnReasons: [],
+        atRiskSubscriptions: [],
+        detailedSubscriptions: []
       };
     }
     
-    return filteredData;
-  }, [data, selectedPlanType]);
+    return {
+      ...data,
+      subscriptionTrend: data.subscriptionTrend || [],
+      planDistribution: data.planDistribution || [],
+      revenueTrend: data.revenueTrend || [],
+      planPerformance: data.planPerformance || [],
+      upcomingRenewals: data.upcomingRenewals || [],
+      churnReasons: data.churnReasons || [],
+      atRiskSubscriptions: data.atRiskSubscriptions || [],
+      detailedSubscriptions: data.detailedSubscriptions || []
+    };
+  }, [data]);
 
   const metrics = [
     {
@@ -41,7 +74,7 @@ const SubscriptionReports = ({
       change: processedData.subscriptionsChange || 0,
       icon: 'fas fa-calendar-check',
       color: 'blue',
-      trend: processedData.subscriptionsTrend || 'up',
+      trend: (processedData.subscriptionsChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.activeSubscriptions || 0} active`
     },
     {
@@ -50,7 +83,7 @@ const SubscriptionReports = ({
       change: processedData.activeChange || 0,
       icon: 'fas fa-user-clock',
       color: 'green',
-      trend: processedData.activeTrend || 'up',
+      trend: (processedData.activeChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.trialSubscriptions || 0} trials`
     },
     {
@@ -59,7 +92,7 @@ const SubscriptionReports = ({
       change: processedData.mrrChange || 0,
       icon: 'fas fa-money-bill-wave',
       color: 'purple',
-      trend: processedData.mrrTrend || 'up',
+      trend: (processedData.mrrChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Recurring revenue'
     },
     {
@@ -68,7 +101,7 @@ const SubscriptionReports = ({
       change: processedData.renewalChange || 0,
       icon: 'fas fa-sync',
       color: 'orange',
-      trend: processedData.renewalTrend || 'up',
+      trend: (processedData.renewalChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Successful renewals'
     },
     {
@@ -77,7 +110,7 @@ const SubscriptionReports = ({
       change: processedData.churnChange || 0,
       icon: 'fas fa-running',
       color: 'red',
-      trend: processedData.churnTrend || 'down',
+      trend: (processedData.churnChange || 0) <= 0 ? 'down' : 'up',
       subtitle: 'Customer attrition'
     },
     {
@@ -86,7 +119,7 @@ const SubscriptionReports = ({
       change: processedData.arpuChange || 0,
       icon: 'fas fa-chart-line',
       color: 'teal',
-      trend: processedData.arpuTrend || 'up',
+      trend: (processedData.arpuChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Per active user'
     }
   ];
@@ -98,7 +131,7 @@ const SubscriptionReports = ({
       change: processedData.ltvChange || 0,
       icon: 'fas fa-gem',
       color: 'purple',
-      trend: processedData.ltvTrend || 'up'
+      trend: (processedData.ltvChange || 0) >= 0 ? 'up' : 'down'
     },
     {
       title: 'Customer Acquisition Cost',
@@ -106,7 +139,7 @@ const SubscriptionReports = ({
       change: processedData.cacChange || 0,
       icon: 'fas fa-tag',
       color: 'orange',
-      trend: processedData.cacTrend || 'down'
+      trend: (processedData.cacChange || 0) <= 0 ? 'down' : 'up'
     },
     {
       title: 'LTV to CAC Ratio',
@@ -114,77 +147,9 @@ const SubscriptionReports = ({
       change: processedData.ratioChange || 0,
       icon: 'fas fa-balance-scale',
       color: 'green',
-      trend: processedData.ratioTrend || 'up'
+      trend: (processedData.ratioChange || 0) >= 0 ? 'up' : 'down'
     }
   ];
-
-  const subscriptionTrendData = {
-    labels: processedData.subscriptionTrend?.map(item => item.period) || [],
-    datasets: [
-      {
-        label: 'New Subscriptions',
-        data: processedData.subscriptionTrend?.map(item => item.new) || [],
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Cancellations',
-        data: processedData.subscriptionTrend?.map(item => item.cancelled) || [],
-        borderColor: '#EF4444',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Renewals',
-        data: processedData.subscriptionTrend?.map(item => item.renewed) || [],
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        fill: true,
-        tension: 0.4
-      }
-    ]
-  };
-
-  const planDistribution = {
-    labels: processedData.planDistribution?.map(item => item.plan) || [],
-    datasets: [
-      {
-        data: processedData.planDistribution?.map(item => item.subscribers) || [],
-        backgroundColor: [
-          '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444',
-          '#6366F1', '#EC4899', '#14B8A6', '#F97316', '#06B6D4'
-        ],
-        borderWidth: 2,
-        borderColor: '#fff'
-      }
-    ]
-  };
-
-  const revenueTrendData = {
-    labels: processedData.revenueTrend?.map(item => item.month) || [],
-    datasets: [
-      {
-        label: 'MRR Growth',
-        data: processedData.revenueTrend?.map(item => item.mrr) || [],
-        borderColor: '#8B5CF6',
-        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'ARR Projection',
-        data: processedData.revenueTrend?.map(item => item.arr) || [],
-        borderColor: '#F59E0B',
-        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-        fill: true,
-        tension: 0.4,
-        borderDash: [5, 5]
-      }
-    ]
-  };
 
   const planTypes = ['all', 'custom', 'one-time', 'emergency', 'preset'];
 
@@ -223,43 +188,6 @@ const SubscriptionReports = ({
 
       <MetricsGrid metrics={metricView === 'overview' ? metrics : revenueMetrics} />
 
-      {/* <div className="chart-grid">
-        <div className="chart-section">
-          <ReportChart
-            title="Subscription Lifecycle Trends"
-            data={subscriptionTrendData}
-            type="line"
-            height={300}
-            showStats={true}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="Plan Distribution"
-            data={planDistribution}
-            type="doughnut"
-            height={300}
-            options={{
-              plugins: {
-                legend: {
-                  position: 'bottom'
-                }
-              }
-            }}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="Revenue Growth & Projection"
-            data={revenueTrendData}
-            type="line"
-            height={300}
-          />
-        </div>
-      </div> */}
-
       <div className="data-tables">
         <div className="table-section">
           <div className="table-header">
@@ -278,22 +206,22 @@ const SubscriptionReports = ({
               <span className={`plan-type ${plan.type}`}>
                 {plan.type}
               </span>,
-              plan.subscribers.toLocaleString(),
-              `₦${plan.mrr.toLocaleString()}`,
+              (plan.subscribers || 0).toLocaleString(),
+              `₦${(plan.mrr || 0).toLocaleString()}`,
               <div className="churn-indicator">
-                <span className={plan.churnRate < 5 ? 'text-green-600' : plan.churnRate > 15 ? 'text-red-600' : 'text-yellow-600'}>
-                  {plan.churnRate}%
+                <span className={(plan.churnRate || 0) < 5 ? 'text-green-600' : (plan.churnRate || 0) > 15 ? 'text-red-600' : 'text-yellow-600'}>
+                  {(plan.churnRate || 0)}%
                 </span>
               </div>,
-              `₦${plan.ltv.toLocaleString()}`,
+              `₦${(plan.ltv || 0).toLocaleString()}`,
               <div className="health-score">
                 <div className="score-bar">
                   <div 
-                    className={`score-fill ${plan.healthScore > 80 ? 'excellent' : plan.healthScore > 60 ? 'good' : 'poor'}`}
-                    style={{ width: `${plan.healthScore}%` }}
+                    className={`score-fill ${(plan.healthScore || 0) > 80 ? 'excellent' : (plan.healthScore || 0) > 60 ? 'good' : 'poor'}`}
+                    style={{ width: `${plan.healthScore || 0}%` }}
                   ></div>
                 </div>
-                <span>{plan.healthScore}%</span>
+                <span>{(plan.healthScore || 0)}%</span>
               </div>
             ]) || []}
             sortable={true}
@@ -320,8 +248,8 @@ const SubscriptionReports = ({
                   {renewal.daysUntilRenewal} days
                 </div>
               </div>,
-              `₦${renewal.amount.toLocaleString()}`,
-              <span className={`status-badge ${renewal.status.toLowerCase()}`}>
+              `₦${(renewal.amount || 0).toLocaleString()}`,
+              <span className={`status-badge ${(renewal.status || 'active').toLowerCase()}`}>
                 {renewal.status}
               </span>,
               <div className="auto-renew">
@@ -365,9 +293,9 @@ const SubscriptionReports = ({
                 <span className="metric-value">{processedData.retentionRate || 0}%</span>
                 <span className="metric-label">Retention Rate</span>
               </div>
-              <div className="health-trend positive">
-                <i className="fas fa-arrow-up"></i>
-                {processedData.retentionChange || 0}%
+              <div className={`health-trend ${(processedData.retentionChange || 0) >= 0 ? 'positive' : 'negative'}`}>
+                <i className={`fas fa-arrow-${(processedData.retentionChange || 0) >= 0 ? 'up' : 'down'}`}></i>
+                {Math.abs(processedData.retentionChange || 0)}%
               </div>
             </div>
           </div>
@@ -382,9 +310,9 @@ const SubscriptionReports = ({
                 <span className="metric-value">{processedData.netGrowth || 0}</span>
                 <span className="metric-label">Net Growth</span>
               </div>
-              <div className="health-trend positive">
-                <i className="fas fa-arrow-up"></i>
-                {processedData.growthRate || 0}%
+              <div className={`health-trend ${(processedData.growthRate || 0) >= 0 ? 'positive' : 'negative'}`}>
+                <i className={`fas fa-arrow-${(processedData.growthRate || 0) >= 0 ? 'up' : 'down'}`}></i>
+                {Math.abs(processedData.growthRate || 0)}%
               </div>
             </div>
           </div>
@@ -399,9 +327,9 @@ const SubscriptionReports = ({
                 <span className="metric-value">{processedData.revenueHealth || 0}%</span>
                 <span className="metric-label">Revenue Health</span>
               </div>
-              <div className="health-trend positive">
-                <i className="fas fa-arrow-up"></i>
-                {processedData.revenueGrowth || 0}%
+              <div className={`health-trend ${(processedData.revenueGrowth || 0) >= 0 ? 'positive' : 'negative'}`}>
+                <i className={`fas fa-arrow-${(processedData.revenueGrowth || 0) >= 0 ? 'up' : 'down'}`}></i>
+                {Math.abs(processedData.revenueGrowth || 0)}%
               </div>
             </div>
           </div>
@@ -467,11 +395,11 @@ const SubscriptionReports = ({
           </div>,
           new Date(sub.startDate).toLocaleDateString(),
           new Date(sub.endDate).toLocaleDateString(),
-          <span className={`status-badge ${sub.status.toLowerCase()}`}>
+          <span className={`status-badge ${(sub.status || 'active').toLowerCase()}`}>
             {sub.status}
           </span>,
-          `₦${sub.mrr.toLocaleString()}`,
-          `₦${sub.totalValue.toLocaleString()}`,
+          `₦${(sub.mrr || 0).toLocaleString()}`,
+          `₦${(sub.totalValue || 0).toLocaleString()}`,
           new Date(sub.renewalDate).toLocaleDateString(),
           <div className="subscription-actions">
             <button className="btn-action-small" title="View Details">
@@ -500,7 +428,7 @@ const SubscriptionReports = ({
         <div className="header-content">
           <h2>Subscription Analytics Dashboard</h2>
           <p className="report-period">
-            {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
+            {dateRange?.startDate?.toLocaleDateString() || 'N/A'} - {dateRange?.endDate?.toLocaleDateString() || 'N/A'}
           </p>
         </div>
         <div className="report-actions">

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
 import { FaPlus, FaSearch, FaTimes, FaEllipsisV } from 'react-icons/fa';
+import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const Subscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -19,10 +20,14 @@ const Subscriptions = () => {
   useEffect(() => {
     const fetchSubscriptions = async () => {
       setIsLoading(true);
+      infoToast('Loading your subscriptions...');
+      
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          setError('You must be logged in to view subscriptions.');
+          const errorMsg = 'You must be logged in to view subscriptions.';
+          setError(errorMsg);
+          warningToast(errorMsg);
           setIsLoading(false);
           return;
         }
@@ -42,10 +47,19 @@ const Subscriptions = () => {
         }
 
         setSubscriptions(result.data || []);
+        
+        if (result.data && result.data.length === 0) {
+          infoToast('No subscriptions found. Create your first subscription!');
+        } else {
+          successToast(`Loaded ${result.data.length} subscriptions successfully`);
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching subscriptions:', error);
-        setError('Failed to load your subscriptions. Please try again later.');
+        const errorMsg = 'Failed to load your subscriptions. Please try again later.';
+        setError(errorMsg);
+        errorToast(errorMsg);
         setIsLoading(false);
       }
     };
@@ -54,6 +68,7 @@ const Subscriptions = () => {
   }, [API_BASE_URL]);
 
   const handleCreateNewSubscription = () => {
+    infoToast('Redirecting to subscription plans...');
     navigate('/subscription-plans');
   };
 
@@ -78,13 +93,20 @@ const Subscriptions = () => {
     setSelectedSubscription(subscription);
     setShowDetailsModal(true);
     closeDropdown();
+    infoToast(`Viewing details for subscription #${subscription._id?.slice(-8)}`);
   };
 
   const handlePausePlan = async (subscriptionId) => {
+    const subscription = subscriptions.find(sub => sub._id === subscriptionId);
+    if (!subscription) return;
+
     if (!window.confirm('Are you sure you want to pause this subscription?')) {
+      infoToast('Subscription pause cancelled');
       closeDropdown();
       return;
     }
+
+    warningToast(`Pausing subscription #${subscriptionId.slice(-8)}...`);
 
     try {
       const token = localStorage.getItem('token');
@@ -113,23 +135,31 @@ const Subscriptions = () => {
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
-        alert('Subscription paused successfully');
+        successToast('Subscription paused successfully');
       } else {
         throw new Error(result.message || 'Failed to pause subscription');
       }
     } catch (error) {
       console.error('Error pausing subscription:', error);
-      setError(error.message || 'Failed to pause subscription. Please try again.');
+      const errorMsg = error.message || 'Failed to pause subscription. Please try again.';
+      setError(errorMsg);
+      errorToast(errorMsg);
     } finally {
       closeDropdown();
     }
   };
 
   const handleResumePlan = async (subscriptionId) => {
+    const subscription = subscriptions.find(sub => sub._id === subscriptionId);
+    if (!subscription) return;
+
     if (!window.confirm('Are you sure you want to resume this subscription?')) {
+      infoToast('Subscription resume cancelled');
       closeDropdown();
       return;
     }
+
+    infoToast(`Resuming subscription #${subscriptionId.slice(-8)}...`);
 
     try {
       const token = localStorage.getItem('token');
@@ -158,23 +188,31 @@ const Subscriptions = () => {
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
-        alert('Subscription resumed successfully');
+        successToast('Subscription resumed successfully');
       } else {
         throw new Error(result.message || 'Failed to resume subscription');
       }
     } catch (error) {
       console.error('Error resuming subscription:', error);
-      setError(error.message || 'Failed to resume subscription. Please try again.');
+      const errorMsg = error.message || 'Failed to resume subscription. Please try again.';
+      setError(errorMsg);
+      errorToast(errorMsg);
     } finally {
       closeDropdown();
     }
   };
 
   const cancelSubscription = async (subscriptionId) => {
+    const subscription = subscriptions.find(sub => sub._id === subscriptionId);
+    if (!subscription) return;
+
     if (!window.confirm('Are you sure you want to cancel this subscription? This action cannot be undone.')) {
+      infoToast('Subscription cancellation cancelled');
       closeDropdown();
       return;
     }
+
+    warningToast(`Cancelling subscription #${subscriptionId.slice(-8)}...`);
 
     try {
       const token = localStorage.getItem('token');
@@ -203,7 +241,7 @@ const Subscriptions = () => {
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
-        alert('Subscription cancelled successfully');
+        successToast('Subscription cancelled successfully');
       } else {
         throw new Error(result.message || 'Failed to cancel subscription');
       }
@@ -211,9 +249,32 @@ const Subscriptions = () => {
       closeDropdown();
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      setError(error.message || 'Failed to cancel subscription. Please try again.');
+      const errorMsg = error.message || 'Failed to cancel subscription. Please try again.';
+      setError(errorMsg);
+      errorToast(errorMsg);
       closeDropdown();
     }
+  };
+
+  const handleSubscribeAgain = (subscription) => {
+    infoToast('Redirecting to subscription plans...');
+    navigate('/subscription-plans');
+  };
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      infoToast('Search functionality coming soon...');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowDetailsModal(false);
+    infoToast('Subscription details closed');
+  };
+
+  const handleClearError = () => {
+    setError('');
+    infoToast('Error message cleared');
   };
 
   const formatDate = (date) => {
@@ -270,7 +331,11 @@ const Subscriptions = () => {
         <div className="sub-header-actions">
           <div className="sub-search-bar">
             <FaSearch className="sub-search-icon" />
-            <input type="text" placeholder="Search subscriptions..." />
+            <input 
+              type="text" 
+              placeholder="Search subscriptions..." 
+              onKeyPress={handleSearch}
+            />
           </div>
           <button className="sub-btn-primary" onClick={handleCreateNewSubscription}>
             <FaPlus className="sub-fas" /> New Subscription
@@ -281,7 +346,7 @@ const Subscriptions = () => {
       {error && (
         <div className="sub-error-message">
           {error}
-          <button onClick={() => setError('')} className="close-error">
+          <button onClick={handleClearError} className="close-error">
             <FaTimes className="sub-fas" />
           </button>
         </div>
@@ -406,7 +471,10 @@ const Subscriptions = () => {
                               View Details
                             </button>
                             {subscription.status === 'expired' && (
-                              <button className="sub-dropdown-item">
+                              <button 
+                                className="sub-dropdown-item"
+                                onClick={() => handleSubscribeAgain(subscription)}
+                              >
                                 Subscribe Again
                               </button>
                             )}
@@ -472,7 +540,7 @@ const Subscriptions = () => {
               <h3>Subscription Details</h3>
               <button 
                 className="sub-modal-close"
-                onClick={() => setShowDetailsModal(false)}
+                onClick={handleCloseModal}
               >
                 <FaTimes />
               </button>
@@ -574,7 +642,7 @@ const Subscriptions = () => {
               )}
               <button 
                 className="sub-btn-secondary"
-                onClick={() => setShowDetailsModal(false)}
+                onClick={handleCloseModal}
               >
                 Close
               </button>

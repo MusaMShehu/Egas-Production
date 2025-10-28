@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPaperclip, FaSearch, FaTimes } from "react-icons/fa";
 import "./UserSupport.css";
+import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const Support = () => {
   const [tickets, setTickets] = useState([]);
@@ -36,6 +37,8 @@ const Support = () => {
   useEffect(() => {
     const fetchTickets = async () => {
       setIsLoading(true);
+      infoToast("Loading your support tickets...");
+      
       try {
         const response = await fetch(`${API_BASE_URL}/support/tickets`, {
           headers: getAuthHeaders(),
@@ -45,9 +48,17 @@ const Support = () => {
 
         const data = await response.json();
         setTickets(data.data || []);
+        
+        if (data.data && data.data.length === 0) {
+          infoToast("No support tickets found. Create your first ticket!");
+        } else {
+          successToast(`Loaded ${data.data.length} support tickets successfully`);
+        }
       } catch (err) {
         console.error("Error fetching tickets:", err);
-        setError("Failed to load support tickets. Please try again.");
+        const errorMsg = "Failed to load support tickets. Please try again.";
+        setError(errorMsg);
+        errorToast(errorMsg);
       } finally {
         setIsLoading(false);
       }
@@ -68,6 +79,7 @@ const Support = () => {
       ...newTicket,
       attachments: [...newTicket.attachments, ...files],
     });
+    successToast(`Added ${files.length} file(s) to attachments`);
   };
 
   // Create ticket
@@ -75,6 +87,7 @@ const Support = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+    infoToast("Creating support ticket...");
 
     try {
       const formData = new FormData();
@@ -104,10 +117,12 @@ const Support = () => {
         description: "",
         attachments: [],
       });
-      alert("Support ticket created successfully!");
+      successToast("Support ticket created successfully!");
     } catch (err) {
       console.error("Error creating ticket:", err);
-      setError("Failed to create ticket. Try again.");
+      const errorMsg = "Failed to create ticket. Please try again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -115,9 +130,14 @@ const Support = () => {
 
   // Add response
   const handleAddResponse = async (_id) => {
-    if (!newResponse.trim()) return;
+    if (!newResponse.trim()) {
+      warningToast("Please enter a response message");
+      return;
+    }
 
     setIsSubmitting(true);
+    infoToast("Sending your response...");
+    
     try {
       const response = await fetch(
         `${API_BASE_URL}/support/tickets/response/${_id}`,
@@ -137,10 +157,12 @@ const Support = () => {
       }
 
       setNewResponse("");
-      alert("Response added!");
+      successToast("Response sent successfully!");
     } catch (err) {
       console.error("Error adding response:", err);
-      setError("Failed to add response.");
+      const errorMsg = "Failed to send response. Please try again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -148,7 +170,15 @@ const Support = () => {
 
   // Close ticket
   const closeTicket = async (_id) => {
-    if (!window.confirm("Are you sure you want to close this ticket?")) return;
+    const ticket = tickets.find(t => t._id === _id);
+    if (!ticket) return;
+
+    if (!window.confirm("Are you sure you want to close this ticket?")) {
+      infoToast("Ticket closure cancelled");
+      return;
+    }
+
+    warningToast(`Closing ticket #${ticket.ticketId}...`);
 
     try {
       const response = await fetch(
@@ -156,7 +186,6 @@ const Support = () => {
         {
           method: "PUT",
           headers: getAuthHeaders(),
-          // body: JSON.stringify(),
         }
       );
 
@@ -168,10 +197,12 @@ const Support = () => {
         setSelectedTicket(data.data);
       }
 
-      alert("Ticket closed successfully!");
+      successToast("Ticket closed successfully!");
     } catch (err) {
       console.error("Error closing ticket:", err);
-      setError("Failed to close ticket.");
+      const errorMsg = "Failed to close ticket. Please try again.";
+      setError(errorMsg);
+      errorToast(errorMsg);
     }
   };
 
@@ -219,6 +250,50 @@ const Support = () => {
 
   const userId = localStorage.getItem("userId"); // set on login
 
+  // Event handlers with toast
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value) {
+      infoToast(`Searching for "${e.target.value}"...`);
+    }
+  };
+
+  const handleCreateFormOpen = () => {
+    setShowCreateForm(true);
+    infoToast("Opening ticket creation form...");
+  };
+
+  const handleCreateFormClose = () => {
+    if (!isSubmitting) {
+      setShowCreateForm(false);
+      infoToast("Ticket creation cancelled");
+    }
+  };
+
+  const handleViewTicketDetails = (ticket) => {
+    setSelectedTicket(ticket);
+    infoToast(`Viewing ticket #${ticket.ticketId}`);
+  };
+
+  const handleCloseTicketDetails = () => {
+    setSelectedTicket(null);
+    infoToast("Ticket details closed");
+  };
+
+  const handleClearError = () => {
+    setError("");
+    infoToast("Error message cleared");
+  };
+
+  const handleRemoveAttachment = (index) => {
+    const updatedAttachments = newTicket.attachments.filter((_, i) => i !== index);
+    setNewTicket({
+      ...newTicket,
+      attachments: updatedAttachments
+    });
+    warningToast("Attachment removed");
+  };
+
   if (isLoading)
     return (
       <div className="support-page loading">Loading support tickets...</div>
@@ -235,12 +310,24 @@ const Support = () => {
               type="text"
               placeholder="Search tickets..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
             />
+            {searchQuery && (
+              <button 
+                className="sup-clear-search"
+                onClick={() => {
+                  setSearchQuery("");
+                  infoToast("Search cleared");
+                }}
+                title="Clear search"
+              >
+                <FaTimes />
+              </button>
+            )}
           </div>
           <button
             className="sup-btn-primary"
-            onClick={() => setShowCreateForm(true)}
+            onClick={handleCreateFormOpen}
             disabled={isSubmitting}
           >
             <i className="sup-fas fa-plus"></i> New Ticket
@@ -251,7 +338,7 @@ const Support = () => {
       {error && (
         <div className="sup-error-message">
           {error}
-          <button onClick={() => setError("")} className="sup-close-error">
+          <button onClick={handleClearError} className="sup-close-error">
             <FaTimes className="sup-fas" />
           </button>
         </div>
@@ -304,7 +391,7 @@ const Support = () => {
                   <div className="sup-ticket-actions">
                     <button
                       className="sup-btn-primary"
-                      onClick={() => setSelectedTicket(ticket)}
+                      onClick={() => handleViewTicketDetails(ticket)}
                     >
                       View Details
                     </button>
@@ -323,12 +410,24 @@ const Support = () => {
           ) : (
             <div className="sup-no-tickets">
               <p>No tickets found.</p>
-              <button
-                className="sup-btn-primary"
-                onClick={() => setShowCreateForm(true)}
-              >
-                Create Ticket
-              </button>
+              {searchQuery ? (
+                <button
+                  className="sup-btn-secondary"
+                  onClick={() => {
+                    setSearchQuery("");
+                    infoToast("Search cleared");
+                  }}
+                >
+                  Clear Search
+                </button>
+              ) : (
+                <button
+                  className="sup-btn-primary"
+                  onClick={handleCreateFormOpen}
+                >
+                  Create Your First Ticket
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -342,7 +441,7 @@ const Support = () => {
                   <h2>Ticket #{selectedTicket.ticketId}</h2>
                   <button
                     className="sup-close-btn"
-                    onClick={() => setSelectedTicket(null)}
+                    onClick={handleCloseTicketDetails}
                   >
                     <FaTimes className="sup-fas" />
                   </button>
@@ -399,6 +498,7 @@ const Support = () => {
                                   href={file}
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  onClick={() => infoToast("Downloading attachment...")}
                                 >
                                   {file}
                                 </a>
@@ -439,6 +539,7 @@ const Support = () => {
                                     href={file}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => infoToast("Downloading attachment...")}
                                   >
                                     {file}
                                   </a>
@@ -471,6 +572,16 @@ const Support = () => {
                           >
                             {isSubmitting ? "Sending..." : "Send Response"}
                           </button>
+                          <button
+                            className="sup-btn-secondary"
+                            onClick={() => {
+                              setNewResponse("");
+                              infoToast("Response cleared");
+                            }}
+                            disabled={isSubmitting}
+                          >
+                            Clear
+                          </button>
                         </div>
                       </div>
                     )}
@@ -487,10 +598,10 @@ const Support = () => {
         <div className="sup-support-modal-overlay">
           <div className="sup-support-modal-content">
             <div className="sup-support-modal-header">
-              <h2>Create Ticket</h2>
+              <h2>Create Support Ticket</h2>
               <button
                 className="sup-close-btn"
-                onClick={() => !isSubmitting && setShowCreateForm(false)}
+                onClick={handleCreateFormClose}
                 disabled={isSubmitting}
               >
                 <FaTimes className="sup-fas" />
@@ -523,6 +634,7 @@ const Support = () => {
                     onChange={handleInputChange}
                     required
                     disabled={isSubmitting}
+                    placeholder="Enter ticket subject"
                   />
                 </div>
                 <div className="sup-form-group">
@@ -534,6 +646,7 @@ const Support = () => {
                     rows="5"
                     required
                     disabled={isSubmitting}
+                    placeholder="Describe your issue in detail..."
                   />
                 </div>
                 <div className="sup-form-group">
@@ -546,10 +659,19 @@ const Support = () => {
                   />
                   {newTicket.attachments.length > 0 && (
                     <div className="sup-attachments-preview">
-                      <strong>Selected files:</strong>
+                      <strong>Selected files ({newTicket.attachments.length}):</strong>
                       {newTicket.attachments.map((f, i) => (
                         <div key={i} className="sup-attachment">
-                          <FaPaperclip className="sup-fas" /> {f.name}
+                          <FaPaperclip className="sup-fas" /> 
+                          {f.name}
+                          <button
+                            type="button"
+                            className="sup-remove-attachment"
+                            onClick={() => handleRemoveAttachment(i)}
+                            disabled={isSubmitting}
+                          >
+                            <FaTimes />
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -560,7 +682,7 @@ const Support = () => {
                 <button
                   type="button"
                   className="sup-btn-secondary"
-                  onClick={() => setShowCreateForm(false)}
+                  onClick={handleCreateFormClose}
                   disabled={isSubmitting}
                 >
                   Cancel

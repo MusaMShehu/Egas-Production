@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from 'react';
 import MetricsGrid from './MetricsGrid';
 import DataTable from './DataTable';
-// import ReportChart from './ReportChart';
 
 const UserReports = ({ 
   data, 
@@ -17,12 +16,47 @@ const UserReports = ({
   const [analyticsView, setAnalyticsView] = useState('growth');
 
   const processedData = useMemo(() => {
-    // Apply filters and processing logic
+    if (!data) {
+      return {
+        totalUsers: 0,
+        activeUsers: 0,
+        newUsers: 0,
+        usersChange: 0,
+        activeChange: 0,
+        registrationChange: 0,
+        conversionRate: 0,
+        conversionChange: 0,
+        dailyUsers: [],
+        userDemographics: [],
+        acquisitionSources: [],
+        userTiers: [],
+        deviceUsage: [],
+        geographicData: [],
+        peakTimes: [],
+        acquisitionRate: 0,
+        acquisitionCost: 0,
+        activationRate: 0,
+        timeToActivate: 0,
+        retentionRate: 0,
+        churnRate: 0,
+        arpu: 0,
+        ltv: 0,
+        detailedUsers: []
+      };
+    }
+    
     return {
       ...data,
-      // Add any data processing here
+      dailyUsers: data.dailyUsers || [],
+      userDemographics: data.userDemographics || [],
+      acquisitionSources: data.acquisitionSources || [],
+      userTiers: data.userTiers || [],
+      deviceUsage: data.deviceUsage || [],
+      geographicData: data.geographicData || [],
+      peakTimes: data.peakTimes || [],
+      detailedUsers: data.detailedUsers || []
     };
-  }, [data, filters, searchQuery]);
+  }, [data]);
 
   const growthMetrics = [
     {
@@ -31,7 +65,7 @@ const UserReports = ({
       change: processedData.usersChange || 0,
       icon: 'fas fa-users',
       color: 'blue',
-      trend: processedData.usersTrend || 'up',
+      trend: (processedData.usersChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.newUsers || 0} new this period`
     },
     {
@@ -40,7 +74,7 @@ const UserReports = ({
       change: processedData.activeChange || 0,
       icon: 'fas fa-user-check',
       color: 'green',
-      trend: processedData.activeTrend || 'up',
+      trend: (processedData.activeChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.dailyActive || 0} daily active`
     },
     {
@@ -49,7 +83,7 @@ const UserReports = ({
       change: processedData.registrationChange || 0,
       icon: 'fas fa-user-plus',
       color: 'purple',
-      trend: processedData.registrationTrend || 'up',
+      trend: (processedData.registrationChange || 0) >= 0 ? 'up' : 'down',
       subtitle: `${processedData.verifiedUsers || 0} verified`
     },
     {
@@ -58,7 +92,7 @@ const UserReports = ({
       change: processedData.conversionChange || 0,
       icon: 'fas fa-percentage',
       color: 'orange',
-      trend: processedData.conversionTrend || 'up',
+      trend: (processedData.conversionChange || 0) >= 0 ? 'up' : 'down',
       subtitle: 'Visitor to user'
     }
   ];
@@ -70,7 +104,7 @@ const UserReports = ({
       change: processedData.sessionChange || 0,
       icon: 'fas fa-clock',
       color: 'teal',
-      trend: processedData.sessionTrend || 'up'
+      trend: (processedData.sessionChange || 0) >= 0 ? 'up' : 'down'
     },
     {
       title: 'Pages per Visit',
@@ -78,7 +112,7 @@ const UserReports = ({
       change: processedData.pagesChange || 0,
       icon: 'fas fa-file',
       color: 'indigo',
-      trend: processedData.pagesTrend || 'up'
+      trend: (processedData.pagesChange || 0) >= 0 ? 'up' : 'down'
     },
     {
       title: 'Bounce Rate',
@@ -86,7 +120,7 @@ const UserReports = ({
       change: processedData.bounceChange || 0,
       icon: 'fas fa-sign-out-alt',
       color: 'red',
-      trend: processedData.bounceTrend || 'down'
+      trend: (processedData.bounceChange || 0) <= 0 ? 'down' : 'up'
     },
     {
       title: 'Returning Users',
@@ -94,75 +128,9 @@ const UserReports = ({
       change: processedData.returningChange || 0,
       icon: 'fas fa-redo',
       color: 'green',
-      trend: processedData.returningTrend || 'up'
+      trend: (processedData.returningChange || 0) >= 0 ? 'up' : 'down'
     }
   ];
-
-  const userGrowthData = {
-    labels: processedData.dailyUsers?.map(item => {
-      const date = new Date(item.date);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }) || [],
-    datasets: [
-      {
-        label: 'New Registrations',
-        data: processedData.dailyUsers?.map(item => item.newUsers) || [],
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Active Users',
-        data: processedData.dailyUsers?.map(item => item.activeUsers) || [],
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        fill: true,
-        tension: 0.4
-      },
-      {
-        label: 'Returning Users',
-        data: processedData.dailyUsers?.map(item => item.returningUsers) || [],
-        borderColor: '#8B5CF6',
-        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-        fill: true,
-        tension: 0.4
-      }
-    ]
-  };
-
-  const userDemographics = {
-    labels: processedData.userDemographics?.map(item => item.group) || [],
-    datasets: [
-      {
-        data: processedData.userDemographics?.map(item => item.percentage) || [],
-        backgroundColor: [
-          '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444',
-          '#6366F1', '#EC4899', '#14B8A6', '#F97316', '#06B6D4'
-        ],
-        borderWidth: 2,
-        borderColor: '#fff'
-      }
-    ]
-  };
-
-  const acquisitionChannels = {
-    labels: processedData.acquisitionSources?.map(item => item.source) || [],
-    datasets: [
-      {
-        label: 'Users',
-        data: processedData.acquisitionSources?.map(item => item.users) || [],
-        backgroundColor: '#3B82F6'
-      },
-      {
-        label: 'Conversion Rate',
-        data: processedData.acquisitionSources?.map(item => item.conversionRate) || [],
-        backgroundColor: '#10B981',
-        type: 'line',
-        yAxisID: 'y1'
-      }
-    ]
-  };
 
   const userSegments = ['all', 'new', 'active', 'returning', 'inactive', 'premium'];
 
@@ -201,73 +169,6 @@ const UserReports = ({
 
       <MetricsGrid metrics={analyticsView === 'growth' ? growthMetrics : engagementMetrics} />
 
-      {/* <div className="chart-grid">
-        <div className="chart-section">
-          <ReportChart
-            title="User Growth Trends"
-            data={userGrowthData}
-            type="line"
-            height={300}
-            showStats={true}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="User Demographics"
-            data={userDemographics}
-            type="doughnut"
-            height={300}
-            options={{
-              plugins: {
-                legend: {
-                  position: 'bottom'
-                }
-              }
-            }}
-          />
-        </div>
-        
-        <div className="chart-section">
-          <ReportChart
-            title="Acquisition Channels Performance"
-            data={acquisitionChannels}
-            type="bar"
-            height={300}
-            options={{
-              scales: {
-                y: {
-                  type: 'linear',
-                  display: true,
-                  position: 'left',
-                  title: {
-                    display: true,
-                    text: 'Number of Users'
-                  }
-                },
-                y1: {
-                  type: 'linear',
-                  display: true,
-                  position: 'right',
-                  title: {
-                    display: true,
-                    text: 'Conversion Rate %'
-                  },
-                  grid: {
-                    drawOnChartArea: false,
-                  },
-                  ticks: {
-                    callback: function(value) {
-                      return value + '%';
-                    }
-                  }
-                }
-              }
-            }}
-          />
-        </div>
-      </div> */}
-
       <div className="data-tables">
         <div className="table-section">
           <div className="table-header">
@@ -283,17 +184,17 @@ const UserReports = ({
                 <div className="source-name">{source.source}</div>
                 <div className="source-type">{source.type}</div>
               </div>,
-              source.users.toLocaleString(),
+              (source.users || 0).toLocaleString(),
               <div className="conversion-rate">
-                <span className={source.conversionRate > 5 ? 'text-green-600' : source.conversionRate < 2 ? 'text-red-600' : ''}>
-                  {source.conversionRate}%
+                <span className={(source.conversionRate || 0) > 5 ? 'text-green-600' : (source.conversionRate || 0) < 2 ? 'text-red-600' : ''}>
+                  {(source.conversionRate || 0)}%
                 </span>
               </div>,
-              `₦${source.cpa.toLocaleString()}`,
-              `₦${source.ltv.toLocaleString()}`,
+              `₦${(source.cpa || 0).toLocaleString()}`,
+              `₦${(source.ltv || 0).toLocaleString()}`,
               <div className="roi-indicator">
-                <span className={source.roi > 300 ? 'text-green-600' : source.roi < 100 ? 'text-red-600' : ''}>
-                  {source.roi}%
+                <span className={(source.roi || 0) > 300 ? 'text-green-600' : (source.roi || 0) < 100 ? 'text-red-600' : ''}>
+                  {(source.roi || 0)}%
                 </span>
               </div>
             ]) || []}
@@ -312,18 +213,18 @@ const UserReports = ({
                 <div className="tier-name">{tier.tier}</div>
                 <div className="tier-criteria">{tier.criteria}</div>
               </div>,
-              tier.users.toLocaleString(),
-              tier.avgSessions.toFixed(1),
-              tier.avgOrders.toFixed(1),
-              `₦${tier.avgSpend.toLocaleString()}`,
+              (tier.users || 0).toLocaleString(),
+              (tier.avgSessions || 0).toFixed(1),
+              (tier.avgOrders || 0).toFixed(1),
+              `₦${(tier.avgSpend || 0).toLocaleString()}`,
               <div className="retention-rate">
                 <div className="rate-bar">
                   <div 
                     className="rate-fill" 
-                    style={{ width: `${tier.retentionRate}%` }}
+                    style={{ width: `${tier.retentionRate || 0}%` }}
                   ></div>
                 </div>
-                <span>{tier.retentionRate}%</span>
+                <span>{(tier.retentionRate || 0)}%</span>
               </div>
             ]) || []}
             sortable={true}
@@ -479,12 +380,12 @@ const UserReports = ({
             {user.lastActive ? new Date(user.lastActive).toLocaleDateString() : 'Never'}
             {user.isOnline && <span className="online-indicator"></span>}
           </div>,
-          <span className={`status-badge ${user.status.toLowerCase()}`}>
+          <span className={`status-badge ${(user.status || 'inactive').toLowerCase()}`}>
             {user.status}
           </span>,
-          user.orders,
-          `₦${user.totalSpend.toLocaleString()}`,
-          <span className={`user-tier ${user.tier.toLowerCase()}`}>
+          user.orders || 0,
+          `₦${(user.totalSpend || 0).toLocaleString()}`,
+          <span className={`user-tier ${(user.tier || 'bronze').toLowerCase()}`}>
             {user.tier}
           </span>,
           <div className="user-actions">
@@ -514,7 +415,7 @@ const UserReports = ({
         <div className="header-content">
           <h2>User Analytics Dashboard</h2>
           <p className="report-period">
-            {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
+            {dateRange?.startDate?.toLocaleDateString() || 'N/A'} - {dateRange?.endDate?.toLocaleDateString() || 'N/A'}
           </p>
         </div>
         <div className="report-actions">

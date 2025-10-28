@@ -32,21 +32,88 @@ const DeliveryAgentPortal = () => {
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
-      const status = selectedTab === 0 ? 'assigned,accepted,out_for_delivery' : 
-                    selectedTab === 1 ? 'delivered' : 'failed';
-      
-      const response = await fetch(`/api/v1/deliveries/agent/my-deliveries?status=${status}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+
+      // Determine delivery status based on selected tab
+      let status = "all";
+      if (selectedTab === 0) status = "assigned,accepted,out_for_delivery"; // Includes assigned, accepted, out_for_delivery
+      else if (selectedTab === 1) status = "delivered";
+      else if (selectedTab === 2) status = "failed";
+
+      // Fetch deliveries for the logged-in agent
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:5000/api/v1/admin/delivery/agent/my-deliveries?status=${status}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token?.replace(/^"|"$/g, "")}`,
+          },
         }
-      });
+      );
+
       const data = await response.json();
-      
-      if (data.success) {
+
+      if (response.ok && data.success) {
         setDeliveries(data.data);
+      } else {
+        showSnackbar(data.message || "Failed to fetch deliveries", "error");
       }
     } catch (error) {
-      showSnackbar('Error fetching deliveries', 'error');
+      console.error("Error fetching deliveries:", error);
+      showSnackbar("Error fetching deliveries", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Alternative approach if you need more control over status filtering
+  const fetchAllDeliveries = async () => {
+    try {
+      setLoading(true);
+      
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:5000/api/v1/admin/delivery/agent/my-deliveries?status=all`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token?.replace(/^"|"$/g, "")}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Filter deliveries based on selected tab
+        let filteredDeliveries = data.data;
+        
+        if (selectedTab === 0) {
+          // Active deliveries: assigned, accepted, out_for_delivery
+          filteredDeliveries = data.data.filter(delivery => 
+            ['assigned', 'accepted', 'out_for_delivery'].includes(delivery.status)
+          );
+        } else if (selectedTab === 1) {
+          // Delivered
+          filteredDeliveries = data.data.filter(delivery => 
+            delivery.status === 'delivered'
+          );
+        } else if (selectedTab === 2) {
+          // Failed
+          filteredDeliveries = data.data.filter(delivery => 
+            delivery.status === 'failed'
+          );
+        }
+        
+        setDeliveries(filteredDeliveries);
+      } else {
+        showSnackbar(data.message || "Failed to fetch deliveries", "error");
+      }
+    } catch (error) {
+      console.error("Error fetching deliveries:", error);
+      showSnackbar("Error fetching deliveries", "error");
     } finally {
       setLoading(false);
     }
@@ -54,7 +121,7 @@ const DeliveryAgentPortal = () => {
 
   const handleAcceptDelivery = async (orderId) => {
     try {
-      const response = await fetch(`/api/v1/deliveries/${orderId}/accept`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${orderId}/accept`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -73,7 +140,7 @@ const DeliveryAgentPortal = () => {
 
   const handleMarkOutForDelivery = async (orderId) => {
     try {
-      const response = await fetch(`/api/v1/deliveries/${orderId}/out-for-delivery`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${orderId}/out-for-delivery`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -92,7 +159,7 @@ const DeliveryAgentPortal = () => {
 
   const handleMarkDelivered = async () => {
     try {
-      const response = await fetch(`/api/v1/deliveries/${selectedOrder._id}/delivered`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${selectedOrder._id}/delivered`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +188,7 @@ const DeliveryAgentPortal = () => {
     }
 
     try {
-      const response = await fetch(`/api/v1/deliveries/${selectedOrder._id}/failed`, {
+      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${selectedOrder._id}/failed`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -189,6 +256,22 @@ const DeliveryAgentPortal = () => {
     setSelectedTab(newValue);
   };
 
+  // Filter deliveries for display (as backup)
+  const getFilteredDeliveries = () => {
+    if (selectedTab === 0) {
+      return deliveries.filter(delivery => 
+        ['assigned', 'accepted', 'out_for_delivery'].includes(delivery.status)
+      );
+    } else if (selectedTab === 1) {
+      return deliveries.filter(delivery => delivery.status === 'delivered');
+    } else if (selectedTab === 2) {
+      return deliveries.filter(delivery => delivery.status === 'failed');
+    }
+    return deliveries;
+  };
+
+  const displayDeliveries = getFilteredDeliveries();
+
   if (loading) {
     return (
       <div className="adm-agent-portal">
@@ -211,6 +294,9 @@ const DeliveryAgentPortal = () => {
           >
             <FaShippingFast className="adm-icon" />
             Active Deliveries
+            <span className="adm-tab-badge">
+              {deliveries.filter(d => ['assigned', 'accepted', 'out_for_delivery'].includes(d.status)).length}
+            </span>
           </button>
           <button 
             className={`adm-tab ${selectedTab === 1 ? 'active' : ''}`}
@@ -218,6 +304,9 @@ const DeliveryAgentPortal = () => {
           >
             <FaHistory className="adm-icon" />
             Delivery History
+            <span className="adm-tab-badge">
+              {deliveries.filter(d => d.status === 'delivered').length}
+            </span>
           </button>
           <button 
             className={`adm-tab ${selectedTab === 2 ? 'active' : ''}`}
@@ -225,12 +314,15 @@ const DeliveryAgentPortal = () => {
           >
             <FaExclamationTriangle className="adm-icon" />
             Failed Deliveries
+            <span className="adm-tab-badge">
+              {deliveries.filter(d => d.status === 'failed').length}
+            </span>
           </button>
         </div>
       </div>
 
       <div className="adm-deliveries-grid">
-        {deliveries.map((order) => (
+        {displayDeliveries.map((order) => (
           <div key={order._id} className="adm-delivery-card">
             <div className="adm-card-content">
               <div className="adm-card-header">
@@ -253,7 +345,7 @@ const DeliveryAgentPortal = () => {
 
                   <div className="adm-plan-details">
                     <div className="adm-plan-detail">
-                      <strong>Plan:</strong> {order.planDetails.planName} ({order.planDetails.size})
+                      <strong>Plan:</strong> {order.planDetails?.planName} ({order.planDetails?.size})
                     </div>
                     <div className="adm-plan-detail">
                       <strong>Delivery Date:</strong> {formatDate(order.deliveryDate)}
@@ -352,7 +444,7 @@ const DeliveryAgentPortal = () => {
           </div>
         ))}
 
-        {deliveries.length === 0 && (
+        {displayDeliveries.length === 0 && (
           <div className="adm-empty-state">
             <h3>No deliveries found</h3>
             <p>

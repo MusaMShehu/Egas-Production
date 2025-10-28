@@ -12,6 +12,7 @@ import {
   FaExclamationTriangle
 } from 'react-icons/fa';
 import './Dashboard.css';
+import { successToast, errorToast, infoToast, warningToast } from "../../utils/toast";
 
 // API service
 const dashboardAPI = {
@@ -134,6 +135,14 @@ const StatCard = ({ title, value, subtitle, icon, color = 'primary' }) => (
 const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
   const isUpcoming = nextDeliveryDate && isAfter(new Date(nextDeliveryDate), new Date());
   
+  const handleDeliveryClick = () => {
+    if (nextDeliveryDate) {
+      infoToast(`Next delivery scheduled for ${formatDate(nextDeliveryDate)}`);
+    } else {
+      infoToast('No upcoming deliveries scheduled');
+    }
+  };
+  
   return (
     <div className="card">
       <div className="card-header">
@@ -143,7 +152,11 @@ const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
       <div className="card-content">
         {nextDeliveryDate ? (
           <>
-            <div className={`delivery-banner ${isUpcoming ? 'upcoming' : 'pending'}`}>
+            <div 
+              className={`delivery-banner ${isUpcoming ? 'upcoming' : 'pending'}`}
+              onClick={handleDeliveryClick}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="delivery-date">{formatDate(nextDeliveryDate)}</div>
               <div className="delivery-status">
                 {isUpcoming ? 'Upcoming delivery' : 'Delivery pending'}
@@ -154,12 +167,17 @@ const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
               <h4>Active Subscriptions ({activeSubscriptions.length})</h4>
               <div className="subscriptions">
                 {activeSubscriptions.slice(0, 3).map((sub, index) => (
-                  <div key={index} className="subscription-item">
+                  <div 
+                    key={index} 
+                    className="subscription-item"
+                    onClick={() => infoToast(`Subscription: ${sub.name || 'Unnamed'} - ${sub.deliveryFrequency || 'Regular'}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <FaCheckCircle className="subscription-icon" />
                     <div className="subscription-details">
-                      <div className="subscription-name">{sub.name}</div>
+                      <div className="subscription-name">{sub.name || 'Subscription'}</div>
                       <div className="subscription-info">
-                        {sub.deliveryFrequency} • {formatDate(sub.nextDeliveryDate)}
+                        {sub.deliveryFrequency || 'Regular'} • {formatDate(sub.nextDeliveryDate)}
                       </div>
                     </div>
                   </div>
@@ -179,6 +197,10 @@ const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
 
 // Recent Activities Component
 const RecentActivities = ({ activities }) => {
+  const handleActivityClick = (activity) => {
+    infoToast(`Activity: ${activity.title} - ${formatCurrency(activity.amount)}`);
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -190,7 +212,12 @@ const RecentActivities = ({ activities }) => {
           {activities.map((activity, index) => {
             const IconComponent = activityIcons[activity.type];
             return (
-              <div key={index} className="activity-item">
+              <div 
+                key={index} 
+                className="activity-item"
+                onClick={() => handleActivityClick(activity)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="activity-icon">
                   {IconComponent ? <IconComponent /> : <FaHistory />}
                 </div>
@@ -224,6 +251,11 @@ const RecentActivities = ({ activities }) => {
 const SpendingChart = ({ spendingByMonth }) => {
   const maxSpending = Math.max(...spendingByMonth.map(item => item.total), 0);
   
+  const handleMonthClick = (item) => {
+    const monthName = format(new Date(item._id.year, item._id.month - 1), 'MMM yyyy');
+    infoToast(`Spent ${formatCurrency(item.total)} in ${monthName}`);
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -236,7 +268,12 @@ const SpendingChart = ({ spendingByMonth }) => {
             const monthName = format(new Date(item._id.year, item._id.month - 1), 'MMM yyyy');
             
             return (
-              <div key={index} className="spending-item">
+              <div 
+                key={index} 
+                className="spending-item"
+                onClick={() => handleMonthClick(item)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="spending-header">
                   <span className="spending-month">{monthName}</span>
                   <span className="spending-amount">₦{formatCurrencyClean(item.total)}</span>
@@ -262,6 +299,71 @@ const SpendingChart = ({ spendingByMonth }) => {
   );
 };
 
+// Quick Stats Component
+const QuickStats = ({ 
+  activeOrderCount, 
+  activeSubscriptions, 
+  orderMonthly, 
+  subscriptionMonthly, 
+  topupMonthly 
+}) => {
+  const handleStatClick = (statName, value) => {
+    infoToast(`${statName}: ${value}`);
+  };
+
+  return (
+    <div className="card">
+      <div className="card-header">
+        <h3>Quick Stats</h3>
+      </div>
+      <div className="card-content">
+        <div className="quick-stats">
+          <div 
+            className="quick-stat"
+            onClick={() => handleStatClick('Active Orders', activeOrderCount)}
+            style={{ cursor: 'pointer' }}
+          >
+            <span>Active Orders</span>
+            <span className="stat-badge info">{activeOrderCount}</span>
+          </div>
+          <div 
+            className="quick-stat"
+            onClick={() => handleStatClick('Active Subscriptions', activeSubscriptions.length)}
+            style={{ cursor: 'pointer' }}
+          >
+            <span>Active Subscriptions</span>
+            <span className="stat-badge success">{activeSubscriptions.length}</span>
+          </div>
+          <div 
+            className="quick-stat"
+            onClick={() => handleStatClick('Monthly Orders', formatCurrency(orderMonthly))}
+            style={{ cursor: 'pointer' }}
+          >
+            <span>Monthly Orders</span>
+            <span className="stat-amount">{formatCurrency(orderMonthly)}</span>
+          </div>
+          <div 
+            className="quick-stat"
+            onClick={() => handleStatClick('Monthly Subscriptions', formatCurrency(subscriptionMonthly))}
+            style={{ cursor: 'pointer' }}
+          >
+            <span>Monthly Subscriptions</span>
+            <span className="stat-amount">{formatCurrency(subscriptionMonthly)}</span>
+          </div>
+          <div 
+            className="quick-stat"
+            onClick={() => handleStatClick('Monthly Top-ups', formatCurrency(topupMonthly))}
+            style={{ cursor: 'pointer' }}
+          >
+            <span>Monthly Top-ups</span>
+            <span className="stat-amount">{formatCurrency(topupMonthly)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main Dashboard Component
 const DashboardOverview = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -272,19 +374,49 @@ const DashboardOverview = () => {
     try {
       setLoading(true);
       setError(null);
+      infoToast('Loading dashboard data...');
+
       const response = await dashboardAPI.getDashboardStats();
       
       if (response.success) {
         setDashboardData(response.data);
+        successToast('Dashboard data loaded successfully!');
+        
+        // Additional info toasts for key metrics
+        if (response.data) {
+          const { totalSpent, thisMonthSpent, walletBalance, activeOrderCount, activeSubscriptions } = response.data;
+          
+          setTimeout(() => {
+            if (totalSpent > 0) {
+              infoToast(`Total spent: ${formatCurrency(totalSpent)}`);
+            }
+            if (thisMonthSpent > 0) {
+              infoToast(`This month: ${formatCurrency(thisMonthSpent)}`);
+            }
+            if (activeOrderCount > 0) {
+              infoToast(`${activeOrderCount} active orders`);
+            }
+            if (activeSubscriptions.length > 0) {
+              infoToast(`${activeSubscriptions.length} active subscriptions`);
+            }
+          }, 1000);
+        }
       } else {
         throw new Error('Failed to load dashboard data');
       }
     } catch (err) {
-      setError(err.message);
+      const errorMsg = err.message || 'Failed to load dashboard data';
+      setError(errorMsg);
+      errorToast(errorMsg);
       console.error('Dashboard error:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = () => {
+    infoToast('Refreshing dashboard data...');
+    fetchDashboardData();
   };
 
   useEffect(() => {
@@ -306,6 +438,9 @@ const DashboardOverview = () => {
           <FaExclamationTriangle />
           <span>No dashboard data available</span>
         </div>
+        <button className="refresh-button" onClick={handleRefresh}>
+          <FaRedo /> Refresh
+        </button>
       </div>
     );
   }
@@ -329,46 +464,58 @@ const DashboardOverview = () => {
     recentActivities = []
   } = dashboardData;
 
+  const handleStatCardClick = (title, value, subtitle) => {
+    infoToast(`${title}: ${value} - ${subtitle}`);
+  };
+
   return (
     <div className="dashboard-container">
       {/* Header */}
       <div className="dashboard-header">
         <h1>Dashboard Overview</h1>
-        <button className="refresh-button" onClick={fetchDashboardData}>
+        <button className="refresh-button" onClick={handleRefresh}>
           <FaRedo /> Refresh
         </button>
       </div>
 
       {/* Main Stats Grid - UPDATED to show Naira */}
       <div className="stats-grid">
-        <StatCard
-          title="Total Spent"
-          value={formatCurrency(totalSpent)}
-          subtitle={`${formatCurrency(thisMonthSpent)} this month`}
-          icon={<FaChartLine />}
-          color="primary"
-        />
-        <StatCard
-          title="Orders"
-          value={orderCount}
-          subtitle={`${activeOrderCount} active • ${formatCurrency(orderTotal)} total`}
-          icon={<FaShoppingCart />}
-          color="secondary"
-        />
-        <StatCard
-          title="Subscriptions"
-          value={subscriptionCount}
-          subtitle={`${activeSubscriptions.length} active • ${formatCurrency(subscriptionTotal)} total`}
-          icon={<FaFileInvoiceDollar />}
-          color="info"
-        />
-        <StatCard
-          title="Wallet Balance"
-          value={formatCurrency(walletBalance)}
-          subtitle={`${formatCurrency(topupTotal)} total top-ups`}
-          icon={<FaWallet />}
-          color="success"
-        />
+        <div onClick={() => handleStatCardClick('Total Spent', formatCurrency(totalSpent), `${formatCurrency(thisMonthSpent)} this month`)}>
+          <StatCard
+            title="Total Spent"
+            value={formatCurrency(totalSpent)}
+            subtitle={`${formatCurrency(thisMonthSpent)} this month`}
+            icon={<FaChartLine />}
+            color="primary"
+          />
+        </div>
+        <div onClick={() => handleStatCardClick('Orders', orderCount, `${activeOrderCount} active • ${formatCurrency(orderTotal)} total`)}>
+          <StatCard
+            title="Orders"
+            value={orderCount}
+            subtitle={`${activeOrderCount} active • ${formatCurrency(orderTotal)} total`}
+            icon={<FaShoppingCart />}
+            color="secondary"
+          />
+        </div>
+        <div onClick={() => handleStatCardClick('Subscriptions', subscriptionCount, `${activeSubscriptions.length} active • ${formatCurrency(subscriptionTotal)} total`)}>
+          <StatCard
+            title="Subscriptions"
+            value={subscriptionCount}
+            subtitle={`${activeSubscriptions.length} active • ${formatCurrency(subscriptionTotal)} total`}
+            icon={<FaFileInvoiceDollar />}
+            color="info"
+          />
+        </div>
+        <div onClick={() => handleStatCardClick('Wallet Balance', formatCurrency(walletBalance), `${formatCurrency(topupTotal)} total top-ups`)}>
+          <StatCard
+            title="Wallet Balance"
+            value={formatCurrency(walletBalance)}
+            subtitle={`${formatCurrency(topupTotal)} total top-ups`}
+            icon={<FaWallet />}
+            color="success"
+          />
+        </div>
       </div>
 
       {/* Detailed Stats and Charts */}
@@ -381,20 +528,36 @@ const DashboardOverview = () => {
             </div>
             <div className="card-content">
               <div className="spending-breakdown">
-                <div className="breakdown-item">
+                <div 
+                  className="breakdown-item"
+                  onClick={() => infoToast(`Orders this month: ${formatCurrency(orderMonthly)}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span>Orders</span>
                   <span className="breakdown-amount">{formatCurrency(orderMonthly)}</span>
                 </div>
-                <div className="breakdown-item">
+                <div 
+                  className="breakdown-item"
+                  onClick={() => infoToast(`Subscriptions this month: ${formatCurrency(subscriptionMonthly)}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span>Subscriptions</span>
                   <span className="breakdown-amount">{formatCurrency(subscriptionMonthly)}</span>
                 </div>
-                <div className="breakdown-item">
+                <div 
+                  className="breakdown-item"
+                  onClick={() => infoToast(`Wallet top-ups this month: ${formatCurrency(topupMonthly)}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span>Wallet Top-ups</span>
                   <span className="breakdown-amount">{formatCurrency(topupMonthly)}</span>
                 </div>
                 <div className="breakdown-divider"></div>
-                <div className="breakdown-total">
+                <div 
+                  className="breakdown-total"
+                  onClick={() => infoToast(`Total this month: ${formatCurrency(orderMonthly + subscriptionMonthly + topupMonthly)}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span>Total</span>
                   <span className="total-amount">
                     {formatCurrency(orderMonthly + subscriptionMonthly + topupMonthly)}
@@ -427,35 +590,13 @@ const DashboardOverview = () => {
         
         {/* Quick Stats Sidebar */}
         <div className="stats-sidebar">
-          <div className="card">
-            <div className="card-header">
-              <h3>Quick Stats</h3>
-            </div>
-            <div className="card-content">
-              <div className="quick-stats">
-                <div className="quick-stat">
-                  <span>Active Orders</span>
-                  <span className="stat-badge info">{activeOrderCount}</span>
-                </div>
-                <div className="quick-stat">
-                  <span>Active Subscriptions</span>
-                  <span className="stat-badge success">{activeSubscriptions.length}</span>
-                </div>
-                <div className="quick-stat">
-                  <span>Monthly Orders</span>
-                  <span className="stat-amount">{formatCurrency(orderMonthly)}</span>
-                </div>
-                <div className="quick-stat">
-                  <span>Monthly Subscriptions</span>
-                  <span className="stat-amount">{formatCurrency(subscriptionMonthly)}</span>
-                </div>
-                <div className="quick-stat">
-                  <span>Monthly Top-ups</span>
-                  <span className="stat-amount">{formatCurrency(topupMonthly)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <QuickStats 
+            activeOrderCount={activeOrderCount}
+            activeSubscriptions={activeSubscriptions}
+            orderMonthly={orderMonthly}
+            subscriptionMonthly={subscriptionMonthly}
+            topupMonthly={topupMonthly}
+          />
         </div>
       </div>
     </div>
