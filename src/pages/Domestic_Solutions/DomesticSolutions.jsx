@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './DomesticSolutions.css';
 import { Link } from 'react-router-dom';
-import SubscriptionPlans from '../../components/pages/SubscriptionPlans';
+// import SubscriptionPlans from '../../components/pages/SubscriptionPlans';
 import { 
   FaTruckFast, 
   FaCalendarCheck, 
@@ -116,7 +116,7 @@ const DomesticSolutions = () => {
         </div>
       </section>
 
-      <SubscriptionPlans />
+      {/* <SubscriptionPlans /> */}
 
       {/* FAQ Section */}
       <section className="dom-sol-faq-section">

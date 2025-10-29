@@ -57,16 +57,16 @@ import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
 
 
 // Admin Panel
-import AdminLayout from "./components/Admin/AdminLayout";
-import AdminDashboard from "./components/Admin/AdminDashboard";
-import UserManagement from "./components/Admin/UserManagement/UserManagement";
-import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
-import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
-import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
-import AdminDeliveryManagement from "./components/Admin/DeliveryManagement/DeliveryManagement";
-import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
-import AdminReport from "./components/Admin/Reports/AdminReports";
-import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
+// import AdminLayout from "./components/Admin/AdminLayout";
+// import AdminDashboard from "./components/Admin/AdminDashboard";
+// import UserManagement from "./components/Admin/UserManagement/UserManagement";
+// import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
+// import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
+// import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
+// import AdminDeliveryManagement from "./components/Admin/DeliveryManagement/DeliveryManagement";
+// import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
+// import AdminReport from "./components/Admin/Reports/AdminReports";
+// import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
 
 // 2nd User Panel
 import UserLayout from "./components/User/UserLayout";
@@ -79,7 +79,7 @@ import UserProfile from "./components/User/UserProfile/UserProfile";
 import UserSupport from "./components/User/UserSupport/UserSupport";
 import UserSettings from "./components/User/UserSettings/UserSettings";
 
-import CustomerDeliveryHistory from "./components/Admin/DeliveryManagement/CustomerDeliveryHistoryConfirmation";
+import CustomerDeliveryHistory from "./components/User/UserDelivery/CustomerDeliveryHistoryConfirmation";
 
 
 
@@ -92,7 +92,7 @@ import { PaymentProvider } from './contexts/paymentContext';
 
 // Wallet Topup verify/Callback
 import WalletTopupCallback from './components/payments/walletTopupCallback';
-import DeliveryAgentPortal from "./components/Admin/DeliveryManagement/DeliveryAgentPortal";
+// import DeliveryAgentPortal from "./components/Admin/DeliveryManagement/DeliveryAgentPortal";
 
 
 
@@ -183,7 +183,7 @@ function App() {
           </Route>
 
           {/* Admin Routes (can also be wrapped with ProtectedRoute if only admins allowed) */}
-          <Route path="/admin" element={<AdminLayout />}>
+          {/* <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
             <Route path="overview" element={<AdminDashboard />} />
             <Route path="users" element={<UserManagement />} />
@@ -195,7 +195,7 @@ function App() {
             <Route path="support" element={<SupportManagement />} />
             <Route path="reports" element={<AdminReport />} />
             <Route path="settings" element={<AdminPanelSettings />} />
-          </Route>
+          </Route> */}
           
         </Routes>
       </div>

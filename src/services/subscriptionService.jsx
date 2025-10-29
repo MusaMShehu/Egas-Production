@@ -1,11 +1,7 @@
 // services/subscriptionService.js
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com';
 
-/**
- * Pause a subscription
- * @param {string} subscriptionId - The ID of the subscription to pause
- * @returns {Promise<Object>} - Result of the pause operation
- */
+
 export const pauseSubscription = async (subscriptionId) => {
   try {
     const token = localStorage.getItem('token');
@@ -41,10 +37,8 @@ export const pauseSubscription = async (subscriptionId) => {
   }
 };
 
-/**
+/*
  * Resume a paused subscription
- * @param {string} subscriptionId - The ID of the subscription to resume
- * @returns {Promise<Object>} - Result of the resume operation
  */
 export const resumeSubscription = async (subscriptionId) => {
   try {
@@ -83,8 +77,6 @@ export const resumeSubscription = async (subscriptionId) => {
 
 /**
  * Get subscription details by ID
- * @param {string} subscriptionId - The ID of the subscription
- * @returns {Promise<Object>} - Subscription details
  */
 export const getSubscriptionDetails = async (subscriptionId) => {
   try {
