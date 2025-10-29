@@ -28,7 +28,7 @@ const CustomerDeliveryHistory = () => {
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/my-deliveries?page=${page}&limit=10`, {
+      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?page=${page}&limit=10`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -48,7 +48,7 @@ const CustomerDeliveryHistory = () => {
 
   const handleConfirmDelivery = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/v1/admin/delivery/${selectedDelivery._id}/confirm`, {
+      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/${selectedDelivery._id}/confirm`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
