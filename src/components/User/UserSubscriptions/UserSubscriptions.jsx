@@ -37,71 +37,66 @@ const Subscriptions = () => {
   };
 
   // ✅ Fetch all user data including subscriptions and wallet balance from dashboard
-  const fetchUserData = async () => {
-    setIsLoading(true);
-    infoToast('Loading your subscriptions...');
-    
-    try {
-      const token = getAuthToken();
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
+ const fetchUserData = async () => {
+  setIsLoading(true);
+  infoToast('Loading your subscriptions...');
+  
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
 
-      // Fetch dashboard data (same as Payments page)
-      const dashboardResponse = await fetch(`${API_BASE_URL}/api/v1/dashboard/overview`, {
-        headers: getHeaders(),
-      });
+    // Fetch dashboard data for wallet balance
+    const dashboardResponse = await fetch(`${API_BASE_URL}/api/v1/dashboard/overview`, {
+      headers: getHeaders(),
+    });
 
-      if (!dashboardResponse.ok) {
-        if (dashboardResponse.status === 401) {
-          const errorMsg = "Session expired. Please log in again.";
-          setError(errorMsg);
-          warningToast(errorMsg);
-          return;
-        }
-        throw new Error(`HTTP error! status: ${dashboardResponse.status}`);
-      }
-
+    if (dashboardResponse.ok) {
       const dashboardData = await dashboardResponse.json();
-      
-      if (!dashboardData.success) {
-        throw new Error(dashboardData.message || "Failed to fetch user data");
-      }
-
-      // Set wallet balance from dashboard data
       setWalletBalance(dashboardData.data?.walletBalance || 0);
       setPaymentData(dashboardData.data || {});
-
-      // Now fetch subscriptions
-      const subscriptionsResponse = await fetch(`${API_BASE_URL}/api/v1/subscriptions/my-subscriptions`, {
+    } else {
+      // Fallback to auth/me endpoint
+      const authResponse = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
         headers: getHeaders(),
       });
-
-      const subscriptionsResult = await subscriptionsResponse.json();
-
-      if (!subscriptionsResponse.ok) {
-        throw new Error(subscriptionsResult.message || `HTTP error! status: ${subscriptionsResponse.status}`);
-      }
-
-      setSubscriptions(subscriptionsResult.data || []);
       
-      if (subscriptionsResult.data && subscriptionsResult.data.length === 0) {
-        infoToast('No subscriptions found. Create your first subscription!');
-      } else {
-        successToast(`Loaded ${subscriptionsResult.data.length} subscriptions successfully`);
+      if (authResponse.ok) {
+        const authData = await authResponse.json();
+        setWalletBalance(authData.data?.walletBalance || 0);
       }
-      
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      const errorMsg = error.message || 'Failed to load your data. Please try again later.';
-      setError(errorMsg);
-      errorToast(errorMsg);
-    } finally {
-      setIsLoading(false);
     }
-  };
 
+    // Fetch subscriptions
+    const subscriptionsResponse = await fetch(`${API_BASE_URL}/api/v1/subscriptions/my-subscriptions`, {
+      headers: getHeaders(),
+    });
+
+    const subscriptionsResult = await subscriptionsResponse.json();
+
+    if (!subscriptionsResponse.ok) {
+      throw new Error(subscriptionsResult.message || `HTTP error! status: ${subscriptionsResponse.status}`);
+    }
+
+    setSubscriptions(subscriptionsResult.data || []);
+    
+    if (subscriptionsResult.data && subscriptionsResult.data.length === 0) {
+      infoToast('No subscriptions found. Create your first subscription!');
+    } else {
+      successToast(`Loaded ${subscriptionsResult.data.length} subscriptions successfully`);
+    }
+    
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    const errorMsg = error.message || 'Failed to load your data. Please try again later.';
+    setError(errorMsg);
+    errorToast(errorMsg);
+  } finally {
+    setIsLoading(false);
+  }
+};
   useEffect(() => {
     fetchUserData();
   }, []);

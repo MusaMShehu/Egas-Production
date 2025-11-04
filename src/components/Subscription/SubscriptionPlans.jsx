@@ -4,10 +4,11 @@ import "./SubscriptionPlan.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
-
+import { successToast, errorToast, infoToast, warningToast } from "../../utils/toast";
 // Stable axios instance
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com",
+  baseURL:
+    process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com",
   timeout: 30000,
 });
 
@@ -18,15 +19,16 @@ const SubscriptionPlans = () => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [plans, setPlans] = useState([]);
-  const [customPlan, setCustomPlan] = useState({ 
-    size: "6kg", 
+  const [customPlan, setCustomPlan] = useState({
+    size: "6kg",
     frequency: "Monthly",
-    subscriptionPeriod: 1 
+    subscriptionPeriod: 1,
   });
   const [oneTimePlan, setOneTimePlan] = useState({ size: "6kg" });
   const [emergencyPlan, setEmergencyPlan] = useState({ size: "6kg" });
   const [selectedFrequencies, setSelectedFrequencies] = useState({});
-  const [selectedSubscriptionPeriods, setSelectedSubscriptionPeriods] = useState({});
+  const [selectedSubscriptionPeriods, setSelectedSubscriptionPeriods] =
+    useState({});
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,7 +43,8 @@ const SubscriptionPlans = () => {
   useEffect(() => {
     const reqId = axiosInstance.interceptors.request.use(
       (cfg) => {
-        if (token) cfg.headers = { ...cfg.headers, Authorization: `Bearer ${token}` };
+        if (token)
+          cfg.headers = { ...cfg.headers, Authorization: `Bearer ${token}` };
         return cfg;
       },
       (err) => Promise.reject(err)
@@ -76,12 +79,12 @@ const SubscriptionPlans = () => {
   // Fetch wallet balance from dashboard (same as Payments page)
   const fetchWalletBalance = useCallback(async () => {
     if (!token) return;
-    
+
     try {
       const response = await axiosInstance.get("/api/v1/dashboard/overview", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (response.data.success) {
         setWalletBalance(response.data.data?.walletBalance || 0);
       }
@@ -90,13 +93,13 @@ const SubscriptionPlans = () => {
       // Fallback to auth/me if dashboard fails
       try {
         const fallbackResponse = await axiosInstance.get("/api/v1/auth/me", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (fallbackResponse.data.success) {
           setWalletBalance(fallbackResponse.data.data?.walletBalance || 0);
         }
       } catch (fallbackError) {
-        console.warn("Could not fetch wallet balance from auth/me:", fallbackError);
+        console.warn("Could not fetch wallet balance", fallbackError);
       }
     }
   }, [token]);
@@ -110,9 +113,11 @@ const SubscriptionPlans = () => {
 
       const resp = await axiosInstance.get("/api/v1/subscription-plans");
       if (resp?.data?.success) {
-        const sortedPlans = (resp.data.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
+        const sortedPlans = (resp.data.data || []).sort(
+          (a, b) => a.displayOrder - b.displayOrder
+        );
         setPlans(sortedPlans);
-        
+
         // Initialize default frequencies and subscription periods
         const freqs = {};
         const periods = {};
@@ -132,8 +137,8 @@ const SubscriptionPlans = () => {
       console.error("Fetch plans error:", err);
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Unable to load subscription plans."
+          err?.message ||
+          "Unable to load subscription plans."
       );
       setDebugInfo(err?.response?.data || null);
     } finally {
@@ -151,32 +156,45 @@ const SubscriptionPlans = () => {
   // Price calculation helper
   const calculatePrice = (plan, size, frequency, subscriptionPeriod = 1) => {
     if (!plan) return 0;
-    
+
     // Extract numeric size value
-    const sizeKg = parseInt(String(size).replace("kg", ""), 10) || parseInt(size, 10);
-    
+    const sizeKg =
+      parseInt(String(size).replace("kg", ""), 10) || parseInt(size, 10);
+
     // Calculate base price
     let baseAmount = sizeKg * (plan.pricePerKg || 0);
-    
+
     // Apply frequency multiplier
     let frequencyMultiplier = 1;
     switch (frequency) {
-      case "Daily": frequencyMultiplier = 30; break;
-      case "Weekly": frequencyMultiplier = 4; break;
-      case "Bi-Weekly": frequencyMultiplier = 2; break;
-      default: frequencyMultiplier = 1; // Monthly
+      case "Daily":
+        frequencyMultiplier = 30;
+        break;
+      case "Weekly":
+        frequencyMultiplier = 4;
+        break;
+      case "Bi-Weekly":
+        frequencyMultiplier = 2;
+        break;
+      default:
+        frequencyMultiplier = 1; // Monthly
     }
-    
+
     // Apply subscription period (months)
     const totalAmount = baseAmount * frequencyMultiplier * subscriptionPeriod;
-    
+
     return Math.round(totalAmount);
   };
 
   const getCustomPlanPrice = () => {
     const plan = plans.find((x) => x.type === "custom");
     if (!plan) return 0;
-    return calculatePrice(plan, customPlan.size, customPlan.frequency, customPlan.subscriptionPeriod);
+    return calculatePrice(
+      plan,
+      customPlan.size,
+      customPlan.frequency,
+      customPlan.subscriptionPeriod
+    );
   };
 
   const getOneTimePlanPrice = () => {
@@ -198,13 +216,13 @@ const SubscriptionPlans = () => {
         const min = plan.cylinderSizeRange?.min || 5;
         const max = plan.cylinderSizeRange?.max || 100;
         return Array.from({ length: max - min + 1 }, (_, i) => `${i + min}kg`);
-      
+
       case "one-time":
-        return (plan.cylinderSizes || []).map(size => `${size}kg`);
-      
+        return (plan.cylinderSizes || []).map((size) => `${size}kg`);
+
       case "emergency":
         return plan.cylinderSizes || ["6kg", "12kg", "25kg", "50kg"];
-      
+
       default: // preset
         return [plan.baseSize];
     }
@@ -220,10 +238,10 @@ const SubscriptionPlans = () => {
           const days = i + minDays;
           return days === 1 ? "Daily" : `${days} days`;
         });
-      
+
       case "preset":
         return plan.deliveryFrequency || ["Monthly"];
-      
+
       default:
         return ["One-Time"];
     }
@@ -241,12 +259,7 @@ const SubscriptionPlans = () => {
       return;
     }
 
-    // Check wallet balance if wallet payment is selected
-    if (paymentMethod === "wallet" && walletBalance < planData.price) {
-      alert("Insufficient wallet balance. Please choose another payment method or fund your wallet.");
-      return;
-    }
-
+    // Remove frontend wallet validation - backend will handle it
     setIsProcessing(true);
 
     try {
@@ -257,30 +270,53 @@ const SubscriptionPlans = () => {
         frequency: planData.frequency,
         subscriptionPeriod: planData.subscriptionPeriod,
         paymentMethod: paymentMethod,
-        ...(planData.planType === 'custom' && { customPlan: planData })
+        ...(planData.planType === "custom" && { customPlan: planData }),
       };
 
       // Send request to backend API
-      const response = await axiosInstance.post("/api/v1/subscriptions", requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axiosInstance.post(
+        "/api/v1/subscriptions",
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      const { success, authorization_url, reference, data, message } = response.data;
+      const {
+        success,
+        authorization_url,
+        reference,
+        data,
+        message,
+        walletBalance,
+      } = response.data;
 
       if (success) {
         if (paymentMethod === "paystack" && authorization_url) {
           // Redirect user to Paystack payment page
           window.location.href = authorization_url;
         } else if (paymentMethod === "wallet") {
-          // Wallet payment successful - refresh wallet balance and show success
-          await fetchWalletBalance(); // Refresh from dashboard
+          // Wallet payment successful
+          if (walletBalance !== undefined) {
+            setWalletBalance(walletBalance);
+          }
+
+          // Show success message
+          successToast(
+            message ||
+              `Subscription created successfully! ₦${planData.price.toLocaleString()} deducted from wallet.`
+          );
+
+          // Refresh wallet balance from dashboard
+          await fetchWalletBalance();
+
+          // Redirect to subscriptions page
           setTimeout(() => {
-            alert(message || `Subscription created successfully! ₦${planData.price.toLocaleString()} deducted from wallet.`);
             navigate("/subscriptions");
-          }, 1000);
+          }, 1500);
         } else {
           throw new Error("Invalid payment response");
         }
@@ -289,10 +325,21 @@ const SubscriptionPlans = () => {
       }
     } catch (error) {
       console.error("Payment initialization error:", error);
-      const errorMsg = error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Failed to process payment. Please try again.";
-      alert(errorMsg);
+
+      // Handle wallet-specific errors
+      if (
+        error.response?.data?.message?.includes("Insufficient wallet balance")
+      ) {
+        errorToast(error.response.data.message);
+        // Optionally switch to paystack payment
+        setPaymentMethod("paystack");
+      } else {
+        const errorMsg =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to process payment. Please try again.";
+        errorToast(errorMsg);
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -328,7 +375,14 @@ const SubscriptionPlans = () => {
     return (
       <ul className="subs-plan-plan-features">
         {features?.map((feature, index) => (
-          <li key={index} className={feature.included ? "subs-plan-feature-included" : "subs-plan-feature-excluded"}>
+          <li
+            key={index}
+            className={
+              feature.included
+                ? "subs-plan-feature-included"
+                : "subs-plan-feature-excluded"
+            }
+          >
             <strong>{feature.title}:</strong> {feature.description}
           </li>
         ))}
@@ -338,7 +392,7 @@ const SubscriptionPlans = () => {
 
   // Format currency
   const formatCurrency = (amount) => {
-    return `₦${amount?.toLocaleString() || '0'}`;
+    return `₦${amount?.toLocaleString() || "0"}`;
   };
 
   // UI rendering
@@ -358,12 +412,27 @@ const SubscriptionPlans = () => {
           <p>{error}</p>
           <div style={{ marginTop: 12 }}>
             <button onClick={handleRetry}>Retry</button>
-            <button style={{ marginLeft: 8 }} onClick={() => { setDebugInfo(null); fetchSubscriptionPlans(); }}>
+            <button
+              style={{ marginLeft: 8 }}
+              onClick={() => {
+                setDebugInfo(null);
+                fetchSubscriptionPlans();
+              }}
+            >
               Clear Debug
             </button>
           </div>
           {debugInfo && (
-            <pre style={{ marginTop: 12, maxHeight: 280, overflow: "auto", background: "#111", color: "#fff", padding: 12 }}>
+            <pre
+              style={{
+                marginTop: 12,
+                maxHeight: 280,
+                overflow: "auto",
+                background: "#111",
+                color: "#fff",
+                padding: 12,
+              }}
+            >
               {JSON.stringify(debugInfo, null, 2)}
             </pre>
           )}
@@ -405,39 +474,81 @@ const SubscriptionPlans = () => {
           if (plan.type === "custom") {
             const price = getCustomPlanPrice();
             return (
-              <div key={plan._id} className="subs-plan-plan-card subs-plan-custom-plan-card">
+              <div
+                key={plan._id}
+                className="subs-plan-plan-card subs-plan-custom-plan-card"
+              >
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
                 {/* {renderFeatures(plan.features)} */}
-                
+
                 <label>Cylinder Size</label>
-                <select value={customPlan.size} onChange={(e) => setCustomPlan(prev => ({ ...prev, size: e.target.value }))}>
-                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                <select
+                  value={customPlan.size}
+                  onChange={(e) =>
+                    setCustomPlan((prev) => ({ ...prev, size: e.target.value }))
+                  }
+                >
+                  {sizeOptions.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
                 </select>
 
                 <label>Delivery Frequency</label>
-                <select value={customPlan.frequency} onChange={(e) => setCustomPlan(prev => ({ ...prev, frequency: e.target.value }))}>
-                  {frequencyOptions.map((f) => <option key={f} value={f}>{f}</option>)}
+                <select
+                  value={customPlan.frequency}
+                  onChange={(e) =>
+                    setCustomPlan((prev) => ({
+                      ...prev,
+                      frequency: e.target.value,
+                    }))
+                  }
+                >
+                  {frequencyOptions.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
                 </select>
 
                 <label>Subscription Period (Months)</label>
-                <select value={customPlan.subscriptionPeriod} onChange={(e) => setCustomPlan(prev => ({ ...prev, subscriptionPeriod: parseInt(e.target.value) }))}>
-                  {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
+                <select
+                  value={customPlan.subscriptionPeriod}
+                  onChange={(e) =>
+                    setCustomPlan((prev) => ({
+                      ...prev,
+                      subscriptionPeriod: parseInt(e.target.value),
+                    }))
+                  }
+                >
+                  {plan.subscriptionPeriod?.map((period) => (
+                    <option key={period} value={period}>
+                      {period} month{period > 1 ? "s" : ""}
+                    </option>
+                  ))}
                 </select>
 
-                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
+                <div className="subs-plan-plan-price">
+                  {formatCurrency(price)}
+                </div>
                 <button
                   disabled={isProcessing}
-                  onClick={() => confirmPlan({
-                    planId: plan._id,
-                    name: plan.name,
-                    planType: plan.type,
-                    size: customPlan.size,
-                    frequency: customPlan.frequency,
-                    subscriptionPeriod: customPlan.subscriptionPeriod,
-                    price
-                  })}
-                >{isProcessing ? "Processing..." : "Subscribe"}</button>
+                  onClick={() =>
+                    confirmPlan({
+                      planId: plan._id,
+                      name: plan.name,
+                      planType: plan.type,
+                      size: customPlan.size,
+                      frequency: customPlan.frequency,
+                      subscriptionPeriod: customPlan.subscriptionPeriod,
+                      price,
+                    })
+                  }
+                >
+                  {isProcessing ? "Processing..." : "Subscribe"}
+                </button>
               </div>
             );
           }
@@ -446,29 +557,45 @@ const SubscriptionPlans = () => {
           if (plan.type === "one-time") {
             const price = getOneTimePlanPrice();
             return (
-              <div key={plan._id} className="subs-plan-plan-card subs-plan-one-time-card">
+              <div
+                key={plan._id}
+                className="subs-plan-plan-card subs-plan-one-time-card"
+              >
                 <h2>{plan.name}</h2>
                 <p>{plan.description}</p>
                 {/* {renderFeatures(plan.features)} */}
-                
+
                 <label>Cylinder Size</label>
-                <select value={oneTimePlan.size} onChange={(e) => setOneTimePlan({ size: e.target.value })}>
-                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                <select
+                  value={oneTimePlan.size}
+                  onChange={(e) => setOneTimePlan({ size: e.target.value })}
+                >
+                  {sizeOptions.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
                 </select>
 
-                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
-                <button 
+                <div className="subs-plan-plan-price">
+                  {formatCurrency(price)}
+                </div>
+                <button
                   disabled={isProcessing}
-                  onClick={() => confirmPlan({
-                    planId: plan._id,
-                    name: plan.name,
-                    planType: plan.type,
-                    size: oneTimePlan.size,
-                    frequency: "One-Time",
-                    subscriptionPeriod: 1,
-                    price
-                  })}
-                >{isProcessing ? "Processing..." : "Buy Now"}</button>
+                  onClick={() =>
+                    confirmPlan({
+                      planId: plan._id,
+                      name: plan.name,
+                      planType: plan.type,
+                      size: oneTimePlan.size,
+                      frequency: "One-Time",
+                      subscriptionPeriod: 1,
+                      price,
+                    })
+                  }
+                >
+                  {isProcessing ? "Processing..." : "Buy Now"}
+                </button>
               </div>
             );
           }
@@ -477,69 +604,134 @@ const SubscriptionPlans = () => {
           if (plan.type === "emergency") {
             const price = getEmergencyPlanPrice();
             return (
-              <div key={plan._id} className="subs-plan-plan-card subs-plan-emergency-card">
+              <div
+                key={plan._id}
+                className="subs-plan-plan-card subs-plan-emergency-card"
+              >
                 <h2>{plan.name} 🚨</h2>
                 <p>{plan.description}</p>
                 {/* {renderFeatures(plan.features)} */}
-                
+
                 <label>Cylinder Size</label>
-                <select value={emergencyPlan.size} onChange={(e) => setEmergencyPlan({ size: e.target.value })}>
-                  {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                <select
+                  value={emergencyPlan.size}
+                  onChange={(e) => setEmergencyPlan({ size: e.target.value })}
+                >
+                  {sizeOptions.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
                 </select>
 
-                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
-                <button 
+                <div className="subs-plan-plan-price">
+                  {formatCurrency(price)}
+                </div>
+                <button
                   disabled={isProcessing}
-                  onClick={() => confirmPlan({
-                    planId: plan._id,
-                    name: plan.name,
-                    planType: plan.type,
-                    size: emergencyPlan.size,
-                    frequency: "Emergency",
-                    subscriptionPeriod: 1,
-                    price
-                  })}
-                >{isProcessing ? "Processing..." : "Request Emergency Delivery"}</button>
+                  onClick={() =>
+                    confirmPlan({
+                      planId: plan._id,
+                      name: plan.name,
+                      planType: plan.type,
+                      size: emergencyPlan.size,
+                      frequency: "Emergency",
+                      subscriptionPeriod: 1,
+                      price,
+                    })
+                  }
+                >
+                  {isProcessing
+                    ? "Processing..."
+                    : "Request Emergency Delivery"}
+                </button>
               </div>
             );
           }
 
           // Preset Plans (Basic, Family, Business)
-          const frequency = selectedFrequencies[plan._id] || frequencyOptions[0];
-          const subscriptionPeriod = selectedSubscriptionPeriods[plan._id] || plan.subscriptionPeriod?.[0] || 1;
-          const price = calculatePrice(plan, plan.baseSize, frequency, subscriptionPeriod);
+          const frequency =
+            selectedFrequencies[plan._id] || frequencyOptions[0];
+          const subscriptionPeriod =
+            selectedSubscriptionPeriods[plan._id] ||
+            plan.subscriptionPeriod?.[0] ||
+            1;
+          const price = calculatePrice(
+            plan,
+            plan.baseSize,
+            frequency,
+            subscriptionPeriod
+          );
 
           return (
             <div key={plan._id} className="subs-plan-plan-card">
               <h2>{plan.name}</h2>
               <p>{plan.description}</p>
               {/* {renderFeatures(plan.features)} */}
-              
+
               <div className="subs-plan-plan-details">
-                <p><strong>Base Size:</strong> {plan.baseSize}</p>
-                <p><strong>Price per Kg:</strong> {formatCurrency(plan.pricePerKg)}</p>
+                <p>
+                  <strong>Base Size:</strong> {plan.baseSize}
+                </p>
+                <p>
+                  <strong>Price per Kg:</strong>{" "}
+                  {formatCurrency(plan.pricePerKg)}
+                </p>
               </div>
 
               <label>Delivery Frequency</label>
-              <select value={frequency} onChange={(e) => setSelectedFrequencies(prev => ({ ...prev, [plan._id]: e.target.value }))}>
-                {frequencyOptions.map((f) => <option key={f} value={f}>{f}</option>)}
+              <select
+                value={frequency}
+                onChange={(e) =>
+                  setSelectedFrequencies((prev) => ({
+                    ...prev,
+                    [plan._id]: e.target.value,
+                  }))
+                }
+              >
+                {frequencyOptions.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
               </select>
 
               <label>Subscription Period (Months)</label>
-              <select value={subscriptionPeriod} onChange={(e) => setSelectedSubscriptionPeriods(prev => ({ ...prev, [plan._id]: parseInt(e.target.value) }))}>
-                {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
+              <select
+                value={subscriptionPeriod}
+                onChange={(e) =>
+                  setSelectedSubscriptionPeriods((prev) => ({
+                    ...prev,
+                    [plan._id]: parseInt(e.target.value),
+                  }))
+                }
+              >
+                {plan.subscriptionPeriod?.map((period) => (
+                  <option key={period} value={period}>
+                    {period} month{period > 1 ? "s" : ""}
+                  </option>
+                ))}
               </select>
 
-              <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
-              <button disabled={isProcessing} onClick={() => confirmPlan({
-                planId: plan._id,
-                name: plan.name,
-                planType: plan.type,
-                size: plan.baseSize,
-                frequency: frequency,
-                subscriptionPeriod: subscriptionPeriod,
-                price
-              })}>{isProcessing ? "Processing..." : "Subscribe"}</button>
+              <div className="subs-plan-plan-price">
+                {formatCurrency(price)}
+              </div>
+              <button
+                disabled={isProcessing}
+                onClick={() =>
+                  confirmPlan({
+                    planId: plan._id,
+                    name: plan.name,
+                    planType: plan.type,
+                    size: plan.baseSize,
+                    frequency: frequency,
+                    subscriptionPeriod: subscriptionPeriod,
+                    price,
+                  })
+                }
+              >
+                {isProcessing ? "Processing..." : "Subscribe"}
+              </button>
             </div>
           );
         })}
@@ -551,21 +743,40 @@ const SubscriptionPlans = () => {
           <div className="subs-plan-summary-card">
             <h2>Confirm Your Order</h2>
             <div className="subs-plan-order-details">
-              <p><strong>Plan:</strong> {selectedPlan.name}</p>
-              <p><strong>Type:</strong> {selectedPlan.planType}</p>
-              <p><strong>Size:</strong> {selectedPlan.size}</p>
-              <p><strong>Frequency:</strong> {selectedPlan.frequency}</p>
+              <p>
+                <strong>Plan:</strong> {selectedPlan.name}
+              </p>
+              <p>
+                <strong>Type:</strong> {selectedPlan.planType}
+              </p>
+              <p>
+                <strong>Size:</strong> {selectedPlan.size}
+              </p>
+              <p>
+                <strong>Frequency:</strong> {selectedPlan.frequency}
+              </p>
               {selectedPlan.subscriptionPeriod && (
-                <p><strong>Subscription Period:</strong> {selectedPlan.subscriptionPeriod} month{selectedPlan.subscriptionPeriod > 1 ? 's' : ''}</p>
+                <p>
+                  <strong>Subscription Period:</strong>{" "}
+                  {selectedPlan.subscriptionPeriod} month
+                  {selectedPlan.subscriptionPeriod > 1 ? "s" : ""}
+                </p>
               )}
-              <p><strong>Total Price:</strong> {formatCurrency(selectedPlan.price)}</p>
+              <p>
+                <strong>Total Price:</strong>{" "}
+                {formatCurrency(selectedPlan.price)}
+              </p>
             </div>
-
-            {/* Payment Method Selection */}
+            {/* Payment Method Selection */}/ Update the payment method section
+            in the summary modal:
             <div className="subs-plan-payment-method">
               <h3>Select Payment Method</h3>
               <div className="subs-plan-payment-options">
-                <label className={`subs-plan-payment-option ${paymentMethod === 'paystack' ? 'selected' : ''}`}>
+                <label
+                  className={`subs-plan-payment-option ${
+                    paymentMethod === "paystack" ? "selected" : ""
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -576,8 +787,12 @@ const SubscriptionPlans = () => {
                   <FaCreditCard className="payment-icon" />
                   <span>Pay with Card (Paystack)</span>
                 </label>
-                
-                <label className={`subs-plan-payment-option ${paymentMethod === 'wallet' ? 'selected' : ''}`}>
+
+                <label
+                  className={`subs-plan-payment-option ${
+                    paymentMethod === "wallet" ? "selected" : ""
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -587,29 +802,40 @@ const SubscriptionPlans = () => {
                   />
                   <FaWallet className="payment-icon" />
                   <span>Pay with Wallet</span>
-                  <span className="wallet-balance">Balance: {formatCurrency(walletBalance)}</span>
+                  <span className="wallet-balance">
+                    Balance: {formatCurrency(walletBalance)}
+                  </span>
                 </label>
               </div>
 
-              {/* Wallet balance warning */}
-              {paymentMethod === "wallet" && walletBalance < selectedPlan.price && (
-                <div className="subs-plan-wallet-warning">
-                  ❌ Insufficient wallet balance. You need {formatCurrency(selectedPlan.price - walletBalance)} more.
+              {/* Remove frontend wallet validation - show info only */}
+              {paymentMethod === "wallet" && (
+                <div className="subs-plan-wallet-info">
+                  ✅ Wallet payment will be validated securely by our system
                 </div>
               )}
             </div>
-
             <div className="subs-plan-summary-actions">
-              <button onClick={() => setShowSummary(false)} disabled={isProcessing}>
+              <button
+                onClick={() => setShowSummary(false)}
+                disabled={isProcessing}
+              >
                 Cancel
               </button>
-              <button 
-                onClick={handlePaymentConfirmation} 
-                disabled={isProcessing || (paymentMethod === "wallet" && walletBalance < selectedPlan.price)}
+              <button
+                onClick={handlePaymentConfirmation}
+                disabled={
+                  isProcessing ||
+                  (paymentMethod === "wallet" &&
+                    walletBalance < selectedPlan.price)
+                }
                 className="subs-plan-confirm-payment-btn"
               >
-                {isProcessing ? "Processing..." : 
-                 paymentMethod === "wallet" ? "Pay with Wallet" : "Proceed to Payment"}
+                {isProcessing
+                  ? "Processing..."
+                  : paymentMethod === "wallet"
+                  ? "Pay with Wallet"
+                  : "Proceed to Payment"}
               </button>
             </div>
           </div>
@@ -618,7 +844,9 @@ const SubscriptionPlans = () => {
 
       {isProcessing && (
         <div className="subs-plan-loading-overlay">
-          <div className="subs-plan-loading-spinner">Initializing Payment...</div>
+          <div className="subs-plan-loading-spinner">
+            Initializing Payment...
+          </div>
         </div>
       )}
     </div>
