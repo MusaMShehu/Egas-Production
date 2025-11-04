@@ -1,9 +1,51 @@
+:root {
+  --blue-lightest: #A2B8F3;
+  --blue-lighter: #8096D8;
+  --blue-light: #5E74BD;
+  --blue-base-light: #3C52A2;
+  --blue-base: #1A2F87;
+  --blue-base-dark: #15266D;
+  --blue-dark: #101D54;
+  --blue-darker: #0B143A;
+  --blue-darkest: #060A21;
+
+  
+  --turquoise-lightest: #C4F5F8;
+  --turquoise-lighter: #9CE9EB;
+  --turquoise-light: #74DDDF;
+  --turquoise-base-light: #4CD0D2;
+  --turquoise-base: #24C2C4;
+  --turquoise-base-dark: #1E9B9D;
+  --turquoise-dark: #187476;
+  --turquoise-darker: #124D4F;
+  --turquoise-darkest: #0C2628;
+}
+
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+background: linear-gradient(
+  to bottom right,
+  var(--turquoise-lightest),
+  var(--turquoise-base),
+  var(--blue-base-light)
+);
+
+
+
+}
+
+
 .user-layout {
   display: flex;
   flex-direction: column;
   background-color: #f3f4f6;
   min-height: 100vh;
   transition: all 0.4s ease;
+  background-color: transparent;
+  min-height: 100vh;
 }
 
 /* ===== Content Wrapper ===== */

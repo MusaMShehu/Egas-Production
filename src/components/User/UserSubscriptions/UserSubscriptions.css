@@ -228,6 +228,62 @@
   width: 100%;
 }
 
+
+/* Wallet Balance */
+.sub-wallet-balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #28a745;
+  border: 1px solid #e9ecef;
+}
+
+.wallet-icon {
+  color: #28a745;
+}
+
+/* Payment Method Styles */
+.sub-payment-method {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.payment-method-icon {
+  font-size: 14px;
+}
+
+.payment-method-icon.wallet {
+  color: #28a745;
+}
+
+.payment-method-icon.card {
+  color: #007bff;
+}
+
+.payment-method-text {
+  font-weight: 500;
+}
+
+.payment-method-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Enhanced Subscription Card */
+.sub-subscription-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* STATUS BADGES */
 .sub-subscription-status {
   padding: 0.4rem 0.9rem;

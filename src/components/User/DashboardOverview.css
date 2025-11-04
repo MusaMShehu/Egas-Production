@@ -1,4 +1,6 @@
-/* components/DashboardOverview.css */
+body{
+  background: var(--blue-base);
+}
 .overview-loading {
   text-align: center;
   padding: 2rem;

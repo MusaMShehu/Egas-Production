@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./SubscriptionPlan.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import PaystackPop from "@paystack/inline-js";
+import { FaWallet, FaCreditCard } from "react-icons/fa";
 
 // Stable axios instance
 const axiosInstance = axios.create({
@@ -34,6 +34,8 @@ const SubscriptionPlans = () => {
   const [plansLoading, setPlansLoading] = useState(true);
   const [error, setError] = useState("");
   const [debugInfo, setDebugInfo] = useState(null);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("paystack"); // "paystack" or "wallet"
 
   // add interceptors once
   useEffect(() => {
@@ -70,6 +72,34 @@ const SubscriptionPlans = () => {
       setIsLoading(false);
     }
   }, []);
+
+  // Fetch wallet balance from dashboard (same as Payments page)
+  const fetchWalletBalance = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      const response = await axiosInstance.get("/api/v1/dashboard/overview", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setWalletBalance(response.data.data?.walletBalance || 0);
+      }
+    } catch (error) {
+      console.warn("Could not fetch wallet balance from dashboard:", error);
+      // Fallback to auth/me if dashboard fails
+      try {
+        const fallbackResponse = await axiosInstance.get("/api/v1/auth/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (fallbackResponse.data.success) {
+          setWalletBalance(fallbackResponse.data.data?.walletBalance || 0);
+        }
+      } catch (fallbackError) {
+        console.warn("Could not fetch wallet balance from auth/me:", fallbackError);
+      }
+    }
+  }, [token]);
 
   // fetch plans
   const fetchSubscriptionPlans = useCallback(async () => {
@@ -112,8 +142,11 @@ const SubscriptionPlans = () => {
   }, []);
 
   useEffect(() => {
-    fetchSubscriptionPlans();
-  }, [fetchSubscriptionPlans]);
+    if (token) {
+      fetchSubscriptionPlans();
+      fetchWalletBalance();
+    }
+  }, [token, fetchSubscriptionPlans, fetchWalletBalance]);
 
   // Price calculation helper
   const calculatePrice = (plan, size, frequency, subscriptionPeriod = 1) => {
@@ -196,63 +229,81 @@ const SubscriptionPlans = () => {
     }
   };
 
-
   const initializePayment = async (planData) => {
-  if (!user || !token) {
-    alert("Please log in to subscribe");
-    navigate("/login");
-    return;
-  }
-
-  if (!planData.price || planData.price <= 0) {
-    alert("Please select a valid plan configuration");
-    return;
-  }
-
-  setIsProcessing(true);
-
-  try {
-    // Prepare request body for backend
-    const requestBody = {
-      plan: planData.planId,
-      size: planData.size,
-      frequency: planData.frequency,
-      subscriptionPeriod: planData.subscriptionPeriod,
-    };
-
-    // Send request to backend API
-    const response = await axiosInstance.post("/api/v1/subscriptions", requestBody, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const { success, authorization_url, reference } = response.data;
-
-    if (success && authorization_url) {
-      // Redirect user to Paystack payment page
-      window.location.href = authorization_url;
-    } else {
-      throw new Error("Failed to initialize payment.");
+    if (!user || !token) {
+      alert("Please log in to subscribe");
+      navigate("/login");
+      return;
     }
-  } catch (error) {
-    console.error("Payment initialization error:", error);
-    alert(
-      error.response?.data?.error ||
-      error.response?.data?.message ||
-      "Failed to initialize payment. Please try again."
-    );
-  } finally {
-    setIsProcessing(false);
-  }
-};
+
+    if (!planData.price || planData.price <= 0) {
+      alert("Please select a valid plan configuration");
+      return;
+    }
+
+    // Check wallet balance if wallet payment is selected
+    if (paymentMethod === "wallet" && walletBalance < planData.price) {
+      alert("Insufficient wallet balance. Please choose another payment method or fund your wallet.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // Prepare request body for backend
+      const requestBody = {
+        plan: planData.planId,
+        size: planData.size,
+        frequency: planData.frequency,
+        subscriptionPeriod: planData.subscriptionPeriod,
+        paymentMethod: paymentMethod,
+        ...(planData.planType === 'custom' && { customPlan: planData })
+      };
+
+      // Send request to backend API
+      const response = await axiosInstance.post("/api/v1/subscriptions", requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { success, authorization_url, reference, data, message } = response.data;
+
+      if (success) {
+        if (paymentMethod === "paystack" && authorization_url) {
+          // Redirect user to Paystack payment page
+          window.location.href = authorization_url;
+        } else if (paymentMethod === "wallet") {
+          // Wallet payment successful - refresh wallet balance and show success
+          await fetchWalletBalance(); // Refresh from dashboard
+          setTimeout(() => {
+            alert(message || `Subscription created successfully! ₦${planData.price.toLocaleString()} deducted from wallet.`);
+            navigate("/subscriptions");
+          }, 1000);
+        } else {
+          throw new Error("Invalid payment response");
+        }
+      } else {
+        throw new Error("Failed to initialize payment.");
+      }
+    } catch (error) {
+      console.error("Payment initialization error:", error);
+      const errorMsg = error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to process payment. Please try again.";
+      alert(errorMsg);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   // Retry without reload
   const handleRetry = () => {
     setError("");
     setDebugInfo(null);
     fetchSubscriptionPlans();
+    if (token) fetchWalletBalance();
   };
 
   // Confirm and initialize payment directly
@@ -267,6 +318,11 @@ const SubscriptionPlans = () => {
     initializePayment(selectedPlan);
   };
 
+  // Handle payment method change
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+  };
+
   // Render plan features
   const renderFeatures = (features) => {
     return (
@@ -278,6 +334,11 @@ const SubscriptionPlans = () => {
         ))}
       </ul>
     );
+  };
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    return `₦${amount?.toLocaleString() || '0'}`;
   };
 
   // UI rendering
@@ -327,7 +388,12 @@ const SubscriptionPlans = () => {
   return (
     <div className="subs-plan-plans-container">
       <div className="subs-plan-user-welcome">
-        <h3 className="sub-plan-subtitle">Choose a plan that fits your needs</h3>
+        <h1>Subscription Plans</h1>
+        <p className="sub-plan-subtitle">Choose a plan that fits your needs</p>
+        <div className="subs-plan-wallet-info">
+          <FaWallet className="wallet-icon" />
+          <span>Wallet Balance: {formatCurrency(walletBalance)}</span>
+        </div>
       </div>
 
       <div className="subs-plan-plans-grid">
@@ -336,7 +402,7 @@ const SubscriptionPlans = () => {
           const frequencyOptions = getFrequencyOptions(plan);
 
           // Custom Plan
-          if (plan.type === "subs-plan-custom") {
+          if (plan.type === "custom") {
             const price = getCustomPlanPrice();
             return (
               <div key={plan._id} className="subs-plan-plan-card subs-plan-custom-plan-card">
@@ -359,7 +425,7 @@ const SubscriptionPlans = () => {
                   {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
                 </select>
 
-                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
                 <button
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -390,7 +456,7 @@ const SubscriptionPlans = () => {
                   {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
 
-                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
                 <button 
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -421,7 +487,7 @@ const SubscriptionPlans = () => {
                   {sizeOptions.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
 
-                <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
+                <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
                 <button 
                   disabled={isProcessing}
                   onClick={() => confirmPlan({
@@ -451,7 +517,7 @@ const SubscriptionPlans = () => {
               
               <div className="subs-plan-plan-details">
                 <p><strong>Base Size:</strong> {plan.baseSize}</p>
-                <p><strong>Price per Kg:</strong> ₦{plan.pricePerKg?.toLocaleString()}</p>
+                <p><strong>Price per Kg:</strong> {formatCurrency(plan.pricePerKg)}</p>
               </div>
 
               <label>Delivery Frequency</label>
@@ -464,7 +530,7 @@ const SubscriptionPlans = () => {
                 {plan.subscriptionPeriod?.map((period) => <option key={period} value={period}>{period} month{period > 1 ? 's' : ''}</option>)}
               </select>
 
-              <div className="subs-plan-plan-price">₦{price.toLocaleString()}</div>
+              <div className="subs-plan-plan-price">{formatCurrency(price)}</div>
               <button disabled={isProcessing} onClick={() => confirmPlan({
                 planId: plan._id,
                 name: plan.name,
@@ -484,20 +550,66 @@ const SubscriptionPlans = () => {
         <div className="subs-plan-summary-modal">
           <div className="subs-plan-summary-card">
             <h2>Confirm Your Order</h2>
-            <p><strong>Plan:</strong> {selectedPlan.name}</p>
-            <p><strong>Type:</strong> {selectedPlan.planType}</p>
-            <p><strong>Size:</strong> {selectedPlan.size}</p>
-            <p><strong>Frequency:</strong> {selectedPlan.frequency}</p>
-            {selectedPlan.subscriptionPeriod && (
-              <p><strong>Subscription Period:</strong> {selectedPlan.subscriptionPeriod} month{selectedPlan.subscriptionPeriod > 1 ? 's' : ''}</p>
-            )}
-            <p><strong>Total Price:</strong> ₦{Number(selectedPlan.price).toLocaleString()}</p>
+            <div className="subs-plan-order-details">
+              <p><strong>Plan:</strong> {selectedPlan.name}</p>
+              <p><strong>Type:</strong> {selectedPlan.planType}</p>
+              <p><strong>Size:</strong> {selectedPlan.size}</p>
+              <p><strong>Frequency:</strong> {selectedPlan.frequency}</p>
+              {selectedPlan.subscriptionPeriod && (
+                <p><strong>Subscription Period:</strong> {selectedPlan.subscriptionPeriod} month{selectedPlan.subscriptionPeriod > 1 ? 's' : ''}</p>
+              )}
+              <p><strong>Total Price:</strong> {formatCurrency(selectedPlan.price)}</p>
+            </div>
+
+            {/* Payment Method Selection */}
+            <div className="subs-plan-payment-method">
+              <h3>Select Payment Method</h3>
+              <div className="subs-plan-payment-options">
+                <label className={`subs-plan-payment-option ${paymentMethod === 'paystack' ? 'selected' : ''}`}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="paystack"
+                    checked={paymentMethod === "paystack"}
+                    onChange={() => handlePaymentMethodChange("paystack")}
+                  />
+                  <FaCreditCard className="payment-icon" />
+                  <span>Pay with Card (Paystack)</span>
+                </label>
+                
+                <label className={`subs-plan-payment-option ${paymentMethod === 'wallet' ? 'selected' : ''}`}>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="wallet"
+                    checked={paymentMethod === "wallet"}
+                    onChange={() => handlePaymentMethodChange("wallet")}
+                  />
+                  <FaWallet className="payment-icon" />
+                  <span>Pay with Wallet</span>
+                  <span className="wallet-balance">Balance: {formatCurrency(walletBalance)}</span>
+                </label>
+              </div>
+
+              {/* Wallet balance warning */}
+              {paymentMethod === "wallet" && walletBalance < selectedPlan.price && (
+                <div className="subs-plan-wallet-warning">
+                  ❌ Insufficient wallet balance. You need {formatCurrency(selectedPlan.price - walletBalance)} more.
+                </div>
+              )}
+            </div>
+
             <div className="subs-plan-summary-actions">
               <button onClick={() => setShowSummary(false)} disabled={isProcessing}>
                 Cancel
               </button>
-              <button onClick={handlePaymentConfirmation} disabled={isProcessing} className="subs-plan-confirm-payment-btn">
-                {isProcessing ? "Initializing Payment..." : "Proceed to Payment"}
+              <button 
+                onClick={handlePaymentConfirmation} 
+                disabled={isProcessing || (paymentMethod === "wallet" && walletBalance < selectedPlan.price)}
+                className="subs-plan-confirm-payment-btn"
+              >
+                {isProcessing ? "Processing..." : 
+                 paymentMethod === "wallet" ? "Pay with Wallet" : "Proceed to Payment"}
               </button>
             </div>
           </div>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
-import { FaPlus, FaSearch, FaTimes, FaEllipsisV } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaTimes, FaEllipsisV, FaWallet, FaCreditCard } from 'react-icons/fa';
 import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
 
 const Subscriptions = () => {
@@ -12,60 +12,99 @@ const Subscriptions = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState(null);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentData, setPaymentData] = useState({});
   const navigate = useNavigate();
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com';
 
-  // ✅ Fetch logged-in user's subscriptions
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      setIsLoading(true);
-      infoToast('Loading your subscriptions...');
-      
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          const errorMsg = 'You must be logged in to view subscriptions.';
+  const getAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Authentication token not found. Please log in again.");
+      warningToast("Please log in to access subscriptions");
+      return null;
+    }
+    return token;
+  };
+
+  const getHeaders = () => {
+    const token = getAuthToken();
+    return {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  };
+
+  // ✅ Fetch all user data including subscriptions and wallet balance from dashboard
+  const fetchUserData = async () => {
+    setIsLoading(true);
+    infoToast('Loading your subscriptions...');
+    
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Fetch dashboard data (same as Payments page)
+      const dashboardResponse = await fetch(`${API_BASE_URL}/api/v1/dashboard/overview`, {
+        headers: getHeaders(),
+      });
+
+      if (!dashboardResponse.ok) {
+        if (dashboardResponse.status === 401) {
+          const errorMsg = "Session expired. Please log in again.";
           setError(errorMsg);
           warningToast(errorMsg);
-          setIsLoading(false);
           return;
         }
-
-        const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/my-subscriptions`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const result = await response.json();
-        console.log("Subscriptions API response:", result);
-
-        if (!response.ok) {
-          throw new Error(result.message || `HTTP error! status: ${response.status}`);
-        }
-
-        setSubscriptions(result.data || []);
-        
-        if (result.data && result.data.length === 0) {
-          infoToast('No subscriptions found. Create your first subscription!');
-        } else {
-          successToast(`Loaded ${result.data.length} subscriptions successfully`);
-        }
-        
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching subscriptions:', error);
-        const errorMsg = 'Failed to load your subscriptions. Please try again later.';
-        setError(errorMsg);
-        errorToast(errorMsg);
-        setIsLoading(false);
+        throw new Error(`HTTP error! status: ${dashboardResponse.status}`);
       }
-    };
 
-    fetchSubscriptions();
-  }, [API_BASE_URL]);
+      const dashboardData = await dashboardResponse.json();
+      
+      if (!dashboardData.success) {
+        throw new Error(dashboardData.message || "Failed to fetch user data");
+      }
+
+      // Set wallet balance from dashboard data
+      setWalletBalance(dashboardData.data?.walletBalance || 0);
+      setPaymentData(dashboardData.data || {});
+
+      // Now fetch subscriptions
+      const subscriptionsResponse = await fetch(`${API_BASE_URL}/api/v1/subscriptions/my-subscriptions`, {
+        headers: getHeaders(),
+      });
+
+      const subscriptionsResult = await subscriptionsResponse.json();
+
+      if (!subscriptionsResponse.ok) {
+        throw new Error(subscriptionsResult.message || `HTTP error! status: ${subscriptionsResponse.status}`);
+      }
+
+      setSubscriptions(subscriptionsResult.data || []);
+      
+      if (subscriptionsResult.data && subscriptionsResult.data.length === 0) {
+        infoToast('No subscriptions found. Create your first subscription!');
+      } else {
+        successToast(`Loaded ${subscriptionsResult.data.length} subscriptions successfully`);
+      }
+      
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      const errorMsg = error.message || 'Failed to load your data. Please try again later.';
+      setError(errorMsg);
+      errorToast(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleCreateNewSubscription = () => {
     infoToast('Redirecting to subscription plans...');
@@ -109,19 +148,14 @@ const Subscriptions = () => {
     warningToast(`Pausing subscription #${subscriptionId.slice(-8)}...`);
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/pause`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        // Handle specific error messages from backend
         if (result.message) {
           throw new Error(result.message);
         }
@@ -129,13 +163,15 @@ const Subscriptions = () => {
       }
 
       if (result.success) {
-        // Update UI with the data returned from backend
         setSubscriptions(prev =>
           prev.map(sub =>
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
         successToast('Subscription paused successfully');
+        
+        // Refresh wallet balance after subscription modification
+        fetchUserData();
       } else {
         throw new Error(result.message || 'Failed to pause subscription');
       }
@@ -162,19 +198,14 @@ const Subscriptions = () => {
     infoToast(`Resuming subscription #${subscriptionId.slice(-8)}...`);
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/resume`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        // Handle specific error messages from backend
         if (result.message) {
           throw new Error(result.message);
         }
@@ -182,13 +213,15 @@ const Subscriptions = () => {
       }
 
       if (result.success) {
-        // Update UI with the data returned from backend
         setSubscriptions(prev =>
           prev.map(sub =>
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
         successToast('Subscription resumed successfully');
+        
+        // Refresh wallet balance after subscription modification
+        fetchUserData();
       } else {
         throw new Error(result.message || 'Failed to resume subscription');
       }
@@ -215,19 +248,14 @@ const Subscriptions = () => {
     warningToast(`Cancelling subscription #${subscriptionId.slice(-8)}...`);
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/api/v1/subscriptions/${subscriptionId}/cancel-my`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: getHeaders(),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        // Handle specific error messages from backend
         if (result.message) {
           throw new Error(result.message);
         }
@@ -235,13 +263,15 @@ const Subscriptions = () => {
       }
 
       if (result.success) {
-        // Update UI with the data returned from backend
         setSubscriptions(prev =>
           prev.map(sub =>
             sub._id === subscriptionId ? { ...sub, ...result.data } : sub
           )
         );
         successToast('Subscription cancelled successfully');
+        
+        // Refresh wallet balance after subscription modification
+        fetchUserData();
       } else {
         throw new Error(result.message || 'Failed to cancel subscription');
       }
@@ -312,6 +342,22 @@ const Subscriptions = () => {
     }
   };
 
+  const getPaymentMethodIcon = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'wallet': return <FaWallet className="payment-method-icon wallet" />;
+      case 'paystack': return <FaCreditCard className="payment-method-icon card" />;
+      default: return null;
+    }
+  };
+
+  const getPaymentMethodText = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'wallet': return 'Wallet Balance';
+      case 'paystack': return 'Card Payment';
+      default: return paymentMethod || 'N/A';
+    }
+  };
+
   // ✅ Split active vs inactive
   const activeSubscriptions = subscriptions.filter(sub =>
     ['active', 'pending'].includes(sub.status)
@@ -329,6 +375,10 @@ const Subscriptions = () => {
       <div className="sub-dashboard-header">
         <h1>My Subscriptions</h1>
         <div className="sub-header-actions">
+          <div className="sub-wallet-balance">
+            <FaWallet className="wallet-icon" />
+            <span>Wallet: {formatCurrency(walletBalance)}</span>
+          </div>
           <div className="sub-search-bar">
             <FaSearch className="sub-search-icon" />
             <input 
@@ -352,6 +402,33 @@ const Subscriptions = () => {
         </div>
       )}
 
+      {/* Subscription Stats */}
+      <div className="sub-stats-container">
+        <div className="sub-stat-card">
+          <div className="sub-stat-icon active">
+            <FaWallet />
+          </div>
+          <h3>Active Subscriptions</h3>
+          <div className="sub-value">{activeSubscriptions.length}</div>
+        </div>
+
+        <div className="sub-stat-card">
+          <div className="sub-stat-icon total">
+            <FaCreditCard />
+          </div>
+          <h3>Total Spent</h3>
+          <div className="sub-value">{formatCurrency(paymentData.subscriptionTotal || 0)}</div>
+        </div>
+
+        <div className="sub-stat-card">
+          <div className="sub-stat-icon monthly">
+            <FaWallet />
+          </div>
+          <h3>This Month</h3>
+          <div className="sub-value">{formatCurrency(paymentData.subscriptionMonthly || 0)}</div>
+        </div>
+      </div>
+
       <div className="sub-sub-content-section">
         {/* Active Subscriptions */}
         {activeSubscriptions.length > 0 && (
@@ -366,6 +443,12 @@ const Subscriptions = () => {
                   <div className="sub-subscription-header">
                     <div className="sub-subscription-id">#{subscription._id?.slice(-8)}</div>
                     <div className="sub-subscription-header-right">
+                      <div className="sub-payment-method">
+                        {getPaymentMethodIcon(subscription.paymentMethod)}
+                        <span className="payment-method-text">
+                          {getPaymentMethodText(subscription.paymentMethod)}
+                        </span>
+                      </div>
                       <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
                         {subscription.status}
                       </div>
@@ -422,6 +505,14 @@ const Subscriptions = () => {
                       </span>
                     </div>
                     <div className="sub-detail-row">
+                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-value">
+                        {formatCurrency(subscription.price)}
+                        {subscription.frequency && subscription.frequency !== 'One-Time' && 
+                          getFrequencyText(subscription.frequency)}
+                      </span>
+                    </div>
+                    <div className="sub-detail-row">
                       <span className="sub-detail-label">Start Date:</span>
                       <span className="sub-detail-value">{formatDate(subscription.startDate)}</span>
                     </div>
@@ -449,6 +540,12 @@ const Subscriptions = () => {
                   <div className="sub-subscription-header">
                     <div className="sub-subscription-id">#{subscription._id?.slice(-8)}</div>
                     <div className="sub-subscription-header-right">
+                      <div className="sub-payment-method">
+                        {getPaymentMethodIcon(subscription.paymentMethod)}
+                        <span className="payment-method-text">
+                          {getPaymentMethodText(subscription.paymentMethod)}
+                        </span>
+                      </div>
                       <div className={`sub-subscription-status ${getStatusClass(subscription.status)}`}>
                         {subscription.status}
                       </div>
@@ -507,6 +604,14 @@ const Subscriptions = () => {
                       </span>
                     </div>
                     <div className="sub-detail-row">
+                      <span className="sub-detail-label">Price:</span>
+                      <span className="sub-detail-value">
+                        {formatCurrency(subscription.price)}
+                        {subscription.frequency && subscription.frequency !== 'One-Time' && 
+                          getFrequencyText(subscription.frequency)}
+                      </span>
+                    </div>
+                    <div className="sub-detail-row">
                       <span className="sub-detail-label">Start Date:</span>
                       <span className="sub-detail-value">{formatDate(subscription.startDate)}</span>
                     </div>
@@ -557,6 +662,13 @@ const Subscriptions = () => {
                     <span className="sub-detail-label">Status:</span>
                     <span className={`sub-detail-value ${getStatusClass(selectedSubscription.status)}`}>
                       {selectedSubscription.status}
+                    </span>
+                  </div>
+                  <div className="sub-detail-item">
+                    <span className="sub-detail-label">Payment Method:</span>
+                    <span className="sub-detail-value payment-method-display">
+                      {getPaymentMethodIcon(selectedSubscription.paymentMethod)}
+                      {getPaymentMethodText(selectedSubscription.paymentMethod)}
                     </span>
                   </div>
                   <div className="sub-detail-item">
