@@ -1,0 +1,45 @@
+.terms-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.7;
+}
+
+.page-title {
+  color: #0b57d0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.last-updated {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+.terms-section h2 {
+  color: #0b57d0;
+  font-size: 1.4rem;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.terms-section ul {
+  padding-left: 25px;
+  margin-bottom: 15px;
+}
+
+.terms-section ul li {
+  margin-bottom: 6px;
+}
+
+.terms-section p {
+  margin-bottom: 15px;
+}
+
+.terms-section strong {
+  color: #000;
+}

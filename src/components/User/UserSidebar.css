@@ -14,15 +14,15 @@
 
 /* ===== Sidebar ===== */
 .user-sidebar {
-  margin-top: 60px;
   width: 220px;
   background: linear-gradient(135deg, #2c3e50, #3498db);
   color: white;
   padding: 50px 0;
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
   height: 100vh;
-  position: sticky;
-  top: 60px;
+  border-top-left-radius: 50px;
+  position: absolute;
+  top: 68px;
   overflow-y: auto;
   transition: all 0.4s ease;
   transform: translateX(0);
@@ -52,10 +52,10 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  /* gap: 12px; */
   position: absolute;
-  top: 62px;
-  left: 8px;
+  top: 12px;
+  left: 6px;
   transition: left 0.4s ease;
   z-index: 1100;
 }
@@ -66,7 +66,7 @@
 
 /* Arrow */
 .sidebar-toggle {
-  background: #3498db;
+  background: #2c3e50;
   color: white;
   border: none;
   outline: none;
@@ -78,7 +78,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); */
 }
 
 .sidebar-toggle:hover {
@@ -87,8 +87,8 @@
 
 /* Hamburger */
 .hamburger-toggle {
-  background: aqua;
-  color:#2c3e50 ;
+  background: #2c3e50;
+  color:#fff ;
   border: none;
   outline: none;
   cursor: pointer;
@@ -99,11 +99,11 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); */
 }
 
 .hamburger-toggle:hover {
-  background: #16a085;
+  background: #1687a0;
 }
 
 /* ===== Menu ===== */
@@ -164,7 +164,7 @@
     margin-top: 0;
     position: fixed;
     left: 0;
-    top: 58px;
+    top: 67px;
     height: 100vh;
     width: 70px;
     transform: translateX(-100%);
@@ -181,8 +181,8 @@
   }
 
   .sidebar-toggle-container {
-    top: 60px;
-    left: 15px;
+    /* top: 60px; */
+    left: 10px;
   }
 
   .hamburger-toggle {

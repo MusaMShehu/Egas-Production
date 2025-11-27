@@ -10,11 +10,11 @@ const Navbar = ({ isMenuOpen, location, user, authLoading }) => {
         Home
       </Link>
       <Link to="/products" className={isActive("/products")}>
-        Products
+        Products & Services
       </Link>
-      <Link to="/services" className={isActive("/services")}>
+      {/* <Link to="/services" className={isActive("/services")}>
         Services
-      </Link>
+      </Link> */}
       <Link to="/contact" className={isActive("/contact")}>
         Contact
       </Link>

@@ -33,6 +33,8 @@ import Services from "./components/Services";
 import Contact from "./components/Contact";
 import About from "./components/About";
 import Business from "./pages/Business_Solutions/BusinessSolutions";
+import TermsOfService from "./pages/Others/TermsOfService";
+import PrivacyPolicy from "./pages/Others/PrivacyPolicy";
 
 import "./App.css";
 
@@ -55,18 +57,6 @@ import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
 import ProductSelection from "./components/Products/ProductSelectionServer";
 import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
 
-
-// Admin Panel
-// import AdminLayout from "./components/Admin/AdminLayout";
-// import AdminDashboard from "./components/Admin/AdminDashboard";
-// import UserManagement from "./components/Admin/UserManagement/UserManagement";
-// import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
-// import ProductManagement from "./components/Admin/ProductManagement/AdminProductManagement";
-// import SubscriptionManagement from "./components/Admin/SubscriptionManagement/SubscriptionManagement";
-// import AdminDeliveryManagement from "./components/Admin/DeliveryManagement/DeliveryManagement";
-// import SupportManagement from "./components/Admin/SupportManagement/SupportManagement";
-// import AdminReport from "./components/Admin/Reports/AdminReports";
-// import AdminPanelSettings from "./components/Admin/Settings/AdminPanelSettings";
 
 // 2nd User Panel
 import UserLayout from "./components/User/UserLayout";
@@ -143,6 +133,9 @@ function App() {
             <Route path="select_product" element={<ProductSelection />} />
             <Route path="subscription-plans" element={<SubscriptionPlans />} />
             <Route path="order_summary" element={<OrderSummary />} />
+
+            <Route path="/terms_of_service" element={<TermsOfService />} />
+            <Route path="/privacy_policy" element={<PrivacyPolicy />} />
           </Route>
 
           <Route path="/cart" element={<ProductCart />} />
@@ -180,23 +173,7 @@ function App() {
             <Route path="payment/order" element={<OrderPayment />} />
             <Route path="payment/callback" element={<PaymentCallback />} /> */}
 
-          </Route>
-
-          {/* Admin Routes (can also be wrapped with ProtectedRoute if only admins allowed) */}
-          {/* <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<AdminDashboard />} />
-            <Route path="users" element={<UserManagement />} />
-            <Route path="orders" element={<OrderManagement />} />
-            <Route path="products" element={<ProductManagement />} />
-            <Route path="subscriptions" element={<SubscriptionManagement />} />
-            <Route path="deliveries" element={<AdminDeliveryManagement />} />
-            <Route path="delivery-agent" element={<DeliveryAgentPortal />} />
-            <Route path="support" element={<SupportManagement />} />
-            <Route path="reports" element={<AdminReport />} />
-            <Route path="settings" element={<AdminPanelSettings />} />
-          </Route> */}
-          
+          </Route>      
         </Routes>
       </div>
       </SnackbarProvider>

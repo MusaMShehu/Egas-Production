@@ -1,5 +1,6 @@
 // src/components/Services/Services.js
 import React from 'react';
+import { Link } from "react-router-dom";
 import { 
   FaTruck, 
   FaCalendarAlt, 
@@ -18,14 +19,14 @@ const Services = () => {
       id: 1,
       icon: FaTruck,
       title: "Doorstep Delivery",
-      description: "Get your gas cylinders delivered to your home or business at your convenience. Schedule one-time or recurring deliveries.",
+      description: "Get your LPG gas delivered to your home or business at your convenience. Schedule one-time or recurring deliveries.",
       link: "delivery.html"
     },
     {
       id: 2,
       icon: FaCalendarAlt,
       title: "Subscription Plans",
-      description: "Never run out of gas with our automatic refill plans. Choose the frequency that matches your usage pattern.",
+      description: "Never run out of gas with our automatic refill plans. Choose the subscription plan that matches your usage pattern.",
       link: "subscription.html"
     },
     {
@@ -81,44 +82,18 @@ const Services = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      id: 1,
-      quote: "e-GAS has completely changed how we manage our kitchen. The subscription service means we never run out of gas, and the delivery team is always punctual.",
-      name: "Amina Yusuf",
-      location: "Lagos",
-      image: "https://randomuser.me/api/portraits/women/44.jpg"
-    },
-    {
-      id: 2,
-      quote: "As a restaurant owner, reliable gas supply is critical. e-GAS's business solution has taken the stress out of managing our gas needs.",
-      name: "Emeka Okafor",
-      location: "Abuja",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      id: 3,
-      quote: "The safety check service gave me peace of mind about my home gas installation. The technician was knowledgeable and professional.",
-      name: "Chioma Adeleke",
-      location: "Port Harcourt",
-      image: "https://randomuser.me/api/portraits/women/68.jpg"
-    }
-  ];
-
   return (
     <div className="services-page">
-      {/* <Header /> */}
       
       {/* Services Hero Section */}
-      <section className="page-hero">
+      <section className="service-page-hero">
         <h2>Our Services</h2>
-        <p>Comprehensive gas solutions for homes and businesses</p>
       </section>
 
       {/* Services Grid */}
       <section className="services-grid-section">
         <div className="section-header">
-          <h3>What We Offer</h3>
+          <h3>Services We Render</h3>
           <p>Beyond just gas delivery, we provide complete solutions for all your gas needs</p>
         </div>
         
@@ -158,14 +133,29 @@ const Services = () => {
           ))}
         </div>
         
-        <div className="cta-button">
-          <button onClick={() => window.location.href = '/signup'}>
-            Get Started Today
-          </button>
+        {/* CTA Section */}
+      <section className="pro-list-products-cta">
+        <div className="pro-list-container">
+          <div className="pro-list-cta-content">
+            <h2>Ready to Place Your Order?</h2>
+            <p>
+              Contact us today to get the best gas products and accessories for
+              your needs
+            </p>
+            <div className="pro-list-cta-buttons">
+              <Link to="/contact" className="pro-list-btn-secondary">
+                Contact Us
+              </Link>
+              <Link to="/order" className="pro-list-btn-primary">
+                Place Order
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
+      </section>
 
-      {/* Testimonials */}
+      {/* Testimonials
       <section className="testimonials-section">
         <div className="section-header">
           <h3>What Our Customers Say</h3>
@@ -189,9 +179,8 @@ const Services = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
-      {/* <Footer /> */}
     </div>
   );
 };

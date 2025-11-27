@@ -11,8 +11,9 @@
   height: 60px;
   width: 100vw;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
   position: fixed;
-  top: 0;
+  top: 8px;
   z-index: 1000;
 }
 
@@ -21,8 +22,9 @@
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content:end;
   align-items: center;
+  gap: 47vw;
   height: 64px;
 }
 
@@ -30,10 +32,6 @@
 .logged-navbar-brand {
   display: flex;
   align-items: center;
-}
-
-.logged-navbar-logo {
-  
 }
 
 .logged-navbar-logo:hover {
@@ -193,9 +191,11 @@
 }
 
 /* moving the logo to middle */
-/* @media (max-width: 768px){
-  .logged-navbar-brand{
-    margin-left: 45%;
-  }
+@media (max-width: 768px){
+
+.logged-navbar-container {
+  gap: 30vw;
   
-} */
+}
+
+}

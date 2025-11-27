@@ -102,8 +102,8 @@ const Footer = () => {
       {/* Footer bottom */}
       <div className="footer-bottom">
         <div className="footer-bottom-links">
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
+          <Link to="/privacy_policy">Privacy Policy</Link>
+          <Link to="/terms_of_service">Terms of Service</Link>
           <Link to="/cookies">Cookie Policy</Link>
           <Link to="/support">Support</Link>
         </div>

@@ -173,7 +173,7 @@ const SubscriptionPlans = () => {
       case "Weekly":
         frequencyMultiplier = 4;
         break;
-      case "Bi-Weekly":
+      case "Bi-weekly":
         frequencyMultiplier = 2;
         break;
       default:
@@ -250,7 +250,7 @@ const SubscriptionPlans = () => {
   const initializePayment = async (planData) => {
     if (!user || !token) {
       alert("Please log in to subscribe");
-      navigate("/login");
+      navigate("/auth");
       return;
     }
 

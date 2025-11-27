@@ -7,7 +7,9 @@ import {
   FaPhone,
   FaUser,
   FaClock,
-  FaTruck
+  FaTruck,
+  FaFilter,
+  FaSort
 } from 'react-icons/fa';
 import './CustomerDeliveryHistory.css';
 
@@ -20,15 +22,33 @@ const CustomerDeliveryHistory = () => {
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [confirmationNotes, setConfirmationNotes] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  
+  // New state for tabs, filtering and sorting
+  const [activeTab, setActiveTab] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortOrder, setSortOrder] = useState('asc'); // Default ascending order (oldest first)
 
   useEffect(() => {
     fetchDeliveries();
-  }, [page]);
+  }, [page, activeTab, statusFilter, sortOrder]);
 
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?page=${page}&limit=10`, {
+      
+      // Build query parameters - always sort by deliveryDate with specified order
+      let queryParams = `page=${page}&limit=10&sortOrder=${sortOrder}`;
+      
+      // Apply status filter based on active tab
+      if (activeTab === 'pending') {
+        queryParams += '&status=pending';
+      } else if (activeTab === 'delivered') {
+        queryParams += '&status=delivered';
+      } else if (statusFilter !== 'all') {
+        queryParams += `&status=${statusFilter}`;
+      }
+
+      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -88,7 +108,7 @@ const CustomerDeliveryHistory = () => {
       out_for_delivery: 'adm-status-out_for_delivery',
       delivered: 'adm-status-delivered',
       failed: 'adm-status-failed',
-      cancelled: 'adm-status-pending'
+      cancelled: 'adm-status-cancelled'
     };
     return `adm-status-chip ${statusMap[status] || 'adm-status-pending'}`;
   };
@@ -107,6 +127,25 @@ const CustomerDeliveryHistory = () => {
     setPage(newPage);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setPage(1); // Reset to first page when changing tabs
+    // Reset status filter when changing to specific tabs
+    if (tab === 'all') {
+      setStatusFilter('all');
+    }
+  };
+
+  const handleStatusFilterChange = (status) => {
+    setStatusFilter(status);
+    setPage(1); // Reset to first page when changing filters
+  };
+
+  const handleSortOrderChange = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setPage(1); // Reset to first page when changing sort order
+  };
+
   if (loading) {
     return (
       <div className="adm-customer-delivery">
@@ -121,6 +160,63 @@ const CustomerDeliveryHistory = () => {
     <div className="adm-customer-delivery">
       <div className="adm-customer-header">
         <h1 className="adm-customer-title">My Delivery Schedules</h1>
+        
+        {/* Tabs */}
+        <div className="adm-tabs">
+          <button 
+            className={`adm-tab ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => handleTabChange('all')}
+          >
+            All Deliveries
+          </button>
+          <button 
+            className={`adm-tab ${activeTab === 'pending' ? 'active' : ''}`}
+            onClick={() => handleTabChange('pending')}
+          >
+            Pending Deliveries
+          </button>
+          <button 
+            className={`adm-tab ${activeTab === 'delivered' ? 'active' : ''}`}
+            onClick={() => handleTabChange('delivered')}
+          >
+            Delivered
+          </button>
+        </div>
+
+        {/* Filters and Sorting */}
+        <div className="adm-controls">
+          {/* Status Filter (only show in "All Deliveries" tab) */}
+          {activeTab === 'all' && (
+            <div className="adm-filter-group">
+              <FaFilter className="adm-control-icon" />
+              <select 
+                className="adm-filter-select"
+                value={statusFilter}
+                onChange={(e) => handleStatusFilterChange(e.target.value)}
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="assigned">Assigned</option>
+                <option value="accepted">Accepted</option>
+                <option value="out_for_delivery">Out for Delivery</option>
+                <option value="delivered">Delivered</option>
+                <option value="failed">Failed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          )}
+
+          {/* Sort Order */}
+          <div className="adm-sort-group">
+            <FaSort className="adm-control-icon" />
+            <button 
+              className="adm-sort-btn"
+              onClick={handleSortOrderChange}
+            >
+              {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="adm-deliveries-list">
@@ -138,8 +234,13 @@ const CustomerDeliveryHistory = () => {
 
               <div className="adm-plan-info">
                 <div className="adm-plan-name">
-                  {delivery.planDetails.planName} - {delivery.planDetails.size}
+                  {delivery.subscriptionId?.planName || 'N/A'} - {delivery.subscriptionId?.size || 'N/A'}
                 </div>
+                {delivery.subscriptionId?.frequency && (
+                  <div className="adm-plan-frequency">
+                    Frequency: {delivery.subscriptionId.frequency}
+                  </div>
+                )}
               </div>
 
               <div className="adm-delivery-details">
@@ -240,8 +341,14 @@ const CustomerDeliveryHistory = () => {
 
         {deliveries.length === 0 && (
           <div className="adm-empty-state">
-            <h3>No delivery history found</h3>
-            <p>You don't have any delivery records yet.</p>
+            <h3>No deliveries found</h3>
+            <p>
+              {activeTab === 'pending' 
+                ? "You don't have any pending deliveries."
+                : activeTab === 'delivered'
+                ? "You don't have any delivered orders."
+                : "You don't have any delivery records for the selected filter."}
+            </p>
           </div>
         )}
       </div>
@@ -250,7 +357,9 @@ const CustomerDeliveryHistory = () => {
       {totalPages > 1 && (
         <div className="adm-pagination">
           <div className="adm-pagination-info">
-            Page {page} of {totalPages}
+            Page {page} of {totalPages} • 
+            Showing {deliveries.length} deliveries • 
+            Sorted: {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
           </div>
           <div className="adm-pagination-buttons">
             <button
@@ -296,7 +405,7 @@ const CustomerDeliveryHistory = () => {
             </div>
             <div className="adm-dialog-content">
               <p style={{ marginBottom: '1rem', color: '#7f8c8d' }}>
-                Please confirm that you have received your {selectedDelivery?.planDetails.planName} delivery.
+                Please confirm that you have received your {selectedDelivery?.subscriptionId?.planName} delivery.
               </p>
               <div className="adm-form-group">
                 <label className="adm-form-label">Delivery Notes (Optional)</label>

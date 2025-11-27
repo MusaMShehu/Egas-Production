@@ -1,21 +1,19 @@
-/* src/components/Services/Services.css */
 /* Services Page Specific Styles */
-.page-hero {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
-  background-size: cover;
-  background-position: center;
-  color: white;
+.service-page-hero {
+  background: #05e6ea;
+  color: #2c3e50;
+  border-radius: 10px;
   text-align: center;
-  padding: 5rem 2rem;
-  margin-bottom: 3rem;
+  padding: 2rem 2rem;
+  margin: 1rem;
 }
 
-.page-hero h2 {
+.service-page-hero h2 {
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
 }
 
-.page-hero p {
+.service-page-hero p {
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto;

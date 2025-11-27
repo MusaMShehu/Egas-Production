@@ -6,7 +6,8 @@
   background-position: center;
   color: white;
   text-align: center;
-  padding: 6rem 2rem;
+  padding: 9rem 2rem;
+  top: 0;
 }
 
 .hero h2 {
@@ -24,6 +25,7 @@
   max-width: 700px;
   margin: 0 auto 2rem;
   font-size: 1.1rem;
+  text-align: justify;
 }
 
 .hero button {
@@ -44,22 +46,29 @@
 
 /* Opportunities Section */
 .opportunities {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 0 2rem;
+  width: 100vw;
+  height: 400px;
+  /* margin: 4rem auto; */
+  padding: 2rem;
   text-align: center;
+  background: #033482e7;
+  
 }
 
 .opportunities h3 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: #009356;
+  /* color: #2c3e50; */
 }
 
 .opportunities p {
   max-width: 800px;
   margin: 0 auto 2rem;
-  color: #555;
+  padding: 1.5rem;
+  text-align: justify;
+  color: #009356;
+  /* color: #555; */
 }
 
 .learn-more{
@@ -83,9 +92,10 @@
 
 /* Quick Links Section */
 .quick-links {
-  max-width: 1200px;
-  margin: 4rem auto;
-  padding: 0 2rem;
+  max-width: 100vw;
+  /* margin: 1rem auto; */
+  padding: 0 1.5rem;
+  background-color: #D5D2C7;
 }
 
 .quick-links h4 {
@@ -99,6 +109,7 @@
   text-align: center;
   max-width: 800px;
   margin: 0 auto 2rem;
+  text-align: justify;
   color: #555;
 }
 
@@ -139,7 +150,7 @@
 
 @media (max-width: 992px){
   .hero {
-    padding: 4rem 1.5rem;
+    padding: 6rem 1.5rem 3rem 1.5rem;
   }
 
   .hero h2 {
@@ -168,4 +179,21 @@
   .opportunities button {
     padding: 0.7rem 1.5rem;
   }
+
+  .opportunities {
+  height: 400px;
+  padding: 1rem; 
+}
+
+.opportunities h3 {
+  font-size: 1.42rem;
+  margin-bottom: 1.5rem;
+}
+
+.opportunities p {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  padding: 1rem; 
+}
+
 }

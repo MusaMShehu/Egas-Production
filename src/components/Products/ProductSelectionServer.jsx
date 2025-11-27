@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaShoppingCart, FaFilter, FaSortAmountDown, FaExclamationTriangle } from 'react-icons/fa';
-import { productAPI } from '../../api/ProductApi';
+import { productAPI } from '../../api/UserProductApi';
 import cartAPI from '../../api/cartApi';
 import './ProductSelection.css';
 
@@ -23,24 +23,34 @@ const ProductSelection = () => {
   // ✅ Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  try {
+    setLoading(true);
+    setError(null);
 
-        const productsData = await productAPI.getAllProducts({ isActive: true });
-        const items = Array.isArray(productsData)
-          ? productsData
-          : productsData?.data || [];
+    const response = await productAPI.getAllProducts({ isActive: true });
+    
+    // Handle different response structures
+    let items = [];
+    if (Array.isArray(response)) {
+      items = response;
+    } else if (response && Array.isArray(response.data)) {
+      items = response.data;
+    } else if (response && response.data && Array.isArray(response.data.products)) {
+      items = response.data.products;
+    } else {
+      console.warn('Unexpected API response structure:', response);
+      items = [];
+    }
 
-        setProducts(items);
-        setFilteredProducts(items);
-      } catch (err) {
-        console.error('Failed to fetch products:', err);
-        setError('Failed to load products. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    setProducts(items);
+    setFilteredProducts(items);
+  } catch (err) {
+    console.error('Failed to fetch products:', err);
+    setError('Failed to load products. Please try again later.');
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchProducts();
   }, []);

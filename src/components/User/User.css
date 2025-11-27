@@ -26,14 +26,12 @@
 html, body {
   height: 100%;
   margin: 0;
-background: linear-gradient(
+/* background: linear-gradient(
   to bottom right,
   var(--turquoise-lightest),
   var(--turquoise-base),
   var(--blue-base-light)
-);
-
-
+); */
 
 }
 
