@@ -53,7 +53,7 @@
 /* Breadcrumb */
 .safety-breadcrumb {
   background: white;
-  padding: 1rem 0;
+  padding: 1rem;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -77,7 +77,7 @@
 }
 
 .safety-current-page {
-  color: #2c5530;
+  color:#2c3e50 ;
   font-weight: 600;
 }
 
@@ -88,13 +88,13 @@
 /* Safety Overview */
 .safety-overview {
   background: white;
-  padding: 4rem 0;
+  padding: 1rem 0;
   text-align: center;
 }
 
 .safety-overview-content h2 {
   font-size: 2.5rem;
-  color: #2c5530;
+  color: #2c3e50;
   margin-bottom: 1.5rem;
 }
 
@@ -110,8 +110,8 @@
 .safety-section-title {
   text-align: center;
   font-size: 2.5rem;
-  color: #2c5530;
-  margin-bottom: 3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -121,7 +121,7 @@
 
 /* Main Guidelines */
 .safety-main-guidelines {
-  padding: 4rem 0;
+  padding: 1rem 0;
   background: #f8f9fa;
 }
 
@@ -168,7 +168,7 @@
 
 .safety-content h3 {
   font-size: 1.5rem;
-  color: #2c5530;
+  color: #2d4864;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -176,7 +176,7 @@
 }
 
 .safety-icon {
-  color: #4a7c59;
+  color: #2d4864;
   font-size: 1.3rem;
 }
 
@@ -203,7 +203,7 @@
 
 /* Do's and Don'ts */
 .safety-dos-donts-section {
-  padding: 4rem 0;
+  padding: 1.5rem 0;
   background: white;
 }
 
@@ -269,7 +269,7 @@
 
 /* Emergency Section */
 .safety-emergency-section {
-  padding: 4rem 0;
+  padding: 1.5rem 0;
   background: #fff3cd;
   border-top: 3px solid #ffc107;
   border-bottom: 3px solid #ffc107;
@@ -367,7 +367,7 @@
 
 /* FAQ Section */
 .safety-faq-section {
-  padding: 4rem 0;
+  padding: 1.5rem 0;
   background: #f8f9fa;
 }
 
@@ -393,7 +393,7 @@
   text-align: left;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c5530;
+  color: #2d4864;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -406,7 +406,7 @@
 }
 
 .safety-faq-arrow {
-  color: #4a7c59;
+  color: #2d4864;
   font-size: 0.9rem;
   transition: transform 0.3s ease;
 }
@@ -435,14 +435,14 @@
 
 /* CTA Section */
 .safety-cta-section {
-  padding: 4rem 0;
-  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+  padding: 2rem 0;
+  background: linear-gradient(135deg, #316786 0%, #3089a7 100%);
   color: white;
   text-align: center;
 }
 
 .safety-cta-content h2 {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   margin-bottom: 1.5rem;
 }
 
@@ -474,12 +474,14 @@
 }
 
 .safety-primary {
-  background: #ffc107;
-  color: #856404;
+  /* background: #2c3e50; */
+  color: #fff;
+  border: 2px solid white;
 }
 
 .safety-primary:hover {
-  background: #e0a800;
+  background: #fff;
+  color: #2c3e50;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -492,7 +494,7 @@
 
 .safety-secondary:hover {
   background: white;
-  color: #2c5530;
+  color: #2c3e50;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -511,6 +513,10 @@
     font-size: 2rem;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .safety-overview-content h2{
+    font-size: 1.8rem;
   }
   
   .safety-grid {
@@ -556,10 +562,6 @@
 @media (max-width: 480px) {
   .safety-container {
     padding: 0 15px;
-  }
-  
-  .safety-page-header {
-    padding: 60px 15px 40px;
   }
   
   .safety-header-content h1 {

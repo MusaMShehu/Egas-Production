@@ -11,7 +11,7 @@ const DeliveryTeam = () => {
       name: "Abubakar Abdulhamid",
       role: "Lead Delivery Coordinator",
       description: "With over 8 years of experience, Abubakar ensures all deliveries are efficiently routed and completed on time.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      image: "/images/ceo.jpg",
       certifications: ["HSE Certified", "Logistics Management", "First Aid Trained"],
       experience: "8 years"
     },
@@ -20,7 +20,7 @@ const DeliveryTeam = () => {
       name: "Aminu Ali",
       role: "Safety Officer",
       description: "Aminu ensures all safety protocols are followed during delivery and handling of gas cylinders.",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80",
+      image: "/images/ceo_2.jpg",
       certifications: ["OSHA Certified", "Safety Management", "Emergency Response"],
       experience: "6 years"
     },
@@ -29,7 +29,7 @@ const DeliveryTeam = () => {
       name: "Zakariyya Abdullahi",
       role: "Senior Delivery Driver",
       description: "Zakariyya has been with e-GAS for 2 years and knows the city routes like the back of his hand.",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      image: "/images/ceo_3.jpg",
       certifications: ["Defensive Driving", "Hazardous Materials", "Vehicle Maintenance"],
       experience: "2 years"
     },
@@ -38,7 +38,7 @@ const DeliveryTeam = () => {
       name: "Hauwa Mohammed",
       role: "Customer Relations Specialist",
       description: "Hauwa ensures customers are satisfied with their delivery experience and handles any special requests.",
-      image: "https://images.unsplash.com/photo-1614289371518-722f2615943d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      image: "/images/ceo.jpg",
       certifications: ["Customer Service Excellence", "Conflict Resolution", "CRM Specialist"],
       experience: "4 years"
     }
@@ -263,7 +263,7 @@ const DeliveryTeam = () => {
             </div>
           </div>
           <div className="del-team-safety-image">
-            <img src="https://images.unsplash.com/photo-1581093450332-63b830d2671c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Safety Procedures" />
+            <img src="https://media.istockphoto.com/id/1470790295/photo/propane-gas-cylinder-for-bbq-grill-grilling-safety-lpg-equipment-inspection-and-storage.jpg?s=612x612&w=0&k=20&c=ZLUeDvJi_glZsFQJFDaNdEn7-cvdWVV1HABYerzkIpU=" alt="Safety Procedures" />
           </div>
         </div>
       </section>

@@ -9,7 +9,8 @@ import {
   FaClock,
   FaTruck,
   FaFilter,
-  FaSort
+  FaSort,
+  FaCalendarAlt
 } from 'react-icons/fa';
 import './CustomerDeliveryHistory.css';
 
@@ -23,29 +24,49 @@ const CustomerDeliveryHistory = () => {
   const [confirmationNotes, setConfirmationNotes] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   
-  // New state for tabs, filtering and sorting
-  const [activeTab, setActiveTab] = useState('all');
+  // State for tabs, filtering and sorting
+  const [activeTab, setActiveTab] = useState('upcoming'); // upcoming, delivered, past-pending
   const [statusFilter, setStatusFilter] = useState('all');
-  const [sortOrder, setSortOrder] = useState('asc'); // Default ascending order (oldest first)
+  const [dateFilter, setDateFilter] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc'); // asc for chronological (nearest first)
 
   useEffect(() => {
     fetchDeliveries();
-  }, [page, activeTab, statusFilter, sortOrder]);
+  }, [page, activeTab, statusFilter, dateFilter, sortOrder]);
 
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
       
-      // Build query parameters - always sort by deliveryDate with specified order
-      let queryParams = `page=${page}&limit=10&sortOrder=${sortOrder}`;
+      // Build query parameters
+      let queryParams = `page=${page}&limit=10&sortBy=deliveryDate&sortOrder=${sortOrder}`;
       
-      // Apply status filter based on active tab
-      if (activeTab === 'pending') {
-        queryParams += '&status=pending';
-      } else if (activeTab === 'delivered') {
-        queryParams += '&status=delivered';
-      } else if (statusFilter !== 'all') {
+      // Apply filters based on active tab
+      switch (activeTab) {
+        case 'upcoming':
+          // Show deliveries from today onwards
+          queryParams += '&deliveryDate=' + new Date().toISOString().split('T')[0];
+          break;
+        case 'delivered':
+          queryParams += '&status=delivered';
+          break;
+        case 'past-pending':
+          // Show past deliveries that are not delivered
+          const today = new Date().toISOString().split('T')[0];
+          queryParams += `&deliveryDate=${today}&status=pending,assigned,accepted,out_for_delivery,failed,cancelled`;
+          break;
+        default:
+          break;
+      }
+
+      // Apply additional status filter if not in specific tabs
+      if (activeTab !== 'delivered' && statusFilter !== 'all') {
         queryParams += `&status=${statusFilter}`;
+      }
+
+      // Apply date filter if selected
+      if (dateFilter) {
+        queryParams += `&deliveryDate=${dateFilter}`;
       }
 
       const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?${queryParams}`, {
@@ -123,27 +144,72 @@ const CustomerDeliveryHistory = () => {
     });
   };
 
+  const formatDateForInput = (dateString) => {
+    return new Date(dateString).toISOString().split('T')[0];
+  };
+
+  const isDeliveryUpcoming = (deliveryDate) => {
+    return new Date(deliveryDate) >= new Date();
+  };
+
+  const isDeliveryPast = (deliveryDate) => {
+    return new Date(deliveryDate) < new Date();
+  };
+
+  const getDeliveryTimeContext = (delivery) => {
+    const now = new Date();
+    const deliveryDate = new Date(delivery.deliveryDate);
+    const timeDiff = deliveryDate - now;
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (delivery.status === 'delivered') {
+      return { type: 'delivered', text: `Delivered on ${formatDate(delivery.deliveredAt || delivery.deliveryDate)}` };
+    } else if (daysDiff === 0) {
+      return { type: 'today', text: 'Today' };
+    } else if (daysDiff === 1) {
+      return { type: 'tomorrow', text: 'Tomorrow' };
+    } else if (daysDiff > 1 && daysDiff <= 7) {
+      return { type: 'this-week', text: `In ${daysDiff} days` };
+    } else if (daysDiff > 7) {
+      return { type: 'future', text: `On ${formatDate(delivery.deliveryDate)}` };
+    } else if (daysDiff < 0) {
+      return { type: 'past', text: `${Math.abs(daysDiff)} days ago` };
+    }
+
+    return { type: 'scheduled', text: formatDate(delivery.deliveryDate) };
+  };
+
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setPage(1); // Reset to first page when changing tabs
-    // Reset status filter when changing to specific tabs
-    if (tab === 'all') {
-      setStatusFilter('all');
-    }
+    setPage(1);
+    // Reset filters when changing tabs
+    setStatusFilter('all');
+    setDateFilter('');
   };
 
   const handleStatusFilterChange = (status) => {
     setStatusFilter(status);
-    setPage(1); // Reset to first page when changing filters
+    setPage(1);
+  };
+
+  const handleDateFilterChange = (date) => {
+    setDateFilter(date);
+    setPage(1);
   };
 
   const handleSortOrderChange = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    setPage(1); // Reset to first page when changing sort order
+    setPage(1);
+  };
+
+  const clearFilters = () => {
+    setStatusFilter('all');
+    setDateFilter('');
+    setPage(1);
   };
 
   if (loading) {
@@ -159,21 +225,15 @@ const CustomerDeliveryHistory = () => {
   return (
     <div className="adm-customer-delivery">
       <div className="adm-customer-header">
-        <h1 className="adm-customer-title">My Delivery Schedules</h1>
+        <h1 className="adm-customer-title">My Delivery Schedule</h1>
         
         {/* Tabs */}
         <div className="adm-tabs">
           <button 
-            className={`adm-tab ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => handleTabChange('all')}
+            className={`adm-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
+            onClick={() => handleTabChange('upcoming')}
           >
-            All Deliveries
-          </button>
-          <button 
-            className={`adm-tab ${activeTab === 'pending' ? 'active' : ''}`}
-            onClick={() => handleTabChange('pending')}
-          >
-            Pending Deliveries
+            Upcoming Deliveries
           </button>
           <button 
             className={`adm-tab ${activeTab === 'delivered' ? 'active' : ''}`}
@@ -181,12 +241,29 @@ const CustomerDeliveryHistory = () => {
           >
             Delivered
           </button>
+          <button 
+            className={`adm-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
+            onClick={() => handleTabChange('past-pending')}
+          >
+            Past Pending
+          </button>
         </div>
 
         {/* Filters and Sorting */}
         <div className="adm-controls">
-          {/* Status Filter (only show in "All Deliveries" tab) */}
-          {activeTab === 'all' && (
+          {/* Date Filter */}
+          <div className="adm-filter-group">
+            <FaCalendarAlt className="adm-control-icon" />
+            <input
+              type="date"
+              className="adm-filter-input"
+              value={dateFilter}
+              onChange={(e) => handleDateFilterChange(e.target.value)}
+            />
+          </div>
+
+          {/* Status Filter (only show in "upcoming" and "past-pending" tabs) */}
+          {(activeTab === 'upcoming' || activeTab === 'past-pending') && (
             <div className="adm-filter-group">
               <FaFilter className="adm-control-icon" />
               <select 
@@ -199,7 +276,6 @@ const CustomerDeliveryHistory = () => {
                 <option value="assigned">Assigned</option>
                 <option value="accepted">Accepted</option>
                 <option value="out_for_delivery">Out for Delivery</option>
-                <option value="delivered">Delivered</option>
                 <option value="failed">Failed</option>
                 <option value="cancelled">Cancelled</option>
               </select>
@@ -213,142 +289,165 @@ const CustomerDeliveryHistory = () => {
               className="adm-sort-btn"
               onClick={handleSortOrderChange}
             >
-              {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+              {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
             </button>
           </div>
+
+          {/* Clear Filters */}
+          {(statusFilter !== 'all' || dateFilter) && (
+            <button className="adm-clear-filters" onClick={clearFilters}>
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
 
       <div className="adm-deliveries-list">
-        {deliveries.map((delivery) => (
-          <div key={delivery._id} className="adm-delivery-card">
-            <div className="adm-card-content">
-              <div className="adm-card-header">
-                <span className={getStatusClass(delivery.status)}>
-                  {delivery.status.replace(/_/g, ' ').toUpperCase()}
-                </span>
-                <span className="adm-delivery-date">
-                  {formatDate(delivery.deliveryDate)}
-                </span>
-              </div>
-
-              <div className="adm-plan-info">
-                <div className="adm-plan-name">
-                  {delivery.subscriptionId?.planName || 'N/A'} - {delivery.subscriptionId?.size || 'N/A'}
-                </div>
-                {delivery.subscriptionId?.frequency && (
-                  <div className="adm-plan-frequency">
-                    Frequency: {delivery.subscriptionId.frequency}
-                  </div>
-                )}
-              </div>
-
-              <div className="adm-delivery-details">
-                <div className="adm-detail-item">
-                  <FaMapMarkerAlt className="adm-icon" />
-                  <div className="adm-detail-text">
-                    {delivery.address}
-                  </div>
+        {deliveries.map((delivery) => {
+          const timeContext = getDeliveryTimeContext(delivery);
+          
+          return (
+            <div key={delivery._id} className="adm-delivery-card">
+              <div className="adm-card-content">
+                {/* Delivery Time Context Badge */}
+                <div className={`adm-time-context adm-time-${timeContext.type}`}>
+                  {timeContext.text}
                 </div>
 
-                {delivery.deliveryAgent && (
-                  <div className="adm-agent-info">
-                    <div className="adm-detail-item">
-                      <FaUser className="adm-icon" />
-                      <div className="adm-detail-text">
-                        <span className="adm-detail-label">Delivery Agent:</span>{' '}
-                        {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
-                      </div>
-                    </div>
-                    {delivery.deliveryAgent.phone && (
-                      <div className="adm-detail-item">
-                        <FaPhone className="adm-icon" />
-                        <div className="adm-detail-text">
-                          <span className="adm-detail-label">Phone:</span>{' '}
-                          {delivery.deliveryAgent.phone}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="adm-card-header">
+                  <span className={getStatusClass(delivery.status)}>
+                    {delivery.status.replace(/_/g, ' ').toUpperCase()}
+                  </span>
+                  <span className="adm-delivery-date">
+                    Scheduled: {formatDate(delivery.deliveryDate)}
+                  </span>
+                </div>
 
-                {delivery.deliveredAt && (
-                  <div className="adm-detail-item">
-                    <FaTruck className="adm-icon" />
-                    <div className="adm-detail-text">
-                      <span className="adm-detail-label">Delivered:</span>{' '}
-                      {formatDate(delivery.deliveredAt)}
-                    </div>
+                <div className="adm-plan-info">
+                  <div className="adm-plan-name">
+                    {delivery.subscriptionId?.planName || 'N/A'} - {delivery.subscriptionId?.size || 'N/A'}
                   </div>
-                )}
-
-                {delivery.agentNotes && (
-                  <div className="adm-detail-item">
-                    <FaClock className="adm-icon" />
-                    <div className="adm-detail-text">
-                      <span className="adm-detail-label">Agent Notes:</span>{' '}
-                      {delivery.agentNotes}
-                    </div>
-                  </div>
-                )}
-
-                {delivery.failedReason && (
-                  <div className="adm-status-message adm-message-error">
-                    <div><strong>Failure Reason:</strong> {delivery.failedReason}</div>
-                  </div>
-                )}
-
-                {delivery.customerConfirmation?.confirmed && (
-                  <div className="adm-status-message adm-message-confirmed">
-                    <div>
-                      <FaCheckCircle className="adm-icon" />
-                      <strong> Confirmed by you on:</strong> {formatDate(delivery.customerConfirmation.confirmedAt)}
-                    </div>
-                    {delivery.customerConfirmation.customerNotes && (
-                      <div style={{ marginTop: '0.5rem' }}>
-                        <strong>Your Notes:</strong> {delivery.customerConfirmation.customerNotes}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="adm-card-footer">
-                <div className="adm-delivery-meta">
-                  {delivery.retryCount > 0 && (
-                    <div style={{ color: '#f39c12', fontSize: '0.9rem' }}>
-                      Retry attempt: {delivery.retryCount}
+                  {delivery.subscriptionId?.frequency && (
+                    <div className="adm-plan-frequency">
+                      Frequency: {delivery.subscriptionId.frequency}
                     </div>
                   )}
                 </div>
-                
-                {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
-                  <button
-                    className="adm-btn adm-btn-success"
-                    onClick={() => {
-                      setSelectedDelivery(delivery);
-                      setConfirmDialogOpen(true);
-                    }}
-                  >
-                    <FaCheckCircle className="adm-icon" />
-                    Confirm Delivery
-                  </button>
-                )}
+
+                <div className="adm-delivery-details">
+                  <div className="adm-detail-item">
+                    <FaMapMarkerAlt className="adm-icon" />
+                    <div className="adm-detail-text">
+                      {delivery.address}
+                    </div>
+                  </div>
+
+                  {delivery.deliveryAgent && (
+                    <div className="adm-agent-info">
+                      <div className="adm-detail-item">
+                        <FaUser className="adm-icon" />
+                        <div className="adm-detail-text">
+                          <span className="adm-detail-label">Delivery Agent:</span>{' '}
+                          {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
+                        </div>
+                      </div>
+                      {delivery.deliveryAgent.phone && (
+                        <div className="adm-detail-item">
+                          <FaPhone className="adm-icon" />
+                          <div className="adm-detail-text">
+                            <span className="adm-detail-label">Phone:</span>{' '}
+                            {delivery.deliveryAgent.phone}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {delivery.deliveredAt && (
+                    <div className="adm-detail-item">
+                      <FaTruck className="adm-icon" />
+                      <div className="adm-detail-text">
+                        <span className="adm-detail-label">Delivered:</span>{' '}
+                        {formatDate(delivery.deliveredAt)}
+                      </div>
+                    </div>
+                  )}
+
+                  {delivery.agentNotes && (
+                    <div className="adm-detail-item">
+                      <FaClock className="adm-icon" />
+                      <div className="adm-detail-text">
+                        <span className="adm-detail-label">Agent Notes:</span>{' '}
+                        {delivery.agentNotes}
+                      </div>
+                    </div>
+                  )}
+
+                  {delivery.failedReason && (
+                    <div className="adm-status-message adm-message-error">
+                      <div><strong>Failure Reason:</strong> {delivery.failedReason}</div>
+                    </div>
+                  )}
+
+                  {delivery.customerConfirmation?.confirmed && (
+                    <div className="adm-status-message adm-message-confirmed">
+                      <div>
+                        <FaCheckCircle className="adm-icon" />
+                        <strong> Confirmed by you on:</strong> {formatDate(delivery.customerConfirmation.confirmedAt)}
+                      </div>
+                      {delivery.customerConfirmation.customerNotes && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <strong>Your Notes:</strong> {delivery.customerConfirmation.customerNotes}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="adm-card-footer">
+                  <div className="adm-delivery-meta">
+                    {delivery.retryCount > 0 && (
+                      <div style={{ color: '#f39c12', fontSize: '0.9rem' }}>
+                        Retry attempt: {delivery.retryCount}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
+                    <button
+                      className="adm-btn adm-btn-success"
+                      onClick={() => {
+                        setSelectedDelivery(delivery);
+                        setConfirmDialogOpen(true);
+                      }}
+                    >
+                      <FaCheckCircle className="adm-icon" />
+                      Confirm Delivery
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {deliveries.length === 0 && (
           <div className="adm-empty-state">
             <h3>No deliveries found</h3>
             <p>
-              {activeTab === 'pending' 
-                ? "You don't have any pending deliveries."
+              {activeTab === 'upcoming' 
+                ? "You don't have any upcoming deliveries scheduled."
                 : activeTab === 'delivered'
                 ? "You don't have any delivered orders."
+                : activeTab === 'past-pending'
+                ? "You don't have any past pending deliveries."
                 : "You don't have any delivery records for the selected filter."}
             </p>
+            {(statusFilter !== 'all' || dateFilter) && (
+              <button className="adm-btn adm-btn-outline" onClick={clearFilters}>
+                Clear Filters
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -359,7 +458,9 @@ const CustomerDeliveryHistory = () => {
           <div className="adm-pagination-info">
             Page {page} of {totalPages} • 
             Showing {deliveries.length} deliveries • 
-            Sorted: {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+            Sorted: {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
+            {dateFilter && ` • Date: ${dateFilter}`}
+            {statusFilter !== 'all' && ` • Status: ${statusFilter}`}
           </div>
           <div className="adm-pagination-buttons">
             <button

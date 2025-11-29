@@ -18,12 +18,12 @@
   background-attachment: fixed;
   color: white;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 5rem 0.8rem 3rem 0.8rem;
   margin-bottom: 2rem;
 }
 
 .pro-list-hero h2 {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   margin-bottom: 1.5rem;
   font-weight: 700;
   line-height: 1.2;
@@ -521,6 +521,7 @@
   .pro-list-hero-content p {
     text-align: justify;
   }
+  
 }
 
 /* Medium devices (tablets, 768px and up) */
