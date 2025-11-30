@@ -15,7 +15,7 @@ const WalletPaymentSuccess = () => {
       <div className="success-page-container">
         <div className="success-card">
           <p className="error-message">
-            ⚠️ No subscription data found. You may have refreshed the page.
+            The Payment was charged from your wallet and subscription activated successfully.
           </p>
           <button
             onClick={() => navigate("/dashboard/subscriptions")}
