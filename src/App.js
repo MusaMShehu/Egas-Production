@@ -52,6 +52,8 @@ import VerifyOrder from "./components/Products/verifyOrder";
 // Subscription Section
 import SubscriptionVerify from './components/Subscription/SubscriptionVerify';
 import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
+import WalletPaymentSuccess from "./components/Subscription/WalletPaymentSuccess";
+
 
 // Subscription and Product Selection Pages from Server
 import ProductSelection from "./components/Products/ProductSelectionServer";
@@ -144,6 +146,7 @@ function App() {
           <Route path="/subscription-Plan" element={<SubscriptionPlans />} />
           <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
           <Route path="/subscriptions/success" element={<SubscriptionSuccess />} />
+          <Route path="/subscriptions/wallet-success" element={<WalletPaymentSuccess />} />
 
 
           <Route path="/auth" element={<AuthPage />} />

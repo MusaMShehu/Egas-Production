@@ -300,23 +300,21 @@ const SubscriptionPlans = () => {
           window.location.href = authorization_url;
         } else if (paymentMethod === "wallet") {
           // Wallet payment successful
-          if (walletBalance !== undefined) {
-            setWalletBalance(walletBalance);
-          }
+if (walletBalance !== undefined) {
+  setWalletBalance(walletBalance);
+}
 
-          // Show success message
-          successToast(
-            message ||
-              `Subscription created successfully! ₦${planData.price.toLocaleString()} deducted from wallet.`
-          );
+// Refresh wallet balance from dashboard
+await fetchWalletBalance();
 
-          // Refresh wallet balance from dashboard
-          await fetchWalletBalance();
+// Redirect to Wallet Payment Success page with subscription data
+navigate("/subscriptions/wallet-success", {
+  state: {
+    subscription: data?.[0] || null, // backend returns created subscription
+    walletBalance: walletBalance,
+  },
+});
 
-          // Redirect to subscriptions page
-          setTimeout(() => {
-            navigate("/subscriptions");
-          }, 1500);
         } else {
           throw new Error("Invalid payment response");
         }
