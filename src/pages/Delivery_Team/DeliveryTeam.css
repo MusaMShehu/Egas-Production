@@ -330,6 +330,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 30px;
   margin-top: 40px;
+  padding: 20px;
 }
 
 .del-team-stat-item {

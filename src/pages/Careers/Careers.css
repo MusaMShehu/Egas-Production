@@ -73,6 +73,18 @@
   margin: 0 auto 3rem;
 }
 
+.recruitment-notice {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 25px;
+  background: #d1dadf;
+  color: #1b1d1e;
+
+}
+
 /* Why Work With Us */
 .benefits-section {
   background-color: #f1f1f1;
@@ -576,5 +588,9 @@ footer {
   .job-meta {
     flex-wrap: wrap;
     margin-top: 1rem;
+  }
+
+  .recruitment-notice{
+    font-size: 1rem;
   }
 }

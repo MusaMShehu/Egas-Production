@@ -70,98 +70,98 @@ const Careers = () => {
 
   // Job data
   const jobs = [
-    {
-      id: 1,
-      title: "Logistics Coordinator",
-      category: "operations",
-      location: "Lagos",
-      type: "Full-time",
-      posted: "2 days ago",
-      description: "We're looking for a Logistics Coordinator to optimize our delivery routes, manage driver schedules, and ensure efficient operations across our service areas.",
-      requirements: [
-        "Bachelor's degree in Logistics, Supply Chain, or related field",
-        "3+ years experience in logistics or operations coordination",
-        "Strong analytical and problem-solving skills",
-        "Proficiency with logistics software and GPS systems",
-        "Excellent communication and organizational skills"
-      ],
-      responsibilities: [
-        "Plan and optimize daily delivery routes",
-        "Coordinate with drivers and field teams",
-        "Monitor delivery performance and efficiency",
-        "Handle logistics challenges and resolve issues",
-        "Maintain accurate records and reports"
-      ]
-    },
-    {
-      id: 2,
-      title: "Frontend Developer",
-      category: "technology",
-      location: "Remote",
-      type: "Full-time",
-      posted: "5 days ago",
-      description: "Join our tech team to build and maintain customer-facing applications that make gas delivery seamless and intuitive for our users.",
-      requirements: [
-        "3+ years experience in frontend development",
-        "Proficiency in HTML, CSS, JavaScript, and React",
-        "Experience with responsive design and cross-browser compatibility",
-        "Familiarity with RESTful APIs and modern frontend tools",
-        "Strong UI/UX sensibilities"
-      ],
-      responsibilities: [
-        "Develop and maintain customer-facing web applications",
-        "Collaborate with UX designers and backend developers",
-        "Implement responsive designs for mobile and desktop",
-        "Write clean, maintainable, and efficient code",
-        "Participate in code reviews and team meetings"
-      ]
-    },
-    {
-      id: 3,
-      title: "Customer Success Manager",
-      category: "customer-service",
-      location: "Abuja",
-      type: "Full-time",
-      posted: "1 week ago",
-      description: "We're seeking a Customer Success Manager to build strong relationships with our clients, ensure their satisfaction, and help them get the most value from our services.",
-      requirements: [
-        "Bachelor's degree in Business, Communications, or related field",
-        "2+ years experience in customer success or account management",
-        "Excellent communication and interpersonal skills",
-        "Problem-solving attitude with customer-centric approach",
-        "Experience with CRM software"
-      ],
-      responsibilities: [
-        "Build and maintain strong client relationships",
-        "Address customer inquiries and resolve issues",
-        "Onboard new customers and educate them on our services",
-        "Gather customer feedback and share with internal teams",
-        "Identify opportunities for account growth"
-      ]
-    },
-    {
-      id: 4,
-      title: "Business Development Executive",
-      category: "business",
-      location: "Port Harcourt",
-      type: "Full-time",
-      posted: "3 days ago",
-      description: "Join our growth team to identify new business opportunities, build partnerships, and expand our market presence in the region.",
-      requirements: [
-        "Bachelor's degree in Business, Marketing, or related field",
-        "3+ years experience in business development or sales",
-        "Proven track record of meeting or exceeding targets",
-        "Strong negotiation and presentation skills",
-        "Knowledge of the local market and energy sector"
-      ],
-      responsibilities: [
-        "Identify and pursue new business opportunities",
-        "Build and maintain relationships with potential clients",
-        "Develop and implement growth strategies",
-        "Prepare and deliver business proposals",
-        "Collaborate with marketing and operations teams"
-      ]
-    }
+    // {
+    //   id: 1,
+    //   title: "Logistics Coordinator",
+    //   category: "operations",
+    //   location: "Lagos",
+    //   type: "Full-time",
+    //   posted: "2 days ago",
+    //   description: "We're looking for a Logistics Coordinator to optimize our delivery routes, manage driver schedules, and ensure efficient operations across our service areas.",
+    //   requirements: [
+    //     "Bachelor's degree in Logistics, Supply Chain, or related field",
+    //     "3+ years experience in logistics or operations coordination",
+    //     "Strong analytical and problem-solving skills",
+    //     "Proficiency with logistics software and GPS systems",
+    //     "Excellent communication and organizational skills"
+    //   ],
+    //   responsibilities: [
+    //     "Plan and optimize daily delivery routes",
+    //     "Coordinate with drivers and field teams",
+    //     "Monitor delivery performance and efficiency",
+    //     "Handle logistics challenges and resolve issues",
+    //     "Maintain accurate records and reports"
+    //   ]
+    // },
+    // {
+    //   id: 2,
+    //   title: "Frontend Developer",
+    //   category: "technology",
+    //   location: "Remote",
+    //   type: "Full-time",
+    //   posted: "5 days ago",
+    //   description: "Join our tech team to build and maintain customer-facing applications that make gas delivery seamless and intuitive for our users.",
+    //   requirements: [
+    //     "3+ years experience in frontend development",
+    //     "Proficiency in HTML, CSS, JavaScript, and React",
+    //     "Experience with responsive design and cross-browser compatibility",
+    //     "Familiarity with RESTful APIs and modern frontend tools",
+    //     "Strong UI/UX sensibilities"
+    //   ],
+    //   responsibilities: [
+    //     "Develop and maintain customer-facing web applications",
+    //     "Collaborate with UX designers and backend developers",
+    //     "Implement responsive designs for mobile and desktop",
+    //     "Write clean, maintainable, and efficient code",
+    //     "Participate in code reviews and team meetings"
+    //   ]
+    // },
+    // {
+    //   id: 3,
+    //   title: "Customer Success Manager",
+    //   category: "customer-service",
+    //   location: "Abuja",
+    //   type: "Full-time",
+    //   posted: "1 week ago",
+    //   description: "We're seeking a Customer Success Manager to build strong relationships with our clients, ensure their satisfaction, and help them get the most value from our services.",
+    //   requirements: [
+    //     "Bachelor's degree in Business, Communications, or related field",
+    //     "2+ years experience in customer success or account management",
+    //     "Excellent communication and interpersonal skills",
+    //     "Problem-solving attitude with customer-centric approach",
+    //     "Experience with CRM software"
+    //   ],
+    //   responsibilities: [
+    //     "Build and maintain strong client relationships",
+    //     "Address customer inquiries and resolve issues",
+    //     "Onboard new customers and educate them on our services",
+    //     "Gather customer feedback and share with internal teams",
+    //     "Identify opportunities for account growth"
+    //   ]
+    // },
+    // {
+    //   id: 4,
+    //   title: "Business Development Executive",
+    //   category: "business",
+    //   location: "Port Harcourt",
+    //   type: "Full-time",
+    //   posted: "3 days ago",
+    //   description: "Join our growth team to identify new business opportunities, build partnerships, and expand our market presence in the region.",
+    //   requirements: [
+    //     "Bachelor's degree in Business, Marketing, or related field",
+    //     "3+ years experience in business development or sales",
+    //     "Proven track record of meeting or exceeding targets",
+    //     "Strong negotiation and presentation skills",
+    //     "Knowledge of the local market and energy sector"
+    //   ],
+    //   responsibilities: [
+    //     "Identify and pursue new business opportunities",
+    //     "Build and maintain relationships with potential clients",
+    //     "Develop and implement growth strategies",
+    //     "Prepare and deliver business proposals",
+    //     "Collaborate with marketing and operations teams"
+    //   ]
+    // }
   ];
 
   // Filter jobs based on active filter
@@ -232,6 +232,7 @@ const Careers = () => {
         
         {/* Job Listings */}
         <h2 className="section-title">Current Openings</h2>
+        <p className="recruitment-notice">There is no open position currently, you will be notified if the portal is open for recruitment,  stay tuned for our next recruitment</p>
         
         <div className="job-filters">
           <button 

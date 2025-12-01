@@ -26,6 +26,7 @@ import PricingPlans from './pages/Pricing_Plans/PricingPlans';
 import CustomerTestimonials from './pages/Customer_Testimonials/CustomerTestimonials';
 import FAQ from './pages/FAQ/FAQ';
 import Blog from './pages/blogs/Blog';
+import Article from './pages/blogs/Article';
 import Careers from './pages/Careers/Careers';
 
 import Products from "./components/Products";
@@ -124,6 +125,7 @@ function App() {
             <Route path="customer-testimonials" element={<CustomerTestimonials />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<Article />} />
             <Route path="careers" element={<Careers />} />
 
             <Route path="products" element={<Products />} />

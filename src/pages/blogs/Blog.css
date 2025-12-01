@@ -16,7 +16,7 @@
 
 /* Page Header */
 .blog-page-header {
-  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+  background: linear-gradient(135deg, #24789f 0%, #248aaf 100%);
   color: white;
   padding: 80px 20px 60px;
   text-align: center;
@@ -136,7 +136,7 @@
 
 .blog-featured-image {
   position: relative;
-  height: 250px;
+  height: 300px;
   overflow: hidden;
 }
 

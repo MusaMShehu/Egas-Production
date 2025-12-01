@@ -16,6 +16,7 @@ import {
   FaEnvelope
 } from 'react-icons/fa';
 import './Blog.css';
+import './Bloog.css';
 
 const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +63,7 @@ const Blog = () => {
         <h3>10. Educate Family Members</h3>
         <p>Ensure all household members understand basic gas safety rules and emergency procedures.</p>
       `,
-      image: "https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://media.istockphoto.com/id/2015197442/photo/gas-bottle-passed-safety-inspection-bright-background-with-safe-sticker-and-documents.jpg?s=612x612&w=0&k=20&c=CFnl2YD3jwRuVRPPcziYFnesYsFDDu4KnJBzsYZCjOU=",
       date: "June 15, 2023",
       author: "Safety Expert",
       readTime: "8 min read",
@@ -98,7 +99,7 @@ const Blog = () => {
         <h3>Reliability During Power Outages</h3>
         <p>Gas cooktops continue working during electrical outages, ensuring uninterrupted kitchen operations.</p>
       `,
-      image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://media.istockphoto.com/id/2200065927/photo/professional-chef-cooking-and-stirring-food-in-a-pan-in-a-commercial-kitchen.jpg?s=612x612&w=0&k=20&c=q8g5mHu0t2sc7GyREroEQ35fswKGaDsCQ6gYCWIWjWk=",
       date: "June 8, 2023",
       author: "Chef Adeola",
       readTime: "6 min read",
@@ -134,7 +135,7 @@ const Blog = () => {
         <h3>Batch Cooking Strategy</h3>
         <p>Cook multiple items at once when possible. An already-hot oven or burner uses less energy than starting from cold.</p>
       `,
-      image: "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://media.istockphoto.com/id/2198014033/photo/a-traditional-dutch-clean-domestic-kitchen.jpg?s=612x612&w=0&k=20&c=Ei_lqsW1K9n7WonGU1nr1Yg3mjl8YlY_XjAlt7ETw_4=",
       date: "May 30, 2023",
       author: "Energy Expert",
       readTime: "7 min read",
@@ -174,7 +175,7 @@ const Blog = () => {
         • Unusual noises during operation<br/>
         • Pilot lights that frequently go out</p>
       `,
-      image: "https://images.unsplash.com/photo-1585149553637-5a1d4a8a7c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://media.istockphoto.com/id/1093111438/photo/regulator-for-propane-butane-gas-cylinder-and-accessories-on-a-wooden-workshop-table-gas.jpg?s=612x612&w=0&k=20&c=ZVBEOsj2A6_HH0XfrYqkg6gjgkvADP1bgxI0qMNlCkc=",
       date: "May 22, 2023",
       author: "Technical Team",
       readTime: "10 min read",
@@ -206,7 +207,7 @@ const Blog = () => {
         <h3>Training for Kitchen Staff</h3>
         <p>Comprehensive training on safe gas handling and efficient cooking practices.</p>
       `,
-      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://media.istockphoto.com/id/1063806806/photo/portugal.jpg?s=612x612&w=0&k=20&c=lLIDczr31Dvo0xTjaBSvm7eB-jOq5D2ALa9M1lPjm40=",
       date: "May 15, 2023",
       author: "Business Team",
       readTime: "5 min read",
@@ -238,7 +239,7 @@ const Blog = () => {
         <h3>Transition Fuel</h3>
         <p>As we move toward fully renewable energy systems, LPG serves as an important transition fuel that's cleaner than alternatives.</p>
       `,
-      image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80",
+      image: "https://media.istockphoto.com/id/477395027/photo/eco-gas-tank-concept.jpg?s=612x612&w=0&k=20&c=7bb7Eg8boTwswSPRy7aPDwgW7A2IsHu9Ygg6N2dCA0c=",
       date: "May 5, 2023",
       author: "Environmental Team",
       readTime: "6 min read",

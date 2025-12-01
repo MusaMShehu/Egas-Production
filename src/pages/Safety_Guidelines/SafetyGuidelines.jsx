@@ -66,7 +66,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  src="https://media.istockphoto.com/id/2244698923/photo/lpg-gas-tanks-are-chained-in-place-on-the-side-of-a-house.jpg?s=612x612&w=0&k=20&c=1nQb8EDfRG94W4TeyyRkTlBNicnzXpG35uVVU6vFz9M="
                   alt="Proper LPG cylinder storage"
                   loading="lazy"
                 />
@@ -89,7 +89,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  src="https://media.istockphoto.com/id/1361274122/photo/young-woman-is-preparing-tea-in-the-modern-kitchen-turning-on-an-electric-pot-she-uses-a-tea.jpg?s=612x612&w=0&k=20&c=RKihqHoDH5GgzCcPUA27Wmv83Lr6fQHozHxnzgNLHP4="
                   alt="Safe LPG appliance usage"
                   loading="lazy"
                 />
@@ -112,7 +112,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1615529328331-f8917597711f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  src="https://media.istockphoto.com/id/1332113530/photo/plumber-analyzing-kitchen-sink.jpg?s=612x612&w=0&k=20&c=H_XXpels9b4Mkzmx2Gj-qSL-eBf3eQ7VkL1QIyVAGCU="
                   alt="LPG leak detection methods"
                   loading="lazy"
                 />
@@ -134,7 +134,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  src="https://media.istockphoto.com/id/1016137942/photo/truck-carrying-lpg-bottles-in-pernambuco-brazil.webp?a=1&b=1&s=612x612&w=0&k=20&c=KGfRwEJhdSIPrMvFCAAaQ591U1iY81CbQhs4mYahlYg="
                   alt="Safe LPG cylinder transportation"
                   loading="lazy"
                 />
@@ -156,7 +156,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  src="https://media.istockphoto.com/id/2218688301/photo/mechanic-with-ac-refrigerant-manifold-gauge-set-for-car-air-conditioning-repair-in-workshop.jpg?s=612x612&w=0&k=20&c=5KJqzPtV_dH-kmTQwADMQ1Bfz9hXjX07l_PfUIRNUiM="
                   alt="Proper LPG installation"
                   loading="lazy"
                 />
@@ -178,7 +178,7 @@ const SafetyGuidelines = () => {
             <div className="safety-card">
               <div className="safety-img">
                 <img
-                  src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1460&q=80"
+                  src="https://media.istockphoto.com/id/463428553/photo/cute-little-siblings-baking-together-smiling-at-camera.jpg?s=612x612&w=0&k=20&c=gzUcSjzf3LQvEp4FzlOGfRPYixul9M4vHpep1GRU-7o="
                   alt="Child and pet safety around LPG"
                   loading="lazy"
                 />

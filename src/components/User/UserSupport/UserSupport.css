@@ -749,7 +749,7 @@
 
   .sup-ticket-detail-modal,
   .sup-support-modal-content {
-    margin: 80px 5px 10px 50px;
+    margin: 80px 5px 10px 5px;
     max-height: calc(90vh - 10px);
     width: calc(90% - 10px);
   }

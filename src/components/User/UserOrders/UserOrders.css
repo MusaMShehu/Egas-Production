@@ -19,7 +19,7 @@
 .userorder-dashboard-header h1 {
   color: #2c3e50;
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   text-align: center;
 }
@@ -58,7 +58,7 @@
   background: #0077ff;
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 5px 20px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -66,7 +66,7 @@
   justify-content: center;
   gap: 8px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   transition: all 0.3s ease;
   width: 100%;
   min-height: 44px;
@@ -409,7 +409,7 @@
 
   .userorder-dashboard-header h1 {
     text-align: left;
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .userorder-header-actions {
