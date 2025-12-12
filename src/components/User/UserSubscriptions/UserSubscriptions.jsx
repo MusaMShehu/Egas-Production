@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import './UserSubscriptions.css';
 import { FaPlus, FaSearch, FaTimes, FaEllipsisV, FaWallet, FaCreditCard } from 'react-icons/fa';
 import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
+import { useNotificationManager } from "../../../hooks/useFirebaseNotificationManager";
+import { useAuth } from "../../../contexts/AuthContext";
+
 
 const Subscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -15,6 +18,9 @@ const Subscriptions = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentData, setPaymentData] = useState({});
   const navigate = useNavigate();
+
+  const notificationManager = useNotificationManager();
+  const { user } = useAuth();
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com';
 
@@ -164,6 +170,8 @@ const Subscriptions = () => {
           )
         );
         successToast('Subscription paused successfully');
+
+        notificationManager.subscriptionPaused(subscriptionId, user?.id);
         
         // Refresh wallet balance after subscription modification
         fetchUserData();
@@ -214,6 +222,7 @@ const Subscriptions = () => {
           )
         );
         successToast('Subscription resumed successfully');
+        notificationManager.subscriptionResumed(subscriptionId, user?.id);
         
         // Refresh wallet balance after subscription modification
         fetchUserData();
@@ -264,6 +273,7 @@ const Subscriptions = () => {
           )
         );
         successToast('Subscription cancelled successfully');
+        notificationManager.subscriptionCancelled(subscriptionId, user?.id);
         
         // Refresh wallet balance after subscription modification
         fetchUserData();

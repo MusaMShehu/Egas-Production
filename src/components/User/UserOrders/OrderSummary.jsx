@@ -39,7 +39,6 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
     }
 
     infoToast('Redirecting to checkout...');
-    // Redirect to checkout page
     setTimeout(() => {
       window.location.href = '/checkout';
     }, 1000);
@@ -99,7 +98,7 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                     />
                     <div className="item-details">
                       <h4>{item.name}</h4>
-                      <p className="item-price">${item.price.toFixed(2)}</p>
+                      <p className="item-price">₦{item.price.toFixed(2)}</p>
                     </div>
                     <div className="quantity-controls">
                       <button
@@ -118,7 +117,7 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                       </button>
                     </div>
                     <div className="item-total">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₦{(item.price * item.quantity).toFixed(2)}
                     </div>
                     <button
                       className="remove-item"
@@ -134,15 +133,19 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
               <div className="order-total">
                 <div className="total-row">
                   <span>Subtotal:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₦{total.toFixed(2)}</span>
                 </div>
                 <div className="total-row">
                   <span>Shipping:</span>
-                  <span>$0.00</span>
+                  <span>₦0.00</span>
+                </div>
+                <div className="total-row">
+                  <span>Tax:</span>
+                  <span>₦0.00</span>
                 </div>
                 <div className="total-row grand-total">
                   <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₦{total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -157,11 +160,10 @@ const OrderSummary = ({ cartItems, onClose, onUpdateCart, total }) => {
                   className="checkout-btn" 
                   onClick={handleCheckout}
                 >
-                  Proceed to Checkout (${total.toFixed(2)})
+                  Proceed to Checkout (₦{total.toFixed(2)})
                 </button>
               </div>
 
-              {/* Additional helpful info */}
               <div className="cart-help-info">
                 <p>
                   <i className="fas fa-info-circle"></i>

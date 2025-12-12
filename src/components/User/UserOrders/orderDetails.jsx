@@ -177,16 +177,16 @@ const OrderDetails = () => {
             <span>{order.shippingAddress?.address || "Not specified"}</span>
           </div>
           <div className="info-item">
-            <strong>City:</strong> 
+            <strong>Street:</strong> 
+            <span>{order.shippingAddress?.street || "Not specified"}</span>
+          </div>
+          <div className="info-item">
+            <strong>City:</strong>
             <span>{order.shippingAddress?.city || "Not specified"}</span>
           </div>
           <div className="info-item">
-            <strong>Postal Code:</strong> 
-            <span>{order.shippingAddress?.postalCode || "Not specified"}</span>
-          </div>
-          <div className="info-item">
-            <strong>Country:</strong> 
-            <span>{order.shippingAddress?.country || "Not specified"}</span>
+            <strong>State:</strong> 
+            <span>{order.shippingAddress?.state|| "Not specified"}</span>
           </div>
         </div>
       </section>

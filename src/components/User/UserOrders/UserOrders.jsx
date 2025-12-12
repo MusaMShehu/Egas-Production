@@ -8,12 +8,6 @@ const Orders = () => {
   const [activeOrder, setActiveOrder] = useState(null);
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingOrder, setEditingOrder] = useState(null);
-  const [editForm, setEditForm] = useState({
-    deliveryAddress: '',
-    deliveryOption: 'standard',
-    paymentMethod: 'wallet'
-  });
   const [error, setError] = useState('');
 
   const API_BASE_URL = 'https://egas-server-1.onrender.com/api/v1';
@@ -39,7 +33,6 @@ const Orders = () => {
         });
 
         const result = await response.json();
-        console.log('API Response:', result); // Debug log
         
         if (result.success) {
           setOrders(result.data || []);
@@ -78,62 +71,6 @@ const Orders = () => {
 
   const closeOrderDetails = () => {
     setActiveOrder(null);
-    setEditingOrder(null);
-  };
-
-  const startEditOrder = (order) => {
-    setEditingOrder(order._id);
-    setEditForm({
-      deliveryAddress: order.deliveryAddress,
-      deliveryOption: order.deliveryOption,
-      paymentMethod: order.paymentMethod
-    });
-    infoToast('Editing order details...');
-  };
-
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  // ✅ Save changes to API
-  const saveOrderChanges = async () => {
-    infoToast('Saving order changes...');
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/orders/${editingOrder}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(editForm)
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        setOrders(prevOrders =>
-          prevOrders.map(order =>
-            order._id === editingOrder ? { ...order, ...editForm } : order
-          )
-        );
-        if (activeOrder && activeOrder._id === editingOrder) {
-          setActiveOrder({ ...activeOrder, ...editForm });
-        }
-        setEditingOrder(null);
-        successToast('Order updated successfully!');
-      } else {
-        const errorMsg = result.message || 'Failed to update order';
-        setError(errorMsg);
-        errorToast(errorMsg);
-      }
-    } catch (err) {
-      console.error('Error updating order:', err);
-      const errorMsg = 'Failed to update order. Please try again.';
-      setError(errorMsg);
-      errorToast(errorMsg);
-    }
   };
 
   // ✅ Cancel order
@@ -183,19 +120,6 @@ const Orders = () => {
     }
   };
 
-  // Handle reorder functionality
-  const handleReorder = async (order) => {
-    infoToast(`Creating reorder for #${order.orderId}...`);
-    
-    try {
-      // Add your reorder logic here
-      // This could involve creating a new order with the same products
-      successToast(`Reorder created for #${order.orderId}!`);
-    } catch (err) {
-      errorToast('Failed to create reorder. Please try again.');
-    }
-  };
-
   const formatDate = (date) => {
     if (!date) return 'Not scheduled';
     return new Date(date).toLocaleDateString('en-NG', {
@@ -220,7 +144,6 @@ const Orders = () => {
     if (!products || products.length === 0) return 'No products';
     
     const productNames = products.map(item => {
-      // Handle cases where product might be null or undefined
       if (!item.product) {
         return `Generic Product (${formatCurrency(item.price)})`;
       }
@@ -263,7 +186,6 @@ const Orders = () => {
       case 'completed': return 'payment-status-paid';
       case 'pending': return 'payment-status-pending';
       case 'failed': return 'payment-status-failed';
-      case 'refunded': return 'payment-status-refunded';
       default: return 'payment-status-pending';
     }
   };
@@ -324,7 +246,7 @@ const Orders = () => {
               <span className="userorder-count-badge">{activeOrders.length}</span>
             </div>
             <div className="userorder-orders-grid">
-              {/* Table Header - Visible on all devices */}
+              {/* Table Header */}
               <div className="userorder-grid-header">
                 <div className="userorder-grid-cell">Product Name</div>
                 <div className="userorder-grid-cell">Quantity</div>
@@ -393,7 +315,7 @@ const Orders = () => {
               <span className="userorder-count-badge">{previousOrders.length}</span>
             </div>
             <div className="userorder-orders-grid">
-              {/* Table Header - Visible on all devices */}
+              {/* Table Header */}
               <div className="userorder-grid-header">
                 <div className="userorder-grid-cell">Product Name</div>
                 <div className="userorder-grid-cell">Quantity</div>
@@ -440,14 +362,6 @@ const Orders = () => {
                       >
                         View Details
                       </button>
-                      {order.orderStatus === 'delivered' && (
-                        <button 
-                          className="userorder-btn-secondary userorder-btn-sm"
-                          onClick={() => handleReorder(order)}
-                        >
-                          Reorder
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -519,21 +433,31 @@ const Orders = () => {
                 </div>
               </div>
 
-              {/* Products List */}
+              {/* Products List with Images */}
               <div className="userorder-detail-section">
                 <h3>Order Items</h3>
                 <div className="userorder-products-list">
                   {activeOrder.products.map((item, idx) => (
                     <div key={idx} className="userorder-product-item">
+                      <div className="userorder-product-image">
+                        {item.product && item.product.image ? (
+                          <img 
+                            src={item.product.image} 
+                            alt={item.productName || 'Product'} 
+                            onError={(e) => {
+                              e.target.src = '/images/default-product.jpg';
+                            }}
+                          />
+                        ) : (
+                          <div className="userorder-product-image-placeholder">
+                            <FaBox />
+                          </div>
+                        )}
+                      </div>
                       <div className="userorder-product-details">
                         <h4 className="userorder-product-name">
-                          {item.product ? item.product.name : `Generic Product`}
+                          {item.productName || (item.product ? item.product.name : 'Generic Product')}
                         </h4>
-                        {item.product && item.product.description && (
-                          <p className="userorder-product-description">
-                            {item.product.description}
-                          </p>
-                        )}
                         <div className="userorder-product-meta">
                           <span className="userorder-product-quantity">
                             Quantity: {item.quantity}
@@ -558,6 +482,10 @@ const Orders = () => {
                     <span>Delivery Fee:</span>
                     <span>{formatCurrency(activeOrder.deliveryFee || 0)}</span>
                   </div>
+                  <div className="userorder-summary-row">
+                    <span>Tax:</span>
+                    <span>₦0.00</span>
+                  </div>
                   <div className="userorder-summary-row userorder-total-row">
                     <span>Total:</span>
                     <span>{formatCurrency(activeOrder.totalAmount)}</span>
@@ -568,67 +496,27 @@ const Orders = () => {
               {/* Delivery Information */}
               <div className="userorder-detail-section">
                 <h3>Delivery Information</h3>
-                {editingOrder === activeOrder._id ? (
-                  <>
-                    <div className="userorder-form-group">
-                      <label>Delivery Address:</label>
-                      <textarea 
-                        name="deliveryAddress"
-                        value={editForm.deliveryAddress}
-                        onChange={handleEditChange}
-                        rows="3"
-                        placeholder="Enter delivery address"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <div className="userorder-info-group">
-                    <strong>Delivery Address:</strong>
-                    <p>{activeOrder.deliveryAddress}</p>
-                  </div>
-                )}
+                <div className="userorder-info-group">
+                  <strong>Delivery Address:</strong>
+                  <p>{activeOrder.deliveryAddress}</p>
+                </div>
+                <div className="userorder-info-group">
+                  <strong>Delivery Option:</strong>
+                  <p>{activeOrder.deliveryOption}</p>
+                </div>
                 <div className="userorder-info-group">
                   <strong>Estimated Delivery:</strong>
                   <p>{formatDate(activeOrder.deliveryDate)}</p>
                 </div>
-                {activeOrder.tracking && (
-                  <div className="userorder-tracking-info">
-                    <strong>Tracking Information:</strong>
-                    <div className="userorder-tracking-progress">
-                      <div 
-                        className="userorder-tracking-bar"
-                        style={{width: `${activeOrder.tracking.progress}%`}}
-                      ></div>
-                    </div>
-                    <p>Status: {activeOrder.tracking.status}</p>
-                    <p>Location: {activeOrder.tracking.location}</p>
-                  </div>
-                )}
               </div>
               
               {/* Payment Information */}
               <div className="userorder-detail-section">
                 <h3>Payment Information</h3>
-                {editingOrder === activeOrder._id ? (
-                  <div className="userorder-form-group">
-                    <label>Payment Method:</label>
-                    <select 
-                      name="paymentMethod"
-                      value={editForm.paymentMethod}
-                      onChange={handleEditChange}
-                    >
-                      <option value="wallet">Wallet</option>
-                      <option value="card">Card</option>
-                      <option value="transfer">Transfer</option>
-                      <option value="paystack">Paystack</option>
-                    </select>
-                  </div>
-                ) : (
-                  <div className="userorder-info-group">
-                    <strong>Payment Method:</strong>
-                    <p>{activeOrder.paymentMethod || 'Not specified'}</p>
-                  </div>
-                )}
+                <div className="userorder-info-group">
+                  <strong>Payment Method:</strong>
+                  <p>{activeOrder.paymentMethod || 'Not specified'}</p>
+                </div>
                 <div className="userorder-info-group">
                   <strong>Payment Status:</strong>
                   <p className={getPaymentStatusClass(activeOrder.paymentStatus)}>
@@ -644,42 +532,9 @@ const Orders = () => {
               </div>
             </div>
             <div className="userorder-modal-footer">
-              {editingOrder === activeOrder._id ? (
-                <>
-                  <button 
-                    className="userorder-btn-secondary" 
-                    onClick={() => {
-                      setEditingOrder(null);
-                      infoToast('Edit cancelled');
-                    }}
-                  >
-                    Cancel Edit
-                  </button>
-                  <button className="userorder-btn-primary" onClick={saveOrderChanges}>
-                    Save Changes
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="userorder-btn-secondary" onClick={closeOrderDetails}>
-                    Close
-                  </button>
-                  {activeOrder.orderStatus !== 'cancelled' && activeOrder.orderStatus !== 'delivered' && (
-                    <button 
-                      className="userorder-btn-warning" 
-                      onClick={() => startEditOrder(activeOrder)}
-                    >
-                      Edit Order
-                    </button>
-                  )}
-                  <button 
-                    className="userorder-btn-primary"
-                    onClick={() => infoToast('Contact support feature coming soon...')}
-                  >
-                    Contact Support
-                  </button>
-                </>
-              )}
+              <button className="userorder-btn-secondary" onClick={closeOrderDetails}>
+                Close
+              </button>
             </div>
           </div>
         </div>

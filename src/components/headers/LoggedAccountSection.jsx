@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import NotificationBell from '../Notifications/FirebaseNotificationBell';
 import "../../styles/AccountSection.css";
 
 const AccountSection = () => {
@@ -20,6 +21,7 @@ const AccountSection = () => {
       <button className="acc-sec-logout-btn" onClick={handleLogout}>
         Logout
       </button>
+      <NotificationBell />
     </div>
   );
 };

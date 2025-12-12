@@ -4,9 +4,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from './contexts/AuthContext';
+
+// Notifications
 import { SnackbarProvider } from './contexts/SnackbarContext';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { NotificationProvider } from './contexts/FirebaseNotificationContext';
+import NotificationBell from './components/Notifications/FirebaseNotificationBell'
+import { useNotificationManager } from './hooks/useFirebaseNotificationManager';
 
 
 // Public Pages
@@ -92,8 +97,11 @@ import WalletTopupCallback from './components/payments/walletTopupCallback';
 
 function App() {
 
+  const userId = "current-user-id";
+
   return (
 
+    <NotificationProvider userId={userId}>
     <AuthProvider>
       <PaymentProvider>
         <SnackbarProvider>
@@ -104,8 +112,10 @@ function App() {
         theme="colored"
         pauseOnHover
         closeOnClick />
+        {/* <NotificationBell /> */}
         <Routes>
-
+        
+           
           {/* Public Routes */}
 
           <Route path="/" element={<PublicLayout />}>
@@ -184,6 +194,7 @@ function App() {
       </SnackbarProvider>
       </PaymentProvider>
     </AuthProvider>
+    </NotificationProvider>
   );
 }
 

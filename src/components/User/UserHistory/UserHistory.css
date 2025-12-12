@@ -399,6 +399,16 @@
   font-size: 0.8rem;
 }
 
+.his-status-expired {
+  color: #ffc107;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  background: #fff3cd;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
 .his-status-cancelled {
   color: #dc3545;
   font-weight: 600;
@@ -428,6 +438,339 @@
   display: inline-block;
   font-size: 0.8rem;
 }
+
+
+
+
+
+/* Add to existing UserHistory.css file */
+
+/* Status Content */
+.his-status-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Subscription Status Colors */
+.his-status-active {
+  color: #28a745;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #d4edda;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-paused {
+  color: #ffc107;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #fff3cd;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-pending {
+  color: #17a2b8;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #d1ecf1;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-expired {
+  color: #6c757d;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #e9ecef;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-cancelled {
+  color: #dc3545;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #f8d7da;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+/* Order Status Colors */
+.his-status-processing {
+  color: #007bff;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #cce5ff;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-in-transit {
+  color: #6610f2;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #e2d9f3;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-delivered {
+  color: #28a745;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #d4edda;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+/* Payment Status Colors */
+.his-status-completed {
+  color: #28a745;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #d4edda;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+.his-status-failed {
+  color: #dc3545;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  background: #f8d7da;
+  display: inline-block;
+  font-size: 0.8rem;
+}
+
+/* Update existing status classes to be more specific */
+.his-history-table td[data-label="Status"] {
+  text-align: center;
+}
+
+.his-history-table td[data-label="Status"] .his-status-content {
+  justify-content: center;
+}
+
+/* Modal Detail Styles */
+.his-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.his-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #007bff;
+}
+
+.his-detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.his-detail-value {
+  color: #495057;
+  font-size: 1rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.his-detail-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.his-detail-section h3 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.his-order-item {
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  border: 1px solid #dee2e6;
+}
+
+.his-order-item:last-child {
+  margin-bottom: 0;
+}
+
+.his-item-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.his-item-details {
+  color: #6c757d;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.his-item-total {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+.his-amount {
+  font-weight: 700;
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+.his-failure-reason {
+  color: #dc3545;
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* Modal Footer Button Styles */
+.his-modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.his-btn-close {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.his-btn-close:hover {
+  background: #545b62;
+  transform: translateY(-1px);
+}
+
+.his-btn-reorder, .his-btn-retry {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.his-btn-reorder:hover, .his-btn-retry:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+/* Responsive improvements for modal */
+@media (min-width: 640px) {
+  .his-modal-details {
+    gap: 1.25rem;
+  }
+  
+  .his-detail-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+  
+  .his-detail-label {
+    flex: 0 0 180px;
+    font-size: 0.9rem;
+  }
+  
+  .his-detail-value {
+    flex: 1;
+    font-size: 1rem;
+    justify-content: flex-start;
+  }
+  
+  .his-modal-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .his-btn-close,
+  .his-btn-reorder,
+  .his-btn-retry {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+/* Mobile responsive for modal */
+@media (max-width: 639px) {
+  .his-detail-row {
+    padding: 0.75rem;
+  }
+  
+  .his-detail-value {
+    flex-wrap: wrap;
+  }
+  
+  .his-detail-value span {
+    word-break: break-word;
+  }
+  
+  .his-modal-footer {
+    padding: 1rem;
+  }
+  
+  .his-btn-close,
+  .his-btn-reorder,
+  .his-btn-retry {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+
+
+
 
 /* Button Styles */
 .his-btn-primary, .his-btn-secondary, .his-btn-view {

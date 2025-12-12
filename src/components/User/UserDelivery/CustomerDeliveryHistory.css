@@ -122,9 +122,9 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  padding: 4px 8px;
+  padding: 7px 6px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
@@ -515,4 +515,12 @@
   .adm-dialog-footer {
     flex-direction: column;
   }
+}
+
+@media (max-width: 350px) {
+.adm-time-context {
+ 
+  padding: 7px 4px;
+  font-size: 0.6rem;
+}
 }
