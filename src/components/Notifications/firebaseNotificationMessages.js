@@ -21,7 +21,7 @@ export const NotificationService = {
 
   ORDER_OUT_FOR_DELIVERY: {
     title: 'Order Out for Delivery! 🚚',
-    message: 'Your gas cylinder is on the way. Expected delivery within 2 hours.',
+    message: 'Your gas refill is on the way. Expected delivery within 2 hours.',
     type: 'info'
   },
 
