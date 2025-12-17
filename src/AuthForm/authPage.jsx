@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import API from '../utils/Api';
+import API from '../utils/Api'
+import axios from 'axios';
 import './authPage.css';
 
 const AuthPage = () => {
@@ -17,7 +18,7 @@ const AuthPage = () => {
     password: ''
   });
 
-  // Signup form state - UPDATED TO MATCH BACKEND
+  // Signup form state
   const [signupData, setSignupData] = useState({
     firstName: '',
     lastName: '',
@@ -52,7 +53,7 @@ const AuthPage = () => {
     });
   };
 
-  // Handle profile image upload
+  // Handle profile image upload (using your existing validation logic)
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -87,7 +88,7 @@ const AuthPage = () => {
     }
   };
 
-  // GPS location detection
+  // Enhanced GPS location detection with high accuracy
   const getLocation = () => {
     if (!navigator.geolocation) {
       setMessage({ type: 'error', text: 'Geolocation not supported on this browser.' });
@@ -95,32 +96,152 @@ const AuthPage = () => {
     }
 
     setLocationLoading(true);
-    setMessage({ type: 'info', text: 'Detecting your location...' });
+    setMessage({ type: 'info', text: 'Detecting your location with high accuracy... Please wait.' });
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 15000,
+      timeout: 30000,
       maximumAge: 0
     };
 
-    navigator.geolocation.getCurrentPosition(
+    let bestPosition = null;
+    let attempts = 0;
+    const maxAttempts = 3;
+
+    const tryGetLocation = () => {
+      attempts++;
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          
+          if (!bestPosition || accuracy < bestPosition.coords.accuracy) {
+            bestPosition = position;
+          }
+
+          if (accuracy <= 20) {
+            setSignupData(prev => ({
+              ...prev,
+              latitude: latitude.toFixed(8),
+              longitude: longitude.toFixed(8)
+            }));
+            
+            setMessage({ 
+              type: 'success', 
+              text: `High accuracy location detected! (Accuracy: ${Math.round(accuracy)} meters)` 
+            });
+            setLocationLoading(false);
+          } else if (attempts >= maxAttempts) {
+            const finalAccuracy = bestPosition.coords.accuracy;
+            setSignupData(prev => ({
+              ...prev,
+              latitude: bestPosition.coords.latitude.toFixed(8),
+              longitude: bestPosition.coords.longitude.toFixed(8)
+            }));
+            
+            setMessage({ 
+              type: attempts === 1 ? 'success' : 'warning', 
+              text: `Location detected with ${Math.round(finalAccuracy)} meters accuracy. ${finalAccuracy > 50 ? 'For better accuracy, move to an open area.' : ''}` 
+            });
+            setLocationLoading(false);
+          } else {
+            setMessage({ 
+              type: 'info', 
+              text: `Refining location... Attempt ${attempts}/${maxAttempts} (Current accuracy: ${Math.round(accuracy)} meters)` 
+            });
+            setTimeout(tryGetLocation, 3000);
+          }
+        },
+        (error) => {
+          let errorMessage;
+          
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Location access denied. Please allow location permissions in your browser settings and try again.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Location information unavailable. Please check your GPS and internet connection.';
+              break;
+            case error.TIMEOUT:
+              if (attempts < maxAttempts) {
+                setMessage({ 
+                  type: 'info', 
+                  text: `Location request timed out. Retrying... (${attempts}/${maxAttempts})` 
+                });
+                setTimeout(tryGetLocation, 3000);
+                return;
+              }
+              errorMessage = 'Unable to get location. Please ensure GPS is enabled or enter coordinates manually.';
+              break;
+            default:
+              errorMessage = 'An unexpected error occurred while getting location.';
+              break;
+          }
+
+          setMessage({ type: 'error', text: errorMessage });
+          setLocationLoading(false);
+        },
+        options
+      );
+    };
+
+    tryGetLocation();
+  };
+
+  // Alternative: Use watchPosition for continuous updates (most accurate)
+  const getPreciseLocation = () => {
+    if (!navigator.geolocation) {
+      setMessage({ type: 'error', text: 'Geolocation is not supported by your browser' });
+      return;
+    }
+
+    setLocationLoading(true);
+    setMessage({ type: 'info', text: 'Getting precise location... This may take 10-15 seconds.' });
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 0
+    };
+
+    let watchId;
+    let timeoutId;
+
+    if (window.locationWatchId) {
+      navigator.geolocation.clearWatch(window.locationWatchId);
+    }
+
+    watchId = navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
+        const { latitude, longitude, accuracy } = position.coords;
         
-        setSignupData(prev => ({
-          ...prev,
-          latitude: latitude.toFixed(8),
-          longitude: longitude.toFixed(8)
-        }));
-        
-        setMessage({ 
-          type: 'success', 
-          text: 'Location detected successfully!' 
-        });
-        setLocationLoading(false);
+        if (accuracy <= 30) {
+          navigator.geolocation.clearWatch(watchId);
+          clearTimeout(timeoutId);
+          
+          setSignupData(prev => ({
+            ...prev,
+            latitude: latitude.toFixed(8),
+            longitude: longitude.toFixed(8)
+          }));
+
+          setMessage({ 
+            type: 'success', 
+            text: `Precise location detected! (Accuracy: ${Math.round(accuracy)} meters)` 
+          });
+          setLocationLoading(false);
+        } else {
+          setMessage({ 
+            type: 'info', 
+            text: `Refining location... Current accuracy: ${Math.round(accuracy)} meters` 
+          });
+        }
       },
       (error) => {
-        let errorMessage;
+        navigator.geolocation.clearWatch(watchId);
+        clearTimeout(timeoutId);
+        
+        let errorMessage = 'Failed to get precise location.';
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
@@ -130,10 +251,7 @@ const AuthPage = () => {
             errorMessage = 'Location information unavailable. Please check your GPS.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out. Please try again.';
-            break;
-          default:
-            errorMessage = 'An unexpected error occurred while getting location.';
+            errorMessage = 'Precise location detection timed out. Try the standard location detection.';
             break;
         }
 
@@ -142,9 +260,20 @@ const AuthPage = () => {
       },
       options
     );
+
+    timeoutId = setTimeout(() => {
+      navigator.geolocation.clearWatch(watchId);
+      setMessage({ 
+        type: 'warning', 
+        text: 'Precise location detection taking too long. Try standard location detection or enter manually.' 
+      });
+      setLocationLoading(false);
+    }, 20000);
+
+    window.locationWatchId = watchId;
   };
 
-  // Handle login submission
+  // Handle login submission using your existing AuthContext logic
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -154,6 +283,7 @@ const AuthPage = () => {
       await login(loginData.email, loginData.password);
       setMessage({ type: 'success', text: 'Welcome back!' });
       
+      // Redirect to dashboard after successful login
       setTimeout(() => {
         window.location.href = '/dashboard';
       }, 1000);
@@ -167,137 +297,128 @@ const AuthPage = () => {
     }
   };
 
-  // Form validation
+  // Enhanced form validation using your existing logic
   const validateSignupForm = () => {
-    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'password', 'confirmPassword', 'dob', 'gender', 'address', 'city', 'state'];
-    
-    for (const field of requiredFields) {
-      if (!signupData[field]) {
-        setMessage({ type: 'error', text: `Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}` });
-        return false;
-      }
+    if (!signupData.firstName || !signupData.lastName || !signupData.email || !signupData.password) {
+      setMessage({ type: 'error', text: "All required fields must be filled." });
+      return false;
     }
-    
     if (signupData.password !== signupData.confirmPassword) {
       setMessage({ type: 'error', text: "Passwords do not match!" });
       return false;
     }
-    
     if (signupData.password.length < 6) {
       setMessage({ type: 'error', text: "Password must be at least 6 characters long." });
       return false;
     }
-    
+    if (!signupData.state || !signupData.city) {
+      setMessage({ type: 'error', text: "Please select your state and city." });
+      return false;
+    }
     if (!signupData.latitude || !signupData.longitude) {
       setMessage({ type: 'error', text: "Please provide GPS coordinates." });
       return false;
     }
-    
     return true;
   };
 
-  // Handle signup submission - UPDATED FOR CLOUDINARY
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
+  // Handle signup submission using your existing API logic
+const handleSignup = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: '', text: '' });
 
-    if (!validateSignupForm()) {
-      setLoading(false);
-      return;
-    }
+  if (!validateSignupForm()) {
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const formData = new FormData();
-      
-      // Append all form data - UPDATED FIELD NAMES TO MATCH BACKEND
-      formData.append('firstName', signupData.firstName);
-      formData.append('lastName', signupData.lastName);
-      formData.append('email', signupData.email);
-      formData.append('phone', signupData.phone);
-      formData.append('password', signupData.password);
-      formData.append('confirmPassword', signupData.confirmPassword);
-      formData.append('dob', signupData.dob);
-      formData.append('gender', signupData.gender);
-      formData.append('address', signupData.address);
-      formData.append('city', signupData.city);
-      formData.append('state', signupData.state);
-      
-      // Append profile image with correct field name
-      if (signupData.profileImage) {
-        // Backend expects 'profileImage' as the field name for the file upload
-        formData.append('profileImage', signupData.profileImage);
-      }
-      
-      // Create GPS GeoJSON - UPDATED TO MATCH BACKEND
+  try {
+    const formData = new FormData();
+    
+    // Append all form data following your existing structure
+   Object.keys(signupData).forEach(key => {
+  if (key === 'profileImage' && signupData[key]) {
+    formData.append('profilePic', signupData[key]);
+  } else {
+    formData.append(key, signupData[key]);
+  }
+});
+
+for (let [key, value] of formData.entries()) {
+  console.log(key, value);
+}
+
+
+    // Create GPS GeoJSON like your original form
+    if (signupData.latitude && signupData.longitude) {
       const geoJson = JSON.stringify({
         type: "Point",
         coordinates: [parseFloat(signupData.longitude), parseFloat(signupData.latitude)]
       });
       formData.append('gps', geoJson);
+    }
 
-      // Debug: Log form data
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-
-      // Make API call - UPDATED ENDPOINT
-      const response = await API.post("/auth/register", formData, {
+    // Try using your API helper first, fallback to axios
+    let response;
+    try {
+      // If you have an API.js helper
+      response = await API.post("/api/v1/auth/register", formData);
+    } catch (helperError) {
+      console.log('API helper failed, trying direct axios...');
+      // Fallback to direct axios call
+      response = await axios.post('/api/v1/auth/register', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-
-      console.log('Registration response:', response.data);
-
-      if (response.data.success) {
-        // Store token and user data
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        setMessage({ type: 'success', text: response.data.message || 'Registration successful!' });
-        
-        // Auto login after registration
-        try {
-          await login(signupData.email, signupData.password);
-          setTimeout(() => {
-            window.location.href = '/dashboard';
-          }, 1500);
-        } catch (loginError) {
-          // Redirect to login page if auto-login fails
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 1500);
-        }
-      } else {
-        setMessage({ 
-          type: 'error', 
-          text: response.data.error || "Registration failed. Please try again." 
-        });
-      }
-    } catch (err) {
-      console.error("Signup error:", err);
-      
-      let errorMessage = "Registration failed. Please try again.";
-      
-      if (err.response) {
-        // Server responded with error
-        errorMessage = err.response.data?.error || 
-                      err.response.data?.message || 
-                      `Server error: ${err.response.status}`;
-      } else if (err.request) {
-        // Request was made but no response
-        errorMessage = "No response from server. Please check your connection.";
-      } else {
-        // Something else happened
-        errorMessage = err.message || "An unexpected error occurred.";
-      }
-      
-      setMessage({ type: 'error', text: errorMessage });
-    } finally {
-      setLoading(false);
     }
-  };
+
+    if (response.data.success) {
+      // Store token and user data like your original
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      setMessage({ type: 'success', text: 'Registration successful!' });
+      
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1000);
+    } else {
+      setMessage({ 
+        type: 'error', 
+        text: response.data.error || "Signup failed. Please try again." 
+      });
+    }
+  } catch (err) {
+    console.error("Signup error details:", err);
+    
+    // More detailed error logging
+    if (err.response) {
+      // Server responded with error status
+      console.error("Response status:", err.response.status);
+      console.error("Response data:", err.response.data);
+      console.error("Response headers:", err.response.headers);
+    } else if (err.request) {
+      // Request was made but no response received
+      console.error("No response received:", err.request);
+    } else {
+      // Something else happened
+      console.error("Error message:", err.message);
+    }
+
+    const msg =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      "Signup failed. Please check your network connection and try again.";
+    
+    setMessage({ type: 'error', text: msg });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Reset forms when switching
   const switchToLogin = () => {
@@ -309,6 +430,7 @@ const AuthPage = () => {
   const switchToSignup = () => {
     setIsLogin(false);
     setMessage({ type: '', text: '' });
+    // Reset signup data but keep the structure
     setSignupData({
       firstName: '',
       lastName: '',
@@ -425,7 +547,6 @@ const AuthPage = () => {
                   onChange={handleImageUpload}
                   style={{ display: 'none' }}
                   disabled={loading}
-                  name="profileImage"
                 />
                 <div className="auth-image-preview">
                   {signupData.profileImage ? (
@@ -451,7 +572,6 @@ const AuthPage = () => {
                     >
                       <span>📷</span>
                       <p>Add Profile Photo</p>
-                      <small>Optional - Will be stored on Cloudinary</small>
                     </div>
                   )}
                 </div>
@@ -463,7 +583,7 @@ const AuthPage = () => {
                 <input
                   type="text"
                   name="firstName"
-                  placeholder="First Name *"
+                  placeholder="First Name"
                   value={signupData.firstName}
                   onChange={handleSignupChange}
                   required
@@ -474,7 +594,7 @@ const AuthPage = () => {
                 <input
                   type="text"
                   name="lastName"
-                  placeholder="Last Name *"
+                  placeholder="Last Name"
                   value={signupData.lastName}
                   onChange={handleSignupChange}
                   required
@@ -487,7 +607,7 @@ const AuthPage = () => {
               <input
                 type="email"
                 name="email"
-                placeholder="Email Address *"
+                placeholder="Email Address"
                 value={signupData.email}
                 onChange={handleSignupChange}
                 required
@@ -499,7 +619,7 @@ const AuthPage = () => {
               <input
                 type="tel"
                 name="phone"
-                placeholder="Phone Number *"
+                placeholder="Phone Number"
                 value={signupData.phone}
                 onChange={handleSignupChange}
                 required
@@ -512,7 +632,7 @@ const AuthPage = () => {
                 <input
                   type="password"
                   name="password"
-                  placeholder="Password *"
+                  placeholder="Password"
                   value={signupData.password}
                   onChange={handleSignupChange}
                   required
@@ -524,7 +644,7 @@ const AuthPage = () => {
                 <input
                   type="password"
                   name="confirmPassword"
-                  placeholder="Confirm Password *"
+                  placeholder="Confirm Password"
                   value={signupData.confirmPassword}
                   onChange={handleSignupChange}
                   required
@@ -542,7 +662,6 @@ const AuthPage = () => {
                   placeholder="Date of Birth"
                   value={signupData.dob}
                   onChange={handleSignupChange}
-                  required
                   disabled={loading}
                 />
               </div>
@@ -551,10 +670,9 @@ const AuthPage = () => {
                   name="gender" 
                   value={signupData.gender} 
                   onChange={handleSignupChange}
-                  required
                   disabled={loading}
                 >
-                  <option value="">Gender *</option>
+                  <option value="">Select Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
@@ -566,7 +684,7 @@ const AuthPage = () => {
               <input
                 type="text"
                 name="address"
-                placeholder="Address *"
+                placeholder="Address"
                 value={signupData.address}
                 onChange={handleSignupChange}
                 required
@@ -579,7 +697,7 @@ const AuthPage = () => {
                 <input
                   type="text"
                   name="city"
-                  placeholder="City *"
+                  placeholder="City"
                   value={signupData.city}
                   onChange={handleSignupChange}
                   required
@@ -594,18 +712,16 @@ const AuthPage = () => {
                   required
                   disabled={loading}
                 >
-                  <option value="">Select State *</option>
+                  <option value="">Select State</option>
                   <option value="Borno">Borno</option>
                   <option value="Yobe">Yobe</option>
-                  {/* Add more states as needed */}
                 </select>
               </div>
             </div>
 
-            {/* Location Section */}
+            {/* Enhanced Location Section */}
             <div className="auth-location-section">
-              <div className="auth-location-header">
-                <h4>GPS Location (Required)</h4>
+              <div className="auth-location-buttons">
                 <button 
                   type="button" 
                   onClick={getLocation} 
@@ -618,18 +734,32 @@ const AuthPage = () => {
                       Detecting...
                     </>
                   ) : (
-                    '📍 Auto-detect Location'
+                    'Get Location'
+                  )}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={getPreciseLocation} 
+                  className="auth-location-button precise"
+                  disabled={locationLoading || loading}
+                >
+                  {locationLoading ? (
+                    <>
+                      <span className="auth-spinner-small"></span>
+                      Getting Precise...
+                    </>
+                  ) : (
+                    'Precise Location'
                   )}
                 </button>
               </div>
-              
               <div className="auth-coordinates-row">
                 <div className="auth-form-group">
                   <input
                     type="number"
                     step="any"
                     name="latitude"
-                    placeholder="Latitude *"
+                    placeholder="Latitude"
                     value={signupData.latitude}
                     onChange={handleSignupChange}
                     required
@@ -641,7 +771,7 @@ const AuthPage = () => {
                     type="number"
                     step="any"
                     name="longitude"
-                    placeholder="Longitude *"
+                    placeholder="Longitude"
                     value={signupData.longitude}
                     onChange={handleSignupChange}
                     required
@@ -649,9 +779,13 @@ const AuthPage = () => {
                   />
                 </div>
               </div>
-              
               <div className="auth-location-tips">
-                <p><strong>Note:</strong> GPS coordinates are required for delivery services</p>
+                <p>💡 <strong>Tips for better accuracy:</strong></p>
+                <ul>
+                  <li>Enable GPS on your device</li>
+                  <li>Move to an open area</li>
+                  <li>Use "Precise Location" for highest accuracy</li>
+                </ul>
               </div>
             </div>
 
@@ -665,10 +799,6 @@ const AuthPage = () => {
                 'Create Account'
               )}
             </button>
-            
-            <div className="auth-terms-notice">
-              <small>By creating an account, you agree to our Terms of Service and Privacy Policy</small>
-            </div>
           </form>
         )}
 
