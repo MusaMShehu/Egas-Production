@@ -220,6 +220,67 @@
   transform: translateY(-1px);
 }
 
+
+/* Cloudinary image container */
+.prof-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.prof-profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #4a90e2;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.prof-profile-img:hover {
+  transform: scale(1.05);
+  border-color: #2c5282;
+}
+
+.prof-view-image-btn {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.prof-image-container:hover .prof-view-image-btn {
+  opacity: 1;
+  bottom: 10px;
+}
+
+.prof-view-image-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Cloudinary upload hint */
+.prof-upload-hint small {
+  color: #718096;
+  font-size: 11px;
+  display: block;
+  margin-top: 4px;
+}
+
+
+
+
 .prof-profile-info h2 {
   margin: 0 0 8px 0;
   color: #2c3e50;

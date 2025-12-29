@@ -2,22 +2,25 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: process.env.REACT_APP_API_URL || "https://egas-server-1.onrender.com",
-  timeout: 15000, // a little higher for file uploads
+  timeout: 30000,
+  withCredentials: false, // change only if you use cookies
 });
 
-// ✅ Request Interceptor - add auth token
+// ✅ Request Interceptor
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // ⚠️ Dynamically set correct Content-Type
-    if (!(config.data instanceof FormData)) {
-      config.headers["Content-Type"] = "application/json";
+    // ✅ Let Axios/browser decide Content-Type
+    // This avoids multipart/form-data boundary bugs
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
     } else {
-      delete config.headers["Content-Type"]; // Let browser set multipart boundaries
+      config.headers["Content-Type"] = "application/json";
     }
 
     return config;
@@ -25,12 +28,13 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Response Interceptor - handle unauthorized
+// ✅ Response Interceptor
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.href = "/";
     }
     return Promise.reject(error);

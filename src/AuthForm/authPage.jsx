@@ -1,46 +1,47 @@
-import React, { useState, useRef } from 'react';
+// import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import API from '../utils/Api'
-import axios from 'axios';
-import './authPage.css';
+import API from "../utils/Api";
+import axios from "axios";
+import "./authPage.css";
 
 const AuthPage = () => {
   const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [locationLoading, setLocationLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   // Login form state
   const [loginData, setLoginData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   // Signup form state
   const [signupData, setSignupData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    dob: '',
-    gender: '',
-    address: '',
-    city: '',
-    state: '',
-    latitude: '',
-    longitude: '',
-    profileImage: null
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    dob: "",
+    gender: "",
+    address: "",
+    city: "",
+    state: "",
+    latitude: "",
+    longitude: "",
+    profileImage: null,
   });
 
   // Handle login form changes
   const handleLoginChange = (e) => {
     setLoginData({
       ...loginData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -49,7 +50,7 @@ const AuthPage = () => {
     const { name, value, files } = e.target;
     setSignupData({
       ...signupData,
-      [name]: files ? files[0] : value
+      [name]: files ? files[0] : value,
     });
   };
 
@@ -58,50 +59,73 @@ const AuthPage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      setMessage({ type: 'error', text: "Invalid file type. Please upload JPEG, PNG, GIF, or WEBP images." });
+      setMessage({
+        type: "error",
+        text: "Invalid file type. Please upload JPEG, PNG, GIF, or WEBP images.",
+      });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setMessage({ type: 'error', text: "File size too large. Maximum size is 5MB." });
+      setMessage({
+        type: "error",
+        text: "File size too large. Maximum size is 5MB.",
+      });
       return;
     }
 
     setSignupData({
       ...signupData,
-      profileImage: file
+      profileImage: file,
     });
 
-    setMessage({ type: 'success', text: 'Profile image selected successfully!' });
+    // Add Cloudinary message
+    setMessage({
+      type: "success",
+      text: "Profile image selected! It will be uploaded to Cloudinary.",
+    });
   };
 
   // Remove profile image
   const removeProfileImage = () => {
     setSignupData({
       ...signupData,
-      profileImage: null
+      profileImage: null,
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
+    setMessage({ type: "info", text: "Profile image removed" });
   };
 
   // Enhanced GPS location detection with high accuracy
   const getLocation = () => {
     if (!navigator.geolocation) {
-      setMessage({ type: 'error', text: 'Geolocation not supported on this browser.' });
+      setMessage({
+        type: "error",
+        text: "Geolocation not supported on this browser.",
+      });
       return;
     }
 
     setLocationLoading(true);
-    setMessage({ type: 'info', text: 'Detecting your location with high accuracy... Please wait.' });
+    setMessage({
+      type: "info",
+      text: "Detecting your location with high accuracy... Please wait.",
+    });
 
     const options = {
       enableHighAccuracy: true,
       timeout: 30000,
-      maximumAge: 0
+      maximumAge: 0,
     };
 
     let bestPosition = null;
@@ -110,75 +134,89 @@ const AuthPage = () => {
 
     const tryGetLocation = () => {
       attempts++;
-      
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude, accuracy } = position.coords;
-          
+
           if (!bestPosition || accuracy < bestPosition.coords.accuracy) {
             bestPosition = position;
           }
 
           if (accuracy <= 20) {
-            setSignupData(prev => ({
+            setSignupData((prev) => ({
               ...prev,
               latitude: latitude.toFixed(8),
-              longitude: longitude.toFixed(8)
+              longitude: longitude.toFixed(8),
             }));
-            
-            setMessage({ 
-              type: 'success', 
-              text: `High accuracy location detected! (Accuracy: ${Math.round(accuracy)} meters)` 
+
+            setMessage({
+              type: "success",
+              text: `High accuracy location detected! (Accuracy: ${Math.round(
+                accuracy
+              )} meters)`,
             });
             setLocationLoading(false);
           } else if (attempts >= maxAttempts) {
             const finalAccuracy = bestPosition.coords.accuracy;
-            setSignupData(prev => ({
+            setSignupData((prev) => ({
               ...prev,
               latitude: bestPosition.coords.latitude.toFixed(8),
-              longitude: bestPosition.coords.longitude.toFixed(8)
+              longitude: bestPosition.coords.longitude.toFixed(8),
             }));
-            
-            setMessage({ 
-              type: attempts === 1 ? 'success' : 'warning', 
-              text: `Location detected with ${Math.round(finalAccuracy)} meters accuracy. ${finalAccuracy > 50 ? 'For better accuracy, move to an open area.' : ''}` 
+
+            setMessage({
+              type: attempts === 1 ? "success" : "warning",
+              text: `Location detected with ${Math.round(
+                finalAccuracy
+              )} meters accuracy. ${
+                finalAccuracy > 50
+                  ? "For better accuracy, move to an open area."
+                  : ""
+              }`,
             });
             setLocationLoading(false);
           } else {
-            setMessage({ 
-              type: 'info', 
-              text: `Refining location... Attempt ${attempts}/${maxAttempts} (Current accuracy: ${Math.round(accuracy)} meters)` 
+            setMessage({
+              type: "info",
+              text: `Refining location... Attempt ${attempts}/${maxAttempts} (Current accuracy: ${Math.round(
+                accuracy
+              )} meters)`,
             });
             setTimeout(tryGetLocation, 3000);
           }
         },
         (error) => {
           let errorMessage;
-          
+
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMessage = 'Location access denied. Please allow location permissions in your browser settings and try again.';
+              errorMessage =
+                "Location access denied. Please allow location permissions in your browser settings and try again.";
               break;
             case error.POSITION_UNAVAILABLE:
-              errorMessage = 'Location information unavailable. Please check your GPS and internet connection.';
+              errorMessage =
+                "Location information unavailable. Please check your GPS and internet connection.";
               break;
             case error.TIMEOUT:
               if (attempts < maxAttempts) {
-                setMessage({ 
-                  type: 'info', 
-                  text: `Location request timed out. Retrying... (${attempts}/${maxAttempts})` 
+                setMessage({
+                  type: "info",
+                  text: `Location request timed out. Retrying... (${attempts}/${maxAttempts})`,
                 });
                 setTimeout(tryGetLocation, 3000);
                 return;
               }
-              errorMessage = 'Unable to get location. Please ensure GPS is enabled or enter coordinates manually.';
+              errorMessage =
+                "Unable to get location. Please ensure GPS is enabled or enter coordinates manually.";
               break;
             default:
-              errorMessage = 'An unexpected error occurred while getting location.';
+              errorMessage =
+                "An unexpected error occurred while getting location.";
               break;
           }
 
-          setMessage({ type: 'error', text: errorMessage });
+          setMessage({ type: "error", text: errorMessage });
           setLocationLoading(false);
         },
         options
@@ -191,17 +229,23 @@ const AuthPage = () => {
   // Alternative: Use watchPosition for continuous updates (most accurate)
   const getPreciseLocation = () => {
     if (!navigator.geolocation) {
-      setMessage({ type: 'error', text: 'Geolocation is not supported by your browser' });
+      setMessage({
+        type: "error",
+        text: "Geolocation is not supported by your browser",
+      });
       return;
     }
 
     setLocationLoading(true);
-    setMessage({ type: 'info', text: 'Getting precise location... This may take 10-15 seconds.' });
+    setMessage({
+      type: "info",
+      text: "Getting precise location... This may take 10-15 seconds.",
+    });
 
     const options = {
       enableHighAccuracy: true,
       timeout: 20000,
-      maximumAge: 0
+      maximumAge: 0,
     };
 
     let watchId;
@@ -214,48 +258,55 @@ const AuthPage = () => {
     watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude, accuracy } = position.coords;
-        
+
         if (accuracy <= 30) {
           navigator.geolocation.clearWatch(watchId);
           clearTimeout(timeoutId);
-          
-          setSignupData(prev => ({
+
+          setSignupData((prev) => ({
             ...prev,
             latitude: latitude.toFixed(8),
-            longitude: longitude.toFixed(8)
+            longitude: longitude.toFixed(8),
           }));
 
-          setMessage({ 
-            type: 'success', 
-            text: `Precise location detected! (Accuracy: ${Math.round(accuracy)} meters)` 
+          setMessage({
+            type: "success",
+            text: `Precise location detected! (Accuracy: ${Math.round(
+              accuracy
+            )} meters)`,
           });
           setLocationLoading(false);
         } else {
-          setMessage({ 
-            type: 'info', 
-            text: `Refining location... Current accuracy: ${Math.round(accuracy)} meters` 
+          setMessage({
+            type: "info",
+            text: `Refining location... Current accuracy: ${Math.round(
+              accuracy
+            )} meters`,
           });
         }
       },
       (error) => {
         navigator.geolocation.clearWatch(watchId);
         clearTimeout(timeoutId);
-        
-        let errorMessage = 'Failed to get precise location.';
-        
+
+        let errorMessage = "Failed to get precise location.";
+
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location access denied. Please allow location permissions.';
+            errorMessage =
+              "Location access denied. Please allow location permissions.";
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information unavailable. Please check your GPS.';
+            errorMessage =
+              "Location information unavailable. Please check your GPS.";
             break;
           case error.TIMEOUT:
-            errorMessage = 'Precise location detection timed out. Try the standard location detection.';
+            errorMessage =
+              "Precise location detection timed out. Try the standard location detection.";
             break;
         }
 
-        setMessage({ type: 'error', text: errorMessage });
+        setMessage({ type: "error", text: errorMessage });
         setLocationLoading(false);
       },
       options
@@ -263,9 +314,9 @@ const AuthPage = () => {
 
     timeoutId = setTimeout(() => {
       navigator.geolocation.clearWatch(watchId);
-      setMessage({ 
-        type: 'warning', 
-        text: 'Precise location detection taking too long. Try standard location detection or enter manually.' 
+      setMessage({
+        type: "warning",
+        text: "Precise location detection taking too long. Try standard location detection or enter manually.",
       });
       setLocationLoading(false);
     }, 20000);
@@ -277,20 +328,20 @@ const AuthPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage({ type: '', text: '' });
+    setMessage({ type: "", text: "" });
 
     try {
       await login(loginData.email, loginData.password);
-      setMessage({ type: 'success', text: 'Welcome back!' });
-      
+      setMessage({ type: "success", text: "Welcome back!" });
+
       // Redirect to dashboard after successful login
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = "/dashboard";
       }, 1000);
     } catch (err) {
-      setMessage({ 
-        type: 'error', 
-        text: err.message || "Login failed"
+      setMessage({
+        type: "error",
+        text: err.message || "Login failed",
       });
     } finally {
       setLoading(false);
@@ -299,158 +350,233 @@ const AuthPage = () => {
 
   // Enhanced form validation using your existing logic
   const validateSignupForm = () => {
-    if (!signupData.firstName || !signupData.lastName || !signupData.email || !signupData.password) {
-      setMessage({ type: 'error', text: "All required fields must be filled." });
-      return false;
+    const errors = [];
+
+    // Required fields
+    const requiredFields = {
+      firstName: "First Name",
+      lastName: "Last Name",
+      email: "Email Address",
+      phone: "Phone Number",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      dob: "Date of Birth",
+      gender: "Gender",
+      address: "Address",
+      city: "City",
+      state: "State",
+    };
+
+    for (const [field, name] of Object.entries(requiredFields)) {
+      if (!signupData[field]) {
+        errors.push(`${name} is required`);
+      }
     }
-    if (signupData.password !== signupData.confirmPassword) {
-      setMessage({ type: 'error', text: "Passwords do not match!" });
-      return false;
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (signupData.email && !emailRegex.test(signupData.email)) {
+      errors.push("Please enter a valid email address");
     }
+
+    // Phone validation
+    if (signupData.phone && signupData.phone.replace(/\D/g, "").length < 10) {
+      errors.push("Please enter a valid phone number");
+    }
+
+    // Password validation
     if (signupData.password.length < 6) {
-      setMessage({ type: 'error', text: "Password must be at least 6 characters long." });
-      return false;
+      errors.push("Password must be at least 6 characters long");
     }
-    if (!signupData.state || !signupData.city) {
-      setMessage({ type: 'error', text: "Please select your state and city." });
-      return false;
+
+    if (signupData.password !== signupData.confirmPassword) {
+      errors.push("Passwords do not match");
     }
+
+    // Age validation (18+)
+    if (signupData.dob) {
+      const dob = new Date(signupData.dob);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+
+      if (age < 18) {
+        errors.push("You must be at least 18 years old to register");
+      }
+    }
+
+    // GPS coordinates
     if (!signupData.latitude || !signupData.longitude) {
-      setMessage({ type: 'error', text: "Please provide GPS coordinates." });
+      errors.push("GPS coordinates are required for delivery services");
+    }
+
+    if (errors.length > 0) {
+      setMessage({ type: "error", text: errors[0] });
       return false;
     }
+
     return true;
   };
 
   // Handle signup submission using your existing API logic
-const handleSignup = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setMessage({ type: '', text: '' });
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
 
-  if (!validateSignupForm()) {
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    
-    // Append all form data following your existing structure
-   Object.keys(signupData).forEach(key => {
-  if (key === 'profileImage' && signupData[key]) {
-    formData.append('profilePic', signupData[key]);
-  } else {
-    formData.append(key, signupData[key]);
-  }
-});
-
-for (let [key, value] of formData.entries()) {
-  console.log(key, value);
-}
-
-
-    // Create GPS GeoJSON like your original form
-    if (signupData.latitude && signupData.longitude) {
-      const geoJson = JSON.stringify({
-        type: "Point",
-        coordinates: [parseFloat(signupData.longitude), parseFloat(signupData.latitude)]
-      });
-      formData.append('gps', geoJson);
+    if (!validateSignupForm()) {
+      setLoading(false);
+      return;
     }
 
-    // Try using your API helper first, fallback to axios
-    let response;
     try {
-      // If you have an API.js helper
-      response = await API.post("/api/v1/auth/register", formData);
-    } catch (helperError) {
-      console.log('API helper failed, trying direct axios...');
-      // Fallback to direct axios call
-      response = await axios.post('/api/v1/auth/register', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const formData = new FormData();
+
+      // Append user data with CORRECT field names for Cloudinary backend
+      formData.append("firstName", signupData.firstName.trim());
+      formData.append("lastName", signupData.lastName.trim());
+      formData.append("email", signupData.email.trim().toLowerCase());
+      formData.append("phone", signupData.phone.trim());
+      formData.append("password", signupData.password);
+      formData.append("confirmPassword", signupData.confirmPassword);
+      formData.append("dob", signupData.dob);
+      formData.append("gender", signupData.gender);
+      formData.append("address", signupData.address.trim());
+      formData.append("city", signupData.city.trim());
+      formData.append("state", signupData.state);
+
+      // Append profile image with CORRECT field name for multer middleware
+      // Backend expects 'profileImage' NOT 'profilePic'
+      if (signupData.profileImage) {
+        formData.append("profileImage", signupData.profileImage);
+      }
+
+      // Create GPS GeoJSON in correct format
+      const geoJson = {
+        type: "Point",
+        coordinates: [
+          parseFloat(signupData.longitude),
+          parseFloat(signupData.latitude),
+        ],
+      };
+      formData.append("gps", JSON.stringify(geoJson));
+
+      // Debug: Log form data
+      console.log("Submitting registration to Cloudinary backend...");
+      for (let [key, value] of formData.entries()) {
+        console.log(
+          `${key}:`,
+          value instanceof File ? `${value.name} (${value.type})` : value
+        );
+      }
+
+      // Make API call to CORRECT endpoint
+      // Changed from "/api/v1/auth/register" to "/auth/register"
+      const response = await API.post("/api/v1/auth/register", formData, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        timeout: 30000, // 30 seconds timeout for file upload
+      });
+
+      console.log("Registration successful:", response.data);
+
+      if (response.data.success) {
+        // Store token and user data
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        setMessage({
+          type: "success",
+          text:
+            response.data.message ||
+            "Registration successful! You will be redirected shortly.",
+        });
+
+        // Auto login after successful registration
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
+      } else {
+        setMessage({
+          type: "error",
+          text: response.data.error || "Registration failed. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      let errorMessage = "Registration failed. Please try again.";
+
+      if (error.response) {
+        // Server responded with error
+        const serverError = error.response.data;
+
+        if (serverError.error) {
+          errorMessage = serverError.error;
+        } else if (serverError.message) {
+          errorMessage = serverError.message;
+        } else if (serverError.errors) {
+          // Handle validation errors from backend
+          const firstError = serverError.errors[0];
+          errorMessage = firstError?.msg || JSON.stringify(serverError.errors);
         }
-      });
-    }
+      } else if (error.request) {
+        // Request was made but no response
+        errorMessage =
+          "No response from server. Please check your internet connection.";
+      } else if (error.code === "ECONNABORTED") {
+        errorMessage = "Request timeout. Please try again.";
+      }
 
-    if (response.data.success) {
-      // Store token and user data like your original
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-
-      setMessage({ type: 'success', text: 'Registration successful!' });
-      
-      // Redirect to dashboard
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 1000);
-    } else {
-      setMessage({ 
-        type: 'error', 
-        text: response.data.error || "Signup failed. Please try again." 
-      });
+      setMessage({ type: "error", text: errorMessage });
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Signup error details:", err);
-    
-    // More detailed error logging
-    if (err.response) {
-      // Server responded with error status
-      console.error("Response status:", err.response.status);
-      console.error("Response data:", err.response.data);
-      console.error("Response headers:", err.response.headers);
-    } else if (err.request) {
-      // Request was made but no response received
-      console.error("No response received:", err.request);
-    } else {
-      // Something else happened
-      console.error("Error message:", err.message);
-    }
-
-    const msg =
-      err.response?.data?.message ||
-      err.response?.data?.error ||
-      err.message ||
-      "Signup failed. Please check your network connection and try again.";
-    
-    setMessage({ type: 'error', text: msg });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Reset forms when switching
   const switchToLogin = () => {
     setIsLogin(true);
-    setMessage({ type: '', text: '' });
-    setLoginData({ email: '', password: '' });
+    setMessage({ type: "", text: "" });
+    setLoginData({ email: "", password: "" });
   };
 
   const switchToSignup = () => {
     setIsLogin(false);
-    setMessage({ type: '', text: '' });
+    setMessage({ type: "", text: "" });
     // Reset signup data but keep the structure
     setSignupData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
-      dob: '',
-      gender: '',
-      address: '',
-      city: '',
-      state: '',
-      latitude: '',
-      longitude: '',
-      profileImage: null
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      dob: "",
+      gender: "",
+      address: "",
+      city: "",
+      state: "",
+      latitude: "",
+      longitude: "",
+      profileImage: null,
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
+
+  // Clear message after 5 seconds
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        if (message.type !== "success" || !loading) {
+          setMessage({ type: "", text: "" });
+        }
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, loading]);
 
   return (
     <div className="auth-auth-container">
@@ -458,33 +584,30 @@ for (let [key, value] of formData.entries()) {
         {/* Header Section */}
         <div className="auth-auth-header">
           <div className="auth-auth-tabs">
-            <button 
-              className={`auth-tab-button ${isLogin ? 'auth-active' : ''}`}
+            <button
+              className={`auth-tab-button ${isLogin ? "auth-active" : ""}`}
               onClick={switchToLogin}
             >
               Login
             </button>
-            <button 
-              className={`auth-tab-button ${!isLogin ? 'auth-active' : ''}`}
+            <button
+              className={`auth-tab-button ${!isLogin ? "auth-active" : ""}`}
               onClick={switchToSignup}
             >
               Sign Up
             </button>
           </div>
-          <h2>{isLogin ? 'Welcome to e-Gas' : 'Create Account'}</h2>
+          <h2>{isLogin ? "Welcome to e-Gas" : "Create Account"}</h2>
           <p>
-            {isLogin 
-              ? 'Sign in to your account to continue' 
-              : 'Join e-Gas today and get started'
-            }
+            {isLogin
+              ? "Sign in to your account to continue"
+              : "Join e-Gas today and get started"}
           </p>
         </div>
 
         {/* Message Display */}
         {message.text && (
-          <div className={`auth-message ${message.type}`}>
-            {message.text}
-          </div>
+          <div className={`auth-message ${message.type}`}>{message.text}</div>
         )}
 
         {/* Login Form */}
@@ -515,14 +638,18 @@ for (let [key, value] of formData.entries()) {
               />
             </div>
 
-            <button type="submit" className="auth-auth-button" disabled={loading}>
+            <button
+              type="submit"
+              className="auth-auth-button"
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <span className="auth-spinner"></span>
                   Signing In...
                 </>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </button>
 
@@ -545,19 +672,20 @@ for (let [key, value] of formData.entries()) {
                   ref={fileInputRef}
                   accept="image/*"
                   onChange={handleImageUpload}
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   disabled={loading}
+                  name="profileImage" // ADD THIS LINE
                 />
                 <div className="auth-image-preview">
                   {signupData.profileImage ? (
                     <div className="auth-image-with-remove">
-                      <img 
-                        src={URL.createObjectURL(signupData.profileImage)} 
-                        alt="Profile preview" 
+                      <img
+                        src={URL.createObjectURL(signupData.profileImage)}
+                        alt="Profile preview"
                         className="auth-profile-preview"
                       />
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="auth-remove-image"
                         onClick={removeProfileImage}
                         disabled={loading}
@@ -566,12 +694,15 @@ for (let [key, value] of formData.entries()) {
                       </button>
                     </div>
                   ) : (
-                    <div 
+                    <div
                       className="auth-image-placeholder"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <span>📷</span>
                       <p>Add Profile Photo</p>
+                      <small>
+                        Optional - Will be stored securely on Cloudinary
+                      </small>
                     </div>
                   )}
                 </div>
@@ -666,9 +797,9 @@ for (let [key, value] of formData.entries()) {
                 />
               </div>
               <div className="auth-form-group">
-                <select 
-                  name="gender" 
-                  value={signupData.gender} 
+                <select
+                  name="gender"
+                  value={signupData.gender}
                   onChange={handleSignupChange}
                   disabled={loading}
                 >
@@ -705,9 +836,9 @@ for (let [key, value] of formData.entries()) {
                 />
               </div>
               <div className="auth-form-group">
-                <select 
-                  name="state" 
-                  value={signupData.state} 
+                <select
+                  name="state"
+                  value={signupData.state}
                   onChange={handleSignupChange}
                   required
                   disabled={loading}
@@ -722,9 +853,9 @@ for (let [key, value] of formData.entries()) {
             {/* Enhanced Location Section */}
             <div className="auth-location-section">
               <div className="auth-location-buttons">
-                <button 
-                  type="button" 
-                  onClick={getLocation} 
+                <button
+                  type="button"
+                  onClick={getLocation}
                   className="auth-location-button"
                   disabled={locationLoading || loading}
                 >
@@ -734,12 +865,12 @@ for (let [key, value] of formData.entries()) {
                       Detecting...
                     </>
                   ) : (
-                    'Get Location'
+                    "Get Location"
                   )}
                 </button>
-                <button 
-                  type="button" 
-                  onClick={getPreciseLocation} 
+                <button
+                  type="button"
+                  onClick={getPreciseLocation}
                   className="auth-location-button precise"
                   disabled={locationLoading || loading}
                 >
@@ -749,7 +880,7 @@ for (let [key, value] of formData.entries()) {
                       Getting Precise...
                     </>
                   ) : (
-                    'Precise Location'
+                    "Precise Location"
                   )}
                 </button>
               </div>
@@ -780,7 +911,9 @@ for (let [key, value] of formData.entries()) {
                 </div>
               </div>
               <div className="auth-location-tips">
-                <p>💡 <strong>Tips for better accuracy:</strong></p>
+                <p>
+                  💡 <strong>Tips for better accuracy:</strong>
+                </p>
                 <ul>
                   <li>Enable GPS on your device</li>
                   <li>Move to an open area</li>
@@ -789,16 +922,34 @@ for (let [key, value] of formData.entries()) {
               </div>
             </div>
 
-            <button type="submit" className="auth-auth-button" disabled={loading}>
+            <button
+              type="submit"
+              className="auth-auth-button"
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <span className="auth-spinner"></span>
                   Creating Account...
                 </>
               ) : (
-                'Create Account'
+                "Create Account"
               )}
             </button>
+
+            {/* Add this section */}
+            <div className="auth-terms-notice">
+              <p>
+                By creating an account, you agree to our{" "}
+                <a href="/terms" target="_blank" rel="noopener noreferrer">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" target="_blank" rel="noopener noreferrer">
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
           </form>
         )}
 
@@ -806,15 +957,23 @@ for (let [key, value] of formData.entries()) {
         <div className="auth-auth-switch">
           {isLogin ? (
             <p>
-              Don't have an account?{' '}
-              <button type="button" className="auth-switch-link" onClick={switchToSignup}>
+              Don't have an account?{" "}
+              <button
+                type="button"
+                className="auth-switch-link"
+                onClick={switchToSignup}
+              >
                 Sign up
               </button>
             </p>
           ) : (
             <p>
-              Already have an account?{' '}
-              <button type="button" className="auth-switch-link" onClick={switchToLogin}>
+              Already have an account?{" "}
+              <button
+                type="button"
+                className="auth-switch-link"
+                onClick={switchToLogin}
+              >
                 Sign in
               </button>
             </p>

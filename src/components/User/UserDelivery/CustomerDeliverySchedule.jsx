@@ -12,7 +12,7 @@ import {
   FaSort,
   FaCalendarAlt
 } from 'react-icons/fa';
-import './CustomerDeliveryHistory.css';
+import './CustomerDeliverySchedule.css';
 
 const CustomerDeliveryHistory = () => {
   const [deliveries, setDeliveries] = useState([]);

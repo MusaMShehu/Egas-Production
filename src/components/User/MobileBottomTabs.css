@@ -1,0 +1,87 @@
+.mobile-bottom-tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #E8E8E8;
+  padding: 8px 0 4px;
+  z-index: 1000;
+  box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tabs-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #888;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  min-width: 56px;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #FF6B35;
+}
+
+.tab-item.active .tab-icon {
+  transform: translateY(-4px);
+}
+
+.tab-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.active-indicator {
+  position: absolute;
+  top: -8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #FF6B35;
+}
+
+/* Add safe area for iPhone notch */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-bottom-tabs {
+    padding-bottom: calc(4px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .mobile-bottom-tabs {
+    background: rgba(30, 30, 30, 0.95);
+    border-top-color: #333;
+  }
+  
+  .tab-item {
+    color: #AAA;
+  }
+  
+  .tab-item.active {
+    color: #FF6B35;
+  }
+}

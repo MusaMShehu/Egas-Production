@@ -1,9 +1,13 @@
+import React from "react";
 import {
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from './contexts/AuthContext';
+import { useState, useEffect } from "react";
+import { isMobile } from 'react-device-detect';
+
 
 // Notifications
 import { SnackbarProvider } from './contexts/SnackbarContext';
@@ -16,7 +20,8 @@ import { useNotificationManager } from './hooks/useFirebaseNotificationManager';
 
 // Public Pages
 import PublicLayout from "./components/public/PublicLayout";
-import Home from "./components/Home/Home";
+import HomeDesktop from "./components/Home/Home";
+import HomeMobile from "./components/Home/HomeMobile";
   // Home Nested Routes of public pages
 import LearnMore from "./pages/Learn More/learnMore";
 import DomesticSolutions from "./pages/Domestic_Solutions/DomesticSolutions";
@@ -61,23 +66,41 @@ import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
 import WalletPaymentSuccess from "./components/Subscription/WalletPaymentSuccess";
 
 
-// Subscription and Product Selection Pages from Server
+// Desktop Subscription and Product Selection Pages from Server
 import ProductSelection from "./components/Products/ProductSelectionServer";
-import SubscriptionPlans from "./components/Subscription/SubscriptionPlans";
+import DesktopSubscriptionPlans from "./components/Subscription/SubscriptionPlans";
+
+// Mobile Subscription and Product Selection Pages from Server
+import MobileSubscriptionPlans from "./components/Subscription/MobileSubscriptionPlans";
+
+// Layouts
+import MobileLayout from './components/User/MobileLayout';
+import DesktopLayout from "./components/User/DestopLayout";
 
 
-// 2nd User Panel
-import UserLayout from "./components/User/UserLayout";
-import DashboardOverview from "./components/User/DashboardOverview";
-import UserOrders from "./components/User/UserOrders/UserOrders";
-import UserSubscriptions from "./components/User/UserSubscriptions/UserSubscriptions";
-import UserHistory from "./components/User/UserHistory/UserHistory";
-import UserPayment from "./components/User/UserPayment/UserPayment";
-import UserProfile from "./components/User/UserProfile/UserProfile";
-import UserSupport from "./components/User/UserSupport/UserSupport";
-import UserSettings from "./components/User/UserSettings/UserSettings";
 
-import CustomerDeliveryHistory from "./components/User/UserDelivery/CustomerDeliveryHistoryConfirmation";
+// USER PANEL DESKTOP
+
+import DesktopDashboardOverview from "./components/User/DashboardOverview";
+import DesktopUserOrders from "./components/User/UserOrders/UserOrders";
+import DesktopUserSubscriptions from "./components/User/UserSubscriptions/UserSubscriptions";
+import DesktopUserHistory from "./components/User/UserHistory/UserHistory";
+import DesktopUserPayment from "./components/User/UserPayment/UserPayment";
+import DesktopUserProfile from "./components/User/UserProfile/UserProfile";
+import DesktopUserSupport from "./components/User/UserSupport/UserSupport";
+import DesktopUserSettings from "./components/User/UserSettings/UserSettings";
+import DesktopCustomerDeliverySchedule from "./components/User/UserDelivery/CustomerDeliverySchedule";
+
+// USER PANEL MOBILE VIEW
+import MobileDashboardOverview from "./components/User/DashboardMobile";
+import MobileUserOrders from "./components/User/UserOrders/MobileUserOrders";
+import MobileUserSubscriptions from "./components/User/UserSubscriptions/MobileUserSubscriptions";
+import MobileUserHistory from "./components/User/UserHistory/MobileUserHistory";
+import MobileUserPayment from "./components/User/UserPayment/MobileUserPayment";
+import MobileUserProfile from "./components/User/UserProfile/MobileUserProfile";
+import MobileUserSupport from "./components/User/UserSupport/MobileUserSupport";
+import MobileUserSettings from "./components/User/UserSettings/MobileUserSettings";
+import MobileCustomerDeliverySchedule from "./components/User/UserDelivery/MobileCustomerDeliverySchedule";
 
 
 
@@ -98,6 +121,35 @@ import WalletTopupCallback from './components/payments/walletTopupCallback';
 function App() {
 
   const userId = "current-user-id";
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+
+// Choose components based on device
+  const Home = isMobile ? HomeMobile : HomeDesktop;
+  const CustomerDeliverySchedule = isMobile ? MobileCustomerDeliverySchedule : DesktopCustomerDeliverySchedule;
+  const UserHistory = isMobile ? MobileUserHistory : DesktopUserHistory;
+  const UserPayment = isMobile ? MobileUserPayment : DesktopUserPayment;
+  const UserProfile = isMobile ? MobileUserProfile : DesktopUserProfile;
+  const UserSubscriptions = isMobile ? MobileUserSubscriptions : DesktopUserSubscriptions;
+  const UserOrders = isMobile ? MobileUserOrders : DesktopUserOrders;
+  const DashboardOverview = isMobile ? MobileDashboardOverview : DesktopDashboardOverview;
+  const UserSupport = isMobile ? MobileUserSupport : DesktopUserSupport;
+  const UserSettings = isMobile ? MobileUserSettings : DesktopUserSettings;
+  const UserLayout = isMobile ? MobileLayout : DesktopLayout;
+  const SubscriptionPlans = isMobile ? MobileSubscriptionPlans : DesktopSubscriptionPlans;
+
 
   return (
 
@@ -120,7 +172,7 @@ function App() {
 
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<Home />} />
+            <Route path="home" element={ <Home />} />
             <Route path="/opportunities" element={< OpportunitiesLayout/>} >
               <Route index element={<Navigate to="learn-more" replace />} />
               <Route path="learn-more" element={<LearnMore/>} />
@@ -179,7 +231,7 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />
-            <Route path="delivery" element={<CustomerDeliveryHistory />} />
+            <Route path="delivery" element={<CustomerDeliverySchedule />} />
 
 
               {/* New payment Testing */}

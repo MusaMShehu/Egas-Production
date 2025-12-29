@@ -1,0 +1,63 @@
+.mobile-layout {
+  min-height: 100vh;
+  background: #F8F9FA;
+  position: relative;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-main {
+  padding-bottom: 70px;
+  min-height: calc(100vh - 60px);
+  overflow-x: hidden;
+}
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: linear-gradient(135deg, #FF6B35, #FF9505);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+}
+
+.fab-icon {
+  font-size: 18px;
+}
+
+.fab-text {
+  display: none;
+}
+
+@media (min-width: 400px) {
+  .fab-text {
+    display: inline;
+  }
+}
+
+/* Safe area for iPhone X and newer */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-layout {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+  
+  .fab {
+    bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+}

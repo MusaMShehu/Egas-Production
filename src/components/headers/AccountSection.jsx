@@ -10,8 +10,8 @@ const AccountSection = ({ onLoginClick }) => {
     <div className="account-section">
       {user ? (
         <div className="account-info">
-          {user.profilePic && user.profilePic !== "default.jpg" ? (
-            <img src={user.profilePic} alt="profile" className="profile-pic" />
+          {user.profileImage && user.profileImage !== "default.jpg" ? (
+            <img src={user.profileImage} alt="profile" className="profile-pic" />
           ) : (
             <div className="profile-placeholder">
               <FaUser className="user-icon" />
