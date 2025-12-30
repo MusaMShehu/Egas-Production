@@ -77,35 +77,35 @@ const QuickLinks = () => {
   };
 
   return (
-    <section className="mobile-quick-links">
-      <div className="quick-links-header">
+    <section className="hmc-mobile-quick-links">
+      <div className="hmc-quick-links-header">
         <h2>QUICK LINKS</h2>
-        <p className="section-intro">
+        <p className="hmc-section-intro">
           Navigate through our website to find the best products that suit your preferences.
           Subscribe to plans or customize according to your budget and needs.
         </p>
       </div>
       
-      <div className="quick-links-grid">
+      <div className="hmc-quick-links-grid">
         {linkItems.map((item, index) => (
-          <Link key={index} to={item.path} className="quick-link-card">
-            <div className="card-image-container">
+          <Link key={index} to={item.path} className="hmc-quick-link-card">
+            <div className="hmc-card-image-container">
               <img 
                 src={item.image} 
                 alt={item.title}
                 loading="lazy"
                 onError={handleImageError}
               />
-              <div className="card-icon-fallback" style={{ background: item.color }}>
+              <div className="hmc-card-icon-fallback" style={{ background: item.color }}>
                 {item.icon}
               </div>
-              <div className="card-overlay" style={{ background: `${item.color}40` }}></div>
+              <div className="hmc-card-overlay" style={{ background: `${item.color}40` }}></div>
             </div>
-            <div className="card-content">
-              <div className="card-icon" style={{ color: item.color }}>
+            <div className="hmc-card-content">
+              <div className="hmc-card-icon" style={{ color: item.color }}>
                 {item.icon}
               </div>
-              <h3 className="card-title">{item.title}</h3>
+              <h3 className="hmc-card-title">{item.title}</h3>
             </div>
           </Link>
         ))}

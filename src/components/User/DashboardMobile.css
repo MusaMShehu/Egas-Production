@@ -1,5 +1,5 @@
 /* DashboardMobile.css */
-.mobile-dashboard-container {
+.mobdash-mobile-dashboard-container {
   max-width: 100%;
   margin: 0 auto;
   background: #f5f5f5;
@@ -9,7 +9,7 @@
 }
 
 /* Header */
-.mobile-dashboard-header {
+.mobdash-mobile-dashboard-header {
   position: fixed;
   top: 0;
   left: 0;
@@ -21,20 +21,20 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.header-content {
+.mobdash-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.mobile-dashboard-header h1 {
+.mobdash-mobile-dashboard-header h1 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
 }
 
-.mobile-refresh-btn {
+.mobdash-mobile-refresh-btn {
   background: #f0f7ff;
   border: none;
   width: 40px;
@@ -48,13 +48,13 @@
   transition: all 0.2s;
 }
 
-.mobile-refresh-btn:active {
+.mobdash-mobile-refresh-btn:active {
   transform: rotate(180deg);
   background: #e6f2ff;
 }
 
 /* Loading State */
-.mobile-dashboard-loading {
+.mobdash-mobile-dashboard-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,29 +63,29 @@
   background: #f5f5f5;
 }
 
-.mobile-loading-spinner {
+.mobdash-mobile-loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid #e0e0e0;
   border-top-color: #007bff;
   border-radius: 50%;
-  animation: mobile-spin 1s linear infinite;
+  animation: mobdash-spin 1s linear infinite;
   margin-bottom: 16px;
 }
 
-@keyframes mobile-spin {
+@keyframes mobdash-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-.mobile-dashboard-loading p {
+.mobdash-mobile-dashboard-loading p {
   color: #666;
   font-size: 14px;
 }
 
 /* Error State */
-.mobile-error-container {
+.mobdash-mobile-error-container {
   padding: 40px 20px;
   text-align: center;
   background: #f5f5f5;
@@ -96,26 +96,26 @@
   justify-content: center;
 }
 
-.mobile-error-icon {
+.mobdash-mobile-error-icon {
   font-size: 48px;
   color: #ff4444;
   margin-bottom: 16px;
 }
 
-.mobile-error-container h3 {
+.mobdash-mobile-error-container h3 {
   margin: 0 0 8px 0;
   color: #333;
   font-size: 18px;
 }
 
-.mobile-error-container p {
+.mobdash-mobile-error-container p {
   margin: 0 0 24px 0;
   color: #666;
   font-size: 14px;
   max-width: 300px;
 }
 
-.mobile-retry-btn {
+.mobdash-mobile-retry-btn {
   background: #007bff;
   color: white;
   border: none;
@@ -129,13 +129,13 @@
 }
 
 /* Main Content */
-.mobile-dashboard-content {
-  margin-top: 60px; /* Header height */
+.mobdash-mobile-dashboard-content {
+  /* margin-top: 60px; Header height */
   padding: 16px;
 }
 
 /* Hero Banner */
-.mobile-hero-banner {
+.mobdash-mobile-hero-banner {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   border-radius: 16px;
   padding: 24px 20px;
@@ -144,20 +144,20 @@
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-.hero-content h1 {
+.mobdash-hero-content h1 {
   margin: 0 0 16px 0;
   font-size: 22px;
   font-weight: 600;
   line-height: 1.3;
 }
 
-.hero-features {
+.mobdash-hero-features {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.hero-feature {
+.mobdash-hero-feature {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -165,22 +165,22 @@
   opacity: 0.95;
 }
 
-.hero-feature svg {
+.mobdash-hero-feature svg {
   font-size: 16px;
 }
 
 /* Quick Actions */
-.mobile-quick-actions {
+.mobdash-mobile-quick-actions {
   margin-bottom: 20px;
 }
 
-.action-grid {
+.mobdash-action-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-.action-btn {
+.mobdash-action-btn {
   padding: 16px 12px;
   border: none;
   border-radius: 12px;
@@ -194,46 +194,46 @@
   min-height: 80px;
 }
 
-.action-btn:active {
+.mobdash-action-btn:active {
   transform: scale(0.98);
 }
 
-.action-btn.primary {
+.mobdash-action-btn.mobdash-primary {
   background: #ff6b35;
   color: white;
 }
 
-.action-btn.secondary {
+.mobdash-action-btn.mobdash-secondary {
   background: #28a745;
   color: white;
 }
 
-.action-btn.tertiary {
+.mobdash-action-btn.mobdash-tertiary {
   background: #17a2b8;
   color: white;
 }
 
-.action-btn.quaternary {
+.mobdash-action-btn.mobdash-quaternary {
   background: #6c757d;
   color: white;
 }
 
-.action-btn svg {
+.mobdash-action-btn svg {
   font-size: 20px;
 }
 
 /* Stats Cards */
-.mobile-stats-cards {
+.mobdash-mobile-stats-cards {
   margin-bottom: 20px;
 }
 
-.stats-grid {
+.mobdash-stats-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 12px;
 }
 
-.stat-card {
+.mobdash-stat-card {
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -242,40 +242,40 @@
   gap: 12px;
 }
 
-.stat-card:active {
+.mobdash-stat-card:active {
   opacity: 0.9;
 }
 
-.stat-card.blue {
+.mobdash-stat-card.mobdash-blue {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
 }
 
-.stat-card.orange {
+.mobdash-stat-card.mobdash-orange {
   background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
   color: white;
 }
 
-.stat-card.green {
+.mobdash-stat-card.mobdash-green {
   background: linear-gradient(135deg, #28a745 0%, #218838 100%);
   color: white;
 }
 
-.stat-card.purple {
+.mobdash-stat-card.mobdash-purple {
   background: linear-gradient(135deg, #6f42c1 0%, #5936a1 100%);
   color: white;
 }
 
-.stat-icon {
+.mobdash-stat-icon {
   font-size: 20px;
   opacity: 0.9;
 }
 
-.stat-content {
+.mobdash-stat-content {
   flex: 1;
 }
 
-.stat-content h3 {
+.mobdash-stat-content h3 {
   margin: 0 0 4px 0;
   font-size: 12px;
   font-weight: 500;
@@ -284,21 +284,21 @@
   letter-spacing: 0.5px;
 }
 
-.stat-value {
+.mobdash-stat-value {
   margin: 4px 0;
   font-size: 18px;
   font-weight: 600;
   line-height: 1.2;
 }
 
-.stat-subtitle {
+.mobdash-stat-subtitle {
   margin: 4px 0 0 0;
   font-size: 11px;
   opacity: 0.8;
 }
 
 /* Promotions Banner */
-.mobile-promo-banner {
+.mobdash-mobile-promo-banner {
   background: linear-gradient(135deg, #ff4444 0%, #ff6b6b 100%);
   border-radius: 12px;
   padding: 16px;
@@ -307,25 +307,25 @@
   position: relative;
 }
 
-.promo-header {
+.mobdash-promo-header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-.promo-icon {
+.mobdash-promo-icon {
   font-size: 20px;
 }
 
-.promo-header h3 {
+.mobdash-promo-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
   flex: 1;
 }
 
-.promo-close {
+.mobdash-promo-close {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   width: 24px;
@@ -339,13 +339,13 @@
   line-height: 1;
 }
 
-.mobile-promo-banner p {
+.mobdash-mobile-promo-banner p {
   margin: 0 0 12px 0;
   font-size: 14px;
   opacity: 0.95;
 }
 
-.promo-action-btn {
+.mobdash-promo-action-btn {
   background: white;
   color: #ff4444;
   border: none;
@@ -360,7 +360,7 @@
 }
 
 /* Delivery Card */
-.mobile-delivery-card {
+.mobdash-mobile-delivery-card {
   background: white;
   border-radius: 12px;
   padding: 16px;
@@ -368,19 +368,19 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.delivery-header {
+.mobdash-delivery-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 16px;
 }
 
-.delivery-header svg {
+.mobdash-delivery-header svg {
   color: #007bff;
   font-size: 18px;
 }
 
-.delivery-header h3 {
+.mobdash-delivery-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -388,7 +388,7 @@
   flex: 1;
 }
 
-.view-all-btn {
+.mobdash-view-all-btn {
   background: transparent;
   border: none;
   color: #007bff;
@@ -399,13 +399,13 @@
   font-weight: 500;
 }
 
-.delivery-content {
+.mobdash-delivery-content {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.delivery-schedule {
+.mobdash-delivery-schedule {
   background: #f0f7ff;
   border-radius: 8px;
   padding: 12px;
@@ -414,26 +414,26 @@
   align-items: center;
 }
 
-.delivery-date-badge {
+.mobdash-delivery-date-badge {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.date-label {
+.mobdash-date-label {
   font-size: 11px;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.date-value {
+.mobdash-date-value {
   font-size: 14px;
   font-weight: 600;
   color: #2c3e50;
 }
 
-.delivery-status {
+.mobdash-delivery-status {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -441,48 +441,48 @@
   color: #666;
 }
 
-.status-indicator {
+.mobdash-status-indicator {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
 
-.status-indicator.upcoming {
+.mobdash-status-indicator.mobdash-upcoming {
   background: #28a745;
-  animation: pulse 2s infinite;
+  animation: mobdash-pulse 2s infinite;
 }
 
-.status-indicator.pending {
+.mobdash-status-indicator.mobdash-pending {
   background: #ffc107;
 }
 
-@keyframes pulse {
+@keyframes mobdash-pulse {
   0% { opacity: 1; }
   50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
 
-.no-delivery {
+.mobdash-no-delivery {
   text-align: center;
   padding: 20px;
   color: #666;
   font-size: 14px;
 }
 
-.active-subscriptions h4 {
+.mobdash-active-subscriptions h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
   color: #2c3e50;
   font-weight: 600;
 }
 
-.subscriptions-list {
+.mobdash-subscriptions-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.subscription-item {
+.mobdash-subscription-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -492,37 +492,37 @@
   border-left: 3px solid #28a745;
 }
 
-.subscription-item svg {
+.mobdash-subscription-item svg {
   color: #28a745;
   font-size: 16px;
 }
 
-.subscription-details {
+.mobdash-subscription-details {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.subscription-name {
+.mobdash-subscription-name {
   font-size: 13px;
   font-weight: 500;
   color: #2c3e50;
 }
 
-.subscription-frequency {
+.mobdash-subscription-frequency {
   font-size: 11px;
   color: #666;
 }
 
-.subscription-amount {
+.mobdash-subscription-amount {
   font-size: 13px;
   font-weight: 600;
   color: #28a745;
 }
 
 /* Activities Card */
-.mobile-activities-card {
+.mobdash-mobile-activities-card {
   background: white;
   border-radius: 12px;
   padding: 16px;
@@ -530,19 +530,19 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.activities-header {
+.mobdash-activities-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 16px;
 }
 
-.activities-header svg {
+.mobdash-activities-header svg {
   color: #6c757d;
   font-size: 18px;
 }
 
-.activities-header h3 {
+.mobdash-activities-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -550,13 +550,13 @@
   flex: 1;
 }
 
-.activities-list {
+.mobdash-activities-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.activity-item {
+.mobdash-activity-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -566,68 +566,68 @@
   border-left: 3px solid #007bff;
 }
 
-.activity-icon {
+.mobdash-activity-icon {
   font-size: 16px;
   color: #007bff;
 }
 
-.activity-content {
+.mobdash-activity-content {
   flex: 1;
 }
 
-.activity-title {
+.mobdash-activity-title {
   font-size: 13px;
   font-weight: 500;
   color: #2c3e50;
   margin-bottom: 4px;
 }
 
-.activity-details {
+.mobdash-activity-details {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.activity-amount {
+.mobdash-activity-amount {
   font-size: 12px;
   font-weight: 600;
   color: #28a745;
 }
 
-.activity-status {
+.mobdash-activity-status {
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 500;
 }
 
-.activity-status.status-success {
+.mobdash-activity-status.mobdash-status-success {
   background: #d4edda;
   color: #155724;
 }
 
-.activity-status.status-warning {
+.mobdash-activity-status.mobdash-status-warning {
   background: #fff3cd;
   color: #856404;
 }
 
-.activity-status.status-info {
+.mobdash-activity-status.mobdash-status-info {
   background: #d1ecf1;
   color: #0c5460;
 }
 
-.activity-status.status-error {
+.mobdash-activity-status.mobdash-status-error {
   background: #f8d7da;
   color: #721c24;
 }
 
-.activity-date {
+.mobdash-activity-date {
   font-size: 10px;
   color: #666;
   white-space: nowrap;
 }
 
-.no-activities {
+.mobdash-no-activities {
   text-align: center;
   padding: 20px;
   color: #666;
@@ -635,7 +635,7 @@
 }
 
 /* Spending Card */
-.mobile-spending-card {
+.mobdash-mobile-spending-card {
   background: white;
   border-radius: 12px;
   padding: 16px;
@@ -643,33 +643,33 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.spending-header {
+.mobdash-spending-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
-.spending-header h3 {
+.mobdash-spending-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: #2c3e50;
 }
 
-.spending-total {
+.mobdash-spending-total {
   font-size: 18px;
   font-weight: 700;
   color: #007bff;
 }
 
-.spending-breakdown {
+.mobdash-spending-breakdown {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.breakdown-item {
+.mobdash-breakdown-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -678,7 +678,7 @@
   border-radius: 8px;
 }
 
-.breakdown-label {
+.mobdash-breakdown-label {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -687,19 +687,19 @@
   font-weight: 500;
 }
 
-.breakdown-label svg {
+.mobdash-breakdown-label svg {
   color: #007bff;
   font-size: 16px;
 }
 
-.breakdown-amount {
+.mobdash-breakdown-amount {
   font-size: 14px;
   font-weight: 600;
   color: #28a745;
 }
 
 /* Bottom Navigation */
-.mobile-bottom-nav {
+.mobdash-mobile-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -712,7 +712,7 @@
   z-index: 1000;
 }
 
-.nav-btn {
+.mobdash-nav-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -726,29 +726,29 @@
   min-height: 50px;
 }
 
-.nav-btn.active {
+.mobdash-nav-btn.mobdash-active {
   color: #007bff;
 }
 
-.nav-btn svg {
+.mobdash-nav-btn svg {
   font-size: 20px;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 320px) {
-  .mobile-dashboard-content {
+  .mobdash-mobile-dashboard-content {
     padding: 12px;
   }
   
-  .hero-content h1 {
+  .mobdash-hero-content h1 {
     font-size: 18px;
   }
   
-  .stat-value {
+  .mobdash-stat-value {
     font-size: 16px;
   }
   
-  .action-btn {
+  .mobdash-action-btn {
     min-height: 70px;
     padding: 12px 8px;
   }
@@ -756,65 +756,65 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .mobile-dashboard-container {
+  .mobdash-mobile-dashboard-container {
     background: #121212;
   }
   
-  .mobile-dashboard-header,
-  .mobile-delivery-card,
-  .mobile-activities-card,
-  .mobile-spending-card {
+  .mobdash-mobile-dashboard-header,
+  .mobdash-mobile-delivery-card,
+  .mobdash-mobile-activities-card,
+  .mobdash-mobile-spending-card {
     background: #1e1e1e;
     border-color: #333;
   }
   
-  .mobile-dashboard-header h1,
-  .delivery-header h3,
-  .activities-header h3,
-  .spending-header h3 {
+  .mobdash-mobile-dashboard-header h1,
+  .mobdash-delivery-header h3,
+  .mobdash-activities-header h3,
+  .mobdash-spending-header h3 {
     color: white;
   }
   
-  .stat-card.blue,
-  .stat-card.orange,
-  .stat-card.green,
-  .stat-card.purple {
+  .mobdash-stat-card.mobdash-blue,
+  .mobdash-stat-card.mobdash-orange,
+  .mobdash-stat-card.mobdash-green,
+  .mobdash-stat-card.mobdash-purple {
     opacity: 0.9;
   }
   
-  .subscription-item,
-  .activity-item,
-  .breakdown-item {
+  .mobdash-subscription-item,
+  .mobdash-activity-item,
+  .mobdash-breakdown-item {
     background: #2d2d2d;
     border-color: #404040;
   }
   
-  .subscription-name,
-  .activity-title,
-  .breakdown-label {
+  .mobdash-subscription-name,
+  .mobdash-activity-title,
+  .mobdash-breakdown-label {
     color: #e0e0e0;
   }
   
-  .mobile-bottom-nav {
+  .mobdash-mobile-bottom-nav {
     background: #1e1e1e;
     border-color: #333;
   }
   
-  .nav-btn {
+  .mobdash-nav-btn {
     color: #aaa;
   }
   
-  .nav-btn.active {
+  .mobdash-nav-btn.mobdash-active {
     color: #4dabf7;
   }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .mobile-loading-spinner,
-  .mobile-refresh-btn:active,
-  .action-btn:active,
-  .status-indicator.upcoming {
+  .mobdash-mobile-loading-spinner,
+  .mobdash-mobile-refresh-btn:active,
+  .mobdash-action-btn:active,
+  .mobdash-status-indicator.mobdash-upcoming {
     animation: none;
     transition: none;
   }
@@ -822,20 +822,20 @@
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
-  .stat-card.blue,
-  .stat-card.orange,
-  .stat-card.green,
-  .stat-card.purple,
-  .mobile-promo-banner,
-  .mobile-hero-banner {
+  .mobdash-stat-card.mobdash-blue,
+  .mobdash-stat-card.mobdash-orange,
+  .mobdash-stat-card.mobdash-green,
+  .mobdash-stat-card.mobdash-purple,
+  .mobdash-mobile-promo-banner,
+  .mobdash-mobile-hero-banner {
     border: 2px solid black;
   }
   
-  .mobile-bottom-nav {
+  .mobdash-mobile-bottom-nav {
     border-top: 2px solid black;
   }
   
-  .nav-btn.active {
+  .mobdash-nav-btn.mobdash-active {
     font-weight: bold;
   }
 }

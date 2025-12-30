@@ -1,23 +1,24 @@
 /* MobileOrders.css */
-.mobile-orders {
+.mobord-mobile-orders {
   padding-bottom: 20px;
 }
 
-.orders-header {
+.mobord-orders-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 20px;
 }
 
-.orders-header h1 {
+.mobord-orders-header h1 {
   margin: 0;
   font-size: 24px;
   color: #2c3e50;
   font-weight: 700;
 }
 
-.new-order-btn {
+.mobord-new-order-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   border: none;
@@ -31,28 +32,29 @@
   cursor: pointer;
 }
 
-.new-order-btn:active {
+.mobord-new-order-btn:active {
   transform: scale(0.98);
 }
 
-.search-container {
+.mobord-search-container {
   margin-bottom: 20px;
+  padding: 0 20px;
 }
 
-.search-bar {
+.mobord-search-bar {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.search-icon {
+.mobord-search-icon {
   position: absolute;
   left: 16px;
   color: #666;
   z-index: 1;
 }
 
-.search-bar input {
+.mobord-search-bar input {
   width: 100%;
   padding: 14px 16px 14px 48px;
   border: 1px solid #e0e0e0;
@@ -61,7 +63,7 @@
   background: white;
 }
 
-.clear-search {
+.mobord-clear-search {
   position: absolute;
   right: 16px;
   background: none;
@@ -71,20 +73,20 @@
   padding: 4px;
 }
 
-.filter-tabs {
+.mobord-filter-tabs {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   overflow-x: auto;
-  padding-bottom: 12px;
+  padding: 10px;
   margin-bottom: 20px;
   -webkit-overflow-scrolling: touch;
 }
 
-.filter-tabs::-webkit-scrollbar {
+.mobord-filter-tabs::-webkit-scrollbar {
   display: none;
 }
 
-.filter-tab {
+.mobord-filter-tab {
   flex-shrink: 0;
   padding: 8px 16px;
   border: 1px solid #e0e0e0;
@@ -97,26 +99,27 @@
   white-space: nowrap;
 }
 
-.filter-tab.active {
+.mobord-filter-tab.active {
   background: #2c3e50;
   color: white;
   border-color: #2c3e50;
 }
 
-.orders-list {
+.mobord-orders-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 20px;
 }
 
-.order-card {
+.mobord-order-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.order-header {
+.mobord-order-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -125,13 +128,13 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.order-id {
+.mobord-order-id {
   font-weight: 700;
   color: #2c3e50;
   font-size: 16px;
 }
 
-.order-status-badge {
+.mobord-order-status-badge {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -141,73 +144,73 @@
   font-weight: 600;
 }
 
-.order-status-badge.processing {
+.mobord-order-status-badge.processing {
   background: #fff3e0;
   color: #ef6c00;
 }
 
-.order-status-badge.shipped {
+.mobord-order-status-badge.shipped {
   background: #e3f2fd;
   color: #1976d2;
 }
 
-.order-status-badge.in-transit {
+.mobord-order-status-badge.in-transit {
   background: #e8f5e8;
   color: #2e7d32;
 }
 
-.order-status-badge.delivered {
+.mobord-order-status-badge.delivered {
   background: #e8f5e8;
   color: #2e7d32;
 }
 
-.order-status-badge.cancelled {
+.mobord-order-status-badge.cancelled {
   background: #ffebee;
   color: #c62828;
 }
 
-.status-icon {
+.mobord-status-icon {
   font-size: 14px;
 }
 
-.order-body {
+.mobord-order-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.order-products {
+.mobord-order-products {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.product-icon {
+.mobord-product-icon {
   font-size: 24px;
   color: #2c3e50;
   flex-shrink: 0;
 }
 
-.product-info h4 {
+.mobord-product-info h4 {
   margin: 0 0 4px 0;
   font-size: 16px;
   color: #2c3e50;
   line-height: 1.3;
 }
 
-.product-info p {
+.mobord-product-info p {
   margin: 0;
   font-size: 14px;
   color: #666;
 }
 
-.order-meta {
+.mobord-order-meta {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.meta-item {
+.mobord-meta-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -215,19 +218,19 @@
   color: #666;
 }
 
-.meta-icon {
+.mobord-meta-icon {
   color: #888;
   flex-shrink: 0;
 }
 
-.truncate {
+.mobord-truncate {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
 }
 
-.order-footer {
+.mobord-order-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -235,28 +238,28 @@
   border-top: 1px solid #f0f0f0;
 }
 
-.order-total {
+.mobord-order-total {
   display: flex;
   flex-direction: column;
 }
 
-.order-total span {
+.mobord-order-total span {
   font-size: 12px;
   color: #666;
 }
 
-.order-total strong {
+.mobord-order-total strong {
   font-size: 18px;
   color: #2c3e50;
 }
 
-.order-actions {
+.mobord-order-actions {
   display: flex;
   gap: 8px;
 }
 
-.view-details-btn,
-.cancel-btn {
+.mobord-view-details-btn,
+.mobord-cancel-btn {
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 14px;
@@ -265,46 +268,46 @@
   border: none;
 }
 
-.view-details-btn {
+.mobord-view-details-btn {
   background: #2c3e50;
   color: white;
 }
 
-.cancel-btn {
+.mobord-cancel-btn {
   background: #ffebee;
   color: #c62828;
 }
 
-.view-details-btn:active,
-.cancel-btn:active {
+.mobord-view-details-btn:active,
+.mobord-cancel-btn:active {
   transform: scale(0.95);
 }
 
 /* No Orders State */
-.no-orders {
+.mobord-no-orders {
   text-align: center;
   padding: 40px 20px;
 }
 
-.no-orders-icon {
+.mobord-no-orders-icon {
   font-size: 48px;
   color: #ddd;
   margin-bottom: 16px;
 }
 
-.no-orders h3 {
+.mobord-no-orders h3 {
   margin: 0 0 8px 0;
   color: #666;
   font-size: 20px;
 }
 
-.no-orders p {
+.mobord-no-orders p {
   margin: 0 0 20px 0;
   color: #888;
   font-size: 16px;
 }
 
-.create-order-btn {
+.mobord-create-order-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   border: none;
@@ -316,7 +319,7 @@
 }
 
 /* Loading State */
-.mobile-orders.loading {
+.mobord-mobile-orders.mobord-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -324,21 +327,21 @@
   height: 300px;
 }
 
-.loading-spinner {
+.mobord-loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid #f0f0f0;
   border-top-color: #2c3e50;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: mobord-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes mobord-spin {
   to { transform: rotate(360deg); }
 }
 
 /* Order Details Modal */
-.order-details-modal {
+.mobord-order-details-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -353,17 +356,17 @@
   backdrop-filter: blur(4px);
 }
 
-.modal-content {
+.mobord-modal-content {
   background: white;
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  animation: slideUp 0.3s ease;
+  animation: mobord-slideUp 0.3s ease;
 }
 
-@keyframes slideUp {
+@keyframes mobord-slideUp {
   from {
     opacity: 0;
     transform: translateY(50px);
@@ -374,7 +377,7 @@
   }
 }
 
-.modal-header {
+.mobord-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -387,13 +390,13 @@
   z-index: 1;
 }
 
-.modal-header h2 {
+.mobord-modal-header h2 {
   margin: 0;
   font-size: 20px;
   color: #2c3e50;
 }
 
-.close-modal {
+.mobord-close-modal {
   background: none;
   border: none;
   font-size: 20px;
@@ -406,28 +409,28 @@
   justify-content: center;
 }
 
-.modal-body {
+.mobord-modal-body {
   padding: 20px;
 }
 
-.details-section {
+.mobord-details-section {
   margin-bottom: 24px;
 }
 
-.details-section h3 {
+.mobord-details-section h3 {
   margin: 0 0 16px 0;
   font-size: 18px;
   color: #2c3e50;
 }
 
-.section-header {
+.mobord-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
-.status-display {
+.mobord-status-display {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -437,36 +440,36 @@
   font-weight: 600;
 }
 
-.summary-grid {
+.mobord-summary-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.summary-item {
+.mobord-summary-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.summary-item .label {
+.mobord-summary-item .mobord-label {
   font-size: 12px;
   color: #666;
 }
 
-.summary-item .value {
+.mobord-summary-item .mobord-value {
   font-size: 14px;
   color: #2c3e50;
   font-weight: 500;
 }
 
-.products-list {
+.mobord-products-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.product-item {
+.mobord-product-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -475,68 +478,68 @@
   border-radius: 12px;
 }
 
-.product-info h4 {
+.mobord-product-info h4 {
   margin: 0 0 8px 0;
   font-size: 14px;
   color: #2c3e50;
 }
 
-.product-meta {
+.mobord-product-meta {
   display: flex;
   gap: 16px;
   font-size: 12px;
   color: #666;
 }
 
-.product-total {
+.mobord-product-total {
   font-weight: 700;
   color: #2c3e50;
   font-size: 16px;
 }
 
-.delivery-info {
+.mobord-delivery-info {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.info-item {
+.mobord-info-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
 
-.info-icon {
+.mobord-info-icon {
   color: #2c3e50;
   margin-top: 2px;
   flex-shrink: 0;
 }
 
-.info-content {
+.mobord-info-content {
   flex: 1;
 }
 
-.info-content strong {
+.mobord-info-content strong {
   display: block;
   font-size: 14px;
   color: #666;
   margin-bottom: 4px;
 }
 
-.info-content p {
+.mobord-info-content p {
   margin: 0;
   font-size: 14px;
   color: #2c3e50;
   line-height: 1.4;
 }
 
-.totals-grid {
+.mobord-totals-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.total-item {
+.mobord-total-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -544,11 +547,11 @@
   border-bottom: 1px dashed #e0e0e0;
 }
 
-.total-item:last-child {
+.mobord-total-item:last-child {
   border-bottom: none;
 }
 
-.total-item.grand-total {
+.mobord-total-item.mobord-grand-total {
   font-weight: 700;
   font-size: 18px;
   color: #2c3e50;
@@ -556,7 +559,7 @@
   border-top: 2px solid #2c3e50;
 }
 
-.modal-footer {
+.mobord-modal-footer {
   display: flex;
   gap: 12px;
   padding: 20px;
@@ -565,8 +568,8 @@
   border-radius: 0 0 20px 20px;
 }
 
-.btn-primary,
-.btn-secondary {
+.mobord-btn-primary,
+.mobord-btn-secondary {
   flex: 1;
   padding: 14px;
   border-radius: 12px;
@@ -576,48 +579,48 @@
   cursor: pointer;
 }
 
-.btn-primary {
+.mobord-btn-primary {
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
 }
 
-.btn-secondary {
+.mobord-btn-secondary {
   background: white;
   color: #2c3e50;
   border: 1px solid #e0e0e0;
 }
 
-.btn-primary:active,
-.btn-secondary:active {
+.mobord-btn-primary:active,
+.mobord-btn-secondary:active {
   transform: scale(0.98);
 }
 
 @media (max-width: 480px) {
-  .orders-header h1 {
+  .mobord-orders-header h1 {
     font-size: 20px;
   }
   
-  .new-order-btn {
+  .mobord-new-order-btn {
     padding: 8px 12px;
     font-size: 13px;
   }
   
-  .filter-tab {
+  .mobord-filter-tab {
     padding: 6px 12px;
     font-size: 12px;
   }
   
-  .order-card {
+  .mobord-order-card {
     padding: 16px;
   }
   
-  .order-actions {
+  .mobord-order-actions {
     flex-direction: column;
     gap: 6px;
   }
   
-  .view-details-btn,
-  .cancel-btn {
+  .mobord-view-details-btn,
+  .mobord-cancel-btn {
     padding: 6px 12px;
     font-size: 13px;
   }

@@ -1,7 +1,7 @@
 /* UserPayment.css - Mobile First Design */
 
 /* Base Styles - Mobile */
-.pay-payments-page {
+.mobpay-payments-page {
   padding: 0;
   margin: 0;
   background: #f5f5f5;
@@ -10,7 +10,7 @@
 }
 
 /* Mobile Header */
-.pay-mobile-header {
+.mobpay-mobile-header {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -20,27 +20,27 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.pay-mobile-header-top {
+.mobpay-mobile-header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.pay-mobile-header h1 {
+.mobpay-mobile-header h1 {
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
   margin: 0;
 }
 
-.pay-mobile-header-actions {
+.mobpay-mobile-header-actions {
   display: flex;
   gap: 12px;
 }
 
-.pay-mobile-search-btn,
-.pay-mobile-filter-btn {
+.mobpay-mobile-search-btn,
+.mobpay-mobile-filter-btn {
   background: none;
   border: none;
   font-size: 18px;
@@ -53,17 +53,17 @@
 }
 
 /* Mobile Search */
-.pay-mobile-search {
+.mobpay-mobile-search {
   padding: 12px 0;
 }
 
-.pay-mobile-search-input-wrapper {
+.mobpay-mobile-search-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.pay-mobile-search-input-wrapper input {
+.mobpay-mobile-search-input-wrapper input {
   width: 100%;
   padding: 12px 40px 12px 40px;
   border: 1px solid #ddd;
@@ -71,13 +71,13 @@
   font-size: 16px;
 }
 
-.pay-search-icon {
+.mobpay-search-icon {
   position: absolute;
   left: 12px;
   color: #6c757d;
 }
 
-.pay-mobile-clear-search {
+.mobpay-mobile-clear-search {
   position: absolute;
   right: 12px;
   background: none;
@@ -86,20 +86,20 @@
 }
 
 /* Mobile Quick Stats */
-.pay-mobile-quick-stats {
+.mobpay-mobile-quick-stats {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
 }
 
-.pay-mobile-stat {
+.mobpay-mobile-stat {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.pay-mobile-stat-icon {
+.mobpay-mobile-stat-icon {
   width: 36px;
   height: 36px;
   border-radius: 18px;
@@ -110,23 +110,23 @@
   justify-content: center;
 }
 
-.pay-mobile-stat-info {
+.mobpay-mobile-stat-info {
   display: flex;
   flex-direction: column;
 }
 
-.pay-mobile-stat-label {
+.mobpay-mobile-stat-label {
   font-size: 12px;
   color: #6c757d;
 }
 
-.pay-mobile-stat-value {
+.mobpay-mobile-stat-value {
   font-size: 16px;
   font-weight: 600;
   color: #2c3e50;
 }
 
-.pay-mobile-topup-btn {
+.mobpay-mobile-topup-btn {
   background: #28a745;
   color: white;
   border: none;
@@ -140,14 +140,14 @@
 }
 
 /* Mobile Stats Cards */
-.pay-mobile-stats {
+.mobpay-mobile-stats {
   padding: 16px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.pay-mobile-stat-card {
+.mobpay-mobile-stat-card {
   background: white;
   border-radius: 16px;
   padding: 16px;
@@ -157,7 +157,7 @@
   gap: 12px;
 }
 
-.pay-mobile-stat-card-icon {
+.mobpay-mobile-stat-card-icon {
   width: 48px;
   height: 48px;
   border-radius: 24px;
@@ -168,44 +168,44 @@
   color: white;
 }
 
-.pay-mobile-stat-card-icon.spending {
+.mobpay-mobile-stat-card-icon.mobpay-spending {
   background: #28a745;
 }
 
-.pay-mobile-stat-card-icon.total {
+.mobpay-mobile-stat-card-icon.mobpay-total {
   background: #ffc107;
 }
 
-.pay-mobile-stat-card-content {
+.mobpay-mobile-stat-card-content {
   flex: 1;
 }
 
-.pay-mobile-stat-card-label {
+.mobpay-mobile-stat-card-label {
   font-size: 14px;
   color: #6c757d;
   margin-bottom: 4px;
 }
 
-.pay-mobile-stat-card-value {
+.mobpay-mobile-stat-card-value {
   font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
   margin-bottom: 4px;
 }
 
-.pay-mobile-stat-card-breakdown {
+.mobpay-mobile-stat-card-breakdown {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.pay-mobile-stat-card-breakdown span {
+.mobpay-mobile-stat-card-breakdown span {
   font-size: 12px;
   color: #6c757d;
 }
 
 /* Mobile Tabs */
-.pay-mobile-tabs {
+.mobpay-mobile-tabs {
   display: flex;
   gap: 8px;
   padding: 16px 16px 0;
@@ -213,11 +213,11 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.pay-mobile-tabs::-webkit-scrollbar {
+.mobpay-mobile-tabs::-webkit-scrollbar {
   display: none;
 }
 
-.pay-mobile-tab {
+.mobpay-mobile-tab {
   flex-shrink: 0;
   padding: 8px 16px;
   border: none;
@@ -229,14 +229,15 @@
   white-space: nowrap;
 }
 
-.pay-mobile-tab.active {
+.mobpay-mobile-tab.active {
   background: #007bff;
   color: white;
 }
 
 /* Mobile Filter Panel */
-.pay-mobile-filter-panel {
+.mobpay-mobile-filter-panel {
   position: fixed;
+  margin-bottom: 80px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -244,15 +245,15 @@
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
   z-index: 1000;
-  animation: slideUp 0.3s ease;
+  animation: mobpay-slideUp 0.3s ease;
 }
 
-@keyframes slideUp {
+@keyframes mobpay-slideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
 
-.pay-filter-panel-header {
+.mobpay-filter-panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -260,37 +261,37 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
-.pay-filter-panel-header h3 {
+.mobpay-filter-panel-header h3 {
   margin: 0;
   font-size: 18px;
   color: #2c3e50;
 }
 
-.pay-filter-panel-header button {
+.mobpay-filter-panel-header button {
   background: none;
   border: none;
   font-size: 18px;
   color: #6c757d;
 }
 
-.pay-filter-panel-content {
+.mobpay-filter-panel-content {
   padding: 16px;
   max-height: 70vh;
   overflow-y: auto;
 }
 
-.pay-mobile-sort-options h4 {
+.mobpay-mobile-sort-options h4 {
   margin: 0 0 12px 0;
   font-size: 16px;
   color: #2c3e50;
 }
 
-.pay-mobile-sort-buttons {
+.mobpay-mobile-sort-buttons {
   display: flex;
   gap: 8px;
 }
 
-.pay-mobile-sort-btn {
+.mobpay-mobile-sort-btn {
   flex: 1;
   padding: 12px;
   border: 1px solid #ddd;
@@ -300,38 +301,38 @@
   font-size: 14px;
 }
 
-.pay-mobile-sort-btn.active {
+.mobpay-mobile-sort-btn.active {
   background: #007bff;
   color: white;
   border-color: #007bff;
 }
 
 /* Mobile Section Header */
-.pay-mobile-section-header {
+.mobpay-mobile-section-header {
   padding: 16px;
   background: white;
   border-bottom: 1px solid #e0e0e0;
 }
 
-.pay-mobile-section-title {
+.mobpay-mobile-section-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.pay-mobile-section-header h2 {
+.mobpay-mobile-section-header h2 {
   margin: 0;
   font-size: 18px;
   color: #2c3e50;
 }
 
-.pay-mobile-count {
+.mobpay-mobile-count {
   font-size: 14px;
   color: #6c757d;
 }
 
-.pay-mobile-section-header .pay-mobile-sort-btn {
+.mobpay-mobile-section-header .mobpay-mobile-sort-btn {
   background: none;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -344,11 +345,11 @@
 }
 
 /* Mobile List View */
-.pay-mobile-list {
+.mobpay-mobile-list {
   padding: 16px;
 }
 
-.pay-mobile-card {
+.mobpay-mobile-card {
   background: white;
   border-radius: 16px;
   margin-bottom: 16px;
@@ -356,40 +357,40 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.pay-mobile-card-header {
+.mobpay-mobile-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
 }
 
-.pay-mobile-card-left {
+.mobpay-mobile-card-left {
   flex: 1;
 }
 
-.pay-mobile-activity-type {
+.mobpay-mobile-activity-type {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
 
-.pay-mobile-type-text {
+.mobpay-mobile-type-text {
   font-weight: 500;
   font-size: 14px;
   color: #2c3e50;
 }
 
-.pay-mobile-activity-date {
+.mobpay-mobile-activity-date {
   color: #6c757d;
   font-size: 13px;
 }
 
-.pay-mobile-card-right {
+.mobpay-mobile-card-right {
   margin-left: 12px;
 }
 
-.pay-mobile-status-badge {
+.mobpay-mobile-status-badge {
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
@@ -397,54 +398,54 @@
   text-transform: capitalize;
 }
 
-.pay-mobile-status-success {
+.mobpay-mobile-status-success {
   background: #d4edda;
   color: #155724;
 }
 
-.pay-mobile-status-pending {
+.mobpay-mobile-status-pending {
   background: #fff3cd;
   color: #856404;
 }
 
-.pay-mobile-status-failed {
+.mobpay-mobile-status-failed {
   background: #f8d7da;
   color: #721c24;
 }
 
-.pay-mobile-status-warning {
+.mobpay-mobile-status-warning {
   background: #fff3cd;
   color: #856404;
 }
 
-.pay-mobile-card-body {
+.mobpay-mobile-card-body {
   margin-bottom: 12px;
 }
 
-.pay-mobile-activity-title {
+.mobpay-mobile-activity-title {
   color: #6c757d;
   font-size: 14px;
   margin-bottom: 8px;
   line-height: 1.4;
 }
 
-.pay-mobile-card-footer {
+.mobpay-mobile-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.pay-mobile-amount {
+.mobpay-mobile-amount {
   font-weight: 600;
   color: #2c3e50;
   font-size: 16px;
 }
 
-.pay-mobile-amount.credit {
+.mobpay-mobile-amount.credit {
   color: #28a745;
 }
 
-.pay-mobile-more-btn {
+.mobpay-mobile-more-btn {
   background: none;
   border: none;
   color: #6c757d;
@@ -452,7 +453,7 @@
 }
 
 /* Mobile Modal */
-.pay-mobile-modal-overlay {
+.mobpay-mobile-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -466,15 +467,15 @@
   padding: 16px;
 }
 
-.pay-mobile-modal-content {
+.mobpay-mobile-modal-content {
   background: white;
   border-radius: 20px;
   width: 100%;
   max-width: 400px;
-  animation: slideUp 0.3s ease;
+  animation: mobpay-slideUp 0.3s ease;
 }
 
-.pay-mobile-modal-header {
+.mobpay-mobile-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -482,28 +483,28 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
-.pay-mobile-modal-header h2 {
+.mobpay-mobile-modal-header h2 {
   margin: 0;
   font-size: 20px;
   color: #2c3e50;
 }
 
-.pay-mobile-close-btn {
+.mobpay-mobile-close-btn {
   background: none;
   border: none;
   color: #6c757d;
   font-size: 18px;
 }
 
-.pay-mobile-modal-body {
+.mobpay-mobile-modal-body {
   padding: 20px;
 }
 
-.pay-mobile-form-group {
+.mobpay-mobile-form-group {
   margin-bottom: 16px;
 }
 
-.pay-mobile-form-group label {
+.mobpay-mobile-form-group label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
@@ -511,7 +512,7 @@
   font-size: 14px;
 }
 
-.pay-mobile-form-group input {
+.mobpay-mobile-form-group input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -519,14 +520,14 @@
   font-size: 16px;
 }
 
-.pay-mobile-form-group small {
+.mobpay-mobile-form-group small {
   display: block;
   margin-top: 4px;
   color: #6c757d;
   font-size: 12px;
 }
 
-.pay-mobile-amount-preview {
+.mobpay-mobile-amount-preview {
   margin-top: 12px;
   padding: 12px;
   background: #e7f3ff;
@@ -535,7 +536,7 @@
   font-size: 14px;
 }
 
-.pay-mobile-processing-overlay {
+.mobpay-mobile-processing-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -550,29 +551,29 @@
   gap: 12px;
 }
 
-.pay-mobile-processing-spinner {
+.mobpay-mobile-processing-spinner {
   width: 32px;
   height: 32px;
   border: 3px solid #e9ecef;
   border-top: 3px solid #007bff;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: mobpay-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes mobpay-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.pay-mobile-modal-footer {
+.mobpay-mobile-modal-footer {
   padding: 20px;
   border-top: 1px solid #e0e0e0;
   display: flex;
   gap: 12px;
 }
 
-.pay-mobile-btn-secondary,
-.pay-mobile-btn-primary {
+.mobpay-mobile-btn-secondary,
+.mobpay-mobile-btn-primary {
   flex: 1;
   padding: 14px;
   border: none;
@@ -581,23 +582,23 @@
   font-weight: 500;
 }
 
-.pay-mobile-btn-secondary {
+.mobpay-mobile-btn-secondary {
   background: #6c757d;
   color: white;
 }
 
-.pay-mobile-btn-primary {
+.mobpay-mobile-btn-primary {
   background: #007bff;
   color: white;
 }
 
-.pay-mobile-btn-primary:disabled {
+.mobpay-mobile-btn-primary:disabled {
   background: #6c757d;
   opacity: 0.5;
 }
 
 /* Error Message */
-.pay-error-message {
+.mobpay-error-message {
   background: #f8d7da;
   color: #721c24;
   padding: 12px 16px;
@@ -609,12 +610,12 @@
   border: 1px solid #f5c6cb;
 }
 
-.pay-error-icon {
+.mobpay-error-icon {
   font-size: 18px;
   flex-shrink: 0;
 }
 
-.pay-close-error {
+.mobpay-close-error {
   background: transparent;
   border: none;
   color: #721c24;
@@ -628,7 +629,7 @@
 }
 
 /* Loading State */
-.pay-payments-page.loading {
+.mobpay-payments-page.mobpay-loading {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -638,35 +639,35 @@
   gap: 12px;
 }
 
-.pay-loading-spinner {
+.mobpay-loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid #e9ecef;
   border-top: 3px solid #007bff;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: mobpay-spin 1s linear infinite;
 }
 
 /* No Payments */
-.pay-no-payments {
+.mobpay-no-payments {
   text-align: center;
   padding: 48px 16px;
 }
 
-.pay-no-payments-icon {
+.mobpay-no-payments-icon {
   font-size: 48px;
   color: #ddd;
   margin-bottom: 16px;
 }
 
-.pay-no-payments p {
+.mobpay-no-payments p {
   color: #6c757d;
   margin-bottom: 20px;
   font-size: 16px;
 }
 
-.pay-clear-search,
-.pay-show-all {
+.mobpay-clear-search,
+.mobpay-show-all {
   background: #007bff;
   color: white;
   border: none;
@@ -676,12 +677,12 @@
 }
 
 /* Hide Desktop Elements on Mobile */
-.pay-desktop-header,
-.pay-desktop-stats-container,
-.pay-desktop-section-header,
-.pay-desktop-tab-container,
-.pay-desktop-table-container,
-.pay-desktop-modal-overlay {
+.mobpay-desktop-header,
+.mobpay-desktop-stats-container,
+.mobpay-desktop-section-header,
+.mobpay-desktop-tab-container,
+.mobpay-desktop-table-container,
+.mobpay-desktop-modal-overlay {
   display: none;
 }
 
@@ -690,30 +691,30 @@
    ============================================ */
 @media (min-width: 768px) {
   /* Hide Mobile Elements on Desktop */
-  .pay-mobile-header,
-  .pay-mobile-search,
-  .pay-mobile-quick-stats,
-  .pay-mobile-stats,
-  .pay-mobile-tabs,
-  .pay-mobile-filter-panel,
-  .pay-mobile-section-header,
-  .pay-mobile-list,
-  .pay-mobile-modal-overlay {
+  .mobpay-mobile-header,
+  .mobpay-mobile-search,
+  .mobpay-mobile-quick-stats,
+  .mobpay-mobile-stats,
+  .mobpay-mobile-tabs,
+  .mobpay-mobile-filter-panel,
+  .mobpay-mobile-section-header,
+  .mobpay-mobile-list,
+  .mobpay-mobile-modal-overlay {
     display: none;
   }
 
   /* Show Desktop Elements */
-  .pay-desktop-header,
-  .pay-desktop-stats-container,
-  .pay-desktop-section-header,
-  .pay-desktop-tab-container,
-  .pay-desktop-table-container,
-  .pay-desktop-modal-overlay {
+  .mobpay-desktop-header,
+  .mobpay-desktop-stats-container,
+  .mobpay-desktop-section-header,
+  .mobpay-desktop-tab-container,
+  .mobpay-desktop-table-container,
+  .mobpay-desktop-modal-overlay {
     display: block;
   }
 
   /* Desktop Container */
-  .pay-payments-page {
+  .mobpay-payments-page {
     padding: 20px;
     max-width: 1400px;
     margin: 0 auto;
@@ -721,7 +722,7 @@
   }
 
   /* Desktop Header */
-  .pay-desktop-header {
+  .mobpay-desktop-header {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -732,7 +733,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
-  .pay-desktop-header h1 {
+  .mobpay-desktop-header h1 {
     color: #2c3e50;
     margin: 0;
     font-size: 28px;
@@ -740,7 +741,7 @@
     text-align: center;
   }
 
-  .pay-desktop-header-actions {
+  .mobpay-desktop-header-actions {
     display: flex;
     flex-direction: row;
     gap: 1rem;
@@ -749,7 +750,7 @@
     justify-content: center;
   }
 
-  .pay-desktop-search-bar {
+  .mobpay-desktop-search-bar {
     position: relative;
     display: flex;
     align-items: center;
@@ -757,7 +758,7 @@
     max-width: 400px;
   }
 
-  .pay-desktop-search-bar input {
+  .mobpay-desktop-search-bar input {
     padding: 12px 16px 12px 44px;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -766,7 +767,7 @@
     background: white;
   }
 
-  .pay-desktop-clear-search {
+  .mobpay-desktop-clear-search {
     position: absolute;
     right: 12px;
     background: none;
@@ -774,7 +775,7 @@
     color: #6c757d;
   }
 
-  .pay-desktop-btn-primary {
+  .mobpay-desktop-btn-primary {
     background: #007bff;
     color: white;
     border: none;
@@ -793,14 +794,14 @@
   }
 
   /* Desktop Stats */
-  .pay-desktop-stats-container {
+  .mobpay-desktop-stats-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     margin-bottom: 24px;
   }
 
-  .pay-desktop-stat-card {
+  .mobpay-desktop-stat-card {
     background: white;
     border-radius: 12px;
     padding: 20px;
@@ -809,11 +810,11 @@
     transition: transform 0.2s ease;
   }
 
-  .pay-desktop-stat-card:hover {
+  .mobpay-desktop-stat-card:hover {
     transform: translateY(-2px);
   }
 
-  .pay-desktop-stat-icon {
+  .mobpay-desktop-stat-icon {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -826,38 +827,38 @@
     background: #007bff;
   }
 
-  .spending-card .pay-desktop-stat-icon {
+  .mobpay-spending-card .mobpay-desktop-stat-icon {
     background: #28a745;
   }
 
-  .pay-desktop-stat-card h3 {
+  .mobpay-desktop-stat-card h3 {
     margin: 0 0 8px 0;
     color: #6c757d;
     font-size: 0.9rem;
     font-weight: 500;
   }
 
-  .pay-desktop-value {
+  .mobpay-desktop-value {
     font-size: 1.8rem;
     font-weight: 600;
     color: #2c3e50;
     margin: 8px 0;
   }
 
-  .pay-desktop-stat-breakdown {
+  .mobpay-desktop-stat-breakdown {
     margin-top: 8px;
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
 
-  .pay-desktop-stat-breakdown span {
+  .mobpay-desktop-stat-breakdown span {
     font-size: 11px;
     color: #6c757d;
   }
 
   /* Desktop Content Section */
-  .pay-content-section {
+  .mobpay-content-section {
     background: white;
     border-radius: 12px;
     padding: 20px;
@@ -865,7 +866,7 @@
     margin-bottom: 20px;
   }
 
-  .pay-desktop-section-header {
+  .mobpay-desktop-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -874,20 +875,20 @@
     border-bottom: 1px solid #e9ecef;
   }
 
-  .pay-desktop-section-header h2 {
+  .mobpay-desktop-section-header h2 {
     margin: 0;
     color: #2c3e50;
     font-size: 1.4rem;
     font-weight: 600;
   }
 
-  .pay-desktop-tab-container {
+  .mobpay-desktop-tab-container {
     display: flex;
     gap: 8px;
     margin-bottom: 15px;
   }
 
-  .pay-desktop-tab {
+  .mobpay-desktop-tab {
     padding: 8px 16px;
     border: 1px solid #e1e5e9;
     background: white;
@@ -898,18 +899,18 @@
     font-weight: 500;
   }
 
-  .pay-desktop-tab:hover {
+  .mobpay-desktop-tab:hover {
     background: #f8f9fa;
     border-color: #007bff;
   }
 
-  .pay-desktop-tab.active {
+  .mobpay-desktop-tab.active {
     background: #007bff;
     color: white;
     border-color: #007bff;
   }
 
-  .pay-desktop-count-badge {
+  .mobpay-desktop-count-badge {
     background: #007bff;
     color: white;
     padding: 4px 12px;
@@ -919,24 +920,24 @@
   }
 
   /* Desktop Table */
-  .pay-desktop-table-container {
+  .mobpay-desktop-table-container {
     overflow-x: auto;
     border-radius: 8px;
     border: 1px solid #e9ecef;
   }
 
-  .pay-desktop-payments-table {
+  .mobpay-desktop-payments-table {
     width: 100%;
     border-collapse: collapse;
     background: white;
     min-width: 600px;
   }
 
-  .pay-desktop-payments-table thead {
+  .mobpay-desktop-payments-table thead {
     background: #f8f9fa;
   }
 
-  .pay-desktop-payments-table th {
+  .mobpay-desktop-payments-table th {
     padding: 14px 12px;
     text-align: left;
     color: #2c3e50;
@@ -946,7 +947,7 @@
     white-space: nowrap;
   }
 
-  .pay-desktop-payments-table td {
+  .mobpay-desktop-payments-table td {
     padding: 14px 12px;
     border-bottom: 1px solid #e9ecef;
     color: #495057;
@@ -954,34 +955,34 @@
     font-size: 0.9rem;
   }
 
-  .pay-desktop-payments-table tbody tr:hover {
+  .mobpay-desktop-payments-table tbody tr:hover {
     background: #f8f9fa;
   }
 
-  .pay-desktop-activity-type {
+  .mobpay-desktop-activity-type {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .pay-desktop-type-text {
+  .mobpay-desktop-type-text {
     font-weight: 500;
     font-size: 13px;
   }
 
-  .pay-desktop-activity-title {
+  .mobpay-desktop-activity-title {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .pay-desktop-amount {
+  .mobpay-desktop-amount {
     font-weight: 600;
     color: #2c3e50;
   }
 
-  .pay-desktop-status-badge {
+  .mobpay-desktop-status-badge {
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -990,26 +991,26 @@
     display: inline-block;
   }
 
-  .pay-desktop-status-success {
+  .mobpay-desktop-status-success {
     background: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
   }
 
-  .pay-desktop-status-pending {
+  .mobpay-desktop-status-pending {
     background: #fff3cd;
     color: #856404;
     border: 1px solid #ffeaa7;
   }
 
-  .pay-desktop-status-failed {
+  .mobpay-desktop-status-failed {
     background: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
   }
 
   /* Desktop Modal */
-  .pay-desktop-modal-overlay {
+  .mobpay-desktop-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1023,7 +1024,7 @@
     padding: 16px;
   }
 
-  .pay-desktop-modal-content {
+  .mobpay-desktop-modal-content {
     background: white;
     border-radius: 12px;
     width: 95%;
@@ -1031,10 +1032,10 @@
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    animation: modalSlideIn 0.2s ease;
+    animation: mobpay-modalSlideIn 0.2s ease;
   }
 
-  @keyframes modalSlideIn {
+  @keyframes mobpay-modalSlideIn {
     from {
       opacity: 0;
       transform: scale(0.95) translateY(-10px);
@@ -1045,7 +1046,7 @@
     }
   }
 
-  .pay-desktop-modal-header {
+  .mobpay-desktop-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1054,14 +1055,14 @@
     background: #f8f9fa;
   }
 
-  .pay-desktop-modal-header h2 {
+  .mobpay-desktop-modal-header h2 {
     margin: 0;
     color: #2c3e50;
     font-size: 1.3rem;
     font-weight: 600;
   }
 
-  .pay-desktop-close-btn {
+  .mobpay-desktop-close-btn {
     background: transparent;
     border: none;
     color: #6c757d;
@@ -1076,15 +1077,15 @@
     height: 32px;
   }
 
-  .pay-desktop-modal-body {
+  .mobpay-desktop-modal-body {
     padding: 20px;
   }
 
-  .pay-desktop-form-group {
+  .mobpay-desktop-form-group {
     margin-bottom: 16px;
   }
 
-  .pay-desktop-form-group label {
+  .mobpay-desktop-form-group label {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
@@ -1092,7 +1093,7 @@
     font-size: 0.9rem;
   }
 
-  .pay-desktop-form-group input {
+  .mobpay-desktop-form-group input {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #dee2e6;
@@ -1100,7 +1101,7 @@
     font-size: 14px;
   }
 
-  .pay-desktop-amount-preview {
+  .mobpay-desktop-amount-preview {
     margin-top: 12px;
     padding: 12px;
     background: #e7f3ff;
@@ -1108,7 +1109,7 @@
     color: #2c3e50;
   }
 
-  .pay-desktop-processing-overlay {
+  .mobpay-desktop-processing-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -1123,16 +1124,16 @@
     gap: 12px;
   }
 
-  .pay-desktop-processing-spinner {
+  .mobpay-desktop-processing-spinner {
     width: 32px;
     height: 32px;
     border: 3px solid #e9ecef;
     border-top: 3px solid #007bff;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: mobpay-spin 1s linear infinite;
   }
 
-  .pay-desktop-modal-footer {
+  .mobpay-desktop-modal-footer {
     padding: 20px;
     border-top: 1px solid #e9ecef;
     display: flex;
@@ -1140,7 +1141,7 @@
     justify-content: flex-end;
   }
 
-  .pay-desktop-btn-secondary {
+  .mobpay-desktop-btn-secondary {
     background: #6c757d;
     color: white;
     border: none;
@@ -1151,7 +1152,7 @@
     font-weight: 500;
   }
 
-  .pay-desktop-btn-primary {
+  .mobpay-desktop-btn-primary {
     background: #007bff;
     color: white;
     border: none;
@@ -1165,15 +1166,15 @@
 
 /* Large Desktop */
 @media (min-width: 1024px) {
-  .pay-payments-page {
+  .mobpay-payments-page {
     padding: 24px;
   }
 
-  .pay-desktop-stats-container {
+  .mobpay-desktop-stats-container {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .pay-desktop-table-container {
+  .mobpay-desktop-table-container {
     margin: 0;
     width: 100%;
   }

@@ -453,33 +453,33 @@ const ProfileMobile = () => {
 
   if (isLoading && !isEditing) {
     return (
-      <div className="mobile-profile-loading">
-        <div className="loading-spinner"></div>
+      <div className="mobpro-mobile-profile-loading">
+        <div className="mobpro-loading-spinner"></div>
         <p>Loading profile...</p>
       </div>
     );
   }
 
   return (
-    <div className="mobile-profile-container">
+    <div className="mobpro-mobile-profile-container">
       {/* Header */}
-      <div className="mobile-profile-header">
-        <button className="mobile-back-btn" onClick={() => window.history.back()}>
+      <div className="mobpro-mobile-profile-header">
+        <button className="mobpro-mobile-back-btn" onClick={() => window.history.back()}>
           <FaChevronLeft />
         </button>
         <h1>My Profile</h1>
-        <div className="mobile-header-actions">
+        <div className="mobpro-mobile-header-actions">
           {!isEditing && !viewMode && (
-            <button className="mobile-edit-btn" onClick={handleEditStart} disabled={isLoading}>
+            <button className="mobpro-mobile-edit-btn" onClick={handleEditStart} disabled={isLoading}>
               <FaEdit />
             </button>
           )}
           {isEditing && (
             <>
-              <button className="mobile-cancel-btn" onClick={handleEditCancel}>
+              <button className="mobpro-mobile-cancel-btn" onClick={handleEditCancel}>
                 <FaTimes />
               </button>
-              <button className="mobile-save-btn" onClick={handleSave} disabled={isLoading}>
+              <button className="mobpro-mobile-save-btn" onClick={handleSave} disabled={isLoading}>
                 <FaSave />
               </button>
             </>
@@ -488,19 +488,19 @@ const ProfileMobile = () => {
       </div>
 
       {/* Profile Image Section */}
-      <div className="mobile-profile-image-section">
-        <div className="mobile-profile-image-wrapper">
+      <div className="mobpro-mobile-profile-image-section">
+        <div className="mobpro-mobile-profile-image-wrapper">
           <img
             src={getProfilePicUrl()}
             alt="Profile"
-            className="mobile-profile-img"
+            className="mobpro-mobile-profile-img"
             onError={(e) => {
               e.target.src = "default.jpg";
             }}
           />
           {isEditing && (
             <button 
-              className="mobile-change-photo-btn"
+              className="mobpro-mobile-change-photo-btn"
               onClick={() => setShowImageOptions(!showImageOptions)}
             >
               <FaCamera />
@@ -509,13 +509,13 @@ const ProfileMobile = () => {
         </div>
         
         {showImageOptions && isEditing && (
-          <div className="mobile-image-options">
-            <label className="mobile-option-btn">
+          <div className="mobpro-mobile-image-options">
+            <label className="mobpro-mobile-option-btn">
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="mobile-file-input"
+                className="mobpro-mobile-file-input"
                 disabled={isLoading}
               />
               <FaCamera />
@@ -523,7 +523,7 @@ const ProfileMobile = () => {
             </label>
             {user.profileImage?.url && (
               <button 
-                className="mobile-option-btn delete"
+                className="mobpro-mobile-option-btn mobpro-delete"
                 onClick={handleDeleteImage}
                 disabled={isLoading}
               >
@@ -534,31 +534,31 @@ const ProfileMobile = () => {
           </div>
         )}
 
-        <div className="mobile-user-info">
+        <div className="mobpro-mobile-user-info">
           <h2>{user.firstName} {user.lastName}</h2>
-          <p className="mobile-user-email">{user.email}</p>
-          <p className="mobile-member-since">{formatMemberSince()}</p>
+          <p className="mobpro-mobile-user-email">{user.email}</p>
+          <p className="mobpro-mobile-member-since">{formatMemberSince()}</p>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="mobile-section-tabs">
+      <div className="mobpro-mobile-section-tabs">
         <button 
-          className={`mobile-tab ${activeSection === 'personal' ? 'active' : ''}`}
+          className={`mobpro-mobile-tab ${activeSection === 'personal' ? 'mobpro-active' : ''}`}
           onClick={() => setActiveSection('personal')}
         >
           <FaUser />
           <span>Personal</span>
         </button>
         <button 
-          className={`mobile-tab ${activeSection === 'address' ? 'active' : ''}`}
+          className={`mobpro-mobile-tab ${activeSection === 'address' ? 'mobpro-active' : ''}`}
           onClick={() => setActiveSection('address')}
         >
           <FaMapMarkedAlt />
           <span>Address</span>
         </button>
         <button 
-          className={`mobile-tab ${activeSection === 'notifications' ? 'active' : ''}`}
+          className={`mobpro-mobile-tab ${activeSection === 'notifications' ? 'mobpro-active' : ''}`}
           onClick={() => setActiveSection('notifications')}
         >
           <FaBell />
@@ -567,10 +567,10 @@ const ProfileMobile = () => {
       </div>
 
       {/* Content Sections */}
-      <div className="mobile-profile-content">
+      <div className="mobpro-mobile-profile-content">
         {activeSection === 'personal' && (
-          <div className="mobile-section-content">
-            <div className="mobile-form-group">
+          <div className="mobpro-mobile-section-content">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaUser />
                 First Name
@@ -582,14 +582,14 @@ const ProfileMobile = () => {
                   value={user.firstName}
                   onChange={handleInputChange}
                   placeholder="First name"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.firstName || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.firstName || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaUser />
                 Last Name
@@ -601,14 +601,14 @@ const ProfileMobile = () => {
                   value={user.lastName}
                   onChange={handleInputChange}
                   placeholder="Last name"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.lastName || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.lastName || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaEnvelope />
                 Email
@@ -620,14 +620,14 @@ const ProfileMobile = () => {
                   value={user.email}
                   onChange={handleInputChange}
                   placeholder="Email"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.email || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.email || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaPhone />
                 Phone
@@ -639,14 +639,14 @@ const ProfileMobile = () => {
                   value={user.phone}
                   onChange={handleInputChange}
                   placeholder="Phone number"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.phone || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.phone || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaCalendar />
                 Date of Birth
@@ -657,16 +657,16 @@ const ProfileMobile = () => {
                   name="dob"
                   value={user.dob ? new Date(user.dob).toISOString().split('T')[0] : ""}
                   onChange={handleInputChange}
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">
+                <p className="mobpro-mobile-info-text">
                   {user.dob ? new Date(user.dob).toLocaleDateString() : "Not set"}
                 </p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaVenusMars />
                 Gender
@@ -676,7 +676,7 @@ const ProfileMobile = () => {
                   name="gender"
                   value={user.gender}
                   onChange={handleInputChange}
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 >
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
@@ -685,15 +685,15 @@ const ProfileMobile = () => {
                   <option value="prefer-not-to-say">Prefer not to say</option>
                 </select>
               ) : (
-                <p className="mobile-info-text">{user.gender || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.gender || "Not set"}</p>
               )}
             </div>
           </div>
         )}
 
         {activeSection === 'address' && (
-          <div className="mobile-section-content">
-            <div className="mobile-form-group">
+          <div className="mobpro-mobile-section-content">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaMapPin />
                 Street Address
@@ -705,14 +705,14 @@ const ProfileMobile = () => {
                   value={user.address}
                   onChange={handleInputChange}
                   placeholder="Street address"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.address || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.address || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaMapPin />
                 City
@@ -724,14 +724,14 @@ const ProfileMobile = () => {
                   value={user.city}
                   onChange={handleInputChange}
                   placeholder="City"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.city || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.city || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaMapPin />
                 State
@@ -743,20 +743,20 @@ const ProfileMobile = () => {
                   value={user.state}
                   onChange={handleInputChange}
                   placeholder="State"
-                  className="mobile-input"
+                  className="mobpro-mobile-input"
                 />
               ) : (
-                <p className="mobile-info-text">{user.state || "Not set"}</p>
+                <p className="mobpro-mobile-info-text">{user.state || "Not set"}</p>
               )}
             </div>
 
-            <div className="mobile-form-group">
+            <div className="mobpro-mobile-form-group">
               <label>
                 <FaMapMarkerAlt />
                 GPS Coordinates
               </label>
               {isEditing ? (
-                <div className="mobile-gps-section">
+                <div className="mobpro-mobile-gps-section">
                   <input
                     type="text"
                     value={
@@ -778,10 +778,10 @@ const ProfileMobile = () => {
                       }
                     }}
                     placeholder="Latitude, Longitude"
-                    className="mobile-input"
+                    className="mobpro-mobile-input"
                   />
                   <button
-                    className="mobile-location-btn"
+                    className="mobpro-mobile-location-btn"
                     onClick={getCurrentLocation}
                     disabled={isLoading}
                   >
@@ -790,7 +790,7 @@ const ProfileMobile = () => {
                   </button>
                 </div>
               ) : (
-                <p className="mobile-info-text">
+                <p className="mobpro-mobile-info-text">
                   {user.gpsCoordinates?.coordinates
                     ? `${user.gpsCoordinates.coordinates[1]}, ${user.gpsCoordinates.coordinates[0]}`
                     : "Not set"}
@@ -801,16 +801,16 @@ const ProfileMobile = () => {
         )}
 
         {activeSection === 'notifications' && (
-          <div className="mobile-section-content">
-            <div className="mobile-notification-item">
-              <div className="notification-info">
+          <div className="mobpro-mobile-section-content">
+            <div className="mobpro-mobile-notification-item">
+              <div className="mobpro-notification-info">
                 <FaShoppingBag />
                 <div>
                   <h4>Order Updates</h4>
                   <p>Updates about your orders</p>
                 </div>
               </div>
-              <label className="mobile-switch">
+              <label className="mobpro-mobile-switch">
                 <input
                   type="checkbox"
                   checked={notificationPrefs.orderUpdates}
@@ -818,19 +818,19 @@ const ProfileMobile = () => {
                   name="orderUpdates"
                   disabled={!isEditing}
                 />
-                <span className="slider"></span>
+                <span className="mobpro-slider"></span>
               </label>
             </div>
 
-            <div className="mobile-notification-item">
-              <div className="notification-info">
+            <div className="mobpro-mobile-notification-item">
+              <div className="mobpro-notification-info">
                 <FaTruck />
                 <div>
                   <h4>Delivery Notifications</h4>
                   <p>Delivery status updates</p>
                 </div>
               </div>
-              <label className="mobile-switch">
+              <label className="mobpro-mobile-switch">
                 <input
                   type="checkbox"
                   checked={notificationPrefs.deliveryNotifications}
@@ -838,19 +838,19 @@ const ProfileMobile = () => {
                   name="deliveryNotifications"
                   disabled={!isEditing}
                 />
-                <span className="slider"></span>
+                <span className="mobpro-slider"></span>
               </label>
             </div>
 
-            <div className="mobile-notification-item">
-              <div className="notification-info">
+            <div className="mobpro-mobile-notification-item">
+              <div className="mobpro-notification-info">
                 <FaTag />
                 <div>
                   <h4>Promotional Offers</h4>
                   <p>Special deals and discounts</p>
                 </div>
               </div>
-              <label className="mobile-switch">
+              <label className="mobpro-mobile-switch">
                 <input
                   type="checkbox"
                   checked={notificationPrefs.promotionalOffers}
@@ -858,19 +858,19 @@ const ProfileMobile = () => {
                   name="promotionalOffers"
                   disabled={!isEditing}
                 />
-                <span className="slider"></span>
+                <span className="mobpro-slider"></span>
               </label>
             </div>
 
-            <div className="mobile-notification-item">
-              <div className="notification-info">
+            <div className="mobpro-mobile-notification-item">
+              <div className="mobpro-notification-info">
                 <FaNewspaper />
                 <div>
                   <h4>Newsletter</h4>
                   <p>Monthly newsletter</p>
                 </div>
               </div>
-              <label className="mobile-switch">
+              <label className="mobpro-mobile-switch">
                 <input
                   type="checkbox"
                   checked={notificationPrefs.newsletter}
@@ -878,12 +878,12 @@ const ProfileMobile = () => {
                   name="newsletter"
                   disabled={!isEditing}
                 />
-                <span className="slider"></span>
+                <span className="mobpro-slider"></span>
               </label>
             </div>
 
             {isEditing && (
-              <div className="mobile-notification-note">
+              <div className="mobpro-mobile-notification-note">
                 <FaInfoCircle />
                 <p>Save changes to update notification preferences</p>
               </div>
@@ -893,24 +893,24 @@ const ProfileMobile = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="mobile-bottom-nav">
-        <button className="nav-btn">
+      <div className="mobpro-mobile-bottom-nav">
+        <button className="mobpro-nav-btn">
           <FaHome />
           <span>Home</span>
         </button>
-        <button className="nav-btn">
+        <button className="mobpro-nav-btn">
           <FaBox />
           <span>Orders</span>
         </button>
-        <button className="nav-btn active">
+        <button className="mobpro-nav-btn mobpro-active">
           <FaUser />
           <span>Profile</span>
         </button>
-        <button className="nav-btn">
+        <button className="mobpro-nav-btn">
           <FaHistory />
           <span>History</span>
         </button>
-        <button className="nav-btn">
+        <button className="mobpro-nav-btn">
           <FaTags />
           <span>Offers</span>
         </button>

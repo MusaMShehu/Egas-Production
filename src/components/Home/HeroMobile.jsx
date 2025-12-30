@@ -71,35 +71,35 @@ const Hero = () => {
   };
 
   return (
-    <section className="mobile-hero">
+    <section className="hmc-mobile-hero">
       {/* Hero Carousel */}
-      <div className="hero-carousel">
+      <div className="hmc-hero-carousel">
         <div 
-          className="carousel-track" 
+          className="hmc-carousel-track" 
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
           {slides.map((slide, index) => (
             <div 
               key={slide.id}
-              className="carousel-slide"
+              className="hmc-carousel-slide"
               style={{ background: slide.bgColor }}
             >
-              <div className="slide-content">
-                <div className="slide-icon">
+              <div className="hmc-slide-content">
+                <div className="hmc-slide-icon">
                   {slide.icon}
                 </div>
-                <h2 className="slide-title">{slide.title}</h2>
-                <h3 className="slide-subtitle">{slide.subtitle}</h3>
-                <p className="slide-description">{slide.description}</p>
+                <h2 className="hmc-slide-title">{slide.title}</h2>
+                <h3 className="hmc-slide-subtitle">{slide.subtitle}</h3>
+                <p className="hmc-slide-description">{slide.description}</p>
                 
                 {/* Features for first slide only */}
                 {index === 0 && (
-                  <div className="hero-features">
-                    <div className="feature">
+                  <div className="hmc-hero-features">
+                    <div className="hmc-feature">
                       <FaPercent />
                       <span>Discounts Up to 20%</span>
                     </div>
-                    <div className="feature">
+                    <div className="hmc-feature">
                       <FaClock />
                       <span>24/7 Service Available</span>
                     </div>
@@ -111,19 +111,19 @@ const Hero = () => {
         </div>
 
         {/* Carousel Controls */}
-        <button className="carousel-btn prev" onClick={prevSlide}>
+        <button className="hmc-carousel-btn hmc-prev" onClick={prevSlide}>
           <FaChevronLeft />
         </button>
-        <button className="carousel-btn next" onClick={nextSlide}>
+        <button className="hmc-carousel-btn hmc-next" onClick={nextSlide}>
           <FaChevronRight />
         </button>
 
         {/* Carousel Indicators */}
-        <div className="carousel-indicators">
+        <div className="hmc-carousel-indicators">
           {slides.map((_, index) => (
             <button
               key={index}
-              className={`indicator ${index === currentSlide ? 'active' : ''}`}
+              className={`hmc-indicator ${index === currentSlide ? 'hmc-active' : ''}`}
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -131,29 +131,29 @@ const Hero = () => {
         </div>
 
         {/* Auto-play Toggle */}
-        <button className="autoplay-toggle" onClick={toggleAutoPlay}>
+        <button className="hmc-autoplay-toggle" onClick={toggleAutoPlay}>
           {isAutoPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
 
       {/* Hero Content Overlay */}
-      <div className="hero-content-overlay">
-        <div className="hero-main-content">
-          <h1 className="hero-brand">eGAS</h1>
-          <p className="hero-tagline">
+      <div className="hmc-hero-content-overlay">
+        <div className="hmc-hero-main-content">
+          <h1 className="hmc-hero-brand">eGAS</h1>
+          <p className="hmc-hero-tagline">
             Fast & Reliable Gas Delivery!
           </p>
-          <p className="hero-description">
+          <p className="hmc-hero-description">
             We deliver reliable, high-quality, and affordable gas to homes, businesses, and restaurants. 
             Order instantly or subscribe for routine doorstep delivery.
           </p>
           
           {/* Quick Action Buttons */}
-          <div className="hero-action-buttons">
-            <button className="btn-primary" onClick={handleGetStarted}>
+          <div className="hmc-hero-action-buttons">
+            <button className="hmc-btn-primary" onClick={handleGetStarted}>
               Get Started
             </button>
-            <button className="btn-secondary" onClick={() => window.location.href = '/order'}>
+            <button className="hmc-btn-secondary" onClick={() => window.location.href = '/order'}>
               Order Now
             </button>
           </div>

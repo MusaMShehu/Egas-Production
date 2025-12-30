@@ -1,23 +1,24 @@
 /* MobileSubscriptions.css */
-.mobile-subscriptions {
+.mobsubs-mobile-subscriptions {
   padding-bottom: 20px;
 }
 
-.subscriptions-header {
+.mobsubs-subscriptions-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 15px;
 }
 
-.subscriptions-header h1 {
+.mobsubs-subscriptions-header h1 {
   margin: 0;
   font-size: 24px;
   color: #2c3e50;
   font-weight: 700;
 }
 
-.wallet-info {
+.mobsubs-wallet-info {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -28,18 +29,19 @@
   font-weight: 600;
 }
 
-.wallet-icon {
+.mobsubs-wallet-icon {
   font-size: 16px;
 }
 
-.subscription-stats {
+.mobsubs-subscription-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 20px;
+  padding: 0 15px;
 }
 
-.stat-card {
+.mobsubs-stat-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
@@ -49,7 +51,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.stat-icon {
+.mobsubs-stat-icon {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -60,39 +62,41 @@
   color: white;
 }
 
-.stat-icon.active {
+.mobsubs-stat-icon.mobsubs-active {
   background: linear-gradient(135deg, #2ecc71, #27ae60);
 }
 
-.stat-icon.total {
+.mobsubs-stat-icon.mobsubs-total {
   background: linear-gradient(135deg, #3498db, #2980b9);
 }
 
-.stat-content h3 {
+.mobsubs-stat-content h3 {
   margin: 0 0 4px 0;
   font-size: 14px;
   color: #666;
 }
 
-.stat-content p {
+.mobsubs-stat-content p {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #2c3e50;
 }
 
-.actions-bar {
+.mobsubs-actions-bar {
   display: flex;
+  /* flex-direction: column; */
   gap: 12px;
   margin-bottom: 20px;
+  padding: 15px;
 }
 
-.search-container {
+.mobsubs-search-container {
   flex: 1;
   position: relative;
 }
 
-.search-icon {
+.mobsubs-search-icon {
   position: absolute;
   left: 16px;
   top: 50%;
@@ -100,7 +104,7 @@
   color: #666;
 }
 
-.search-container input {
+.mobsubs-search-container input {
   width: 100%;
   padding: 14px 16px 14px 48px;
   border: 1px solid #e0e0e0;
@@ -109,7 +113,7 @@
   background: white;
 }
 
-.clear-search {
+.mobsubs-clear-search {
   position: absolute;
   right: 16px;
   top: 50%;
@@ -121,8 +125,9 @@
   padding: 4px;
 }
 
-.new-subscription-btn {
+.mobsubs-new-subscription-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
+  width: fit-content;
   color: white;
   border: none;
   padding: 14px 20px;
@@ -136,28 +141,29 @@
   white-space: nowrap;
 }
 
-.new-subscription-btn:active {
+.mobsubs-new-subscription-btn:active {
   transform: scale(0.98);
 }
 
-.subscription-section {
+.mobsubs-subscription-section {
   margin-bottom: 24px;
 }
 
-.section-header {
+.mobsubs-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  padding: 0 30px;
 }
 
-.section-header h2 {
+.mobsubs-section-header h2 {
   margin: 0;
   font-size: 18px;
   color: #2c3e50;
 }
 
-.count-badge {
+.mobsubs-count-badge {
   background: #2c3e50;
   color: white;
   padding: 4px 12px;
@@ -166,28 +172,29 @@
   font-weight: 600;
 }
 
-.subscriptions-list {
+.mobsubs-subscriptions-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding: 20px;
 }
 
-.subscription-card {
+.mobsubs-subscription-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.subscription-card.active {
+.mobsubs-subscription-card.mobsubs-active {
   border-left: 4px solid #2ecc71;
 }
 
-.subscription-card.inactive {
+.mobsubs-subscription-card.mobsubs-inactive {
   border-left: 4px solid #95a5a6;
 }
 
-.subscription-header {
+.mobsubs-subscription-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -196,34 +203,34 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.subscription-title {
+.mobsubs-subscription-title {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.subscription-icon {
+.mobsubs-subscription-icon {
   font-size: 24px;
   color: #e74c3c;
 }
 
-.subscription-title h3 {
+.mobsubs-subscription-title h3 {
   margin: 0 0 4px 0;
   font-size: 16px;
   color: #2c3e50;
 }
 
-.subscription-id {
+.mobsubs-subscription-id {
   margin: 0;
   font-size: 12px;
   color: #666;
 }
 
-.subscription-actions {
+.mobsubs-subscription-actions {
   position: relative;
 }
 
-.status-badge {
+.mobsubs-status-badge {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -231,27 +238,27 @@
   margin-bottom: 8px;
 }
 
-.status-active {
+.mobsubs-status-active {
   background: #d4edda;
   color: #155724;
 }
 
-.status-paused {
+.mobsubs-status-paused {
   background: #fff3cd;
   color: #856404;
 }
 
-.status-cancelled {
+.mobsubs-status-cancelled {
   background: #f8d7da;
   color: #721c24;
 }
 
-.status-expired {
+.mobsubs-status-expired {
   background: #e2e3e5;
   color: #383d41;
 }
 
-.action-menu-btn {
+.mobsubs-action-menu-btn {
   background: none;
   border: none;
   color: #666;
@@ -263,11 +270,11 @@
   justify-content: center;
 }
 
-.action-menu-btn:active {
+.mobsubs-action-menu-btn:active {
   background: #f0f0f0;
 }
 
-.action-menu {
+.mobsubs-action-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -279,7 +286,7 @@
   overflow: hidden;
 }
 
-.menu-item {
+.mobsubs-menu-item {
   width: 100%;
   padding: 12px 16px;
   border: none;
@@ -294,37 +301,37 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.menu-item:last-child {
+.mobsubs-menu-item:last-child {
   border-bottom: none;
 }
 
-.menu-item:hover {
+.mobsubs-menu-item:hover {
   background: #f8f9fa;
 }
 
-.menu-item.danger {
+.mobsubs-menu-item.mobsubs-danger {
   color: #e74c3c;
 }
 
-.subscription-details {
+.mobsubs-subscription-details {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.detail-row {
+.mobsubs-detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.detail-row .label {
+.mobsubs-detail-row .mobsubs-label {
   font-size: 14px;
   color: #666;
 }
 
-.detail-row .value {
+.mobsubs-detail-row .mobsubs-value {
   font-size: 14px;
   color: #2c3e50;
   font-weight: 500;
@@ -333,24 +340,24 @@
   gap: 6px;
 }
 
-.detail-row .value.price {
+.mobsubs-detail-row .mobsubs-value.mobsubs-price {
   font-weight: 700;
   font-size: 16px;
   color: #2c3e50;
 }
 
-.detail-row .value .icon {
+.mobsubs-detail-row .mobsubs-value .mobsubs-icon {
   color: #888;
 }
 
-.subscription-footer {
+.mobsubs-subscription-footer {
   display: flex;
   gap: 12px;
 }
 
-.manage-btn,
-.resume-btn,
-.renew-btn {
+.mobsubs-manage-btn,
+.mobsubs-resume-btn,
+.mobsubs-renew-btn {
   flex: 1;
   padding: 12px;
   border-radius: 12px;
@@ -364,29 +371,29 @@
   gap: 8px;
 }
 
-.manage-btn {
+.mobsubs-manage-btn {
   background: #2c3e50;
   color: white;
 }
 
-.resume-btn {
+.mobsubs-resume-btn {
   background: #3498db;
   color: white;
 }
 
-.renew-btn {
+.mobsubs-renew-btn {
   background: #2ecc71;
   color: white;
 }
 
-.manage-btn:active,
-.resume-btn:active,
-.renew-btn:active {
+.mobsubs-manage-btn:active,
+.mobsubs-resume-btn:active,
+.mobsubs-renew-btn:active {
   transform: scale(0.98);
 }
 
 /* No Subscriptions */
-.no-subscriptions {
+.mobsubs-no-subscriptions {
   text-align: center;
   padding: 40px 20px;
   background: white;
@@ -394,25 +401,25 @@
   margin-top: 20px;
 }
 
-.no-subscriptions-icon {
+.mobsubs-no-subscriptions-icon {
   font-size: 48px;
   color: #ddd;
   margin-bottom: 16px;
 }
 
-.no-subscriptions h3 {
+.mobsubs-no-subscriptions h3 {
   margin: 0 0 8px 0;
   color: #666;
   font-size: 20px;
 }
 
-.no-subscriptions p {
+.mobsubs-no-subscriptions p {
   margin: 0 0 20px 0;
   color: #888;
   font-size: 16px;
 }
 
-.create-btn {
+.mobsubs-create-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   border: none;
@@ -427,12 +434,12 @@
   margin: 0 auto;
 }
 
-.create-btn:active {
+.mobsubs-create-btn:active {
   transform: scale(0.98);
 }
 
 /* Loading State */
-.mobile-subscriptions.loading {
+.mobsubs-mobile-subscriptions.mobsubs-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -440,53 +447,53 @@
   height: 300px;
 }
 
-.loading-spinner {
+.mobsubs-loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid #f0f0f0;
   border-top-color: #2c3e50;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: mobsubs-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes mobsubs-spin {
   to { transform: rotate(360deg); }
 }
 
 @media (max-width: 480px) {
-  .subscriptions-header h1 {
+  .mobsubs-subscriptions-header h1 {
     font-size: 20px;
   }
   
-  .wallet-info {
+  .mobsubs-wallet-info {
     padding: 6px 12px;
     font-size: 14px;
   }
   
-  .stat-card {
+  .mobsubs-stat-card {
     padding: 16px;
   }
   
-  .stat-icon {
+  .mobsubs-stat-icon {
     width: 40px;
     height: 40px;
     font-size: 20px;
   }
   
-  .stat-content h3 {
+  .mobsubs-stat-content h3 {
     font-size: 12px;
   }
   
-  .stat-content p {
+  .mobsubs-stat-content p {
     font-size: 18px;
   }
   
-  .new-subscription-btn {
+  .mobsubs-new-subscription-btn {
     padding: 12px 16px;
     font-size: 13px;
   }
   
-  .subscription-card {
+  .mobsubs-subscription-card {
     padding: 16px;
   }
 }

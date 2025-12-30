@@ -45,19 +45,19 @@ const dashboardAPI = {
 // Status configuration
 const statusConfig = {
   order: {
-    completed: { className: 'status-success', label: 'Completed' },
-    processing: { className: 'status-warning', label: 'Processing' },
-    'in-transit': { className: 'status-info', label: 'In Transit' },
-    cancelled: { className: 'status-error', label: 'Cancelled' }
+    completed: { className: 'mobdash-status-success', label: 'Completed' },
+    processing: { className: 'mobdash-status-warning', label: 'Processing' },
+    'in-transit': { className: 'mobdash-status-info', label: 'In Transit' },
+    cancelled: { className: 'mobdash-status-error', label: 'Cancelled' }
   },
   subscription: {
-    active: { className: 'status-success', label: 'Active' },
-    paused: { className: 'status-warning', label: 'Paused' },
-    expired: { className: 'status-error', label: 'Expired' }
+    active: { className: 'mobdash-status-success', label: 'Active' },
+    paused: { className: 'mobdash-status-warning', label: 'Paused' },
+    expired: { className: 'mobdash-status-error', label: 'Expired' }
   },
   wallet_transaction: {
-    Credit: { className: 'status-success', label: 'Credit' },
-    Debit: { className: 'status-info', label: 'Debit' }
+    Credit: { className: 'mobdash-status-success', label: 'Credit' },
+    Debit: { className: 'mobdash-status-info', label: 'Debit' }
   }
 };
 
@@ -91,21 +91,21 @@ const formatDate = (dateString) => {
 
 // Loading Component
 const LoadingSpinner = () => (
-  <div className="mobile-dashboard-loading">
-    <div className="mobile-loading-spinner"></div>
+  <div className="mobdash-mobile-dashboard-loading">
+    <div className="mobdash-mobile-loading-spinner"></div>
     <p>Loading dashboard...</p>
   </div>
 );
 
 // Error Component
 const ErrorMessage = ({ message, onRetry }) => (
-  <div className="mobile-error-container">
-    <div className="mobile-error-icon">
+  <div className="mobdash-mobile-error-container">
+    <div className="mobdash-mobile-error-icon">
       <FaExclamationTriangle />
     </div>
     <h3>Oops!</h3>
     <p>{message}</p>
-    <button className="mobile-retry-btn" onClick={onRetry}>
+    <button className="mobdash-mobile-retry-btn" onClick={onRetry}>
       <FaRedo /> Try Again
     </button>
   </div>
@@ -158,28 +158,28 @@ const DashboardMobile = () => {
         title: 'Order for Refill',
         icon: <FaShoppingCart />,
         path: '/dashboard/orders/',
-        className: 'action-btn primary',
+        className: 'mobdash-action-btn mobdash-primary',
       },
       {
         id: 'subscriptions',
         title: 'Manage Subscription',
         icon: <FaFileInvoiceDollar />,
         path: '/dashboard/subscriptions',
-        className: 'action-btn secondary',
+        className: 'mobdash-action-btn mobdash-secondary',
       },
       {
         id: 'delivery',
         title: 'Delivery Schedules',
         icon: <FaTruck />,
         path: '/dashboard/delivery',
-        className: 'action-btn tertiary',
+        className: 'mobdash-action-btn mobdash-tertiary',
       },
       {
         id: 'history',
         title: 'History',
         icon: <FaHistory />,
         path: '/dashboard/history',
-        className: 'action-btn quaternary',
+        className: 'mobdash-action-btn mobdash-quaternary',
       }
     ];
 
@@ -188,8 +188,8 @@ const DashboardMobile = () => {
     };
 
     return (
-      <div className="mobile-quick-actions">
-        <div className="action-grid">
+      <div className="mobdash-mobile-quick-actions">
+        <div className="mobdash-action-grid">
           {quickActions.map((action) => (
             <button
               key={action.id}
@@ -215,12 +215,12 @@ const DashboardMobile = () => {
 
   if (!dashboardData) {
     return (
-      <div className="mobile-dashboard-container">
-        <div className="mobile-warning-message">
+      <div className="mobdash-mobile-dashboard-container">
+        <div className="mobdash-mobile-warning-message">
           <FaExclamationTriangle />
           <span>No data available</span>
         </div>
-        <button className="mobile-refresh-btn" onClick={handleRefresh}>
+        <button className="mobdash-mobile-refresh-btn" onClick={handleRefresh}>
           <FaRedo /> Refresh
         </button>
       </div>
@@ -248,15 +248,15 @@ const DashboardMobile = () => {
 
   // Hero Banner Component
   const HeroBanner = () => (
-    <div className="mobile-hero-banner">
-      <div className="hero-content">
+    <div className="mobdash-mobile-hero-banner">
+      <div className="mobdash-hero-content">
         <h1>Fast & Reliable Gas Delivery!</h1>
-        <div className="hero-features">
-          <div className="hero-feature">
+        <div className="mobdash-hero-features">
+          <div className="mobdash-hero-feature">
             <FaPercentage />
             <span>Discounts Up to 20%</span>
           </div>
-          <div className="hero-feature">
+          <div className="mobdash-hero-feature">
             <FaClock />
             <span>24/7 Service Available</span>
           </div>
@@ -267,61 +267,61 @@ const DashboardMobile = () => {
 
   // Stats Cards Component
   const StatsCards = () => (
-    <div className="mobile-stats-cards">
-      <div className="stats-grid">
+    <div className="mobdash-mobile-stats-cards">
+      <div className="mobdash-stats-grid">
         <div 
-          className="stat-card blue"
+          className="mobdash-stat-card mobdash-blue"
           onClick={() => infoToast(`Total spent: ${formatCurrency(totalSpent)}`)}
         >
-          <div className="stat-icon">
+          <div className="mobdash-stat-icon">
             <FaChartLine />
           </div>
-          <div className="stat-content">
+          <div className="mobdash-stat-content">
             <h3>Total Spent</h3>
-            <div className="stat-value">{formatCurrency(totalSpent)}</div>
-            <p className="stat-subtitle">This month: {formatCurrency(thisMonthSpent)}</p>
+            <div className="mobdash-stat-value">{formatCurrency(totalSpent)}</div>
+            <p className="mobdash-stat-subtitle">This month: {formatCurrency(thisMonthSpent)}</p>
           </div>
         </div>
 
         <div 
-          className="stat-card orange"
+          className="mobdash-stat-card mobdash-orange"
           onClick={() => infoToast(`${orderCount} orders • ${activeOrderCount} active`)}
         >
-          <div className="stat-icon">
+          <div className="mobdash-stat-icon">
             <FaShoppingCart />
           </div>
-          <div className="stat-content">
+          <div className="mobdash-stat-content">
             <h3>Orders</h3>
-            <div className="stat-value">{orderCount}</div>
-            <p className="stat-subtitle">{activeOrderCount} active</p>
+            <div className="mobdash-stat-value">{orderCount}</div>
+            <p className="mobdash-stat-subtitle">{activeOrderCount} active</p>
           </div>
         </div>
 
         <div 
-          className="stat-card green"
+          className="mobdash-stat-card mobdash-green"
           onClick={() => infoToast(`${subscriptionCount} subscriptions • ${activeSubscriptions.length} active`)}
         >
-          <div className="stat-icon">
+          <div className="mobdash-stat-icon">
             <FaFileInvoiceDollar />
           </div>
-          <div className="stat-content">
+          <div className="mobdash-stat-content">
             <h3>Subscriptions</h3>
-            <div className="stat-value">{subscriptionCount}</div>
-            <p className="stat-subtitle">{activeSubscriptions.length} active</p>
+            <div className="mobdash-stat-value">{subscriptionCount}</div>
+            <p className="mobdash-stat-subtitle">{activeSubscriptions.length} active</p>
           </div>
         </div>
 
         <div 
-          className="stat-card purple"
+          className="mobdash-stat-card mobdash-purple"
           onClick={() => infoToast(`Wallet balance: ${formatCurrency(walletBalance)}`)}
         >
-          <div className="stat-icon">
+          <div className="mobdash-stat-icon">
             <FaWallet />
           </div>
-          <div className="stat-content">
+          <div className="mobdash-stat-content">
             <h3>Wallet Balance</h3>
-            <div className="stat-value">{formatCurrency(walletBalance)}</div>
-            <p className="stat-subtitle">Total top-ups: {formatCurrency(topupTotal)}</p>
+            <div className="mobdash-stat-value">{formatCurrency(walletBalance)}</div>
+            <p className="mobdash-stat-subtitle">Total top-ups: {formatCurrency(topupTotal)}</p>
           </div>
         </div>
       </div>
@@ -333,12 +333,12 @@ const DashboardMobile = () => {
     if (!showPromo) return null;
     
     return (
-      <div className="mobile-promo-banner">
-        <div className="promo-header">
-          <FaFire className="promo-icon" />
+      <div className="mobdash-mobile-promo-banner">
+        <div className="mobdash-promo-header">
+          <FaFire className="mobdash-promo-icon" />
           <h3>Flash Sale!</h3>
           <button 
-            className="promo-close"
+            className="mobdash-promo-close"
             onClick={() => setShowPromo(false)}
           >
             ×
@@ -346,7 +346,7 @@ const DashboardMobile = () => {
         </div>
         <p>Up to 30% off on refills this week!</p>
         <button 
-          className="promo-action-btn"
+          className="mobdash-promo-action-btn"
           onClick={() => {
             infoToast('Claiming discount...');
             navigate('/orders/new');
@@ -363,12 +363,12 @@ const DashboardMobile = () => {
     const isUpcoming = nextDeliveryDate && isAfter(new Date(nextDeliveryDate), new Date());
     
     return (
-      <div className="mobile-delivery-card">
-        <div className="delivery-header">
+      <div className="mobdash-mobile-delivery-card">
+        <div className="mobdash-delivery-header">
           <FaTruck />
           <h3>Track Delivery</h3>
           <button 
-            className="view-all-btn"
+            className="mobdash-view-all-btn"
             onClick={() => {
               infoToast('Viewing all deliveries...');
               navigate('/tracking');
@@ -378,43 +378,43 @@ const DashboardMobile = () => {
           </button>
         </div>
         
-        <div className="delivery-content">
+        <div className="mobdash-delivery-content">
           {nextDeliveryDate ? (
-            <div className="delivery-schedule">
-              <div className="delivery-date-badge">
-                <span className="date-label">Next Delivery</span>
-                <span className="date-value">{formatDate(nextDeliveryDate)}</span>
+            <div className="mobdash-delivery-schedule">
+              <div className="mobdash-delivery-date-badge">
+                <span className="mobdash-date-label">Next Delivery</span>
+                <span className="mobdash-date-value">{formatDate(nextDeliveryDate)}</span>
               </div>
-              <div className="delivery-status">
-                <span className={`status-indicator ${isUpcoming ? 'upcoming' : 'pending'}`}></span>
+              <div className="mobdash-delivery-status">
+                <span className={`mobdash-status-indicator ${isUpcoming ? 'mobdash-upcoming' : 'mobdash-pending'}`}></span>
                 {isUpcoming ? 'Upcoming' : 'Pending'}
               </div>
             </div>
           ) : (
-            <div className="no-delivery">
+            <div className="mobdash-no-delivery">
               <p>No upcoming deliveries scheduled</p>
             </div>
           )}
           
           {activeSubscriptions.length > 0 && (
-            <div className="active-subscriptions">
+            <div className="mobdash-active-subscriptions">
               <h4>Active Subscriptions</h4>
-              <div className="subscriptions-list">
+              <div className="mobdash-subscriptions-list">
                 {activeSubscriptions.slice(0, 2).map((sub, index) => (
                   <div 
                     key={index} 
-                    className="subscription-item"
+                    className="mobdash-subscription-item"
                     onClick={() => {
                       infoToast(`Subscription: ${sub.name || 'Unnamed'}`);
                       navigate('/subscriptions');
                     }}
                   >
                     <FaCheckCircle />
-                    <div className="subscription-details">
-                      <span className="subscription-name">{sub.name || 'Subscription'}</span>
-                      <span className="subscription-frequency">{sub.deliveryFrequency || 'Regular'}</span>
+                    <div className="mobdash-subscription-details">
+                      <span className="mobdash-subscription-name">{sub.name || 'Subscription'}</span>
+                      <span className="mobdash-subscription-frequency">{sub.deliveryFrequency || 'Regular'}</span>
                     </div>
-                    <span className="subscription-amount">{formatCurrency(sub.amount || 0)}</span>
+                    <span className="mobdash-subscription-amount">{formatCurrency(sub.amount || 0)}</span>
                   </div>
                 ))}
               </div>
@@ -427,12 +427,12 @@ const DashboardMobile = () => {
 
   // Recent Activities Component
   const RecentActivities = () => (
-    <div className="mobile-activities-card">
-      <div className="activities-header">
+    <div className="mobdash-mobile-activities-card">
+      <div className="mobdash-activities-header">
         <FaHistory />
         <h3>Recent Activities</h3>
         <button 
-          className="view-all-btn"
+          className="mobdash-view-all-btn"
           onClick={() => {
             infoToast('Viewing all activities...');
             navigate('/orders/history');
@@ -442,7 +442,7 @@ const DashboardMobile = () => {
         </button>
       </div>
       
-      <div className="activities-list">
+      <div className="mobdash-activities-list">
         {recentActivities.slice(0, 3).map((activity, index) => {
           const IconComponent = activityIcons[activity.type];
           const statusConfigItem = statusConfig[activity.type]?.[activity.status] || { className: '', label: activity.status };
@@ -450,32 +450,32 @@ const DashboardMobile = () => {
           return (
             <div 
               key={index} 
-              className="activity-item"
+              className="mobdash-activity-item"
               onClick={() => {
                 infoToast(`Activity: ${activity.title}`);
                 if (activity.type === 'order') navigate('/orders/history');
                 if (activity.type === 'subscription') navigate('/subscriptions');
               }}
             >
-              <div className="activity-icon">
+              <div className="mobdash-activity-icon">
                 {IconComponent ? <IconComponent /> : <FaHistory />}
               </div>
-              <div className="activity-content">
-                <div className="activity-title">{activity.title}</div>
-                <div className="activity-details">
-                  <span className="activity-amount">{formatCurrency(activity.amount)}</span>
-                  <span className={`activity-status ${statusConfigItem.className}`}>
+              <div className="mobdash-activity-content">
+                <div className="mobdash-activity-title">{activity.title}</div>
+                <div className="mobdash-activity-details">
+                  <span className="mobdash-activity-amount">{formatCurrency(activity.amount)}</span>
+                  <span className={`mobdash-activity-status ${statusConfigItem.className}`}>
                     {statusConfigItem.label}
                   </span>
                 </div>
               </div>
-              <div className="activity-date">{formatDate(activity.createdAt)}</div>
+              <div className="mobdash-activity-date">{formatDate(activity.createdAt)}</div>
             </div>
           );
         })}
         
         {recentActivities.length === 0 && (
-          <div className="no-activities">
+          <div className="mobdash-no-activities">
             No recent activities
           </div>
         )}
@@ -485,56 +485,56 @@ const DashboardMobile = () => {
 
   // Monthly Spending Component
   const MonthlySpending = () => (
-    <div className="mobile-spending-card">
-      <div className="spending-header">
+    <div className="mobdash-mobile-spending-card">
+      <div className="mobdash-spending-header">
         <h3>This Month's Spending</h3>
-        <div className="spending-total">
+        <div className="mobdash-spending-total">
           {formatCurrency(orderMonthly + subscriptionMonthly + topupMonthly)}
         </div>
       </div>
       
-      <div className="spending-breakdown">
-        <div className="breakdown-item">
-          <div className="breakdown-label">
+      <div className="mobdash-spending-breakdown">
+        <div className="mobdash-breakdown-item">
+          <div className="mobdash-breakdown-label">
             <FaShoppingCart />
             <span>Orders</span>
           </div>
-          <div className="breakdown-amount">{formatCurrency(orderMonthly)}</div>
+          <div className="mobdash-breakdown-amount">{formatCurrency(orderMonthly)}</div>
         </div>
         
-        <div className="breakdown-item">
-          <div className="breakdown-label">
+        <div className="mobdash-breakdown-item">
+          <div className="mobdash-breakdown-label">
             <FaFileInvoiceDollar />
             <span>Subscriptions</span>
           </div>
-          <div className="breakdown-amount">{formatCurrency(subscriptionMonthly)}</div>
+          <div className="mobdash-breakdown-amount">{formatCurrency(subscriptionMonthly)}</div>
         </div>
         
-        <div className="breakdown-item">
-          <div className="breakdown-label">
+        <div className="mobdash-breakdown-item">
+          <div className="mobdash-breakdown-label">
             <FaWallet />
             <span>Top-ups</span>
           </div>
-          <div className="breakdown-amount">{formatCurrency(topupMonthly)}</div>
+          <div className="mobdash-breakdown-amount">{formatCurrency(topupMonthly)}</div>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="mobile-dashboard-container">
+    <div className="mobdash-mobile-dashboard-container">
       {/* Header */}
-      <div className="mobile-dashboard-header">
-        <div className="header-content">
+      <div className="mobdash-mobile-dashboard-header">
+        <div className="mobdash-header-content">
           <h1>eGas Dashboard</h1>
-          <button className="mobile-refresh-btn" onClick={handleRefresh}>
+          <button className="mobdash-mobile-refresh-btn" onClick={handleRefresh}>
             <FaRedo />
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="mobile-dashboard-content">
+      <div className="mobdash-mobile-dashboard-content">
         {/* Hero Banner */}
         <HeroBanner />
         
@@ -558,34 +558,34 @@ const DashboardMobile = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="mobile-bottom-nav">
-        <button className="nav-btn active">
+      <div className="mobdash-mobile-bottom-nav">
+        <button className="mobdash-nav-btn mobdash-active">
           <FaHome />
           <span>Home</span>
         </button>
         <button 
-          className="nav-btn"
+          className="mobdash-nav-btn"
           onClick={() => navigate('/orders/new')}
         >
           <FaBox />
           <span>Order</span>
         </button>
         <button 
-          className="nav-btn"
+          className="mobdash-nav-btn"
           onClick={() => navigate('/subscriptions')}
         >
           <FaFileInvoiceDollar />
           <span>Subscriptions</span>
         </button>
         <button 
-          className="nav-btn"
+          className="mobdash-nav-btn"
           onClick={() => navigate('/orders/history')}
         >
           <FaHistory />
           <span>History</span>
         </button>
         <button 
-          className="nav-btn"
+          className="mobdash-nav-btn"
           onClick={() => navigate('/profile')}
         >
           <FaUser />

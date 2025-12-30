@@ -27,34 +27,34 @@ const Opportunities = () => {
   ];
 
   return (
-    <section className="mobile-opportunities">
-      <div className="opportunities-header">
+    <section className="hmc-mobile-opportunities">
+      <div className="hmc-opportunities-header">
         <h2>Unlock Boundless Opportunities</h2>
-        <p className="section-subtitle">
+        <p className="hmc-section-subtitle">
           We provide countless opportunities for domestic users, businesses, and organizations.
         </p>
       </div>
       
-      <div className="opportunities-grid">
+      <div className="hmc-opportunities-grid">
         {opportunities.map((item, index) => (
-          <div key={index} className="opportunity-card">
-            <div className="opportunity-icon">
+          <div key={index} className="hmc-opportunity-card">
+            <div className="hmc-opportunity-icon">
               {item.icon}
             </div>
-            <h3 className="opportunity-title">{item.title}</h3>
-            <p className="opportunity-description">{item.description}</p>
+            <h3 className="hmc-opportunity-title">{item.title}</h3>
+            <p className="hmc-opportunity-description">{item.description}</p>
           </div>
         ))}
       </div>
       
-      <div className="opportunities-content">
+      <div className="hmc-opportunities-content">
         <p>
           With our customizable services, you can set up your plan according to your need, budget, 
           and time of delivery. Also at e-gas we offer various services related to gas installation, 
           maintenance, and safety checks.
         </p>
         
-        <Link className="learn-more-btn" to="/opportunities">
+        <Link className="hmc-learn-more-btn" to="/opportunities">
           <span>Learn More</span>
           <FaChevronRight />
         </Link>

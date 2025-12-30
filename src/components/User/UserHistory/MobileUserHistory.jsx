@@ -252,47 +252,47 @@ const History = () => {
 
   const getStatusClass = (status) => {
     if (!status) {
-      if (activeTab === 'orders') return 'his-status-processing';
-      if (activeTab === 'subscriptions') return 'his-status-pending';
-      if (activeTab === 'payments') return 'his-status-pending';
-      return 'his-status-pending';
+      if (activeTab === 'orders') return 'mobhis-status-processing';
+      if (activeTab === 'subscriptions') return 'mobhis-status-pending';
+      if (activeTab === 'payments') return 'mobhis-status-pending';
+      return 'mobhis-status-pending';
     }
     
     const statusLower = status.toLowerCase();
     
     if (activeTab === 'subscriptions') {
       switch (statusLower) {
-        case 'active': return 'his-status-active';
-        case 'paused': return 'his-status-paused';
-        case 'pending': return 'his-status-pending';
-        case 'expired': return 'his-status-expired';
-        case 'cancelled': return 'his-status-cancelled';
-        default: return 'his-status-pending';
+        case 'active': return 'mobhis-status-active';
+        case 'paused': return 'mobhis-status-paused';
+        case 'pending': return 'mobhis-status-pending';
+        case 'expired': return 'mobhis-status-expired';
+        case 'cancelled': return 'mobhis-status-cancelled';
+        default: return 'mobhis-status-pending';
       }
     }
     
     if (activeTab === 'orders') {
       switch (statusLower) {
-        case 'processing': return 'his-status-processing';
+        case 'processing': return 'mobhis-status-processing';
         case 'in-transit':
         case 'in_transit':
-        case 'intransit': return 'his-status-in-transit';
-        case 'delivered': return 'his-status-delivered';
-        case 'cancelled': return 'his-status-cancelled';
-        default: return 'his-status-processing';
+        case 'intransit': return 'mobhis-status-in-transit';
+        case 'delivered': return 'mobhis-status-delivered';
+        case 'cancelled': return 'mobhis-status-cancelled';
+        default: return 'mobhis-status-processing';
       }
     }
     
     if (activeTab === 'payments') {
       switch (statusLower) {
-        case 'pending': return 'his-status-pending';
-        case 'completed': return 'his-status-completed';
-        case 'failed': return 'his-status-failed';
-        default: return 'his-status-pending';
+        case 'pending': return 'mobhis-status-pending';
+        case 'completed': return 'mobhis-status-completed';
+        case 'failed': return 'mobhis-status-failed';
+        default: return 'mobhis-status-pending';
       }
     }
     
-    return 'his-status-pending';
+    return 'mobhis-status-pending';
   };
 
   const getStatusIcon = (status) => {
@@ -471,9 +471,9 @@ const History = () => {
 
   if (isLoading && filteredData.length === 0) {
     return (
-      <div className="his-history-page his-loading">
-        <div className="his-loading-spinner">
-          <FaSpinner className="his-spin" />
+      <div className="mobhis-history-page mobhis-loading">
+        <div className="mobhis-loading-spinner">
+          <FaSpinner className="mobhis-spin" />
         </div>
         <p>Loading history...</p>
       </div>
@@ -481,20 +481,20 @@ const History = () => {
   }
 
   return (
-    <div className="his-history-page">
+    <div className="mobhis-history-page">
       {/* Mobile Header */}
-      <div className="his-mobile-header">
-        <div className="his-mobile-header-top">
+      <div className="mobhis-mobile-header">
+        <div className="mobhis-mobile-header-top">
           <h1>History</h1>
-          <div className="his-mobile-header-actions">
+          <div className="mobhis-mobile-header-actions">
             <button 
-              className="his-mobile-search-btn"
+              className="mobhis-mobile-search-btn"
               onClick={() => setShowSearch(!showSearch)}
             >
               <FaSearch />
             </button>
             <button 
-              className="his-mobile-filter-btn"
+              className="mobhis-mobile-filter-btn"
               onClick={() => setShowFilters(!showFilters)}
             >
               <FaFilter />
@@ -504,23 +504,23 @@ const History = () => {
 
         {/* Mobile Search Bar */}
         {showSearch && (
-          <div className="his-mobile-search-bar">
+          <div className="mobhis-mobile-search-bar">
             <form onSubmit={handleSearchSubmit}>
-              <div className="his-mobile-search-input-wrapper">
-                <FaSearch className="his-search-icon" />
+              <div className="mobhis-mobile-search-input-wrapper">
+                <FaSearch className="mobhis-search-icon" />
                 <input
                   type="text"
                   placeholder={`Search ${activeTab}...`}
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  className="his-mobile-search-input"
+                  className="mobhis-mobile-search-input"
                   autoFocus
                 />
                 {searchQuery && (
                   <button 
                     type="button"
                     onClick={clearSearch} 
-                    className="his-mobile-clear-search"
+                    className="mobhis-mobile-clear-search"
                   >
                     <FaTimes />
                   </button>
@@ -531,74 +531,74 @@ const History = () => {
         )}
 
         {/* Mobile Tabs */}
-        <div className="his-mobile-tabs">
+        <div className="mobhis-mobile-tabs">
           <button
-            className={`his-mobile-tab ${activeTab === 'orders' ? 'active' : ''}`}
+            className={`mobhis-mobile-tab ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('orders');
               infoToast('Switching to order history');
             }}
           >
-            <FaShoppingCart className="his-tab-icon" />
-            <span className="his-tab-text">Orders</span>
-            <span className="his-count-badge">{getTabBadgeCount('orders')}</span>
+            <FaShoppingCart className="mobhis-tab-icon" />
+            <span className="mobhis-tab-text">Orders</span>
+            <span className="mobhis-count-badge">{getTabBadgeCount('orders')}</span>
           </button>
           <button
-            className={`his-mobile-tab ${activeTab === 'subscriptions' ? 'active' : ''}`}
+            className={`mobhis-mobile-tab ${activeTab === 'subscriptions' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('subscriptions');
               infoToast('Switching to subscription history');
             }}
           >
-            <FaCalendarAlt className="his-tab-icon" />
-            <span className="his-tab-text">Subs</span>
-            <span className="his-count-badge">{getTabBadgeCount('subscriptions')}</span>
+            <FaCalendarAlt className="mobhis-tab-icon" />
+            <span className="mobhis-tab-text">Subs</span>
+            <span className="mobhis-count-badge">{getTabBadgeCount('subscriptions')}</span>
           </button>
           <button
-            className={`his-mobile-tab ${activeTab === 'payments' ? 'active' : ''}`}
+            className={`mobhis-mobile-tab ${activeTab === 'payments' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('payments');
               infoToast('Switching to payment history');
             }}
           >
-            <FaCreditCard className="his-tab-icon" />
-            <span className="his-tab-text">Payments</span>
-            <span className="his-count-badge">{getTabBadgeCount('payments')}</span>
+            <FaCreditCard className="mobhis-tab-icon" />
+            <span className="mobhis-tab-text">Payments</span>
+            <span className="mobhis-count-badge">{getTabBadgeCount('payments')}</span>
           </button>
         </div>
       </div>
 
       {/* Desktop Header */}
-      <div className="his-desktop-header">
+      <div className="mobhis-desktop-header">
         <h1>History</h1>
-        <div className="his-desktop-header-actions">
-          <form onSubmit={handleSearchSubmit} className="his-desktop-search-wrapper">
-            <div className="his-desktop-search-input-wrapper">
-              <FaSearch className="his-search-icon" />
+        <div className="mobhis-desktop-header-actions">
+          <form onSubmit={handleSearchSubmit} className="mobhis-desktop-search-wrapper">
+            <div className="mobhis-desktop-search-input-wrapper">
+              <FaSearch className="mobhis-search-icon" />
               <input
                 type="text"
                 placeholder={`Search ${activeTab}...`}
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="his-desktop-search-input"
+                className="mobhis-desktop-search-input"
               />
               {searchQuery && (
                 <button 
                   type="button"
                   onClick={clearSearch} 
-                  className="his-desktop-clear-search"
+                  className="mobhis-desktop-clear-search"
                 >
                   <FaTimes />
                 </button>
               )}
             </div>
-            <button type="submit" className="his-desktop-search-btn">
+            <button type="submit" className="mobhis-desktop-search-btn">
               Search
             </button>
           </form>
 
-          <div className="his-desktop-filter-wrapper">
-            <FaFilter className="his-filter-icon" />
+          <div className="mobhis-desktop-filter-wrapper">
+            <FaFilter className="mobhis-filter-icon" />
             <select
               value={filter}
               onChange={(e) => {
@@ -607,7 +607,7 @@ const History = () => {
                   infoToast(`Filtering by ${e.target.value} status`);
                 }
               }}
-              className="his-desktop-filter-select"
+              className="mobhis-desktop-filter-select"
             >
               <option value="all">All {activeTab}</option>
               {activeTab === 'subscriptions' && (
@@ -641,15 +641,15 @@ const History = () => {
 
       {/* Mobile Filter Panel */}
       {showFilters && (
-        <div className="his-mobile-filter-panel">
-          <div className="his-filter-panel-header">
+        <div className="mobhis-mobile-filter-panel">
+          <div className="mobhis-filter-panel-header">
             <h3>Filter Options</h3>
             <button onClick={() => setShowFilters(false)}>
               <FaTimes />
             </button>
           </div>
-          <div className="his-filter-panel-content">
-            <div className="his-mobile-filter-group">
+          <div className="mobhis-filter-panel-content">
+            <div className="mobhis-mobile-filter-group">
               <label>Status Filter</label>
               <select
                 value={filter}
@@ -659,7 +659,7 @@ const History = () => {
                     infoToast(`Filtering by ${e.target.value} status`);
                   }
                 }}
-                className="his-mobile-filter-select"
+                className="mobhis-mobile-filter-select"
               >
                 <option value="all">All {activeTab}</option>
                 {activeTab === 'subscriptions' && (
@@ -689,7 +689,7 @@ const History = () => {
               </select>
             </div>
             {filter !== 'all' && (
-              <button className="his-mobile-clear-filters" onClick={clearFilters}>
+              <button className="mobhis-mobile-clear-filters" onClick={clearFilters}>
                 Clear Filters
               </button>
             )}
@@ -699,63 +699,63 @@ const History = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="his-error-message">
-          <FaExclamationCircle className="his-error-icon" />
+        <div className="mobhis-error-message">
+          <FaExclamationCircle className="mobhis-error-icon" />
           <span>{error}</span>
-          <button onClick={() => setError('')} className="his-close-error">
+          <button onClick={() => setError('')} className="mobhis-close-error">
             <FaTimes />
           </button>
         </div>
       )}
 
       {/* Desktop Tabs */}
-      <div className="his-desktop-tabs">
+      <div className="mobhis-desktop-tabs">
         <button
-          className={activeTab === 'orders' ? 'his-desktop-tab active' : 'his-desktop-tab'}
+          className={activeTab === 'orders' ? 'mobhis-desktop-tab active' : 'mobhis-desktop-tab'}
           onClick={() => {
             setActiveTab('orders');
             infoToast('Switching to order history');
           }}
         >
-          <FaShoppingCart className="his-tab-icon" />
-          <span className="his-tab-text">Orders</span>
-          <span className="his-count-badge">{getTabBadgeCount('orders')}</span>
+          <FaShoppingCart className="mobhis-tab-icon" />
+          <span className="mobhis-tab-text">Orders</span>
+          <span className="mobhis-count-badge">{getTabBadgeCount('orders')}</span>
         </button>
         <button
-          className={activeTab === 'subscriptions' ? 'his-desktop-tab active' : 'his-desktop-tab'}
+          className={activeTab === 'subscriptions' ? 'mobhis-desktop-tab active' : 'mobhis-desktop-tab'}
           onClick={() => {
             setActiveTab('subscriptions');
             infoToast('Switching to subscription history');
           }}
         >
-          <FaCalendarAlt className="his-tab-icon" />
-          <span className="his-tab-text">Subscriptions</span>
-          <span className="his-count-badge">{getTabBadgeCount('subscriptions')}</span>
+          <FaCalendarAlt className="mobhis-tab-icon" />
+          <span className="mobhis-tab-text">Subscriptions</span>
+          <span className="mobhis-count-badge">{getTabBadgeCount('subscriptions')}</span>
         </button>
         <button
-          className={activeTab === 'payments' ? 'his-desktop-tab active' : 'his-desktop-tab'}
+          className={activeTab === 'payments' ? 'mobhis-desktop-tab active' : 'mobhis-desktop-tab'}
           onClick={() => {
             setActiveTab('payments');
             infoToast('Switching to payment history');
           }}
         >
-          <FaCreditCard className="his-tab-icon" />
-          <span className="his-tab-text">Payments</span>
-          <span className="his-count-badge">{getTabBadgeCount('payments')}</span>
+          <FaCreditCard className="mobhis-tab-icon" />
+          <span className="mobhis-tab-text">Payments</span>
+          <span className="mobhis-count-badge">{getTabBadgeCount('payments')}</span>
         </button>
       </div>
 
       {/* Content Section */}
-      <div className="his-content-section">
+      <div className="mobhis-content-section">
         {/* Desktop Section Header */}
-        <div className="his-desktop-section-header">
+        <div className="mobhis-desktop-section-header">
           <h2>
             {activeTab === 'orders' && 'Order History'}
             {activeTab === 'subscriptions' && 'Subscription History'}
             {activeTab === 'payments' && 'Payment History'}
           </h2>
-          <div className="his-desktop-pagination-info">
-            <span className="his-count-badge">
+          <div className="mobhis-desktop-pagination-info">
+            <span className="mobhis-count-badge">
               Showing {filteredData.length} of {currentPagination.total} items
               {currentPagination.pages > 1 && ` • Page ${currentPagination.page} of ${currentPagination.pages}`}
             </span>
@@ -763,20 +763,20 @@ const History = () => {
         </div>
 
         {/* Mobile Section Header */}
-        <div className="his-mobile-section-header">
-          <div className="his-mobile-section-title">
+        <div className="mobhis-mobile-section-header">
+          <div className="mobhis-mobile-section-title">
             <h2>
               {activeTab === 'orders' && 'Orders'}
               {activeTab === 'subscriptions' && 'Subscriptions'}
               {activeTab === 'payments' && 'Payments'}
             </h2>
-            <span className="his-mobile-count">
+            <span className="mobhis-mobile-count">
               {filteredData.length} items
             </span>
           </div>
-          <div className="his-mobile-sort-options">
+          <div className="mobhis-mobile-sort-options">
             <button 
-              className="his-mobile-sort-btn"
+              className="mobhis-mobile-sort-btn"
               onClick={() => infoToast('Sort options coming soon')}
             >
               <FaList /> Sort
@@ -786,108 +786,108 @@ const History = () => {
 
         {/* Loading state for active tab */}
         {currentLoading ? (
-          <div className="his-table-loading">
-            <div className="his-loading-spinner">
-              <FaSpinner className="his-spin" />
+          <div className="mobhis-table-loading">
+            <div className="mobhis-loading-spinner">
+              <FaSpinner className="mobhis-spin" />
             </div>
             <p>Loading {activeTab}...</p>
           </div>
         ) : filteredData.length > 0 ? (
           <>
             {/* Mobile List View */}
-            <div className="his-mobile-list">
+            <div className="mobhis-mobile-list">
               {filteredData.map((item) => (
-                <div key={item._id || item.id} className="his-mobile-card">
-                  <div className="his-mobile-card-header">
-                    <div className="his-mobile-card-left">
-                      <div className="his-mobile-card-title">
+                <div key={item._id || item.id} className="mobhis-mobile-card">
+                  <div className="mobhis-mobile-card-header">
+                    <div className="mobhis-mobile-card-left">
+                      <div className="mobhis-mobile-card-title">
                         {activeTab === 'orders' && (
                           <>
-                            <div className="his-mobile-card-id">Order #{item.orderId?.slice(-8) || item._id?.slice(-8)}</div>
-                            <div className="his-mobile-card-date">{formatDateShort(item.createdAt)}</div>
+                            <div className="mobhis-mobile-card-id">Order #{item.orderId?.slice(-8) || item._id?.slice(-8)}</div>
+                            <div className="mobhis-mobile-card-date">{formatDateShort(item.createdAt)}</div>
                           </>
                         )}
                         {activeTab === 'subscriptions' && (
                           <>
-                            <div className="his-mobile-card-plan">{item.planName}</div>
-                            <div className="his-mobile-card-size">{item.size} • {item.frequency}</div>
+                            <div className="mobhis-mobile-card-plan">{item.planName}</div>
+                            <div className="mobhis-mobile-card-size">{item.size} • {item.frequency}</div>
                           </>
                         )}
                         {activeTab === 'payments' && (
                           <>
-                            <div className="his-mobile-card-id">TXN #{item.transactionId?.slice(-8) || item._id?.slice(-8)}</div>
-                            <div className="his-mobile-card-date">{formatDateShort(item.createdAt)}</div>
+                            <div className="mobhis-mobile-card-id">TXN #{item.transactionId?.slice(-8) || item._id?.slice(-8)}</div>
+                            <div className="mobhis-mobile-card-date">{formatDateShort(item.createdAt)}</div>
                           </>
                         )}
                       </div>
                     </div>
-                    <div className="his-mobile-card-right">
-                      <span className={`his-mobile-status ${getStatusClass(item.status)}`}>
+                    <div className="mobhis-mobile-card-right">
+                      <span className={`mobhis-mobile-status ${getStatusClass(item.status)}`}>
                         {getStatusIcon(item.status)}
                         <span>{getStatusText(item.status)}</span>
                       </span>
                     </div>
                   </div>
 
-                  <div className="his-mobile-card-body">
+                  <div className="mobhis-mobile-card-body">
                     {activeTab === 'orders' && (
-                      <div className="his-mobile-card-details">
-                        <div className="his-mobile-card-amount">{formatCurrency(item.totalAmount || item.amount || 0)}</div>
-                        <div className="his-mobile-card-items">
+                      <div className="mobhis-mobile-card-details">
+                        <div className="mobhis-mobile-card-amount">{formatCurrency(item.totalAmount || item.amount || 0)}</div>
+                        <div className="mobhis-mobile-card-items">
                           {item.items?.slice(0, 2).map((p, i) => (
-                            <span key={i} className="his-mobile-card-item">
+                            <span key={i} className="mobhis-mobile-card-item">
                               {(p.quantity || 1)} × {p.name?.substring(0, 20) || 'Product'}
                               {item.items.length > 2 && i === 1 && ` +${item.items.length - 2} more`}
                             </span>
                           ))}
                           {(!item.items || item.items.length === 0) && (
-                            <span className="his-mobile-card-item">No items</span>
+                            <span className="mobhis-mobile-card-item">No items</span>
                           )}
                         </div>
                       </div>
                     )}
                     {activeTab === 'subscriptions' && (
-                      <div className="his-mobile-card-details">
-                        <div className="his-mobile-card-amount">{formatCurrency(item.price || 0)}</div>
-                        <div className="his-mobile-card-period">
+                      <div className="mobhis-mobile-card-details">
+                        <div className="mobhis-mobile-card-amount">{formatCurrency(item.price || 0)}</div>
+                        <div className="mobhis-mobile-card-period">
                           {formatDateShort(item.startDate)} - {item.endDate ? formatDateShort(item.endDate) : 'Present'}
                         </div>
                       </div>
                     )}
                     {activeTab === 'payments' && (
-                      <div className="his-mobile-card-details">
-                        <div className="his-mobile-card-amount">{formatCurrency(item.amount || 0)}</div>
-                        <div className="his-mobile-card-method">{getMethodName(item.method)}</div>
+                      <div className="mobhis-mobile-card-details">
+                        <div className="mobhis-mobile-card-amount">{formatCurrency(item.amount || 0)}</div>
+                        <div className="mobhis-mobile-card-method">{getMethodName(item.method)}</div>
                         {item.failureReason && (
-                          <div className="his-mobile-card-reason">{item.failureReason}</div>
+                          <div className="mobhis-mobile-card-reason">{item.failureReason}</div>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="his-mobile-card-footer">
+                  <div className="mobhis-mobile-card-footer">
                     <button
-                      className="his-mobile-view-btn"
+                      className="mobhis-mobile-view-btn"
                       onClick={() => viewItemDetails(item)}
                     >
-                      <FaEye className="his-btn-icon" />
+                      <FaEye className="mobhis-btn-icon" />
                       View Details
                     </button>
                     {activeTab === 'orders' && item.status === 'delivered' && (
                       <button
-                        className="his-mobile-action-btn"
+                        className="mobhis-mobile-action-btn"
                         onClick={() => handleReorder(item)}
                       >
-                        <FaRedo className="his-btn-icon" />
+                        <FaRedo className="mobhis-btn-icon" />
                         Reorder
                       </button>
                     )}
                     {activeTab === 'payments' && item.status === 'failed' && (
                       <button
-                        className="his-mobile-action-btn"
+                        className="mobhis-mobile-action-btn"
                         onClick={() => handleRetryPayment(item)}
                       >
-                        <FaRedo className="his-btn-icon" />
+                        <FaRedo className="mobhis-btn-icon" />
                         Retry
                       </button>
                     )}
@@ -897,8 +897,8 @@ const History = () => {
             </div>
 
             {/* Desktop Table View */}
-            <div className="his-desktop-table-container">
-              <table className="his-desktop-history-table">
+            <div className="mobhis-desktop-table-container">
+              <table className="mobhis-desktop-history-table">
                 <thead>
                   <tr>
                     {activeTab === 'orders' && (
@@ -945,7 +945,7 @@ const History = () => {
                           <td data-label="Items">
                             {item.items?.length ? (
                               item.items.map((p, i) => (
-                                <div key={i} className="his-product-item">
+                                <div key={i} className="mobhis-product-item">
                                   {(p.quantity || 1)} × {p.name || 'Unnamed Product'}
                                 </div>
                               ))
@@ -955,17 +955,17 @@ const History = () => {
                           </td>
                           <td data-label="Amount">{formatCurrency(item.totalAmount || item.amount || 0)}</td>
                           <td data-label="Status" className={getStatusClass(item.status)}>
-                            <span className="his-status-content">
+                            <span className="mobhis-status-content">
                               {getStatusIcon(item.status)}
                               {getStatusText(item.status)}
                             </span>
                           </td>
                           <td data-label="Actions">
                             <button
-                              className="his-btn-view"
+                              className="mobhis-btn-view"
                               onClick={() => viewItemDetails(item)}
                             >
-                              <FaEye className="his-btn-icon" />
+                              <FaEye className="mobhis-btn-icon" />
                               View
                             </button>
                           </td>
@@ -983,17 +983,17 @@ const History = () => {
                             {item.endDate ? formatDate(item.endDate) : 'Present'}
                           </td>
                           <td data-label="Status" className={getStatusClass(item.status)}>
-                            <span className="his-status-content">
+                            <span className="mobhis-status-content">
                               {getStatusIcon(item.status)}
                               {getStatusText(item.status)}
                             </span>
                           </td>
                           <td data-label="Actions">
                             <button
-                              className="his-btn-view"
+                              className="mobhis-btn-view"
                               onClick={() => viewItemDetails(item)}
                             >
-                              <FaEye className="his-btn-icon" />
+                              <FaEye className="mobhis-btn-icon" />
                               View
                             </button>
                           </td>
@@ -1008,20 +1008,20 @@ const History = () => {
                           <td data-label="Amount">{formatCurrency(item.amount || 0)}</td>
                           <td data-label="Method">{getMethodName(item.method)}</td>
                           <td data-label="Status" className={getStatusClass(item.status)}>
-                            <span className="his-status-content">
+                            <span className="mobhis-status-content">
                               {getStatusIcon(item.status)}
                               {getStatusText(item.status)}
                             </span>
                             {item.failureReason && (
-                              <div className="his-failure-reason">({item.failureReason})</div>
+                              <div className="mobhis-failure-reason">({item.failureReason})</div>
                             )}
                           </td>
                           <td data-label="Actions">
                             <button
-                              className="his-btn-view"
+                              className="mobhis-btn-view"
                               onClick={() => viewItemDetails(item)}
                             >
-                              <FaEye className="his-btn-icon" />
+                              <FaEye className="mobhis-btn-icon" />
                               View
                             </button>
                           </td>
@@ -1035,19 +1035,19 @@ const History = () => {
 
             {/* Mobile Pagination */}
             {currentPagination.pages > 1 && (
-              <div className="his-mobile-pagination">
+              <div className="mobhis-mobile-pagination">
                 <button
-                  className="his-mobile-pagination-btn"
+                  className="mobhis-mobile-pagination-btn"
                   onClick={() => handlePageChange(currentPagination.page - 1)}
                   disabled={currentPagination.page <= 1}
                 >
                   <FaChevronLeft />
                 </button>
-                <div className="his-mobile-page-info">
+                <div className="mobhis-mobile-page-info">
                   Page {currentPagination.page} of {currentPagination.pages}
                 </div>
                 <button
-                  className="his-mobile-pagination-btn"
+                  className="mobhis-mobile-pagination-btn"
                   onClick={() => handlePageChange(currentPagination.page + 1)}
                   disabled={currentPagination.page >= currentPagination.pages}
                 >
@@ -1058,9 +1058,9 @@ const History = () => {
 
             {/* Desktop Pagination Controls */}
             {currentPagination.pages > 1 && (
-              <div className="his-desktop-pagination-controls">
+              <div className="mobhis-desktop-pagination-controls">
                 <button
-                  className="his-desktop-pagination-btn prev"
+                  className="mobhis-desktop-pagination-btn prev"
                   onClick={() => handlePageChange(currentPagination.page - 1)}
                   disabled={currentPagination.page <= 1}
                 >
@@ -1068,16 +1068,16 @@ const History = () => {
                   Previous
                 </button>
                 
-                <div className="his-desktop-pagination-numbers">
+                <div className="mobhis-desktop-pagination-numbers">
                   {getPageNumbers().map((pageNum, index) => (
                     pageNum === '...' ? (
-                      <span key={`ellipsis-${index}`} className="his-desktop-pagination-ellipsis">
+                      <span key={`ellipsis-${index}`} className="mobhis-desktop-pagination-ellipsis">
                         ...
                       </span>
                     ) : (
                       <button
                         key={pageNum}
-                        className={`his-desktop-pagination-number ${
+                        className={`mobhis-desktop-pagination-number ${
                           currentPagination.page === pageNum ? 'active' : ''
                         }`}
                         onClick={() => handlePageChange(pageNum)}
@@ -1089,7 +1089,7 @@ const History = () => {
                 </div>
 
                 <button
-                  className="his-desktop-pagination-btn next"
+                  className="mobhis-desktop-pagination-btn next"
                   onClick={() => handlePageChange(currentPagination.page + 1)}
                   disabled={currentPagination.page >= currentPagination.pages}
                 >
@@ -1100,9 +1100,9 @@ const History = () => {
             )}
           </>
         ) : (
-          <div className="his-no-history">
-            <div className="his-no-history-content">
-              <div className="his-no-history-icon">
+          <div className="mobhis-no-history">
+            <div className="mobhis-no-history-content">
+              <div className="mobhis-no-history-icon">
                 {activeTab === 'orders' && <FaShoppingCart />}
                 {activeTab === 'subscriptions' && <FaCalendarAlt />}
                 {activeTab === 'payments' && <FaCreditCard />}
@@ -1110,7 +1110,7 @@ const History = () => {
               <p>No {activeTab} history found.</p>
               {(filter !== 'all' || searchQuery) && (
                 <button 
-                  className="his-btn-clear-filters"
+                  className="mobhis-btn-clear-filters"
                   onClick={clearFilters}
                 >
                   Clear all filters
@@ -1123,48 +1123,48 @@ const History = () => {
 
       {/* Mobile Detail Modal */}
       {activeItem && (
-        <div className="his-mobile-detail-modal">
-          <div className="his-mobile-modal-overlay" onClick={closeItemDetails}></div>
-          <div className="his-mobile-modal-content">
-            <div className="his-mobile-modal-header">
+        <div className="mobhis-mobile-detail-modal">
+          <div className="mobhis-mobile-modal-overlay" onClick={closeItemDetails}></div>
+          <div className="mobhis-mobile-modal-content">
+            <div className="mobhis-mobile-modal-header">
               <h2>
                 {activeTab === 'orders' && `Order #${activeItem.orderId || activeItem._id}`}
                 {activeTab === 'subscriptions' && `Subscription - ${activeItem.planName}`}
                 {activeTab === 'payments' && `Payment #${activeItem.transactionId || activeItem._id}`}
               </h2>
-              <button className="his-mobile-close-btn" onClick={closeItemDetails}>
+              <button className="mobhis-mobile-close-btn" onClick={closeItemDetails}>
                 <FaTimes />
               </button>
             </div>
 
-            <div className="his-mobile-modal-body">
-              <div className="his-mobile-modal-details">
+            <div className="mobhis-mobile-modal-body">
+              <div className="mobhis-mobile-modal-details">
                 {activeTab === 'orders' && (
                   <>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Order ID:</span>
-                      <span className="his-mobile-detail-value">{activeItem.orderId || activeItem._id}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Order ID:</span>
+                      <span className="mobhis-mobile-detail-value">{activeItem.orderId || activeItem._id}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Date:</span>
-                      <span className="his-mobile-detail-value">{formatDate(activeItem.createdAt)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Date:</span>
+                      <span className="mobhis-mobile-detail-value">{formatDate(activeItem.createdAt)}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Status:</span>
-                      <span className={`his-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Status:</span>
+                      <span className={`mobhis-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Amount:</span>
-                      <span className="his-mobile-detail-value his-amount">{formatCurrency(activeItem.totalAmount)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Amount:</span>
+                      <span className="mobhis-mobile-detail-value mobhis-amount">{formatCurrency(activeItem.totalAmount)}</span>
                     </div>
-                    <div className="his-mobile-detail-section">
+                    <div className="mobhis-mobile-detail-section">
                       <h3>Order Items</h3>
                       {activeItem.items?.map((item, index) => (
-                        <div key={index} className="his-mobile-order-item">
-                          <div className="his-mobile-item-name">{item.name}</div>
-                          <div className="his-mobile-item-details">
+                        <div key={index} className="mobhis-mobile-order-item">
+                          <div className="mobhis-mobile-item-name">{item.name}</div>
+                          <div className="mobhis-mobile-item-details">
                             Quantity: {item.quantity} • Price: {formatCurrency(item.price)}
                           </div>
                         </div>
@@ -1175,31 +1175,31 @@ const History = () => {
 
                 {activeTab === 'subscriptions' && (
                   <>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Plan:</span>
-                      <span className="his-mobile-detail-value">{activeItem.planName}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Plan:</span>
+                      <span className="mobhis-mobile-detail-value">{activeItem.planName}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Status:</span>
-                      <span className={`his-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Status:</span>
+                      <span className={`mobhis-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Size:</span>
-                      <span className="his-mobile-detail-value">{activeItem.size}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Size:</span>
+                      <span className="mobhis-mobile-detail-value">{activeItem.size}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Frequency:</span>
-                      <span className="his-mobile-detail-value">{activeItem.frequency}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Frequency:</span>
+                      <span className="mobhis-mobile-detail-value">{activeItem.frequency}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Price:</span>
-                      <span className="his-mobile-detail-value his-amount">{formatCurrency(activeItem.price)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Price:</span>
+                      <span className="mobhis-mobile-detail-value mobhis-amount">{formatCurrency(activeItem.price)}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Period:</span>
-                      <span className="his-mobile-detail-value">
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Period:</span>
+                      <span className="mobhis-mobile-detail-value">
                         {formatDate(activeItem.startDate)} to {formatDate(activeItem.endDate) || 'Present'}
                       </span>
                     </div>
@@ -1208,32 +1208,32 @@ const History = () => {
 
                 {activeTab === 'payments' && (
                   <>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Transaction ID:</span>
-                      <span className="his-mobile-detail-value">{activeItem.transactionId || activeItem._id}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Transaction ID:</span>
+                      <span className="mobhis-mobile-detail-value">{activeItem.transactionId || activeItem._id}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Date:</span>
-                      <span className="his-mobile-detail-value">{formatDate(activeItem.createdAt)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Date:</span>
+                      <span className="mobhis-mobile-detail-value">{formatDate(activeItem.createdAt)}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Status:</span>
-                      <span className={`his-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Status:</span>
+                      <span className={`mobhis-mobile-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Amount:</span>
-                      <span className="his-mobile-detail-value his-amount">{formatCurrency(activeItem.amount)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Amount:</span>
+                      <span className="mobhis-mobile-detail-value mobhis-amount">{formatCurrency(activeItem.amount)}</span>
                     </div>
-                    <div className="his-mobile-detail-row">
-                      <span className="his-mobile-detail-label">Method:</span>
-                      <span className="his-mobile-detail-value">{getMethodName(activeItem.method)}</span>
+                    <div className="mobhis-mobile-detail-row">
+                      <span className="mobhis-mobile-detail-label">Method:</span>
+                      <span className="mobhis-mobile-detail-value">{getMethodName(activeItem.method)}</span>
                     </div>
                     {activeItem.failureReason && (
-                      <div className="his-mobile-detail-row">
-                        <span className="his-mobile-detail-label">Reason:</span>
-                        <span className="his-mobile-detail-value his-failure-reason">{activeItem.failureReason}</span>
+                      <div className="mobhis-mobile-detail-row">
+                        <span className="mobhis-mobile-detail-label">Reason:</span>
+                        <span className="mobhis-mobile-detail-value mobhis-failure-reason">{activeItem.failureReason}</span>
                       </div>
                     )}
                   </>
@@ -1241,25 +1241,25 @@ const History = () => {
               </div>
             </div>
 
-            <div className="his-mobile-modal-footer">
-              <button className="his-mobile-btn-close" onClick={closeItemDetails}>
+            <div className="mobhis-mobile-modal-footer">
+              <button className="mobhis-mobile-btn-close" onClick={closeItemDetails}>
                 Close
               </button>
               {activeTab === 'orders' && activeItem.status === 'delivered' && (
                 <button 
-                  className="his-mobile-btn-reorder"
+                  className="mobhis-mobile-btn-reorder"
                   onClick={() => handleReorder(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
+                  <FaRedo className="mobhis-btn-icon" />
                   Reorder
                 </button>
               )}
               {activeTab === 'payments' && activeItem.status === 'failed' && (
                 <button 
-                  className="his-mobile-btn-retry"
+                  className="mobhis-mobile-btn-retry"
                   onClick={() => handleRetryPayment(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
+                  <FaRedo className="mobhis-btn-icon" />
                   Retry Payment
                 </button>
               )}
@@ -1270,50 +1270,50 @@ const History = () => {
 
       {/* Desktop Detail Modal */}
       {activeItem && (
-        <div className="his-desktop-detail-modal">
-          <div className="his-desktop-modal-overlay" onClick={closeItemDetails}></div>
-          <div className="his-desktop-modal-content">
-            <div className="his-desktop-modal-header">
+        <div className="mobhis-desktop-detail-modal">
+          <div className="mobhis-desktop-modal-overlay" onClick={closeItemDetails}></div>
+          <div className="mobhis-desktop-modal-content">
+            <div className="mobhis-desktop-modal-header">
               <h2>
                 {activeTab === 'orders' && `Order #${activeItem.orderId || activeItem._id}`}
                 {activeTab === 'subscriptions' && `Subscription - ${activeItem.planName}`}
                 {activeTab === 'payments' && `Payment #${activeItem.transactionId || activeItem._id}`}
               </h2>
-              <button className="his-desktop-close-btn" onClick={closeItemDetails}>
+              <button className="mobhis-desktop-close-btn" onClick={closeItemDetails}>
                 <FaTimes />
               </button>
             </div>
 
-            <div className="his-desktop-modal-body">
-              <div className="his-desktop-modal-details">
+            <div className="mobhis-desktop-modal-body">
+              <div className="mobhis-desktop-modal-details">
                 {/* Desktop modal content remains the same as original */}
                 {activeTab === 'orders' && (
                   <>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Order ID:</span>
-                      <span className="his-detail-value">{activeItem.orderId || activeItem._id}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Order ID:</span>
+                      <span className="mobhis-detail-value">{activeItem.orderId || activeItem._id}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Order Date:</span>
-                      <span className="his-detail-value">{formatDate(activeItem.createdAt)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Order Date:</span>
+                      <span className="mobhis-detail-value">{formatDate(activeItem.createdAt)}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Status:</span>
+                      <span className={`mobhis-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Total Amount:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.totalAmount)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Total Amount:</span>
+                      <span className="mobhis-detail-value mobhis-amount">{formatCurrency(activeItem.totalAmount)}</span>
                     </div>
                     
-                    <div className="his-detail-section">
+                    <div className="mobhis-detail-section">
                       <h3>Order Items</h3>
                       {activeItem.items?.map((item, index) => (
-                        <div key={index} className="his-order-item">
-                          <div className="his-item-name">{item.name}</div>
-                          <div className="his-item-details">
+                        <div key={index} className="mobhis-order-item">
+                          <div className="mobhis-item-name">{item.name}</div>
+                          <div className="mobhis-item-details">
                             Quantity: {item.quantity} • Price: {formatCurrency(item.price)}
                           </div>
                         </div>
@@ -1324,79 +1324,79 @@ const History = () => {
 
                 {activeTab === 'subscriptions' && (
                   <>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Plan Name:</span>
-                      <span className="his-detail-value">{activeItem.planName}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Plan Name:</span>
+                      <span className="mobhis-detail-value">{activeItem.planName}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Status:</span>
+                      <span className={`mobhis-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Size:</span>
-                      <span className="his-detail-value">{activeItem.size}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Size:</span>
+                      <span className="mobhis-detail-value">{activeItem.size}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Frequency:</span>
-                      <span className="his-detail-value">{activeItem.frequency}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Frequency:</span>
+                      <span className="mobhis-detail-value">{activeItem.frequency}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Price:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.price)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Price:</span>
+                      <span className="mobhis-detail-value mobhis-amount">{formatCurrency(activeItem.price)}</span>
                     </div>
                   </>
                 )}
 
                 {activeTab === 'payments' && (
                   <>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Transaction ID:</span>
-                      <span className="his-detail-value">{activeItem.transactionId || activeItem._id}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Transaction ID:</span>
+                      <span className="mobhis-detail-value">{activeItem.transactionId || activeItem._id}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Payment Date:</span>
-                      <span className="his-detail-value">{formatDate(activeItem.createdAt)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Payment Date:</span>
+                      <span className="mobhis-detail-value">{formatDate(activeItem.createdAt)}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Status:</span>
+                      <span className={`mobhis-detail-value ${getStatusClass(activeItem.status)}`}>
                         {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
                       </span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Amount:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.amount)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Amount:</span>
+                      <span className="mobhis-detail-value mobhis-amount">{formatCurrency(activeItem.amount)}</span>
                     </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Payment Method:</span>
-                      <span className="his-detail-value">{getMethodName(activeItem.method)}</span>
+                    <div className="mobhis-detail-row">
+                      <span className="mobhis-detail-label">Payment Method:</span>
+                      <span className="mobhis-detail-value">{getMethodName(activeItem.method)}</span>
                     </div>
                   </>
                 )}
               </div>
             </div>
 
-            <div className="his-desktop-modal-footer">
-              <button className="his-btn-close" onClick={closeItemDetails}>
+            <div className="mobhis-desktop-modal-footer">
+              <button className="mobhis-btn-close" onClick={closeItemDetails}>
                 Close
               </button>
               {activeTab === 'orders' && activeItem.status === 'delivered' && (
                 <button 
-                  className="his-btn-reorder"
+                  className="mobhis-btn-reorder"
                   onClick={() => handleReorder(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
+                  <FaRedo className="mobhis-btn-icon" />
                   Reorder
                 </button>
               )}
               {activeTab === 'payments' && activeItem.status === 'failed' && (
                 <button 
-                  className="his-btn-retry"
+                  className="mobhis-btn-retry"
                   onClick={() => handleRetryPayment(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
+                  <FaRedo className="mobhis-btn-icon" />
                   Retry Payment
                 </button>
               )}

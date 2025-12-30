@@ -120,15 +120,15 @@ const CustomerDeliveryHistory = () => {
 
   const getStatusClass = (status) => {
     const statusMap = {
-      pending: 'adm-status-pending',
-      assigned: 'adm-status-assigned',
-      accepted: 'adm-status-accepted',
-      out_for_delivery: 'adm-status-out_for_delivery',
-      delivered: 'adm-status-delivered',
-      failed: 'adm-status-failed',
-      cancelled: 'adm-status-cancelled'
+      pending: 'mobdel-status-pending',
+      assigned: 'mobdel-status-assigned',
+      accepted: 'mobdel-status-accepted',
+      out_for_delivery: 'mobdel-status-out_for_delivery',
+      delivered: 'mobdel-status-delivered',
+      failed: 'mobdel-status-failed',
+      cancelled: 'mobdel-status-cancelled'
     };
-    return `adm-status-chip ${statusMap[status] || 'adm-status-pending'}`;
+    return `mobdel-status-chip ${statusMap[status] || 'mobdel-status-pending'}`;
   };
 
   const formatDate = (dateString) => {
@@ -208,9 +208,9 @@ const CustomerDeliveryHistory = () => {
 
   if (loading) {
     return (
-      <div className="adm-customer-delivery">
-        <div className="adm-loading">
-          <div className="adm-spinner"></div>
+      <div className="mobdel-customer-delivery">
+        <div className="mobdel-loading">
+          <div className="mobdel-spinner"></div>
           <p>Loading deliveries...</p>
         </div>
       </div>
@@ -218,13 +218,13 @@ const CustomerDeliveryHistory = () => {
   }
 
   return (
-    <div className="adm-customer-delivery">
+    <div className="mobdel-customer-delivery">
       {/* Mobile Header */}
-      <div className="adm-mobile-header">
-        <div className="adm-mobile-header-top">
-          <h1 className="adm-customer-title">My Deliveries</h1>
+      <div className="mobdel-mobile-header">
+        <div className="mobdel-mobile-header-top">
+          <h1 className="mobdel-customer-title">My Deliveries</h1>
           <button 
-            className="adm-mobile-filter-btn"
+            className="mobdel-mobile-filter-btn"
             onClick={() => setShowFilters(!showFilters)}
           >
             <FaFilter />
@@ -232,21 +232,21 @@ const CustomerDeliveryHistory = () => {
         </div>
         
         {/* Mobile Tabs - Scrollable */}
-        <div className="adm-mobile-tabs">
+        <div className="mobdel-mobile-tabs">
           <button 
-            className={`adm-mobile-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
+            className={`mobdel-mobile-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
             onClick={() => handleTabChange('upcoming')}
           >
             Upcoming
           </button>
           <button 
-            className={`adm-mobile-tab ${activeTab === 'delivered' ? 'active' : ''}`}
+            className={`mobdel-mobile-tab ${activeTab === 'delivered' ? 'active' : ''}`}
             onClick={() => handleTabChange('delivered')}
           >
             Delivered
           </button>
           <button 
-            className={`adm-mobile-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
+            className={`mobdel-mobile-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
             onClick={() => handleTabChange('past-pending')}
           >
             Past Pending
@@ -255,25 +255,25 @@ const CustomerDeliveryHistory = () => {
       </div>
 
       {/* Desktop Header */}
-      <div className="adm-desktop-header">
-        <h1 className="adm-customer-title">My Delivery Schedule</h1>
+      <div className="mobdel-desktop-header">
+        <h1 className="mobdel-customer-title">My Delivery Schedule</h1>
         
         {/* Desktop Tabs */}
-        <div className="adm-desktop-tabs">
+        <div className="mobdel-desktop-tabs">
           <button 
-            className={`adm-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
+            className={`mobdel-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
             onClick={() => handleTabChange('upcoming')}
           >
             Upcoming Deliveries
           </button>
           <button 
-            className={`adm-tab ${activeTab === 'delivered' ? 'active' : ''}`}
+            className={`mobdel-tab ${activeTab === 'delivered' ? 'active' : ''}`}
             onClick={() => handleTabChange('delivered')}
           >
             Delivered
           </button>
           <button 
-            className={`adm-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
+            className={`mobdel-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
             onClick={() => handleTabChange('past-pending')}
           >
             Past Pending
@@ -281,22 +281,22 @@ const CustomerDeliveryHistory = () => {
         </div>
 
         {/* Desktop Controls */}
-        <div className="adm-desktop-controls">
-          <div className="adm-filter-group">
-            <FaCalendarAlt className="adm-control-icon" />
+        <div className="mobdel-desktop-controls">
+          <div className="mobdel-filter-group">
+            <FaCalendarAlt className="mobdel-control-icon" />
             <input
               type="date"
-              className="adm-filter-input"
+              className="mobdel-filter-input"
               value={dateFilter}
               onChange={(e) => handleDateFilterChange(e.target.value)}
             />
           </div>
 
           {(activeTab === 'upcoming' || activeTab === 'past-pending') && (
-            <div className="adm-filter-group">
-              <FaFilter className="adm-control-icon" />
+            <div className="mobdel-filter-group">
+              <FaFilter className="mobdel-control-icon" />
               <select 
-                className="adm-filter-select"
+                className="mobdel-filter-select"
                 value={statusFilter}
                 onChange={(e) => handleStatusFilterChange(e.target.value)}
               >
@@ -311,10 +311,10 @@ const CustomerDeliveryHistory = () => {
             </div>
           )}
 
-          <div className="adm-sort-group">
-            <FaSort className="adm-control-icon" />
+          <div className="mobdel-sort-group">
+            <FaSort className="mobdel-control-icon" />
             <button 
-              className="adm-sort-btn"
+              className="mobdel-sort-btn"
               onClick={handleSortOrderChange}
             >
               {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
@@ -322,7 +322,7 @@ const CustomerDeliveryHistory = () => {
           </div>
 
           {(statusFilter !== 'all' || dateFilter) && (
-            <button className="adm-clear-filters" onClick={clearFilters}>
+            <button className="mobdel-clear-filters" onClick={clearFilters}>
               Clear Filters
             </button>
           )}
@@ -331,32 +331,32 @@ const CustomerDeliveryHistory = () => {
 
       {/* Mobile Filter Panel */}
       {showFilters && (
-        <div className="adm-mobile-filter-panel">
-          <div className="adm-filter-panel-header">
+        <div className="mobdel-mobile-filter-panel">
+          <div className="mobdel-filter-panel-header">
             <h3>Filters</h3>
             <button onClick={() => setShowFilters(false)}>
               <FaTimesCircle />
             </button>
           </div>
           
-          <div className="adm-filter-panel-content">
-            <div className="adm-mobile-filter-group">
+          <div className="mobdel-filter-panel-content">
+            <div className="mobdel-mobile-filter-group">
               <label>Date</label>
               <input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => handleDateFilterChange(e.target.value)}
-                className="adm-mobile-filter-input"
+                className="mobdel-mobile-filter-input"
               />
             </div>
 
             {(activeTab === 'upcoming' || activeTab === 'past-pending') && (
-              <div className="adm-mobile-filter-group">
+              <div className="mobdel-mobile-filter-group">
                 <label>Status</label>
                 <select 
                   value={statusFilter}
                   onChange={(e) => handleStatusFilterChange(e.target.value)}
-                  className="adm-mobile-filter-select"
+                  className="mobdel-mobile-filter-select"
                 >
                   <option value="all">All Status</option>
                   <option value="pending">Pending</option>
@@ -369,10 +369,10 @@ const CustomerDeliveryHistory = () => {
               </div>
             )}
 
-            <div className="adm-mobile-filter-group">
+            <div className="mobdel-mobile-filter-group">
               <label>Sort Order</label>
               <button 
-                className="adm-mobile-sort-btn"
+                className="mobdel-mobile-sort-btn"
                 onClick={handleSortOrderChange}
               >
                 {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
@@ -380,7 +380,7 @@ const CustomerDeliveryHistory = () => {
             </div>
 
             {(statusFilter !== 'all' || dateFilter) && (
-              <button className="adm-mobile-clear-btn" onClick={clearFilters}>
+              <button className="mobdel-mobile-clear-btn" onClick={clearFilters}>
                 Clear All Filters
               </button>
             )}
@@ -388,76 +388,76 @@ const CustomerDeliveryHistory = () => {
         </div>
       )}
 
-      <div className="adm-deliveries-list">
+      <div className="mobdel-deliveries-list">
         {deliveries.map((delivery) => {
           const timeContext = getDeliveryTimeContext(delivery);
           
           return (
-            <div key={delivery._id} className="adm-delivery-card">
+            <div key={delivery._id} className="mobdel-delivery-card">
               {/* Mobile Card View */}
-              <div className="adm-mobile-card">
-                <div className="adm-mobile-card-header">
-                  <div className="adm-mobile-card-left">
-                    <div className={`adm-mobile-time-badge adm-time-${timeContext.type}`}>
+              <div className="mobdel-mobile-card">
+                <div className="mobdel-mobile-card-header">
+                  <div className="mobdel-mobile-card-left">
+                    <div className={`mobdel-mobile-time-badge mobdel-time-${timeContext.type}`}>
                       {timeContext.text}
                     </div>
                     <span className={getStatusClass(delivery.status)}>
                       {delivery.status.replace(/_/g, ' ').charAt(0).toUpperCase() + delivery.status.slice(1)}
                     </span>
                   </div>
-                  <button className="adm-mobile-more-btn">
+                  <button className="mobdel-mobile-more-btn">
                     <FaEllipsisH />
                   </button>
                 </div>
 
-                <div className="adm-mobile-card-body">
-                  <div className="adm-mobile-plan-info">
+                <div className="mobdel-mobile-card-body">
+                  <div className="mobdel-mobile-plan-info">
                     <h3>{delivery.subscriptionId?.planName || 'N/A'}</h3>
                     <p>{delivery.subscriptionId?.size || 'N/A'} • {delivery.subscriptionId?.frequency || 'N/A'}</p>
                   </div>
 
-                  <div className="adm-mobile-details">
-                    <div className="adm-mobile-detail-row">
-                      <FaMapMarkerAlt className="adm-icon" />
-                      <span className="adm-mobile-detail-text">
+                  <div className="mobdel-mobile-details">
+                    <div className="mobdel-mobile-detail-row">
+                      <FaMapMarkerAlt className="mobdel-icon" />
+                      <span className="mobdel-mobile-detail-text">
                         {delivery.address?.length > 40 ? delivery.address.substring(0, 40) + '...' : delivery.address}
                       </span>
                     </div>
 
                     {delivery.deliveryAgent && (
-                      <div className="adm-mobile-detail-row">
-                        <FaUser className="adm-icon" />
-                        <span className="adm-mobile-detail-text">
+                      <div className="mobdel-mobile-detail-row">
+                        <FaUser className="mobdel-icon" />
+                        <span className="mobdel-mobile-detail-text">
                           {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
                         </span>
                       </div>
                     )}
 
-                    <div className="adm-mobile-detail-row">
-                      <FaClock className="adm-icon" />
-                      <span className="adm-mobile-detail-text">
+                    <div className="mobdel-mobile-detail-row">
+                      <FaClock className="mobdel-icon" />
+                      <span className="mobdel-mobile-detail-text">
                         {formatDateShort(delivery.deliveryDate)}
                       </span>
                     </div>
                   </div>
 
                   {delivery.failedReason && (
-                    <div className="adm-mobile-error">
+                    <div className="mobdel-mobile-error">
                       <FaTimesCircle /> {delivery.failedReason}
                     </div>
                   )}
 
                   {delivery.customerConfirmation?.confirmed && (
-                    <div className="adm-mobile-confirmed">
+                    <div className="mobdel-mobile-confirmed">
                       <FaCheckCircle /> Confirmed
                     </div>
                   )}
                 </div>
 
-                <div className="adm-mobile-card-footer">
+                <div className="mobdel-mobile-card-footer">
                   {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
                     <button
-                      className="adm-mobile-confirm-btn"
+                      className="mobdel-mobile-confirm-btn"
                       onClick={() => {
                         setSelectedDelivery(delivery);
                         setConfirmDialogOpen(true);
@@ -470,54 +470,54 @@ const CustomerDeliveryHistory = () => {
               </div>
 
               {/* Desktop Card View */}
-              <div className="adm-desktop-card">
-                <div className="adm-card-content">
-                  <div className={`adm-time-context adm-time-${timeContext.type}`}>
+              <div className="mobdel-desktop-card">
+                <div className="mobdel-card-content">
+                  <div className={`mobdel-time-context mobdel-time-${timeContext.type}`}>
                     {timeContext.text}
                   </div>
 
-                  <div className="adm-card-header">
+                  <div className="mobdel-card-header">
                     <span className={getStatusClass(delivery.status)}>
                       {delivery.status.replace(/_/g, ' ').toUpperCase()}
                     </span>
-                    <span className="adm-delivery-date">
+                    <span className="mobdel-delivery-date">
                       Scheduled: {formatDate(delivery.deliveryDate)}
                     </span>
                   </div>
 
-                  <div className="adm-plan-info">
-                    <div className="adm-plan-name">
+                  <div className="mobdel-plan-info">
+                    <div className="mobdel-plan-name">
                       {delivery.subscriptionId?.planName || 'N/A'} - {delivery.subscriptionId?.size || 'N/A'}
                     </div>
                     {delivery.subscriptionId?.frequency && (
-                      <div className="adm-plan-frequency">
+                      <div className="mobdel-plan-frequency">
                         Frequency: {delivery.subscriptionId.frequency}
                       </div>
                     )}
                   </div>
 
-                  <div className="adm-delivery-details">
-                    <div className="adm-detail-item">
-                      <FaMapMarkerAlt className="adm-icon" />
-                      <div className="adm-detail-text">
+                  <div className="mobdel-delivery-details">
+                    <div className="mobdel-detail-item">
+                      <FaMapMarkerAlt className="mobdel-icon" />
+                      <div className="mobdel-detail-text">
                         {delivery.address}
                       </div>
                     </div>
 
                     {delivery.deliveryAgent && (
-                      <div className="adm-agent-info">
-                        <div className="adm-detail-item">
-                          <FaUser className="adm-icon" />
-                          <div className="adm-detail-text">
-                            <span className="adm-detail-label">Delivery Agent:</span>{' '}
+                      <div className="mobdel-agent-info">
+                        <div className="mobdel-detail-item">
+                          <FaUser className="mobdel-icon" />
+                          <div className="mobdel-detail-text">
+                            <span className="mobdel-detail-label">Delivery Agent:</span>{' '}
                             {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
                           </div>
                         </div>
                         {delivery.deliveryAgent.phone && (
-                          <div className="adm-detail-item">
-                            <FaPhone className="adm-icon" />
-                            <div className="adm-detail-text">
-                              <span className="adm-detail-label">Phone:</span>{' '}
+                          <div className="mobdel-detail-item">
+                            <FaPhone className="mobdel-icon" />
+                            <div className="mobdel-detail-text">
+                              <span className="mobdel-detail-label">Phone:</span>{' '}
                               {delivery.deliveryAgent.phone}
                             </div>
                           </div>
@@ -526,35 +526,35 @@ const CustomerDeliveryHistory = () => {
                     )}
 
                     {delivery.deliveredAt && (
-                      <div className="adm-detail-item">
-                        <FaTruck className="adm-icon" />
-                        <div className="adm-detail-text">
-                          <span className="adm-detail-label">Delivered:</span>{' '}
+                      <div className="mobdel-detail-item">
+                        <FaTruck className="mobdel-icon" />
+                        <div className="mobdel-detail-text">
+                          <span className="mobdel-detail-label">Delivered:</span>{' '}
                           {formatDate(delivery.deliveredAt)}
                         </div>
                       </div>
                     )}
 
                     {delivery.agentNotes && (
-                      <div className="adm-detail-item">
-                        <FaClock className="adm-icon" />
-                        <div className="adm-detail-text">
-                          <span className="adm-detail-label">Agent Notes:</span>{' '}
+                      <div className="mobdel-detail-item">
+                        <FaClock className="mobdel-icon" />
+                        <div className="mobdel-detail-text">
+                          <span className="mobdel-detail-label">Agent Notes:</span>{' '}
                           {delivery.agentNotes}
                         </div>
                       </div>
                     )}
 
                     {delivery.failedReason && (
-                      <div className="adm-status-message adm-message-error">
+                      <div className="mobdel-status-message mobdel-message-error">
                         <div><strong>Failure Reason:</strong> {delivery.failedReason}</div>
                       </div>
                     )}
 
                     {delivery.customerConfirmation?.confirmed && (
-                      <div className="adm-status-message adm-message-confirmed">
+                      <div className="mobdel-status-message mobdel-message-confirmed">
                         <div>
-                          <FaCheckCircle className="adm-icon" />
+                          <FaCheckCircle className="mobdel-icon" />
                           <strong> Confirmed by you on:</strong> {formatDate(delivery.customerConfirmation.confirmedAt)}
                         </div>
                         {delivery.customerConfirmation.customerNotes && (
@@ -566,8 +566,8 @@ const CustomerDeliveryHistory = () => {
                     )}
                   </div>
 
-                  <div className="adm-card-footer">
-                    <div className="adm-delivery-meta">
+                  <div className="mobdel-card-footer">
+                    <div className="mobdel-delivery-meta">
                       {delivery.retryCount > 0 && (
                         <div style={{ color: '#f39c12', fontSize: '0.9rem' }}>
                           Retry attempt: {delivery.retryCount}
@@ -577,13 +577,13 @@ const CustomerDeliveryHistory = () => {
                     
                     {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
                       <button
-                        className="adm-btn adm-btn-success"
+                        className="mobdel-btn mobdel-btn-success"
                         onClick={() => {
                           setSelectedDelivery(delivery);
                           setConfirmDialogOpen(true);
                         }}
                       >
-                        <FaCheckCircle className="adm-icon" />
+                        <FaCheckCircle className="mobdel-icon" />
                         Confirm Delivery
                       </button>
                     )}
@@ -595,8 +595,8 @@ const CustomerDeliveryHistory = () => {
         })}
 
         {deliveries.length === 0 && (
-          <div className="adm-empty-state">
-            <div className="adm-empty-state-icon">
+          <div className="mobdel-empty-state">
+            <div className="mobdel-empty-state-icon">
               <FaTruck />
             </div>
             <h3>No deliveries found</h3>
@@ -610,7 +610,7 @@ const CustomerDeliveryHistory = () => {
                 : "You don't have any delivery records for the selected filter."}
             </p>
             {(statusFilter !== 'all' || dateFilter) && (
-              <button className="adm-btn adm-btn-outline" onClick={clearFilters}>
+              <button className="mobdel-btn mobdel-btn-outline" onClick={clearFilters}>
                 Clear Filters
               </button>
             )}
@@ -619,19 +619,19 @@ const CustomerDeliveryHistory = () => {
       </div>
 
       {/* Mobile Pagination */}
-      <div className="adm-mobile-pagination">
+      <div className="mobdel-mobile-pagination">
         <button
-          className="adm-mobile-page-btn"
+          className="mobdel-mobile-page-btn"
           disabled={page === 1}
           onClick={() => handlePageChange(page - 1)}
         >
           <FaChevronLeft />
         </button>
-        <span className="adm-mobile-page-info">
+        <span className="mobdel-mobile-page-info">
           Page {page} of {totalPages}
         </span>
         <button
-          className="adm-mobile-page-btn"
+          className="mobdel-mobile-page-btn"
           disabled={page >= totalPages}
           onClick={() => handlePageChange(page + 1)}
         >
@@ -641,17 +641,17 @@ const CustomerDeliveryHistory = () => {
 
       {/* Desktop Pagination */}
       {totalPages > 1 && (
-        <div className="adm-desktop-pagination">
-          <div className="adm-pagination-info">
+        <div className="mobdel-desktop-pagination">
+          <div className="mobdel-pagination-info">
             Page {page} of {totalPages} • 
             Showing {deliveries.length} deliveries • 
             Sorted: {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
             {dateFilter && ` • Date: ${dateFilter}`}
             {statusFilter !== 'all' && ` • Status: ${statusFilter}`}
           </div>
-          <div className="adm-pagination-buttons">
+          <div className="mobdel-pagination-buttons">
             <button
-              className="adm-page-btn"
+              className="mobdel-page-btn"
               disabled={page === 1}
               onClick={() => handlePageChange(page - 1)}
             >
@@ -665,7 +665,7 @@ const CustomerDeliveryHistory = () => {
               return (
                 <button
                   key={pageNumber}
-                  className={`adm-page-btn ${page === pageNumber ? 'active' : ''}`}
+                  className={`mobdel-page-btn ${page === pageNumber ? 'active' : ''}`}
                   onClick={() => handlePageChange(pageNumber)}
                 >
                   {pageNumber}
@@ -674,7 +674,7 @@ const CustomerDeliveryHistory = () => {
             })}
             
             <button
-              className="adm-page-btn"
+              className="mobdel-page-btn"
               disabled={page >= totalPages}
               onClick={() => handlePageChange(page + 1)}
             >
@@ -686,17 +686,17 @@ const CustomerDeliveryHistory = () => {
 
       {/* Mobile Confirmation Dialog */}
       {confirmDialogOpen && (
-        <div className="adm-mobile-dialog-overlay">
-          <div className="adm-mobile-dialog">
-            <div className="adm-mobile-dialog-header">
+        <div className="mobdel-mobile-dialog-overlay">
+          <div className="mobdel-mobile-dialog">
+            <div className="mobdel-mobile-dialog-header">
               <h2>Confirm Delivery</h2>
               <button onClick={() => setConfirmDialogOpen(false)}>
                 <FaTimesCircle />
               </button>
             </div>
-            <div className="adm-mobile-dialog-content">
+            <div className="mobdel-mobile-dialog-content">
               <p>Please confirm that you have received your {selectedDelivery?.subscriptionId?.planName} delivery.</p>
-              <div className="adm-mobile-form-group">
+              <div className="mobdel-mobile-form-group">
                 <label>Delivery Notes (Optional)</label>
                 <textarea
                   value={confirmationNotes}
@@ -706,15 +706,15 @@ const CustomerDeliveryHistory = () => {
                 />
               </div>
             </div>
-            <div className="adm-mobile-dialog-footer">
+            <div className="mobdel-mobile-dialog-footer">
               <button 
-                className="adm-mobile-dialog-btn secondary"
+                className="mobdel-mobile-dialog-btn secondary"
                 onClick={() => setConfirmDialogOpen(false)}
               >
                 Cancel
               </button>
               <button 
-                className="adm-mobile-dialog-btn primary"
+                className="mobdel-mobile-dialog-btn primary"
                 onClick={handleConfirmDelivery}
               >
                 <FaCheckCircle /> Confirm
@@ -726,19 +726,19 @@ const CustomerDeliveryHistory = () => {
 
       {/* Desktop Confirmation Dialog */}
       {confirmDialogOpen && (
-        <div className="adm-dialog-overlay">
-          <div className="adm-dialog">
-            <div className="adm-dialog-header">
-              <h2 className="adm-dialog-title">Confirm Delivery</h2>
+        <div className="mobdel-dialog-overlay">
+          <div className="mobdel-dialog">
+            <div className="mobdel-dialog-header">
+              <h2 className="mobdel-dialog-title">Confirm Delivery</h2>
             </div>
-            <div className="adm-dialog-content">
+            <div className="mobdel-dialog-content">
               <p style={{ marginBottom: '1rem', color: '#7f8c8d' }}>
                 Please confirm that you have received your {selectedDelivery?.subscriptionId?.planName} delivery.
               </p>
-              <div className="adm-form-group">
-                <label className="adm-form-label">Delivery Notes (Optional)</label>
+              <div className="mobdel-form-group">
+                <label className="mobdel-form-label">Delivery Notes (Optional)</label>
                 <textarea
-                  className="adm-form-textarea"
+                  className="mobdel-form-textarea"
                   value={confirmationNotes}
                   onChange={(e) => setConfirmationNotes(e.target.value)}
                   placeholder="Add any comments about the delivery service..."
@@ -746,18 +746,18 @@ const CustomerDeliveryHistory = () => {
                 />
               </div>
             </div>
-            <div className="adm-dialog-footer">
+            <div className="mobdel-dialog-footer">
               <button 
-                className="adm-btn adm-btn-outline"
+                className="mobdel-btn mobdel-btn-outline"
                 onClick={() => setConfirmDialogOpen(false)}
               >
                 Cancel
               </button>
               <button 
-                className="adm-btn adm-btn-success"
+                className="mobdel-btn mobdel-btn-success"
                 onClick={handleConfirmDelivery}
               >
-                <FaCheckCircle className="adm-icon" />
+                <FaCheckCircle className="mobdel-icon" />
                 Confirm Receipt
               </button>
             </div>
@@ -767,7 +767,7 @@ const CustomerDeliveryHistory = () => {
 
       {/* Mobile Snackbar */}
       {snackbar.open && (
-        <div className={`adm-mobile-snackbar ${snackbar.severity}`}>
+        <div className={`mobdel-mobile-snackbar ${snackbar.severity}`}>
           {snackbar.severity === 'success' ? (
             <FaCheckCircle />
           ) : (
@@ -779,11 +779,11 @@ const CustomerDeliveryHistory = () => {
 
       {/* Desktop Snackbar */}
       {snackbar.open && (
-        <div className={`adm-snackbar ${snackbar.severity}`}>
+        <div className={`mobdel-snackbar ${snackbar.severity}`}>
           {snackbar.severity === 'success' ? (
-            <FaCheckCircle className="adm-icon" />
+            <FaCheckCircle className="mobdel-icon" />
           ) : (
-            <FaTimesCircle className="adm-icon" />
+            <FaTimesCircle className="mobdel-icon" />
           )}
           {snackbar.message}
         </div>

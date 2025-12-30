@@ -7,7 +7,7 @@ import './HomeMobileComponents.css';
 
 const Home = () => {
   return (
-    <div className="mobile-home-container">
+    <div className="hmc-mobile-home-container">
       <HeroMobile />
       <OpportunitiesMobile />
       <QuickLinksMobile />

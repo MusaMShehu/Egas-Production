@@ -317,28 +317,28 @@ const Payments = () => {
 
   if (isLoading) {
     return (
-      <div className="pay-payments-page loading">
-        <div className="pay-loading-spinner"></div>
+      <div className="mobpay-payments-page mobpay-loading">
+        <div className="mobpay-loading-spinner"></div>
         <p>Loading payment information...</p>
       </div>
     );
   }
 
   return (
-    <div className="pay-payments-page">
+    <div className="mobpay-payments-page">
       {/* Mobile Header */}
-      <div className="pay-mobile-header">
-        <div className="pay-mobile-header-top">
+      <div className="mobpay-mobile-header">
+        <div className="mobpay-mobile-header-top">
           <h1>Payments</h1>
-          <div className="pay-mobile-header-actions">
+          <div className="mobpay-mobile-header-actions">
             <button 
-              className="pay-mobile-search-btn"
+              className="mobpay-mobile-search-btn"
               onClick={() => setShowSearch(!showSearch)}
             >
               <FaSearch />
             </button>
             <button 
-              className="pay-mobile-filter-btn"
+              className="mobpay-mobile-filter-btn"
               onClick={() => setShowFilters(!showFilters)}
             >
               <FaFilter />
@@ -348,9 +348,9 @@ const Payments = () => {
 
         {/* Mobile Search */}
         {showSearch && (
-          <div className="pay-mobile-search">
-            <div className="pay-mobile-search-input-wrapper">
-              <FaSearch className="pay-search-icon" />
+          <div className="mobpay-mobile-search">
+            <div className="mobpay-mobile-search-input-wrapper">
+              <FaSearch className="mobpay-search-icon" />
               <input
                 type="text"
                 placeholder="Search transactions..."
@@ -360,7 +360,7 @@ const Payments = () => {
               />
               {searchTerm && (
                 <button 
-                  className="pay-mobile-clear-search"
+                  className="mobpay-mobile-clear-search"
                   onClick={handleClearSearch}
                 >
                   <FaTimes />
@@ -371,18 +371,18 @@ const Payments = () => {
         )}
 
         {/* Mobile Quick Stats */}
-        <div className="pay-mobile-quick-stats">
-          <div className="pay-mobile-stat">
-            <div className="pay-mobile-stat-icon">
+        <div className="mobpay-mobile-quick-stats">
+          <div className="mobpay-mobile-stat">
+            <div className="mobpay-mobile-stat-icon">
               <FaWallet />
             </div>
-            <div className="pay-mobile-stat-info">
-              <div className="pay-mobile-stat-label">Wallet</div>
-              <div className="pay-mobile-stat-value">{formatCurrency(paymentData.walletBalance)}</div>
+            <div className="mobpay-mobile-stat-info">
+              <div className="mobpay-mobile-stat-label">Wallet</div>
+              <div className="mobpay-mobile-stat-value">{formatCurrency(paymentData.walletBalance)}</div>
             </div>
           </div>
           <button 
-            className="pay-mobile-topup-btn"
+            className="mobpay-mobile-topup-btn"
             onClick={handleOpenTopUpModal}
             disabled={isProcessing}
           >
@@ -392,11 +392,11 @@ const Payments = () => {
       </div>
 
       {/* Desktop Header */}
-      <div className="pay-desktop-header">
+      <div className="mobpay-desktop-header">
         <h1>Payment Management</h1>
-        <div className="pay-desktop-header-actions">
-          <div className="pay-desktop-search-bar">
-            <FaSearch className="pay-search-icon" />
+        <div className="mobpay-desktop-header-actions">
+          <div className="mobpay-desktop-search-bar">
+            <FaSearch className="mobpay-search-icon" />
             <input
               type="text"
               placeholder="Search transactions..."
@@ -405,7 +405,7 @@ const Payments = () => {
             />
             {searchTerm && (
               <button 
-                className="pay-desktop-clear-search"
+                className="mobpay-desktop-clear-search"
                 onClick={handleClearSearch}
               >
                 <FaTimes />
@@ -413,11 +413,11 @@ const Payments = () => {
             )}
           </div>
           <button
-            className="pay-desktop-btn-primary"
+            className="mobpay-desktop-btn-primary"
             onClick={handleOpenTopUpModal}
             disabled={isProcessing}
           >
-            <FaPlus className="pay-btn-icon" />
+            <FaPlus className="mobpay-btn-icon" />
             Top Up Wallet
           </button>
         </div>
@@ -425,39 +425,39 @@ const Payments = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="pay-error-message">
-          <FaExclamationCircle className="pay-error-icon" />
+        <div className="mobpay-error-message">
+          <FaExclamationCircle className="mobpay-error-icon" />
           <span>{error}</span>
-          <button onClick={() => setError("")} className="pay-close-error">
+          <button onClick={() => setError("")} className="mobpay-close-error">
             <FaTimes />
           </button>
         </div>
       )}
 
       {/* Mobile Stats Cards */}
-      <div className="pay-mobile-stats">
-        <div className="pay-mobile-stat-card">
-          <div className="pay-mobile-stat-card-icon spending">
+      <div className="mobpay-mobile-stats">
+        <div className="mobpay-mobile-stat-card">
+          <div className="mobpay-mobile-stat-card-icon mobpay-spending">
             <FaCalendarAlt />
           </div>
-          <div className="pay-mobile-stat-card-content">
-            <div className="pay-mobile-stat-card-label">This Month</div>
-            <div className="pay-mobile-stat-card-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
-            <div className="pay-mobile-stat-card-breakdown">
+          <div className="mobpay-mobile-stat-card-content">
+            <div className="mobpay-mobile-stat-card-label">This Month</div>
+            <div className="mobpay-mobile-stat-card-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
+            <div className="mobpay-mobile-stat-card-breakdown">
               <span>Orders: {formatCurrency(paymentData.orderMonthly)}</span>
               <span>Subs: {formatCurrency(paymentData.subscriptionMonthly)}</span>
             </div>
           </div>
         </div>
 
-        <div className="pay-mobile-stat-card">
-          <div className="pay-mobile-stat-card-icon total">
+        <div className="mobpay-mobile-stat-card">
+          <div className="mobpay-mobile-stat-card-icon mobpay-total">
             <FaChartLine />
           </div>
-          <div className="pay-mobile-stat-card-content">
-            <div className="pay-mobile-stat-card-label">Total Spent</div>
-            <div className="pay-mobile-stat-card-value">{formatCurrency(paymentData.totalSpent)}</div>
-            <div className="pay-mobile-stat-card-breakdown">
+          <div className="mobpay-mobile-stat-card-content">
+            <div className="mobpay-mobile-stat-card-label">Total Spent</div>
+            <div className="mobpay-mobile-stat-card-value">{formatCurrency(paymentData.totalSpent)}</div>
+            <div className="mobpay-mobile-stat-card-breakdown">
               <span>Orders: {formatCurrency(paymentData.orderTotal)}</span>
               <span>Subs: {formatCurrency(paymentData.subscriptionTotal)}</span>
             </div>
@@ -466,74 +466,74 @@ const Payments = () => {
       </div>
 
       {/* Desktop Stats Container */}
-      <div className="pay-desktop-stats-container">
-        <div className="pay-desktop-stat-card balance-card">
-          <div className="pay-desktop-stat-icon">
+      <div className="mobpay-desktop-stats-container">
+        <div className="mobpay-desktop-stat-card mobpay-balance-card">
+          <div className="mobpay-desktop-stat-icon">
             <FaWallet />
           </div>
           <h3>Wallet Balance</h3>
-          <div className="pay-desktop-value">{formatCurrency(paymentData.walletBalance)}</div>
-          <div className="pay-desktop-stat-note">Available for purchases</div>
+          <div className="mobpay-desktop-value">{formatCurrency(paymentData.walletBalance)}</div>
+          <div className="mobpay-desktop-stat-note">Available for purchases</div>
         </div>
 
-        <div className="pay-desktop-stat-card spending-card">
-          <div className="pay-desktop-stat-icon">
+        <div className="mobpay-desktop-stat-card mobpay-spending-card">
+          <div className="mobpay-desktop-stat-icon">
             <FaCalendarAlt />
           </div>
           <h3>This Month Spending</h3>
-          <div className="pay-desktop-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
-          <div className="pay-desktop-stat-breakdown">
+          <div className="mobpay-desktop-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
+          <div className="mobpay-desktop-stat-breakdown">
             <span>Orders: {formatCurrency(paymentData.orderMonthly)}</span>
             <span>Subscriptions: {formatCurrency(paymentData.subscriptionMonthly)}</span>
           </div>
         </div>
 
-        <div className="pay-desktop-stat-card spending-card">
-          <div className="pay-desktop-stat-icon">
+        <div className="mobpay-desktop-stat-card mobpay-spending-card">
+          <div className="mobpay-desktop-stat-icon">
             <FaChartLine />
           </div>
           <h3>Total Spending</h3>
-          <div className="pay-desktop-value">{formatCurrency(paymentData.totalSpent)}</div>
-          <div className="pay-desktop-stat-breakdown">
+          <div className="mobpay-desktop-value">{formatCurrency(paymentData.totalSpent)}</div>
+          <div className="mobpay-desktop-stat-breakdown">
             <span>Orders: {formatCurrency(paymentData.orderTotal)}</span>
             <span>Subscriptions: {formatCurrency(paymentData.subscriptionTotal)}</span>
           </div>
         </div>
 
-        <div className="pay-desktop-stat-card topup-card">
-          <div className="pay-desktop-stat-icon">
+        <div className="mobpay-desktop-stat-card mobpay-topup-card">
+          <div className="mobpay-desktop-stat-icon">
             <FaPlus />
           </div>
           <h3>Total Top-ups</h3>
-          <div className="pay-desktop-value">{formatCurrency(paymentData.topupTotal)}</div>
-          <div className="pay-desktop-stat-breakdown">
+          <div className="mobpay-desktop-value">{formatCurrency(paymentData.topupTotal)}</div>
+          <div className="mobpay-desktop-stat-breakdown">
             <span>This month: {formatCurrency(paymentData.topupMonthly)}</span>
           </div>
         </div>
       </div>
 
       {/* Mobile Tabs */}
-      <div className="pay-mobile-tabs">
+      <div className="mobpay-mobile-tabs">
         <button 
-          className={`pay-mobile-tab ${activeTab === "all" ? "active" : ""}`}
+          className={`mobpay-mobile-tab ${activeTab === "all" ? "active" : ""}`}
           onClick={() => handleTabChange("all")}
         >
           All
         </button>
         <button 
-          className={`pay-mobile-tab ${activeTab === "orders" ? "active" : ""}`}
+          className={`mobpay-mobile-tab ${activeTab === "orders" ? "active" : ""}`}
           onClick={() => handleTabChange("orders")}
         >
           Orders
         </button>
         <button 
-          className={`pay-mobile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+          className={`mobpay-mobile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
           onClick={() => handleTabChange("subscriptions")}
         >
           Subs
         </button>
         <button 
-          className={`pay-mobile-tab ${activeTab === "wallet" ? "active" : ""}`}
+          className={`mobpay-mobile-tab ${activeTab === "wallet" ? "active" : ""}`}
           onClick={() => handleTabChange("wallet")}
         >
           Wallet
@@ -542,31 +542,31 @@ const Payments = () => {
 
       {/* Mobile Filter Panel */}
       {showFilters && (
-        <div className="pay-mobile-filter-panel">
-          <div className="pay-filter-panel-header">
+        <div className="mobpay-mobile-filter-panel">
+          <div className="mobpay-filter-panel-header">
             <h3>Filter & Sort</h3>
             <button onClick={() => setShowFilters(false)}>
               <FaTimes />
             </button>
           </div>
-          <div className="pay-filter-panel-content">
-            <div className="pay-mobile-sort-options">
+          <div className="mobpay-filter-panel-content">
+            <div className="mobpay-mobile-sort-options">
               <h4>Sort By</h4>
-              <div className="pay-mobile-sort-buttons">
+              <div className="mobpay-mobile-sort-buttons">
                 <button 
-                  className={`pay-mobile-sort-btn ${sortBy === 'date' ? 'active' : ''}`}
+                  className={`mobpay-mobile-sort-btn ${sortBy === 'date' ? 'active' : ''}`}
                   onClick={() => setSortBy('date')}
                 >
                   Date
                 </button>
                 <button 
-                  className={`pay-mobile-sort-btn ${sortBy === 'amount' ? 'active' : ''}`}
+                  className={`mobpay-mobile-sort-btn ${sortBy === 'amount' ? 'active' : ''}`}
                   onClick={() => setSortBy('amount')}
                 >
                   Amount
                 </button>
                 <button 
-                  className={`pay-mobile-sort-btn ${sortBy === 'type' ? 'active' : ''}`}
+                  className={`mobpay-mobile-sort-btn ${sortBy === 'type' ? 'active' : ''}`}
                   onClick={() => setSortBy('type')}
                 >
                   Type
@@ -577,47 +577,47 @@ const Payments = () => {
         </div>
       )}
 
-      <div className="pay-content-section">
+      <div className="mobpay-content-section">
         {/* Desktop Section Header */}
-        <div className="pay-desktop-section-header">
+        <div className="mobpay-desktop-section-header">
           <h2>Payment History</h2>
-          <div className="pay-desktop-tab-container">
+          <div className="mobpay-desktop-tab-container">
             <button 
-              className={`pay-desktop-tab ${activeTab === "all" ? "active" : ""}`}
+              className={`mobpay-desktop-tab ${activeTab === "all" ? "active" : ""}`}
               onClick={() => handleTabChange("all")}
             >
               All Transactions
             </button>
             <button 
-              className={`pay-desktop-tab ${activeTab === "orders" ? "active" : ""}`}
+              className={`mobpay-desktop-tab ${activeTab === "orders" ? "active" : ""}`}
               onClick={() => handleTabChange("orders")}
             >
               Orders
             </button>
             <button 
-              className={`pay-desktop-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+              className={`mobpay-desktop-tab ${activeTab === "subscriptions" ? "active" : ""}`}
               onClick={() => handleTabChange("subscriptions")}
             >
               Subscriptions
             </button>
             <button 
-              className={`pay-desktop-tab ${activeTab === "wallet" ? "active" : ""}`}
+              className={`mobpay-desktop-tab ${activeTab === "wallet" ? "active" : ""}`}
               onClick={() => handleTabChange("wallet")}
             >
               Wallet
             </button>
           </div>
-          <span className="pay-desktop-count-badge">{sortedActivities.length} transactions</span>
+          <span className="mobpay-desktop-count-badge">{sortedActivities.length} transactions</span>
         </div>
 
         {/* Mobile Section Header */}
-        <div className="pay-mobile-section-header">
-          <div className="pay-mobile-section-title">
+        <div className="mobpay-mobile-section-header">
+          <div className="mobpay-mobile-section-title">
             <h2>Transactions</h2>
-            <span className="pay-mobile-count">{sortedActivities.length} items</span>
+            <span className="mobpay-mobile-count">{sortedActivities.length} items</span>
           </div>
           <button 
-            className="pay-mobile-sort-btn"
+            className="mobpay-mobile-sort-btn"
             onClick={() => setShowFilters(!showFilters)}
           >
             <FaFilter /> Sort
@@ -627,40 +627,40 @@ const Payments = () => {
         {sortedActivities.length > 0 ? (
           <>
             {/* Mobile List View */}
-            <div className="pay-mobile-list">
+            <div className="mobpay-mobile-list">
               {sortedActivities.map((activity, index) => (
-                <div key={`${activity.type}-${index}-${activity.createdAt}`} className="pay-mobile-card">
-                  <div className="pay-mobile-card-header">
-                    <div className="pay-mobile-card-left">
-                      <div className="pay-mobile-activity-type">
+                <div key={`${activity.type}-${index}-${activity.createdAt}`} className="mobpay-mobile-card">
+                  <div className="mobpay-mobile-card-header">
+                    <div className="mobpay-mobile-card-left">
+                      <div className="mobpay-mobile-activity-type">
                         {getActivityIcon(activity.type)}
-                        <span className="pay-mobile-type-text">
+                        <span className="mobpay-mobile-type-text">
                           {activity.type === 'order' ? 'Order' : 
                            activity.type === 'subscription' ? 'Subscription' : 
                            'Wallet'}
                         </span>
                       </div>
-                      <div className="pay-mobile-activity-date">
+                      <div className="mobpay-mobile-activity-date">
                         {formatDateShort(activity.createdAt)}
                       </div>
                     </div>
-                    <div className="pay-mobile-card-right">
-                      <div className={`pay-mobile-status-badge pay-mobile-status-${getStatusColor(activity.status, activity.type)}`}>
+                    <div className="mobpay-mobile-card-right">
+                      <div className={`mobpay-mobile-status-badge mobpay-mobile-status-${getStatusColor(activity.status, activity.type)}`}>
                         {activity.status || 'pending'}
                       </div>
                     </div>
                   </div>
 
-                  <div className="pay-mobile-card-body">
-                    <div className="pay-mobile-activity-title">
+                  <div className="mobpay-mobile-card-body">
+                    <div className="mobpay-mobile-activity-title">
                       {activity.title?.length > 40 ? activity.title.substring(0, 40) + '...' : activity.title || 'N/A'}
                     </div>
-                    <div className="pay-mobile-card-footer">
-                      <div className={`pay-mobile-amount ${activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? 'credit' : ''}`}>
+                    <div className="mobpay-mobile-card-footer">
+                      <div className={`mobpay-mobile-amount ${activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? 'credit' : ''}`}>
                         {activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? '+' : ''}
                         {formatCurrency(activity.amount)}
                       </div>
-                      <button className="pay-mobile-more-btn">
+                      <button className="mobpay-mobile-more-btn">
                         <FaEllipsisH />
                       </button>
                     </div>
@@ -670,9 +670,9 @@ const Payments = () => {
             </div>
 
             {/* Desktop Table View */}
-            <div className="pay-desktop-table-container">
-              <div className="pay-desktop-table-responsive">
-                <table className="pay-desktop-payments-table">
+            <div className="mobpay-desktop-table-container">
+              <div className="mobpay-desktop-table-responsive">
+                <table className="mobpay-desktop-payments-table">
                   <thead>
                     <tr>
                       <th>Type</th>
@@ -686,25 +686,25 @@ const Payments = () => {
                     {sortedActivities.map((activity, index) => (
                       <tr key={`${activity.type}-${index}-${activity.createdAt}`}>
                         <td data-label="Type">
-                          <div className="pay-desktop-activity-type">
+                          <div className="mobpay-desktop-activity-type">
                             {getActivityIcon(activity.type)}
-                            <span className="pay-desktop-type-text">
+                            <span className="mobpay-desktop-type-text">
                               {activity.type === 'order' ? 'Order' : 
                                activity.type === 'subscription' ? 'Subscription' : 
                                'Wallet Transaction'}
                             </span>
                           </div>
                         </td>
-                        <td data-label="Description" className="pay-desktop-activity-title">
+                        <td data-label="Description" className="mobpay-desktop-activity-title">
                           {activity.title || 'N/A'}
                         </td>
                         <td data-label="Date">{formatDate(activity.createdAt)}</td>
-                        <td data-label="Amount" className="pay-desktop-amount">
+                        <td data-label="Amount" className="mobpay-desktop-amount">
                           {activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? '+' : ''}
                           {formatCurrency(activity.amount)}
                         </td>
                         <td data-label="Status">
-                          <span className={`pay-desktop-status-badge pay-desktop-status-${getStatusColor(activity.status, activity.type)}`}>
+                          <span className={`mobpay-desktop-status-badge mobpay-desktop-status-${getStatusColor(activity.status, activity.type)}`}>
                             {activity.status || 'pending'}
                           </span>
                         </td>
@@ -716,12 +716,12 @@ const Payments = () => {
             </div>
           </>
         ) : (
-          <div className="pay-no-payments">
-            <FaReceipt className="pay-no-payments-icon" />
+          <div className="mobpay-no-payments">
+            <FaReceipt className="mobpay-no-payments-icon" />
             <p>No {activeTab !== "all" ? activeTab : ""} transactions found</p>
             {searchTerm && (
               <button 
-                className="pay-clear-search"
+                className="mobpay-clear-search"
                 onClick={handleClearSearch}
               >
                 Clear search
@@ -729,7 +729,7 @@ const Payments = () => {
             )}
             {!searchTerm && activeTab !== "all" && (
               <button 
-                className="pay-show-all"
+                className="mobpay-show-all"
                 onClick={() => handleTabChange("all")}
               >
                 Show all transactions
@@ -741,20 +741,20 @@ const Payments = () => {
 
       {/* Mobile Top-up Modal */}
       {showTopUpModal && (
-        <div className="pay-mobile-modal-overlay">
-          <div className="pay-mobile-modal-content">
-            <div className="pay-mobile-modal-header">
+        <div className="mobpay-mobile-modal-overlay">
+          <div className="mobpay-mobile-modal-content">
+            <div className="mobpay-mobile-modal-header">
               <h2>Top Up Wallet</h2>
               <button
-                className="pay-mobile-close-btn"
+                className="mobpay-mobile-close-btn"
                 onClick={handleCloseTopUpModal}
                 disabled={isProcessing}
               >
                 <FaTimes />
               </button>
             </div>
-            <div className="pay-mobile-modal-body">
-              <div className="pay-mobile-form-group">
+            <div className="mobpay-mobile-modal-body">
+              <div className="mobpay-mobile-form-group">
                 <label htmlFor="amount">Amount (₦)</label>
                 <input
                   type="number"
@@ -768,22 +768,22 @@ const Payments = () => {
                 />
                 <small>Minimum amount: ₦1,000</small>
                 {topUpAmount >= 1000 && (
-                  <div className="pay-mobile-amount-preview">
+                  <div className="mobpay-mobile-amount-preview">
                     You are topping up: <strong>{formatCurrency(topUpAmount)}</strong>
                   </div>
                 )}
               </div>
               {isProcessing && (
-                <div className="pay-mobile-processing-overlay">
-                  <div className="pay-mobile-processing-spinner"></div>
+                <div className="mobpay-mobile-processing-overlay">
+                  <div className="mobpay-mobile-processing-spinner"></div>
                   <p>Redirecting to Paystack...</p>
                 </div>
               )}
             </div>
-            <div className="pay-mobile-modal-footer">
+            <div className="mobpay-mobile-modal-footer">
               <button
                 type="button"
-                className="pay-mobile-btn-secondary"
+                className="mobpay-mobile-btn-secondary"
                 onClick={handleCancelTopUp}
                 disabled={isProcessing}
               >
@@ -791,7 +791,7 @@ const Payments = () => {
               </button>
               <button
                 type="button"
-                className="pay-mobile-btn-primary"
+                className="mobpay-mobile-btn-primary"
                 onClick={handleTopUp}
                 disabled={isProcessing || topUpAmount < 1000}
               >
@@ -806,20 +806,20 @@ const Payments = () => {
 
       {/* Desktop Top-up Modal */}
       {showTopUpModal && (
-        <div className="pay-desktop-modal-overlay">
-          <div className="pay-desktop-modal-content">
-            <div className="pay-desktop-modal-header">
+        <div className="mobpay-desktop-modal-overlay">
+          <div className="mobpay-desktop-modal-content">
+            <div className="mobpay-desktop-modal-header">
               <h2>Top Up Wallet</h2>
               <button
-                className="pay-desktop-close-btn"
+                className="mobpay-desktop-close-btn"
                 onClick={handleCloseTopUpModal}
                 disabled={isProcessing}
               >
                 <FaTimes />
               </button>
             </div>
-            <div className="pay-desktop-modal-body">
-              <div className="pay-desktop-form-group">
+            <div className="mobpay-desktop-modal-body">
+              <div className="mobpay-desktop-form-group">
                 <label htmlFor="amount">Amount (₦)</label>
                 <input
                   type="number"
@@ -833,22 +833,22 @@ const Payments = () => {
                 />
                 <small>Minimum amount: ₦1,000</small>
                 {topUpAmount >= 1000 && (
-                  <div className="pay-desktop-amount-preview">
+                  <div className="mobpay-desktop-amount-preview">
                     You are topping up: <strong>{formatCurrency(topUpAmount)}</strong>
                   </div>
                 )}
               </div>
               {isProcessing && (
-                <div className="pay-desktop-processing-overlay">
-                  <div className="pay-desktop-processing-spinner"></div>
+                <div className="mobpay-desktop-processing-overlay">
+                  <div className="mobpay-desktop-processing-spinner"></div>
                   <p>Redirecting to Paystack...</p>
                 </div>
               )}
             </div>
-            <div className="pay-desktop-modal-footer">
+            <div className="mobpay-desktop-modal-footer">
               <button
                 type="button"
-                className="pay-desktop-btn-secondary"
+                className="mobpay-desktop-btn-secondary"
                 onClick={handleCancelTopUp}
                 disabled={isProcessing}
               >
@@ -856,7 +856,7 @@ const Payments = () => {
               </button>
               <button
                 type="button"
-                className="pay-desktop-btn-primary"
+                className="mobpay-desktop-btn-primary"
                 onClick={handleTopUp}
                 disabled={isProcessing || topUpAmount < 1000}
               >

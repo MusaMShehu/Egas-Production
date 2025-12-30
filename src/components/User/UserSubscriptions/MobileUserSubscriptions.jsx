@@ -1,4 +1,3 @@
-// components/mobile/MobileSubscriptions.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MobileUserSubscriptions.css';
@@ -86,11 +85,11 @@ const MobileSubscriptions = () => {
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'active': return 'status-active';
-      case 'paused': return 'status-paused';
-      case 'cancelled': return 'status-cancelled';
-      case 'expired': return 'status-expired';
-      default: return 'status-pending';
+      case 'active': return 'mobsubs-status-active';
+      case 'paused': return 'mobsubs-status-paused';
+      case 'cancelled': return 'mobsubs-status-cancelled';
+      case 'expired': return 'mobsubs-status-expired';
+      default: return 'mobsubs-status-pending';
     }
   };
 
@@ -220,41 +219,41 @@ const MobileSubscriptions = () => {
 
   if (isLoading) {
     return (
-      <div className="mobile-subscriptions loading">
-        <div className="loading-spinner"></div>
+      <div className="mobsubs-mobile-subscriptions mobsubs-loading">
+        <div className="mobsubs-loading-spinner"></div>
         <p>Loading subscriptions...</p>
       </div>
     );
   }
 
   return (
-    <div className="mobile-subscriptions">
+    <div className="mobsubs-mobile-subscriptions">
       {/* Header */}
-      <div className="subscriptions-header">
+      <div className="mobsubs-subscriptions-header">
         <h1>My Subscriptions</h1>
-        <div className="wallet-info">
-          <FaWallet className="wallet-icon" />
+        <div className="mobsubs-wallet-info">
+          <FaWallet className="mobsubs-wallet-icon" />
           <span>{formatCurrency(walletBalance)}</span>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="subscription-stats">
-        <div className="stat-card">
-          <div className="stat-icon active">
+      <div className="mobsubs-subscription-stats">
+        <div className="mobsubs-stat-card">
+          <div className="mobsubs-stat-icon mobsubs-active">
             <FaFire />
           </div>
-          <div className="stat-content">
+          <div className="mobsubs-stat-content">
             <h3>Active</h3>
             <p>{activeSubscriptions.length}</p>
           </div>
         </div>
         
-        <div className="stat-card">
-          <div className="stat-icon total">
+        <div className="mobsubs-stat-card">
+          <div className="mobsubs-stat-icon mobsubs-total">
             <FaCreditCard />
           </div>
-          <div className="stat-content">
+          <div className="mobsubs-stat-content">
             <h3>Monthly</h3>
             <p>{formatCurrency(
               activeSubscriptions.reduce((sum, sub) => sum + (sub.price || 0), 0)
@@ -264,9 +263,9 @@ const MobileSubscriptions = () => {
       </div>
 
       {/* Search and Create */}
-      <div className="actions-bar">
-        <div className="search-container">
-          <FaSearch className="search-icon" />
+      <div className="mobsubs-actions-bar">
+        <div className="mobsubs-search-container">
+          <FaSearch className="mobsubs-search-icon" />
           <input
             type="text"
             placeholder="Search subscriptions..."
@@ -274,44 +273,44 @@ const MobileSubscriptions = () => {
             onChange={handleSearch}
           />
           {searchQuery && (
-            <button className="clear-search" onClick={() => setSearchQuery('')}>
+            <button className="mobsubs-clear-search" onClick={() => setSearchQuery('')}>
               <FaTimes />
             </button>
           )}
         </div>
         
-        <button className="new-subscription-btn" onClick={handleCreateSubscription}>
-          <FaPlus /> New
+        <button className="mobsubs-new-subscription-btn" onClick={handleCreateSubscription}>
+          <FaPlus /> Create New
         </button>
       </div>
 
       {/* Active Subscriptions */}
       {activeSubscriptions.length > 0 && (
-        <div className="subscription-section">
-          <div className="section-header">
+        <div className="mobsubs-subscription-section">
+          <div className="mobsubs-section-header">
             <h2>Active Subscriptions</h2>
-            <span className="count-badge">{activeSubscriptions.length}</span>
+            <span className="mobsubs-count-badge">{activeSubscriptions.length}</span>
           </div>
           
-          <div className="subscriptions-list">
+          <div className="mobsubs-subscriptions-list">
             {activeSubscriptions.map(subscription => (
-              <div key={subscription._id} className="subscription-card active">
-                <div className="subscription-header">
-                  <div className="subscription-title">
-                    <FaFire className="subscription-icon" />
+              <div key={subscription._id} className="mobsubs-subscription-card mobsubs-active">
+                <div className="mobsubs-subscription-header">
+                  <div className="mobsubs-subscription-title">
+                    <FaFire className="mobsubs-subscription-icon" />
                     <div>
                       <h3>{subscription.planName || 'Premium Plan'}</h3>
-                      <p className="subscription-id">#{subscription._id?.slice(-8)}</p>
+                      <p className="mobsubs-subscription-id">#{subscription._id?.slice(-8)}</p>
                     </div>
                   </div>
                   
-                  <div className="subscription-actions">
-                    <div className={`status-badge ${getStatusClass(subscription.status)}`}>
+                  <div className="mobsubs-subscription-actions">
+                    <div className={`mobsubs-status-badge ${getStatusClass(subscription.status)}`}>
                       {getStatusText(subscription.status)}
                     </div>
                     
                     <button 
-                      className="action-menu-btn"
+                      className="mobsubs-action-menu-btn"
                       onClick={() => setShowActionMenu(
                         showActionMenu === subscription._id ? null : subscription._id
                       )}
@@ -320,15 +319,15 @@ const MobileSubscriptions = () => {
                     </button>
                     
                     {showActionMenu === subscription._id && (
-                      <div className="action-menu">
+                      <div className="mobsubs-action-menu">
                         <button 
-                          className="menu-item"
+                          className="mobsubs-menu-item"
                           onClick={() => handlePauseSubscription(subscription._id)}
                         >
                           <FaPause /> Pause
                         </button>
                         <button 
-                          className="menu-item danger"
+                          className="mobsubs-menu-item mobsubs-danger"
                           onClick={() => handleCancelSubscription(subscription._id)}
                         >
                           <FaTrash /> Cancel
@@ -338,40 +337,40 @@ const MobileSubscriptions = () => {
                   </div>
                 </div>
                 
-                <div className="subscription-details">
-                  <div className="detail-row">
-                    <span className="label">Cylinder Size:</span>
-                    <span className="value">{subscription.size || '15 kg'}</span>
+                <div className="mobsubs-subscription-details">
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Cylinder Size:</span>
+                    <span className="mobsubs-value">{subscription.size || '15 kg'}</span>
                   </div>
                   
-                  <div className="detail-row">
-                    <span className="label">Frequency:</span>
-                    <span className="value">
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Frequency:</span>
+                    <span className="mobsubs-value">
                       {getFrequencyText(subscription.frequency)}
                     </span>
                   </div>
                   
-                  <div className="detail-row">
-                    <span className="label">Price:</span>
-                    <span className="value price">
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Price:</span>
+                    <span className="mobsubs-value mobsubs-price">
                       {formatCurrency(subscription.price)}
                       {subscription.frequency && subscription.frequency !== 'One-Time' && 
                         ` ${getFrequencyText(subscription.frequency)}`}
                     </span>
                   </div>
                   
-                  <div className="detail-row">
-                    <span className="label">Next Delivery:</span>
-                    <span className="value">
-                      <FaCalendar className="icon" />
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Next Delivery:</span>
+                    <span className="mobsubs-value">
+                      <FaCalendar className="mobsubs-icon" />
                       {formatDate(subscription.nextDeliveryDate) || 'Not scheduled'}
                     </span>
                   </div>
                 </div>
                 
-                <div className="subscription-footer">
+                <div className="mobsubs-subscription-footer">
                   <button 
-                    className="manage-btn"
+                    className="mobsubs-manage-btn"
                     onClick={() => navigate(`/subscriptions/${subscription._id}`)}
                   >
                     Manage
@@ -385,40 +384,40 @@ const MobileSubscriptions = () => {
 
       {/* Other Subscriptions */}
       {otherSubscriptions.length > 0 && (
-        <div className="subscription-section">
-          <div className="section-header">
+        <div className="mobsubs-subscription-section">
+          <div className="mobsubs-section-header">
             <h2>Subscription History</h2>
-            <span className="count-badge">{otherSubscriptions.length}</span>
+            <span className="mobsubs-count-badge">{otherSubscriptions.length}</span>
           </div>
           
-          <div className="subscriptions-list">
+          <div className="mobsubs-subscriptions-list">
             {otherSubscriptions.map(subscription => (
-              <div key={subscription._id} className="subscription-card inactive">
-                <div className="subscription-header">
-                  <div className="subscription-title">
-                    <FaFire className="subscription-icon" />
+              <div key={subscription._id} className="mobsubs-subscription-card mobsubs-inactive">
+                <div className="mobsubs-subscription-header">
+                  <div className="mobsubs-subscription-title">
+                    <FaFire className="mobsubs-subscription-icon" />
                     <div>
                       <h3>{subscription.planName || 'Plan'}</h3>
-                      <p className="subscription-id">#{subscription._id?.slice(-8)}</p>
+                      <p className="mobsubs-subscription-id">#{subscription._id?.slice(-8)}</p>
                     </div>
                   </div>
                   
-                  <div className={`status-badge ${getStatusClass(subscription.status)}`}>
+                  <div className={`mobsubs-status-badge ${getStatusClass(subscription.status)}`}>
                     {getStatusText(subscription.status)}
                   </div>
                 </div>
                 
-                <div className="subscription-details">
-                  <div className="detail-row">
-                    <span className="label">Status:</span>
-                    <span className="value">
+                <div className="mobsubs-subscription-details">
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Status:</span>
+                    <span className="mobsubs-value">
                       {getStatusText(subscription.status)} since {formatDate(subscription.updatedAt)}
                     </span>
                   </div>
                   
-                  <div className="detail-row">
-                    <span className="label">Price:</span>
-                    <span className="value price">
+                  <div className="mobsubs-detail-row">
+                    <span className="mobsubs-label">Price:</span>
+                    <span className="mobsubs-value mobsubs-price">
                       {formatCurrency(subscription.price)}
                       {subscription.frequency && subscription.frequency !== 'One-Time' && 
                         ` ${getFrequencyText(subscription.frequency)}`}
@@ -426,9 +425,9 @@ const MobileSubscriptions = () => {
                   </div>
                   
                   {subscription.status === 'paused' && (
-                    <div className="subscription-footer">
+                    <div className="mobsubs-subscription-footer">
                       <button 
-                        className="resume-btn"
+                        className="mobsubs-resume-btn"
                         onClick={() => handleResumeSubscription(subscription._id)}
                       >
                         <FaPlay /> Resume
@@ -437,9 +436,9 @@ const MobileSubscriptions = () => {
                   )}
                   
                   {subscription.status === 'expired' && (
-                    <div className="subscription-footer">
+                    <div className="mobsubs-subscription-footer">
                       <button 
-                        className="renew-btn"
+                        className="mobsubs-renew-btn"
                         onClick={handleCreateSubscription}
                       >
                         Renew
@@ -455,11 +454,11 @@ const MobileSubscriptions = () => {
 
       {/* No Subscriptions */}
       {subscriptions.length === 0 && (
-        <div className="no-subscriptions">
-          <FaFire className="no-subscriptions-icon" />
+        <div className="mobsubs-no-subscriptions">
+          <FaFire className="mobsubs-no-subscriptions-icon" />
           <h3>No Subscriptions Yet</h3>
           <p>Start a subscription plan for regular gas delivery</p>
-          <button className="create-btn" onClick={handleCreateSubscription}>
+          <button className="mobsubs-create-btn" onClick={handleCreateSubscription}>
             <FaPlus /> Create Subscription
           </button>
         </div>

@@ -137,12 +137,12 @@ const MobileOrders = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'processing': return <FaBox className="status-icon processing" />;
-      case 'shipped': return <FaShippingFast className="status-icon shipped" />;
-      case 'in-transit': return <FaTruck className="status-icon transit" />;
-      case 'delivered': return <FaCheckCircle className="status-icon delivered" />;
-      case 'cancelled': return <FaTimesCircle className="status-icon cancelled" />;
-      default: return <FaBox className="status-icon processing" />;
+      case 'processing': return <FaBox className="mobord-status-icon mobord-processing" />;
+      case 'shipped': return <FaShippingFast className="mobord-status-icon mobord-shipped" />;
+      case 'in-transit': return <FaTruck className="mobord-status-icon mobord-transit" />;
+      case 'delivered': return <FaCheckCircle className="mobord-status-icon mobord-delivered" />;
+      case 'cancelled': return <FaTimesCircle className="mobord-status-icon mobord-cancelled" />;
+      default: return <FaBox className="mobord-status-icon mobord-processing" />;
     }
   };
 
@@ -166,27 +166,27 @@ const MobileOrders = () => {
 
   if (isLoading) {
     return (
-      <div className="mobile-orders loading">
-        <div className="loading-spinner"></div>
+      <div className="mobord-mobile-orders mobord-loading">
+        <div className="mobord-loading-spinner"></div>
         <p>Loading orders...</p>
       </div>
     );
   }
 
   return (
-    <div className="mobile-orders">
+    <div className="mobord-mobile-orders">
       {/* Header */}
-      <div className="orders-header">
+      <div className="mobord-orders-header">
         <h1>Order History</h1>
-        <button className="new-order-btn" onClick={createNewOrder}>
+        <button className="mobord-new-order-btn" onClick={createNewOrder}>
           <FaPlus /> New Order
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="search-container">
-        <div className="search-bar">
-          <FaSearch className="search-icon" />
+      <div className="mobord-search-container">
+        <div className="mobord-search-bar">
+          <FaSearch className="mobord-search-icon" />
           <input
             type="text"
             placeholder="Search orders..."
@@ -194,7 +194,7 @@ const MobileOrders = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button className="clear-search" onClick={() => setSearchQuery('')}>
+            <button className="mobord-clear-search" onClick={() => setSearchQuery('')}>
               <FaTimes />
             </button>
           )}
@@ -202,11 +202,11 @@ const MobileOrders = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="filter-tabs">
+      <div className="mobord-filter-tabs">
         {filters.map(filter => (
           <button
             key={filter.id}
-            className={`filter-tab ${activeFilter === filter.id ? 'active' : ''}`}
+            className={`mobord-filter-tab ${activeFilter === filter.id ? 'active' : ''}`}
             onClick={() => setActiveFilter(filter.id)}
           >
             {filter.label}
@@ -215,55 +215,55 @@ const MobileOrders = () => {
       </div>
 
       {/* Orders List */}
-      <div className="orders-list">
+      <div className="mobord-orders-list">
         {filteredOrders.length > 0 ? (
           filteredOrders.map(order => (
-            <div key={order._id} className="order-card">
-              <div className="order-header">
-                <div className="order-id">#{order.orderId}</div>
-                <div className={`order-status-badge ${order.orderStatus}`}>
+            <div key={order._id} className="mobord-order-card">
+              <div className="mobord-order-header">
+                <div className="mobord-order-id">#{order.orderId}</div>
+                <div className={`mobord-order-status-badge ${order.orderStatus}`}>
                   {getStatusIcon(order.orderStatus)}
                   <span>{getStatusText(order.orderStatus)}</span>
                 </div>
               </div>
 
-              <div className="order-body">
-                <div className="order-products">
-                  <FaGasPump className="product-icon" />
-                  <div className="product-info">
+              <div className="mobord-order-body">
+                <div className="mobord-order-products">
+                  <FaGasPump className="mobord-product-icon" />
+                  <div className="mobord-product-info">
                     <h4>{getProductNames(order.products)}</h4>
                     <p>{order.products?.length || 0} items</p>
                   </div>
                 </div>
 
-                <div className="order-meta">
-                  <div className="meta-item">
-                    <FaCalendar className="meta-icon" />
+                <div className="mobord-order-meta">
+                  <div className="mobord-meta-item">
+                    <FaCalendar className="mobord-meta-icon" />
                     <span>{formatDate(order.createdAt)}</span>
                   </div>
                   {order.deliveryAddress && (
-                    <div className="meta-item">
-                      <FaMapMarkerAlt className="meta-icon" />
-                      <span className="truncate">{order.deliveryAddress.split(',')[0]}</span>
+                    <div className="mobord-meta-item">
+                      <FaMapMarkerAlt className="mobord-meta-icon" />
+                      <span className="mobord-truncate">{order.deliveryAddress.split(',')[0]}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="order-footer">
-                  <div className="order-total">
+                <div className="mobord-order-footer">
+                  <div className="mobord-order-total">
                     <span>Total:</span>
                     <strong>{formatCurrency(order.totalAmount)}</strong>
                   </div>
-                  <div className="order-actions">
+                  <div className="mobord-order-actions">
                     <button 
-                      className="view-details-btn"
+                      className="mobord-view-details-btn"
                       onClick={() => viewOrderDetails(order)}
                     >
                       View Details
                     </button>
                     {!['delivered', 'cancelled'].includes(order.orderStatus) && (
                       <button 
-                        className="cancel-btn"
+                        className="mobord-cancel-btn"
                         onClick={() => cancelOrder(order._id)}
                       >
                         Cancel
@@ -275,11 +275,11 @@ const MobileOrders = () => {
             </div>
           ))
         ) : (
-          <div className="no-orders">
-            <FaBox className="no-orders-icon" />
+          <div className="mobord-no-orders">
+            <FaBox className="mobord-no-orders-icon" />
             <h3>No orders found</h3>
             <p>{searchQuery ? 'Try a different search' : 'Create your first order'}</p>
-            <button className="create-order-btn" onClick={createNewOrder}>
+            <button className="mobord-create-order-btn" onClick={createNewOrder}>
               Create New Order
             </button>
           </div>
@@ -288,38 +288,38 @@ const MobileOrders = () => {
 
       {/* Order Details Modal */}
       {selectedOrder && (
-        <div className="order-details-modal">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="mobord-order-details-modal">
+          <div className="mobord-modal-content">
+            <div className="mobord-modal-header">
               <h2>Order Details</h2>
-              <button className="close-modal" onClick={closeOrderDetails}>
+              <button className="mobord-close-modal" onClick={closeOrderDetails}>
                 <FaTimes />
               </button>
             </div>
 
-            <div className="modal-body">
+            <div className="mobord-modal-body">
               {/* Order Summary */}
-              <div className="details-section">
-                <div className="section-header">
+              <div className="mobord-details-section">
+                <div className="mobord-section-header">
                   <h3>Order Summary</h3>
-                  <div className={`status-display ${selectedOrder.orderStatus}`}>
+                  <div className={`mobord-status-display ${selectedOrder.orderStatus}`}>
                     {getStatusIcon(selectedOrder.orderStatus)}
                     {getStatusText(selectedOrder.orderStatus)}
                   </div>
                 </div>
                 
-                <div className="summary-grid">
-                  <div className="summary-item">
-                    <span className="label">Order ID:</span>
-                    <span className="value">#{selectedOrder.orderId}</span>
+                <div className="mobord-summary-grid">
+                  <div className="mobord-summary-item">
+                    <span className="mobord-label">Order ID:</span>
+                    <span className="mobord-value">#{selectedOrder.orderId}</span>
                   </div>
-                  <div className="summary-item">
-                    <span className="label">Date:</span>
-                    <span className="value">{formatDate(selectedOrder.createdAt)}</span>
+                  <div className="mobord-summary-item">
+                    <span className="mobord-label">Date:</span>
+                    <span className="mobord-value">{formatDate(selectedOrder.createdAt)}</span>
                   </div>
-                  <div className="summary-item">
-                    <span className="label">Payment:</span>
-                    <span className={`value ${selectedOrder.paymentStatus}`}>
+                  <div className="mobord-summary-item">
+                    <span className="mobord-label">Payment:</span>
+                    <span className={`mobord-value ${selectedOrder.paymentStatus}`}>
                       {selectedOrder.paymentStatus || 'Pending'}
                     </span>
                   </div>
@@ -327,19 +327,19 @@ const MobileOrders = () => {
               </div>
 
               {/* Products */}
-              <div className="details-section">
+              <div className="mobord-details-section">
                 <h3>Order Items</h3>
-                <div className="products-list">
+                <div className="mobord-products-list">
                   {selectedOrder.products?.map((item, idx) => (
-                    <div key={idx} className="product-item">
-                      <div className="product-info">
+                    <div key={idx} className="mobord-product-item">
+                      <div className="mobord-product-info">
                         <h4>{item.productName || 'Product'}</h4>
-                        <div className="product-meta">
+                        <div className="mobord-product-meta">
                           <span>Qty: {item.quantity || 1}</span>
                           <span>Price: {formatCurrency(item.price)}</span>
                         </div>
                       </div>
-                      <div className="product-total">
+                      <div className="mobord-product-total">
                         {formatCurrency((item.price || 0) * (item.quantity || 1))}
                       </div>
                     </div>
@@ -348,20 +348,20 @@ const MobileOrders = () => {
               </div>
 
               {/* Delivery Info */}
-              <div className="details-section">
+              <div className="mobord-details-section">
                 <h3>Delivery Information</h3>
-                <div className="delivery-info">
-                  <div className="info-item">
-                    <FaMapMarkerAlt className="info-icon" />
-                    <div className="info-content">
+                <div className="mobord-delivery-info">
+                  <div className="mobord-info-item">
+                    <FaMapMarkerAlt className="mobord-info-icon" />
+                    <div className="mobord-info-content">
                       <strong>Address:</strong>
                       <p>{selectedOrder.deliveryAddress || 'Not specified'}</p>
                     </div>
                   </div>
                   {selectedOrder.deliveryOption && (
-                    <div className="info-item">
-                      <FaTruck className="info-icon" />
-                      <div className="info-content">
+                    <div className="mobord-info-item">
+                      <FaTruck className="mobord-info-icon" />
+                      <div className="mobord-info-content">
                         <strong>Delivery Option:</strong>
                         <p>{selectedOrder.deliveryOption}</p>
                       </div>
@@ -371,18 +371,18 @@ const MobileOrders = () => {
               </div>
 
               {/* Totals */}
-              <div className="details-section totals">
+              <div className="mobord-details-section mobord-totals">
                 <h3>Order Total</h3>
-                <div className="totals-grid">
-                  <div className="total-item">
+                <div className="mobord-totals-grid">
+                  <div className="mobord-total-item">
                     <span>Subtotal:</span>
                     <span>{formatCurrency(selectedOrder.totalAmount)}</span>
                   </div>
-                  <div className="total-item">
+                  <div className="mobord-total-item">
                     <span>Delivery Fee:</span>
                     <span>{formatCurrency(selectedOrder.deliveryFee || 0)}</span>
                   </div>
-                  <div className="total-item grand-total">
+                  <div className="mobord-total-item mobord-grand-total">
                     <span>Total Amount:</span>
                     <span>{formatCurrency(selectedOrder.totalAmount)}</span>
                   </div>
@@ -390,12 +390,12 @@ const MobileOrders = () => {
               </div>
             </div>
 
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={closeOrderDetails}>
+            <div className="mobord-modal-footer">
+              <button className="mobord-btn-secondary" onClick={closeOrderDetails}>
                 Close
               </button>
               {selectedOrder.orderStatus === 'delivered' && (
-                <button className="btn-primary">
+                <button className="mobord-btn-primary">
                   Order Again
                 </button>
               )}

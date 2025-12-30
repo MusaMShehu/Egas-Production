@@ -1,4 +1,3 @@
-// components/mobile/MobileSupport.js
 import React, { useState, useEffect } from 'react';
 import './MobileUserSupport.css';
 import { FaPaperclip, FaSearch, FaTimes, FaPlus, FaComment, FaCheckCircle, FaClock, FaExclamationCircle, FaImage, FaFile, FaTrash } from 'react-icons/fa';
@@ -227,11 +226,11 @@ const MobileSupport = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'open': return <FaExclamationCircle className="status-icon open" />;
-      case 'in-progress': return <FaClock className="status-icon in-progress" />;
-      case 'resolved': return <FaCheckCircle className="status-icon resolved" />;
-      case 'closed': return <FaCheckCircle className="status-icon closed" />;
-      default: return <FaExclamationCircle className="status-icon open" />;
+      case 'open': return <FaExclamationCircle className="mobsup-status-icon mobsup-open" />;
+      case 'in-progress': return <FaClock className="mobsup-status-icon mobsup-in-progress" />;
+      case 'resolved': return <FaCheckCircle className="mobsup-status-icon mobsup-resolved" />;
+      case 'closed': return <FaCheckCircle className="mobsup-status-icon mobsup-closed" />;
+      default: return <FaExclamationCircle className="mobsup-status-icon mobsup-open" />;
     }
   };
 
@@ -286,9 +285,9 @@ const MobileSupport = () => {
     if (!filename) return <FaFile />;
     const ext = filename.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
-      return <FaImage className="file-icon image" />;
+      return <FaImage className="mobsup-file-icon mobsup-image" />;
     } else if (ext === 'pdf') {
-      return <FaFile className="file-icon pdf" />;
+      return <FaFile className="mobsup-file-icon mobsup-pdf" />;
     }
     return <FaFile />;
   };
@@ -302,20 +301,20 @@ const MobileSupport = () => {
 
   if (isLoading) {
     return (
-      <div className="mobile-support loading">
-        <div className="loading-spinner"></div>
+      <div className="mobsup-mobile-support mobsup-loading">
+        <div className="mobsup-loading-spinner"></div>
         <p>Loading support tickets...</p>
       </div>
     );
   }
 
   return (
-    <div className="mobile-support">
+    <div className="mobsup-mobile-support">
       {/* Header */}
-      <div className="support-header">
+      <div className="mobsup-support-header">
         <h1>Support Center</h1>
         <button 
-          className="new-ticket-btn"
+          className="mobsup-new-ticket-btn"
           onClick={() => setShowCreateForm(true)}
           disabled={isSubmitting}
         >
@@ -324,9 +323,9 @@ const MobileSupport = () => {
       </div>
 
       {/* Search */}
-      <div className="search-container">
-        <div className="search-bar">
-          <FaSearch className="search-icon" />
+      <div className="mobsup-search-container">
+        <div className="mobsup-search-bar">
+          <FaSearch className="mobsup-search-icon" />
           <input
             type="text"
             placeholder="Search tickets..."
@@ -334,7 +333,7 @@ const MobileSupport = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button className="clear-search" onClick={() => setSearchQuery('')}>
+            <button className="mobsup-clear-search" onClick={() => setSearchQuery('')}>
               <FaTimes />
             </button>
           )}
@@ -342,32 +341,32 @@ const MobileSupport = () => {
       </div>
 
       {/* Ticket Stats */}
-      <div className="ticket-stats">
-        <div className="stat-card">
-          <div className="stat-icon open">
+      <div className="mobsup-ticket-stats">
+        <div className="mobsup-stat-card">
+          <div className="mobsup-stat-icon mobsup-open">
             <FaExclamationCircle />
           </div>
-          <div className="stat-content">
+          <div className="mobsup-stat-content">
             <h3>Open</h3>
             <p>{ticketsByStatus.open.length}</p>
           </div>
         </div>
         
-        <div className="stat-card">
-          <div className="stat-icon in-progress">
+        <div className="mobsup-stat-card">
+          <div className="mobsup-stat-icon mobsup-in-progress">
             <FaClock />
           </div>
-          <div className="stat-content">
+          <div className="mobsup-stat-content">
             <h3>In Progress</h3>
             <p>{ticketsByStatus['in-progress'].length}</p>
           </div>
         </div>
         
-        <div className="stat-card">
-          <div className="stat-icon resolved">
+        <div className="mobsup-stat-card">
+          <div className="mobsup-stat-icon mobsup-resolved">
             <FaCheckCircle />
           </div>
-          <div className="stat-content">
+          <div className="mobsup-stat-content">
             <h3>Resolved</h3>
             <p>{ticketsByStatus.resolved.length + ticketsByStatus.closed.length}</p>
           </div>
@@ -375,54 +374,54 @@ const MobileSupport = () => {
       </div>
 
       {/* Tickets List */}
-      <div className="tickets-section">
-        <div className="section-header">
+      <div className="mobsup-tickets-section">
+        <div className="mobsup-section-header">
           <h2>Your Tickets</h2>
-          <span className="count-badge">{filteredTickets.length}</span>
+          <span className="mobsup-count-badge">{filteredTickets.length}</span>
         </div>
 
         {filteredTickets.length > 0 ? (
-          <div className="tickets-list">
+          <div className="mobsup-tickets-list">
             {filteredTickets.map(ticket => (
               <div 
                 key={ticket._id} 
-                className="ticket-card"
+                className="mobsup-ticket-card"
                 onClick={() => setSelectedTicket(ticket)}
               >
-                <div className="ticket-header">
-                  <div className="ticket-title">
+                <div className="mobsup-ticket-header">
+                  <div className="mobsup-ticket-title">
                     <h3>{ticket.subject}</h3>
-                    <span className="ticket-category">
+                    <span className="mobsup-ticket-category">
                       {getCategoryText(ticket.category)}
                     </span>
                   </div>
-                  <div className={`ticket-status ${ticket.status}`}>
+                  <div className={`mobsup-ticket-status mobsup-${ticket.status}`}>
                     {getStatusIcon(ticket.status)}
                     <span>{getStatusText(ticket.status)}</span>
                   </div>
                 </div>
 
-                <div className="ticket-body">
-                  <p className="ticket-description">
+                <div className="mobsup-ticket-body">
+                  <p className="mobsup-ticket-description">
                     {ticket.description.length > 100
                       ? `${ticket.description.substring(0, 100)}...`
                       : ticket.description}
                   </p>
                   
-                  <div className="ticket-meta">
-                    <div className="meta-item">
+                  <div className="mobsup-ticket-meta">
+                    <div className="mobsup-meta-item">
                       <FaComment />
                       <span>{ticket.responses?.length || 0} replies</span>
                     </div>
-                    <div className="meta-item">
+                    <div className="mobsup-meta-item">
                       <span>{formatDate(ticket.createdAt)}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="ticket-footer">
+                <div className="mobsup-ticket-footer">
                   <button 
-                    className="view-details-btn"
+                    className="mobsup-view-details-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedTicket(ticket);
@@ -432,7 +431,7 @@ const MobileSupport = () => {
                   </button>
                   {ticket.status !== 'closed' && (
                     <button 
-                      className="close-ticket-btn"
+                      className="mobsup-close-ticket-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         closeTicket(ticket._id);
@@ -446,12 +445,12 @@ const MobileSupport = () => {
             ))}
           </div>
         ) : (
-          <div className="no-tickets">
-            <FaComment className="no-tickets-icon" />
+          <div className="mobsup-no-tickets">
+            <FaComment className="mobsup-no-tickets-icon" />
             <h3>No tickets found</h3>
             <p>{searchQuery ? 'Try a different search' : 'Create your first support ticket'}</p>
             <button 
-              className="create-ticket-btn"
+              className="mobsup-create-ticket-btn"
               onClick={() => setShowCreateForm(true)}
             >
               <FaPlus /> Create Ticket
@@ -462,64 +461,64 @@ const MobileSupport = () => {
 
       {/* Ticket Details Modal */}
       {selectedTicket && (
-        <div className="ticket-details-modal">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="mobsup-ticket-details-modal">
+          <div className="mobsup-modal-content">
+            <div className="mobsup-modal-header">
               <h2>Ticket #{selectedTicket.ticketId}</h2>
               <button 
-                className="close-modal"
+                className="mobsup-close-modal"
                 onClick={() => setSelectedTicket(null)}
               >
                 <FaTimes />
               </button>
             </div>
 
-            <div className="modal-body">
+            <div className="mobsup-modal-body">
               {/* Ticket Info */}
-              <div className="ticket-info-section">
-                <div className="info-grid">
-                  <div className="info-item">
-                    <span className="label">Subject:</span>
-                    <span className="value">{selectedTicket.subject}</span>
+              <div className="mobsup-ticket-info-section">
+                <div className="mobsup-info-grid">
+                  <div className="mobsup-info-item">
+                    <span className="mobsup-label">Subject:</span>
+                    <span className="mobsup-value">{selectedTicket.subject}</span>
                   </div>
-                  <div className="info-item">
-                    <span className="label">Category:</span>
-                    <span className="value">{getCategoryText(selectedTicket.category)}</span>
+                  <div className="mobsup-info-item">
+                    <span className="mobsup-label">Category:</span>
+                    <span className="mobsup-value">{getCategoryText(selectedTicket.category)}</span>
                   </div>
-                  <div className="info-item">
-                    <span className="label">Status:</span>
-                    <span className={`value status ${selectedTicket.status}`}>
+                  <div className="mobsup-info-item">
+                    <span className="mobsup-label">Status:</span>
+                    <span className={`mobsup-value mobsup-status mobsup-${selectedTicket.status}`}>
                       {getStatusIcon(selectedTicket.status)}
                       {getStatusText(selectedTicket.status)}
                     </span>
                   </div>
-                  <div className="info-item">
-                    <span className="label">Created:</span>
-                    <span className="value">{formatDate(selectedTicket.createdAt)}</span>
+                  <div className="mobsup-info-item">
+                    <span className="mobsup-label">Created:</span>
+                    <span className="mobsup-value">{formatDate(selectedTicket.createdAt)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Conversation */}
-              <div className="conversation-section">
+              <div className="mobsup-conversation-section">
                 <h3>Conversation</h3>
                 
                 {/* Initial Message */}
-                <div className="message user-message">
-                  <div className="message-header">
-                    <span className="sender">You</span>
-                    <span className="time">{formatDate(selectedTicket.createdAt)}</span>
+                <div className="mobsup-message mobsup-user-message">
+                  <div className="mobsup-message-header">
+                    <span className="mobsup-sender">You</span>
+                    <span className="mobsup-time">{formatDate(selectedTicket.createdAt)}</span>
                   </div>
-                  <div className="message-content">
+                  <div className="mobsup-message-content">
                     <p>{selectedTicket.description}</p>
                     {selectedTicket.images && selectedTicket.images.length > 0 && (
-                      <div className="message-attachments">
+                      <div className="mobsup-message-attachments">
                         <strong>Attachments:</strong>
-                        <div className="attachments-list">
+                        <div className="mobsup-attachments-list">
                           {selectedTicket.images.map((img, index) => (
-                            <div key={index} className="attachment">
+                            <div key={index} className="mobsup-attachment">
                               {getFileIcon(typeof img === 'string' ? img : img.name)}
-                              <span className="filename">
+                              <span className="mobsup-filename">
                                 {typeof img === 'string' ? img.split('/').pop() : img.name}
                               </span>
                             </div>
@@ -534,24 +533,24 @@ const MobileSupport = () => {
                 {selectedTicket.responses?.map((response, index) => (
                   <div 
                     key={response._id || index}
-                    className={`message ${response.user ? 'user-message' : 'agent-message'}`}
+                    className={`mobsup-message ${response.user ? 'mobsup-user-message' : 'mobsup-agent-message'}`}
                   >
-                    <div className="message-header">
-                      <span className="sender">
+                    <div className="mobsup-message-header">
+                      <span className="mobsup-sender">
                         {response.user ? 'You' : 'Support Agent'}
                       </span>
-                      <span className="time">{formatDate(response.createdAt)}</span>
+                      <span className="mobsup-time">{formatDate(response.createdAt)}</span>
                     </div>
-                    <div className="message-content">
+                    <div className="mobsup-message-content">
                       <p>{response.message}</p>
                       {response.attachments && response.attachments.length > 0 && (
-                        <div className="message-attachments">
+                        <div className="mobsup-message-attachments">
                           <strong>Attachments:</strong>
-                          <div className="attachments-list">
+                          <div className="mobsup-attachments-list">
                             {response.attachments.map((att, idx) => (
-                              <div key={idx} className="attachment">
+                              <div key={idx} className="mobsup-attachment">
                                 {getFileIcon(typeof att === 'string' ? att : att.name)}
-                                <span className="filename">
+                                <span className="mobsup-filename">
                                   {typeof att === 'string' ? att.split('/').pop() : att.name}
                                 </span>
                               </div>
@@ -566,7 +565,7 @@ const MobileSupport = () => {
 
               {/* Reply Form */}
               {selectedTicket.status !== 'closed' && (
-                <div className="reply-section">
+                <div className="mobsup-reply-section">
                   <h4>Add Reply</h4>
                   <textarea
                     value={newResponse}
@@ -577,8 +576,8 @@ const MobileSupport = () => {
                   />
                   
                   {/* Attachments */}
-                  <div className="attachments-input">
-                    <label className="attach-btn">
+                  <div className="mobsup-attachments-input">
+                    <label className="mobsup-attach-btn">
                       <FaPaperclip />
                       <span>Attach Files</span>
                       <input
@@ -591,14 +590,14 @@ const MobileSupport = () => {
                     </label>
                     
                     {responseAttachments.length > 0 && (
-                      <div className="attachments-preview">
+                      <div className="mobsup-attachments-preview">
                         {responseAttachments.map((file, index) => (
-                          <div key={index} className="attachment-preview">
+                          <div key={index} className="mobsup-attachment-preview">
                             {getFileIcon(file.name)}
-                            <span className="filename">{file.name}</span>
+                            <span className="mobsup-filename">{file.name}</span>
                             <button
                               type="button"
-                              className="remove-attachment"
+                              className="mobsup-remove-attachment"
                               onClick={() => handleRemoveFile(index, true)}
                               disabled={isSubmitting}
                             >
@@ -610,16 +609,16 @@ const MobileSupport = () => {
                     )}
                   </div>
 
-                  <div className="reply-actions">
+                  <div className="mobsup-reply-actions">
                     <button
-                      className="send-btn"
+                      className="mobsup-send-btn"
                       onClick={() => handleAddResponse(selectedTicket._id)}
                       disabled={isSubmitting || (!newResponse.trim() && responseAttachments.length === 0)}
                     >
                       {isSubmitting ? 'Sending...' : 'Send Reply'}
                     </button>
                     <button
-                      className="cancel-btn"
+                      className="mobsup-cancel-btn"
                       onClick={() => {
                         setNewResponse('');
                         setResponseAttachments([]);
@@ -633,9 +632,9 @@ const MobileSupport = () => {
               )}
             </div>
 
-            <div className="modal-footer">
+            <div className="mobsup-modal-footer">
               <button 
-                className="close-ticket-modal-btn"
+                className="mobsup-close-ticket-modal-btn"
                 onClick={() => closeTicket(selectedTicket._id)}
                 disabled={selectedTicket.status === 'closed'}
               >
@@ -648,12 +647,12 @@ const MobileSupport = () => {
 
       {/* Create Ticket Modal */}
       {showCreateForm && (
-        <div className="create-ticket-modal">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="mobsup-create-ticket-modal">
+          <div className="mobsup-modal-content">
+            <div className="mobsup-modal-header">
               <h2>Create New Ticket</h2>
               <button 
-                className="close-modal"
+                className="mobsup-close-modal"
                 onClick={() => !isSubmitting && setShowCreateForm(false)}
                 disabled={isSubmitting}
               >
@@ -662,8 +661,8 @@ const MobileSupport = () => {
             </div>
 
             <form onSubmit={handleCreateTicket}>
-              <div className="modal-body">
-                <div className="form-group">
+              <div className="mobsup-modal-body">
+                <div className="mobsup-form-group">
                   <label>Category</label>
                   <select
                     value={newTicket.category}
@@ -679,7 +678,7 @@ const MobileSupport = () => {
                   </select>
                 </div>
 
-                <div className="form-group">
+                <div className="mobsup-form-group">
                   <label>Subject</label>
                   <input
                     type="text"
@@ -691,7 +690,7 @@ const MobileSupport = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="mobsup-form-group">
                   <label>Description</label>
                   <textarea
                     value={newTicket.description}
@@ -703,10 +702,10 @@ const MobileSupport = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="mobsup-form-group">
                   <label>Attachments (Optional)</label>
-                  <div className="file-input-container">
-                    <label className="file-input-label">
+                  <div className="mobsup-file-input-container">
+                    <label className="mobsup-file-input-label">
                       <FaPaperclip />
                       <span>Choose Files</span>
                       <input
@@ -719,14 +718,14 @@ const MobileSupport = () => {
                     </label>
                     
                     {newTicket.images.length > 0 && (
-                      <div className="attachments-preview">
+                      <div className="mobsup-attachments-preview">
                         {newTicket.images.map((file, index) => (
-                          <div key={index} className="attachment-preview">
+                          <div key={index} className="mobsup-attachment-preview">
                             {getFileIcon(file.name)}
-                            <span className="filename">{file.name}</span>
+                            <span className="mobsup-filename">{file.name}</span>
                             <button
                               type="button"
-                              className="remove-attachment"
+                              className="mobsup-remove-attachment"
                               onClick={() => handleRemoveFile(index, false)}
                               disabled={isSubmitting}
                             >
@@ -740,10 +739,10 @@ const MobileSupport = () => {
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="mobsup-modal-footer">
                 <button
                   type="button"
-                  className="cancel-btn"
+                  className="mobsup-cancel-btn"
                   onClick={() => !isSubmitting && setShowCreateForm(false)}
                   disabled={isSubmitting}
                 >
@@ -751,7 +750,7 @@ const MobileSupport = () => {
                 </button>
                 <button
                   type="submit"
-                  className="submit-btn"
+                  className="mobsup-submit-btn"
                   disabled={isSubmitting || !newTicket.subject || !newTicket.description}
                 >
                   {isSubmitting ? 'Creating...' : 'Create Ticket'}
