@@ -27,28 +27,28 @@ const Footer = () => {
           </p>
           <div className="social-links">
             <a
-              href="https://web.facebook.com/dworld2day"
+              // href="https://web.facebook.com/dworld2day"
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaFacebookF />
             </a>
             <a
-              href="https://x.com/Musashehum"
+              // href="https://x.com/Musashehum"
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaTwitter />
             </a>
             <a
-              href="https://www.instagram.com/mozekhan?utm_source=qr&igsh=MTV0MDh1eWNxMG01cw=="
+              // href="https://www.instagram.com/mozekhan?utm_source=qr&igsh=MTV0MDh1eWNxMG01cw=="
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaInstagram />
             </a>
             <a
-              href="https://www.linkedin.com/musamohammedshehu"
+              // href="https://www.linkedin.com/musamohammedshehu"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -58,7 +58,7 @@ const Footer = () => {
         </div>
 
         {/* Services */}
-        <div className="footer-links-section">
+        {/* <div className="footer-links-section">
           <h3>Services</h3>
           <ul className="footer-links">
             <li>
@@ -77,7 +77,7 @@ const Footer = () => {
               <Link to="/business">Business Solutions</Link>
             </li>
           </ul>
-        </div>
+        </div> */}
 
         {/* Contact Info */}
         <div className="footer-links-section">

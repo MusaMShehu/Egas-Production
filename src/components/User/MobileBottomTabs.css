@@ -72,7 +72,7 @@
 }
 
 /* Dark mode */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .mobile-bottom-tabs {
     background: rgba(30, 30, 30, 0.95);
     border-top-color: #333;
@@ -85,4 +85,4 @@
   .tab-item.active {
     color: #FF6B35;
   }
-}
+} */

@@ -9,8 +9,8 @@
 
 /* Hero Section */
 .hmc-mobile-hero {
-  position: relative;
-  height: 500px;
+  /* position: relative; */
+  height: 250px;
   overflow: hidden;
   border-radius: 0 0 24px 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -183,10 +183,11 @@
 /* Hero Content Overlay */
 .hmc-hero-content-overlay {
   position: absolute;
+  top: 20px;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  /* background: linear-gradient(transparent, rgba(0, 0, 0, 0.7)); */
   padding: 30px 20px 20px;
   z-index: 5;
 }
@@ -197,7 +198,8 @@
 
 .hmc-hero-brand {
   font-size: 36px;
-  font-weight: 800;
+  font-weight: 700;
+  color: cyan;
   margin: 0 0 8px 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -212,7 +214,7 @@
 .hmc-hero-description {
   font-size: 14px;
   line-height: 1.5;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
   opacity: 0.9;
   max-width: 500px;
 }

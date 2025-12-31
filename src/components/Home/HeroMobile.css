@@ -1,0 +1,333 @@
+/* Hero Carousel Styles */
+.hmc-mobile-hero {
+  position: relative;
+  /* height: 100vh; */
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.hmc-hero-carousel {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hmc-carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.hmc-slide-wrapper {
+  min-width: 100%;
+  height: 100%;
+}
+
+.hmc-carousel-slide {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.hmc-slide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.hmc-slide-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hmc-slide-content.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hmc-slide-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hmc-slide-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.hmc-slide-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hmc-slide-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* Carousel Controls */
+.hmc-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.hmc-carousel-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.hmc-prev {
+  left: 1rem;
+}
+
+.hmc-next {
+  right: 1rem;
+}
+
+/* Carousel Indicators */
+.hmc-carousel-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.hmc-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hmc-indicator.hmc-active {
+  background: white;
+  transform: scale(1.2);
+}
+
+/* Auto-play Toggle */
+.hmc-autoplay-toggle {
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.hmc-autoplay-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Hero Content Overlay */
+.hmc-hero-content-overlay {
+  position: absolute;
+  /* top: 0; */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hmc-hero-main-content {
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: 2rem;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  margin: 2rem;
+}
+
+.hmc-hero-brand {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.hmc-hero-tagline {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.95;
+}
+
+.hmc-hero-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* Hero Features */
+.hmc-hero-features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.hmc-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  backdrop-filter: blur(5px);
+}
+
+/* Action Buttons */
+.hmc-hero-action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.hmc-btn-primary, .hmc-btn-secondary {
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.hmc-btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.hmc-btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.hmc-btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.hmc-btn-secondary:hover {
+  background: white;
+  color: #333;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hmc-slide-title {
+    font-size: 2rem;
+  }
+  
+  .hmc-slide-subtitle {
+    font-size: 1rem;
+  }
+  
+  .hmc-hero-brand {
+    font-size: 2.5rem;
+  }
+  
+  .hmc-hero-tagline {
+    font-size: 1.2rem;
+  }
+  
+  .hmc-hero-features {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .hmc-hero-action-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .hmc-btn-primary, .hmc-btn-secondary {
+    width: 100%;
+  }
+  
+  .hmc-carousel-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hmc-slide-title {
+    font-size: 1.8rem;
+  }
+  
+  .hmc-hero-brand {
+    font-size: 2rem;
+  }
+  
+  .hmc-hero-main-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+}

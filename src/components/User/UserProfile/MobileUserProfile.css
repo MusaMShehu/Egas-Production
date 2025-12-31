@@ -485,7 +485,7 @@ input:checked + .mobpro-slider:before {
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .mobpro-mobile-profile-container {
     background: #121212;
     color: white;
@@ -541,7 +541,7 @@ input:checked + .mobpro-slider:before {
   .mobpro-mobile-notification-note {
     background: #2d2d2d;
   }
-}
+} */
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {

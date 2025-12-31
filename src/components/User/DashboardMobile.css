@@ -755,7 +755,7 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .mobdash-mobile-dashboard-container {
     background: #121212;
   }
@@ -807,7 +807,7 @@
   .mobdash-nav-btn.mobdash-active {
     color: #4dabf7;
   }
-}
+} */
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
