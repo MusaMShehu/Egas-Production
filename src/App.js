@@ -90,6 +90,7 @@ import DesktopUserProfile from "./components/User/UserProfile/UserProfile";
 import DesktopUserSupport from "./components/User/UserSupport/UserSupport";
 import DesktopUserSettings from "./components/User/UserSettings/UserSettings";
 import DesktopCustomerDeliverySchedule from "./components/User/UserDelivery/CustomerDeliverySchedule";
+import CustomerRemnant from "./components/User/UserDelivery/DeliveryRemnant";
 
 // USER PANEL MOBILE VIEW
 import MobileDashboardOverview from "./components/User/DashboardMobile";
@@ -232,6 +233,7 @@ function App() {
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />
             <Route path="delivery" element={<CustomerDeliverySchedule />} />
+            <Route path="remnant" element={<CustomerRemnant />} />
 
 
               {/* New payment Testing */}
