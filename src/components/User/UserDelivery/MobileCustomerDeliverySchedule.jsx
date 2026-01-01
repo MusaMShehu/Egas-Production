@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FaCheckCircle, 
-  FaTimesCircle, 
-  FaMapMarkerAlt, 
+import React, { useState, useEffect } from "react";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaMapMarkerAlt,
   FaPhone,
   FaUser,
   FaClock,
@@ -12,9 +12,10 @@ import {
   FaCalendarAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaEllipsisH
-} from 'react-icons/fa';
-import './MobileCustomerDeliverySchedule.css';
+  FaEllipsisH,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import "./MobileCustomerDeliverySchedule.css";
 
 const CustomerDeliveryHistory = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -23,14 +24,18 @@ const CustomerDeliveryHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [confirmationNotes, setConfirmationNotes] = useState('');
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  
+  const [confirmationNotes, setConfirmationNotes] = useState("");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
   // State for tabs, filtering and sorting
-  const [activeTab, setActiveTab] = useState('upcoming');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [activeTab, setActiveTab] = useState("upcoming");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
@@ -40,25 +45,26 @@ const CustomerDeliveryHistory = () => {
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
-      
+
       let queryParams = `page=${page}&limit=10&sortBy=deliveryDate&sortOrder=${sortOrder}`;
-      
+
       switch (activeTab) {
-        case 'upcoming':
-          queryParams += '&deliveryDate=' + new Date().toISOString().split('T')[0];
+        case "upcoming":
+          queryParams +=
+            "&deliveryDate=" + new Date().toISOString().split("T")[0];
           break;
-        case 'delivered':
-          queryParams += '&status=delivered';
+        case "delivered":
+          queryParams += "&status=delivered";
           break;
-        case 'past-pending':
-          const today = new Date().toISOString().split('T')[0];
+        case "past-pending":
+          const today = new Date().toISOString().split("T")[0];
           queryParams += `&deliveryDate=${today}&status=pending,assigned,accepted,out_for_delivery,failed,cancelled`;
           break;
         default:
           break;
       }
 
-      if (activeTab !== 'delivered' && statusFilter !== 'all') {
+      if (activeTab !== "delivered" && statusFilter !== "all") {
         queryParams += `&status=${statusFilter}`;
       }
 
@@ -66,19 +72,22 @@ const CustomerDeliveryHistory = () => {
         queryParams += `&deliveryDate=${dateFilter}`;
       }
 
-      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      const response = await fetch(
+        `https://egas-server-1.onrender.com/api/v1/admin/delivery/my-deliveries?${queryParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       const data = await response.json();
-      
+
       if (data.success) {
         setDeliveries(data.data);
         setTotalPages(data.pagination.pages);
       }
     } catch (error) {
-      showSnackbar('Error fetching delivery history', 'error');
+      showSnackbar("Error fetching delivery history", "error");
     } finally {
       setLoading(false);
     }
@@ -86,28 +95,31 @@ const CustomerDeliveryHistory = () => {
 
   const handleConfirmDelivery = async () => {
     try {
-      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/${selectedDelivery._id}/confirm`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ notes: confirmationNotes })
-      });
+      const response = await fetch(
+        `https://egas-server-1.onrender.com/api/v1/admin/delivery/${selectedDelivery._id}/confirm`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ notes: confirmationNotes }),
+        }
+      );
 
       const data = await response.json();
-      
+
       if (data.success) {
-        showSnackbar('Delivery confirmed successfully', 'success');
+        showSnackbar("Delivery confirmed successfully", "success");
         setConfirmDialogOpen(false);
-        setConfirmationNotes('');
+        setConfirmationNotes("");
         setSelectedDelivery(null);
         fetchDeliveries();
       } else {
-        showSnackbar(data.message, 'error');
+        showSnackbar(data.message, "error");
       }
     } catch (error) {
-      showSnackbar('Error confirming delivery', 'error');
+      showSnackbar("Error confirming delivery", "error");
     }
   };
 
@@ -120,33 +132,33 @@ const CustomerDeliveryHistory = () => {
 
   const getStatusClass = (status) => {
     const statusMap = {
-      pending: 'mobdel-status-pending',
-      assigned: 'mobdel-status-assigned',
-      accepted: 'mobdel-status-accepted',
-      out_for_delivery: 'mobdel-status-out_for_delivery',
-      delivered: 'mobdel-status-delivered',
-      failed: 'mobdel-status-failed',
-      cancelled: 'mobdel-status-cancelled'
+      pending: "mobdel-status-pending",
+      assigned: "mobdel-status-assigned",
+      accepted: "mobdel-status-accepted",
+      out_for_delivery: "mobdel-status-out_for_delivery",
+      delivered: "mobdel-status-delivered",
+      failed: "mobdel-status-failed",
+      cancelled: "mobdel-status-cancelled",
     };
-    return `mobdel-status-chip ${statusMap[status] || 'mobdel-status-pending'}`;
+    return `mobdel-status-chip ${statusMap[status] || "mobdel-status-pending"}`;
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const formatDateShort = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -156,21 +168,21 @@ const CustomerDeliveryHistory = () => {
     const timeDiff = deliveryDate - now;
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-    if (delivery.status === 'delivered') {
-      return { type: 'delivered', text: `Delivered` };
+    if (delivery.status === "delivered") {
+      return { type: "delivered", text: `Delivered` };
     } else if (daysDiff === 0) {
-      return { type: 'today', text: 'Today' };
+      return { type: "today", text: "Today" };
     } else if (daysDiff === 1) {
-      return { type: 'tomorrow', text: 'Tomorrow' };
+      return { type: "tomorrow", text: "Tomorrow" };
     } else if (daysDiff > 1 && daysDiff <= 7) {
-      return { type: 'this-week', text: `${daysDiff}d` };
+      return { type: "this-week", text: `${daysDiff}d` };
     } else if (daysDiff > 7) {
-      return { type: 'future', text: `${Math.floor(daysDiff/7)}w` };
+      return { type: "future", text: `${Math.floor(daysDiff / 7)}w` };
     } else if (daysDiff < 0) {
-      return { type: 'past', text: `${Math.abs(daysDiff)}d ago` };
+      return { type: "past", text: `${Math.abs(daysDiff)}d ago` };
     }
 
-    return { type: 'scheduled', text: 'Scheduled' };
+    return { type: "scheduled", text: "Scheduled" };
   };
 
   const handlePageChange = (newPage) => {
@@ -180,8 +192,8 @@ const CustomerDeliveryHistory = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setPage(1);
-    setStatusFilter('all');
-    setDateFilter('');
+    setStatusFilter("all");
+    setDateFilter("");
   };
 
   const handleStatusFilterChange = (status) => {
@@ -195,13 +207,13 @@ const CustomerDeliveryHistory = () => {
   };
 
   const handleSortOrderChange = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     setPage(1);
   };
 
   const clearFilters = () => {
-    setStatusFilter('all');
-    setDateFilter('');
+    setStatusFilter("all");
+    setDateFilter("");
     setPage(1);
     setShowFilters(false);
   };
@@ -223,61 +235,78 @@ const CustomerDeliveryHistory = () => {
       <div className="mobdel-mobile-header">
         <div className="mobdel-mobile-header-top">
           <h1 className="mobdel-customer-title">My Deliveries</h1>
-          <button 
+          <button
             className="mobdel-mobile-filter-btn"
             onClick={() => setShowFilters(!showFilters)}
           >
             <FaFilter />
           </button>
         </div>
-        
+
         {/* Mobile Tabs - Scrollable */}
         <div className="mobdel-mobile-tabs">
-          <button 
-            className={`mobdel-mobile-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
-            onClick={() => handleTabChange('upcoming')}
+          <button
+            className={`mobdel-mobile-tab ${
+              activeTab === "upcoming" ? "active" : ""
+            }`}
+            onClick={() => handleTabChange("upcoming")}
           >
             Upcoming
           </button>
-          <button 
-            className={`mobdel-mobile-tab ${activeTab === 'delivered' ? 'active' : ''}`}
-            onClick={() => handleTabChange('delivered')}
+          <button
+            className={`mobdel-mobile-tab ${
+              activeTab === "delivered" ? "active" : ""
+            }`}
+            onClick={() => handleTabChange("delivered")}
           >
             Delivered
           </button>
-          <button 
-            className={`mobdel-mobile-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
-            onClick={() => handleTabChange('past-pending')}
+          {/* <button
+            className={`mobdel-mobile-tab ${
+              activeTab === "past-pending" ? "active" : ""
+            }`}
+            onClick={() => handleTabChange("past-pending")}
           >
             Past Pending
-          </button>
+          </button> */}
+          <Link to="/dashboard/remnant" className="mobdel-mobile-tab mobdel-rem-tab">
+            My Gas Remnant
+          </Link>
         </div>
       </div>
 
       {/* Desktop Header */}
       <div className="mobdel-desktop-header">
         <h1 className="mobdel-customer-title">My Delivery Schedule</h1>
-        
+
         {/* Desktop Tabs */}
         <div className="mobdel-desktop-tabs">
-          <button 
-            className={`mobdel-tab ${activeTab === 'upcoming' ? 'active' : ''}`}
-            onClick={() => handleTabChange('upcoming')}
+          <button
+            className={`mobdel-tab ${activeTab === "upcoming" ? "active" : ""}`}
+            onClick={() => handleTabChange("upcoming")}
           >
             Upcoming Deliveries
           </button>
-          <button 
-            className={`mobdel-tab ${activeTab === 'delivered' ? 'active' : ''}`}
-            onClick={() => handleTabChange('delivered')}
+          <button
+            className={`mobdel-tab ${
+              activeTab === "delivered" ? "active" : ""
+            }`}
+            onClick={() => handleTabChange("delivered")}
           >
             Delivered
           </button>
-          <button 
-            className={`mobdel-tab ${activeTab === 'past-pending' ? 'active' : ''}`}
-            onClick={() => handleTabChange('past-pending')}
+          {/* <button
+            className={`mobdel-tab ${
+              activeTab === "past-pending" ? "active" : ""
+            }`}
+            onClick={() => handleTabChange("past-pending")}
           >
             Past Pending
-          </button>
+          </button> */}
+
+          <Link to="/dashboard/remnant" className="mobdel-tab">
+            My Gas Remnant
+          </Link>
         </div>
 
         {/* Desktop Controls */}
@@ -292,10 +321,10 @@ const CustomerDeliveryHistory = () => {
             />
           </div>
 
-          {(activeTab === 'upcoming' || activeTab === 'past-pending') && (
+          {(activeTab === "upcoming" || activeTab === "past-pending") && (
             <div className="mobdel-filter-group">
               <FaFilter className="mobdel-control-icon" />
-              <select 
+              <select
                 className="mobdel-filter-select"
                 value={statusFilter}
                 onChange={(e) => handleStatusFilterChange(e.target.value)}
@@ -313,15 +342,12 @@ const CustomerDeliveryHistory = () => {
 
           <div className="mobdel-sort-group">
             <FaSort className="mobdel-control-icon" />
-            <button 
-              className="mobdel-sort-btn"
-              onClick={handleSortOrderChange}
-            >
-              {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
+            <button className="mobdel-sort-btn" onClick={handleSortOrderChange}>
+              {sortOrder === "asc" ? "Nearest First" : "Furthest First"}
             </button>
           </div>
 
-          {(statusFilter !== 'all' || dateFilter) && (
+          {(statusFilter !== "all" || dateFilter) && (
             <button className="mobdel-clear-filters" onClick={clearFilters}>
               Clear Filters
             </button>
@@ -338,7 +364,7 @@ const CustomerDeliveryHistory = () => {
               <FaTimesCircle />
             </button>
           </div>
-          
+
           <div className="mobdel-filter-panel-content">
             <div className="mobdel-mobile-filter-group">
               <label>Date</label>
@@ -350,10 +376,10 @@ const CustomerDeliveryHistory = () => {
               />
             </div>
 
-            {(activeTab === 'upcoming' || activeTab === 'past-pending') && (
+            {(activeTab === "upcoming" || activeTab === "past-pending") && (
               <div className="mobdel-mobile-filter-group">
                 <label>Status</label>
-                <select 
+                <select
                   value={statusFilter}
                   onChange={(e) => handleStatusFilterChange(e.target.value)}
                   className="mobdel-mobile-filter-select"
@@ -371,16 +397,19 @@ const CustomerDeliveryHistory = () => {
 
             <div className="mobdel-mobile-filter-group">
               <label>Sort Order</label>
-              <button 
+              <button
                 className="mobdel-mobile-sort-btn"
                 onClick={handleSortOrderChange}
               >
-                {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
+                {sortOrder === "asc" ? "Nearest First" : "Furthest First"}
               </button>
             </div>
 
-            {(statusFilter !== 'all' || dateFilter) && (
-              <button className="mobdel-mobile-clear-btn" onClick={clearFilters}>
+            {(statusFilter !== "all" || dateFilter) && (
+              <button
+                className="mobdel-mobile-clear-btn"
+                onClick={clearFilters}
+              >
                 Clear All Filters
               </button>
             )}
@@ -391,18 +420,23 @@ const CustomerDeliveryHistory = () => {
       <div className="mobdel-deliveries-list">
         {deliveries.map((delivery) => {
           const timeContext = getDeliveryTimeContext(delivery);
-          
+
           return (
             <div key={delivery._id} className="mobdel-delivery-card">
               {/* Mobile Card View */}
               <div className="mobdel-mobile-card">
                 <div className="mobdel-mobile-card-header">
                   <div className="mobdel-mobile-card-left">
-                    <div className={`mobdel-mobile-time-badge mobdel-time-${timeContext.type}`}>
+                    <div
+                      className={`mobdel-mobile-time-badge mobdel-time-${timeContext.type}`}
+                    >
                       {timeContext.text}
                     </div>
                     <span className={getStatusClass(delivery.status)}>
-                      {delivery.status.replace(/_/g, ' ').charAt(0).toUpperCase() + delivery.status.slice(1)}
+                      {delivery.status
+                        .replace(/_/g, " ")
+                        .charAt(0)
+                        .toUpperCase() + delivery.status.slice(1)}
                     </span>
                   </div>
                   <button className="mobdel-mobile-more-btn">
@@ -412,15 +446,20 @@ const CustomerDeliveryHistory = () => {
 
                 <div className="mobdel-mobile-card-body">
                   <div className="mobdel-mobile-plan-info">
-                    <h3>{delivery.subscriptionId?.planName || 'N/A'}</h3>
-                    <p>{delivery.subscriptionId?.size || 'N/A'} • {delivery.subscriptionId?.frequency || 'N/A'}</p>
+                    <h3>{delivery.subscriptionId?.planName || "N/A"}</h3>
+                    <p>
+                      {delivery.subscriptionId?.size || "N/A"} •{" "}
+                      {delivery.subscriptionId?.frequency || "N/A"}
+                    </p>
                   </div>
 
                   <div className="mobdel-mobile-details">
                     <div className="mobdel-mobile-detail-row">
                       <FaMapMarkerAlt className="mobdel-icon" />
                       <span className="mobdel-mobile-detail-text">
-                        {delivery.address?.length > 40 ? delivery.address.substring(0, 40) + '...' : delivery.address}
+                        {delivery.address?.length > 40
+                          ? delivery.address.substring(0, 40) + "..."
+                          : delivery.address}
                       </span>
                     </div>
 
@@ -428,7 +467,8 @@ const CustomerDeliveryHistory = () => {
                       <div className="mobdel-mobile-detail-row">
                         <FaUser className="mobdel-icon" />
                         <span className="mobdel-mobile-detail-text">
-                          {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
+                          {delivery.deliveryAgent.firstName}{" "}
+                          {delivery.deliveryAgent.lastName}
                         </span>
                       </div>
                     )}
@@ -455,30 +495,33 @@ const CustomerDeliveryHistory = () => {
                 </div>
 
                 <div className="mobdel-mobile-card-footer">
-                  {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
-                    <button
-                      className="mobdel-mobile-confirm-btn"
-                      onClick={() => {
-                        setSelectedDelivery(delivery);
-                        setConfirmDialogOpen(true);
-                      }}
-                    >
-                      <FaCheckCircle /> Confirm Delivery
-                    </button>
-                  )}
+                  {delivery.status === "delivered" &&
+                    !delivery.customerConfirmation?.confirmed && (
+                      <button
+                        className="mobdel-mobile-confirm-btn"
+                        onClick={() => {
+                          setSelectedDelivery(delivery);
+                          setConfirmDialogOpen(true);
+                        }}
+                      >
+                        <FaCheckCircle /> Confirm Delivery
+                      </button>
+                    )}
                 </div>
               </div>
 
               {/* Desktop Card View */}
               <div className="mobdel-desktop-card">
                 <div className="mobdel-card-content">
-                  <div className={`mobdel-time-context mobdel-time-${timeContext.type}`}>
+                  <div
+                    className={`mobdel-time-context mobdel-time-${timeContext.type}`}
+                  >
                     {timeContext.text}
                   </div>
 
                   <div className="mobdel-card-header">
                     <span className={getStatusClass(delivery.status)}>
-                      {delivery.status.replace(/_/g, ' ').toUpperCase()}
+                      {delivery.status.replace(/_/g, " ").toUpperCase()}
                     </span>
                     <span className="mobdel-delivery-date">
                       Scheduled: {formatDate(delivery.deliveryDate)}
@@ -487,7 +530,8 @@ const CustomerDeliveryHistory = () => {
 
                   <div className="mobdel-plan-info">
                     <div className="mobdel-plan-name">
-                      {delivery.subscriptionId?.planName || 'N/A'} - {delivery.subscriptionId?.size || 'N/A'}
+                      {delivery.subscriptionId?.planName || "N/A"} -{" "}
+                      {delivery.subscriptionId?.size || "N/A"}
                     </div>
                     {delivery.subscriptionId?.frequency && (
                       <div className="mobdel-plan-frequency">
@@ -509,15 +553,20 @@ const CustomerDeliveryHistory = () => {
                         <div className="mobdel-detail-item">
                           <FaUser className="mobdel-icon" />
                           <div className="mobdel-detail-text">
-                            <span className="mobdel-detail-label">Delivery Agent:</span>{' '}
-                            {delivery.deliveryAgent.firstName} {delivery.deliveryAgent.lastName}
+                            <span className="mobdel-detail-label">
+                              Delivery Agent:
+                            </span>{" "}
+                            {delivery.deliveryAgent.firstName}{" "}
+                            {delivery.deliveryAgent.lastName}
                           </div>
                         </div>
                         {delivery.deliveryAgent.phone && (
                           <div className="mobdel-detail-item">
                             <FaPhone className="mobdel-icon" />
                             <div className="mobdel-detail-text">
-                              <span className="mobdel-detail-label">Phone:</span>{' '}
+                              <span className="mobdel-detail-label">
+                                Phone:
+                              </span>{" "}
                               {delivery.deliveryAgent.phone}
                             </div>
                           </div>
@@ -529,7 +578,9 @@ const CustomerDeliveryHistory = () => {
                       <div className="mobdel-detail-item">
                         <FaTruck className="mobdel-icon" />
                         <div className="mobdel-detail-text">
-                          <span className="mobdel-detail-label">Delivered:</span>{' '}
+                          <span className="mobdel-detail-label">
+                            Delivered:
+                          </span>{" "}
                           {formatDate(delivery.deliveredAt)}
                         </div>
                       </div>
@@ -539,7 +590,9 @@ const CustomerDeliveryHistory = () => {
                       <div className="mobdel-detail-item">
                         <FaClock className="mobdel-icon" />
                         <div className="mobdel-detail-text">
-                          <span className="mobdel-detail-label">Agent Notes:</span>{' '}
+                          <span className="mobdel-detail-label">
+                            Agent Notes:
+                          </span>{" "}
                           {delivery.agentNotes}
                         </div>
                       </div>
@@ -547,7 +600,10 @@ const CustomerDeliveryHistory = () => {
 
                     {delivery.failedReason && (
                       <div className="mobdel-status-message mobdel-message-error">
-                        <div><strong>Failure Reason:</strong> {delivery.failedReason}</div>
+                        <div>
+                          <strong>Failure Reason:</strong>{" "}
+                          {delivery.failedReason}
+                        </div>
                       </div>
                     )}
 
@@ -555,11 +611,15 @@ const CustomerDeliveryHistory = () => {
                       <div className="mobdel-status-message mobdel-message-confirmed">
                         <div>
                           <FaCheckCircle className="mobdel-icon" />
-                          <strong> Confirmed by you on:</strong> {formatDate(delivery.customerConfirmation.confirmedAt)}
+                          <strong> Confirmed by you on:</strong>{" "}
+                          {formatDate(
+                            delivery.customerConfirmation.confirmedAt
+                          )}
                         </div>
                         {delivery.customerConfirmation.customerNotes && (
-                          <div style={{ marginTop: '0.5rem' }}>
-                            <strong>Your Notes:</strong> {delivery.customerConfirmation.customerNotes}
+                          <div style={{ marginTop: "0.5rem" }}>
+                            <strong>Your Notes:</strong>{" "}
+                            {delivery.customerConfirmation.customerNotes}
                           </div>
                         )}
                       </div>
@@ -569,24 +629,25 @@ const CustomerDeliveryHistory = () => {
                   <div className="mobdel-card-footer">
                     <div className="mobdel-delivery-meta">
                       {delivery.retryCount > 0 && (
-                        <div style={{ color: '#f39c12', fontSize: '0.9rem' }}>
+                        <div style={{ color: "#f39c12", fontSize: "0.9rem" }}>
                           Retry attempt: {delivery.retryCount}
                         </div>
                       )}
                     </div>
-                    
-                    {delivery.status === 'delivered' && !delivery.customerConfirmation?.confirmed && (
-                      <button
-                        className="mobdel-btn mobdel-btn-success"
-                        onClick={() => {
-                          setSelectedDelivery(delivery);
-                          setConfirmDialogOpen(true);
-                        }}
-                      >
-                        <FaCheckCircle className="mobdel-icon" />
-                        Confirm Delivery
-                      </button>
-                    )}
+
+                    {delivery.status === "delivered" &&
+                      !delivery.customerConfirmation?.confirmed && (
+                        <button
+                          className="mobdel-btn mobdel-btn-success"
+                          onClick={() => {
+                            setSelectedDelivery(delivery);
+                            setConfirmDialogOpen(true);
+                          }}
+                        >
+                          <FaCheckCircle className="mobdel-icon" />
+                          Confirm Delivery
+                        </button>
+                      )}
                   </div>
                 </div>
               </div>
@@ -601,16 +662,19 @@ const CustomerDeliveryHistory = () => {
             </div>
             <h3>No deliveries found</h3>
             <p>
-              {activeTab === 'upcoming' 
+              {activeTab === "upcoming"
                 ? "You don't have any upcoming deliveries scheduled."
-                : activeTab === 'delivered'
+                : activeTab === "delivered"
                 ? "You don't have any delivered orders."
-                : activeTab === 'past-pending'
+                : activeTab === "past-pending"
                 ? "You don't have any past pending deliveries."
                 : "You don't have any delivery records for the selected filter."}
             </p>
-            {(statusFilter !== 'all' || dateFilter) && (
-              <button className="mobdel-btn mobdel-btn-outline" onClick={clearFilters}>
+            {(statusFilter !== "all" || dateFilter) && (
+              <button
+                className="mobdel-btn mobdel-btn-outline"
+                onClick={clearFilters}
+              >
                 Clear Filters
               </button>
             )}
@@ -643,11 +707,10 @@ const CustomerDeliveryHistory = () => {
       {totalPages > 1 && (
         <div className="mobdel-desktop-pagination">
           <div className="mobdel-pagination-info">
-            Page {page} of {totalPages} • 
-            Showing {deliveries.length} deliveries • 
-            Sorted: {sortOrder === 'asc' ? 'Nearest First' : 'Furthest First'}
+            Page {page} of {totalPages} • Showing {deliveries.length} deliveries
+            • Sorted: {sortOrder === "asc" ? "Nearest First" : "Furthest First"}
             {dateFilter && ` • Date: ${dateFilter}`}
-            {statusFilter !== 'all' && ` • Status: ${statusFilter}`}
+            {statusFilter !== "all" && ` • Status: ${statusFilter}`}
           </div>
           <div className="mobdel-pagination-buttons">
             <button
@@ -657,22 +720,24 @@ const CustomerDeliveryHistory = () => {
             >
               Previous
             </button>
-            
+
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               const pageNumber = i + Math.max(1, page - 2);
               if (pageNumber > totalPages) return null;
-              
+
               return (
                 <button
                   key={pageNumber}
-                  className={`mobdel-page-btn ${page === pageNumber ? 'active' : ''}`}
+                  className={`mobdel-page-btn ${
+                    page === pageNumber ? "active" : ""
+                  }`}
                   onClick={() => handlePageChange(pageNumber)}
                 >
                   {pageNumber}
                 </button>
               );
             })}
-            
+
             <button
               className="mobdel-page-btn"
               disabled={page >= totalPages}
@@ -695,7 +760,10 @@ const CustomerDeliveryHistory = () => {
               </button>
             </div>
             <div className="mobdel-mobile-dialog-content">
-              <p>Please confirm that you have received your {selectedDelivery?.subscriptionId?.planName} delivery.</p>
+              <p>
+                Please confirm that you have received your{" "}
+                {selectedDelivery?.subscriptionId?.planName} delivery.
+              </p>
               <div className="mobdel-mobile-form-group">
                 <label>Delivery Notes (Optional)</label>
                 <textarea
@@ -707,13 +775,13 @@ const CustomerDeliveryHistory = () => {
               </div>
             </div>
             <div className="mobdel-mobile-dialog-footer">
-              <button 
+              <button
                 className="mobdel-mobile-dialog-btn secondary"
                 onClick={() => setConfirmDialogOpen(false)}
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="mobdel-mobile-dialog-btn primary"
                 onClick={handleConfirmDelivery}
               >
@@ -732,11 +800,14 @@ const CustomerDeliveryHistory = () => {
               <h2 className="mobdel-dialog-title">Confirm Delivery</h2>
             </div>
             <div className="mobdel-dialog-content">
-              <p style={{ marginBottom: '1rem', color: '#7f8c8d' }}>
-                Please confirm that you have received your {selectedDelivery?.subscriptionId?.planName} delivery.
+              <p style={{ marginBottom: "1rem", color: "#7f8c8d" }}>
+                Please confirm that you have received your{" "}
+                {selectedDelivery?.subscriptionId?.planName} delivery.
               </p>
               <div className="mobdel-form-group">
-                <label className="mobdel-form-label">Delivery Notes (Optional)</label>
+                <label className="mobdel-form-label">
+                  Delivery Notes (Optional)
+                </label>
                 <textarea
                   className="mobdel-form-textarea"
                   value={confirmationNotes}
@@ -747,13 +818,13 @@ const CustomerDeliveryHistory = () => {
               </div>
             </div>
             <div className="mobdel-dialog-footer">
-              <button 
+              <button
                 className="mobdel-btn mobdel-btn-outline"
                 onClick={() => setConfirmDialogOpen(false)}
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="mobdel-btn mobdel-btn-success"
                 onClick={handleConfirmDelivery}
               >
@@ -768,7 +839,7 @@ const CustomerDeliveryHistory = () => {
       {/* Mobile Snackbar */}
       {snackbar.open && (
         <div className={`mobdel-mobile-snackbar ${snackbar.severity}`}>
-          {snackbar.severity === 'success' ? (
+          {snackbar.severity === "success" ? (
             <FaCheckCircle />
           ) : (
             <FaTimesCircle />
@@ -780,7 +851,7 @@ const CustomerDeliveryHistory = () => {
       {/* Desktop Snackbar */}
       {snackbar.open && (
         <div className={`mobdel-snackbar ${snackbar.severity}`}>
-          {snackbar.severity === 'success' ? (
+          {snackbar.severity === "success" ? (
             <FaCheckCircle className="mobdel-icon" />
           ) : (
             <FaTimesCircle className="mobdel-icon" />

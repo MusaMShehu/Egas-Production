@@ -90,7 +90,7 @@ import DesktopUserProfile from "./components/User/UserProfile/UserProfile";
 import DesktopUserSupport from "./components/User/UserSupport/UserSupport";
 import DesktopUserSettings from "./components/User/UserSettings/UserSettings";
 import DesktopCustomerDeliverySchedule from "./components/User/UserDelivery/CustomerDeliverySchedule";
-import CustomerRemnant from "./components/User/UserDelivery/DeliveryRemnant";
+import DesktopDeliveryRemnant from "./components/User/UserDelivery/DeliveryRemnant";
 
 // USER PANEL MOBILE VIEW
 import MobileDashboardOverview from "./components/User/DashboardMobile";
@@ -102,6 +102,7 @@ import MobileUserProfile from "./components/User/UserProfile/MobileUserProfile";
 import MobileUserSupport from "./components/User/UserSupport/MobileUserSupport";
 import MobileUserSettings from "./components/User/UserSettings/MobileUserSettings";
 import MobileCustomerDeliverySchedule from "./components/User/UserDelivery/MobileCustomerDeliverySchedule";
+import MobileDeliveryRemnant from "./components/User/UserDelivery/MobileDeliveryRemnant";
 
 
 
@@ -150,6 +151,7 @@ function App() {
   const UserSettings = isMobile ? MobileUserSettings : DesktopUserSettings;
   const UserLayout = isMobile ? MobileLayout : DesktopLayout;
   const SubscriptionPlans = isMobile ? MobileSubscriptionPlans : DesktopSubscriptionPlans;
+  const DeliveryRemnant = isMobile ? MobileDeliveryRemnant : DesktopDeliveryRemnant;
 
 
   return (
@@ -233,7 +235,7 @@ function App() {
             <Route path="support" element={<UserSupport />} />
             <Route path="settings" element={<UserSettings />} />
             <Route path="delivery" element={<CustomerDeliverySchedule />} />
-            <Route path="remnant" element={<CustomerRemnant />} />
+            <Route path="remnant" element={<DeliveryRemnant />} />
 
 
               {/* New payment Testing */}

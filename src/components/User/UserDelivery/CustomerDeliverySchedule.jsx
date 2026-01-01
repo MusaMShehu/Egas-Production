@@ -262,16 +262,16 @@ const CustomerDeliveryHistory = () => {
           >
             Delivered
           </button>
-          <button
+          {/* <button
             className={`adm-tab ${
               activeTab === "past-pending" ? "active" : ""
             }`}
             onClick={() => handleTabChange("past-pending")}
           >
             Past Pending
-          </button>
+          </button> */}
 
-          <Link to="/dashboard/remnant"  className='adm-tab'>
+          <Link to="/dashboard/remnant"  className='adm-tab adm-rem-tab'>
             My Gas Remnant
           </Link>
         </div>

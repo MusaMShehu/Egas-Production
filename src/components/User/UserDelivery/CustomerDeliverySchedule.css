@@ -43,6 +43,15 @@
   color: white;
 }
 
+.adm-rem-tab{
+  background: #34495e;
+  color: white;
+}
+
+.adm-rem-tab:hover {
+  background: #3498db;
+}
+
 /* Controls */
 .adm-controls {
   display: flex;
