@@ -180,6 +180,20 @@ const DashboardMobile = () => {
         icon: <FaHistory />,
         path: '/dashboard/history',
         className: 'mobdash-action-btn mobdash-quaternary',
+      },
+       {
+        id: 'history',
+        title: 'History',
+        icon: <FaHistory />,
+        path: '/dashboard/history',
+        className: 'mobdash-action-btn mobdash-quaternary',
+      },
+       {
+        id: 'history',
+        title: 'History',
+        icon: <FaHistory />,
+        path: '/dashboard/history',
+        className: 'mobdash-action-btn mobdash-quaternary',
       }
     ];
 
@@ -269,6 +283,20 @@ const DashboardMobile = () => {
   const StatsCards = () => (
     <div className="mobdash-mobile-stats-cards">
       <div className="mobdash-stats-grid">
+         <div 
+          className="mobdash-stat-card mobdash-purple"
+          onClick={() => infoToast(`Wallet balance: ${formatCurrency(walletBalance)}`)}
+        >
+          <div className="mobdash-stat-icon">
+            <FaWallet />
+          </div>
+          <div className="mobdash-stat-content">
+            <h3>Wallet Balance</h3>
+            <div className="mobdash-stat-value">{formatCurrency(walletBalance)}</div>
+            <p className="mobdash-stat-subtitle">Total top-ups: {formatCurrency(topupTotal)}</p>
+          </div>
+        </div>
+
         <div 
           className="mobdash-stat-card mobdash-blue"
           onClick={() => infoToast(`Total spent: ${formatCurrency(totalSpent)}`)}
@@ -284,23 +312,7 @@ const DashboardMobile = () => {
         </div>
 
         <div 
-          className="mobdash-stat-card mobdash-orange"
-          onClick={() => infoToast(`${orderCount} orders • ${activeOrderCount} active`)}
-        >
-          <div className="mobdash-stat-icon">
-            <FaShoppingCart />
-          </div>
-          <div className="mobdash-stat-content">
-            <h3>Orders</h3>
-            <div className="mobdash-stat-value">{orderCount}</div>
-            <p className="mobdash-stat-subtitle">{activeOrderCount} active</p>
-          </div>
-        </div>
-
-        <div 
-          className="mobdash-stat-card mobdash-green"
-          onClick={() => infoToast(`${subscriptionCount} subscriptions • ${activeSubscriptions.length} active`)}
-        >
+          className="mobdash-stat-card mobdash-green">
           <div className="mobdash-stat-icon">
             <FaFileInvoiceDollar />
           </div>
@@ -312,16 +324,16 @@ const DashboardMobile = () => {
         </div>
 
         <div 
-          className="mobdash-stat-card mobdash-purple"
-          onClick={() => infoToast(`Wallet balance: ${formatCurrency(walletBalance)}`)}
+          className="mobdash-stat-card mobdash-orange"
+          onClick={() => infoToast(`${orderCount} orders • ${activeOrderCount} active`)}
         >
           <div className="mobdash-stat-icon">
-            <FaWallet />
+            <FaShoppingCart />
           </div>
           <div className="mobdash-stat-content">
-            <h3>Wallet Balance</h3>
-            <div className="mobdash-stat-value">{formatCurrency(walletBalance)}</div>
-            <p className="mobdash-stat-subtitle">Total top-ups: {formatCurrency(topupTotal)}</p>
+            <h3>Orders</h3>
+            <div className="mobdash-stat-value">{orderCount}</div>
+            <p className="mobdash-stat-subtitle">{activeOrderCount} active</p>
           </div>
         </div>
       </div>
@@ -370,7 +382,6 @@ const DashboardMobile = () => {
           <button 
             className="mobdash-view-all-btn"
             onClick={() => {
-              infoToast('Viewing all deliveries...');
               navigate('/tracking');
             }}
           >
