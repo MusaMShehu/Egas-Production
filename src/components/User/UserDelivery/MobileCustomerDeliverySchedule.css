@@ -84,6 +84,352 @@
 .mobdel-rem-tab:hover {
   background: #3498db;
 }
+
+
+/* MobileCustomerDeliverySchedule.css - Add these styles */
+
+/* Tab with counts */
+.mobdel-mobile-tab-count,
+.mobdel-tab-count {
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  margin-left: 6px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.mobdel-mobile-tab.active .mobdel-mobile-tab-count,
+.mobdel-tab.active .mobdel-tab-count {
+  background: #1976d2;
+  color: white;
+}
+
+/* Time context badges */
+.mobdel-mobile-time-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.mobdel-time-today {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.mobdel-time-tomorrow {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.mobdel-time-this-week {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mobdel-time-future {
+  background: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+.mobdel-time-overdue {
+  background: #e67e86;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  animation: mobdel-pulse 2s infinite;
+}
+
+.mobdel-time-delivered {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mobdel-icon-sm {
+  font-size: 0.75rem;
+}
+
+/* Empty state */
+.mobdel-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.mobdel-empty-state-icon {
+  color: #6c757d;
+  margin-bottom: 16px;
+}
+
+.mobdel-empty-state h3 {
+  color: #343a40;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.mobdel-empty-state p {
+  color: #6c757d;
+  max-width: 300px;
+  margin: 0 auto 16px;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+/* Pulse animation for overdue deliveries */
+@keyframes mobdel-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Card enhancements */
+.mobdel-delivery-card {
+  border-left: 3px solid #e9ecef;
+  margin-bottom: 12px;
+}
+
+.mobdel-delivery-card.mobdel-today {
+  border-left-color: #ffc107;
+}
+
+.mobdel-delivery-card.mobdel-overdue {
+  border-left-color: #dc3545;
+}
+
+.mobdel-delivery-card.mobdel-delivered {
+  border-left-color: #28a745;
+}
+
+/* Mobile card header improvements */
+/* .mobdel-mobile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.mobdel-mobile-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mobdel-mobile-date {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+} */
+
+/* Status message styling */
+.mobdel-message-error {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 8px;
+  margin: 8px 0;
+  font-size: 0.85rem;
+}
+
+.mobdel-message-confirmed {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 6px;
+  padding: 8px;
+  margin: 8px 0;
+  font-size: 0.85rem;
+}
+
+.mobdel-message-error .mobdel-icon,
+.mobdel-message-confirmed .mobdel-icon {
+  margin-right: 6px;
+  font-size: 0.9rem;
+}
+
+/* Filter indicator */
+.mobdel-filter-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #dc3545;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.mobdel-mobile-filter-btn {
+  position: relative;
+}
+
+/* Mobile retry badge */
+.mobdel-mobile-retry {
+  background: #f39c12;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .mobdel-mobile-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .mobdel-mobile-tab {
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .mobdel-mobile-card {
+    padding: 12px;
+  }
+  
+  .mobdel-mobile-plan-info h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  
+  .mobdel-mobile-plan-info p {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  
+  .mobdel-mobile-detail-row {
+    margin-bottom: 6px;
+  }
+  
+  .mobdel-mobile-detail-text {
+    font-size: 0.85rem;
+  }
+  
+  .mobdel-mobile-confirm-btn {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobdel-mobile-header,
+  .mobdel-mobile-tabs {
+    display: none;
+  }
+  
+  .mobdel-desktop-header {
+    display: block;
+  }
+  
+  .mobdel-mobile-card {
+    display: none;
+  }
+  
+  .mobdel-desktop-card {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobdel-desktop-header {
+    display: none;
+  }
+  
+  .mobdel-desktop-card {
+    display: none;
+  }
+  
+  .mobdel-mobile-card {
+    display: block;
+  }
+  
+  .mobdel-desktop-pagination {
+    display: none;
+  }
+  
+  .mobdel-mobile-pagination {
+    display: flex;
+  }
+}
+
+/* Desktop time context */
+.mobdel-time-context {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+
+/* Mobile card body improvements */
+/* .mobdel-mobile-card-body {
+  margin: 10px 0;
+}
+
+.mobdel-mobile-error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobdel-mobile-confirmed {
+  background: #d4edda;
+  color: #155724;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+} */
+
+/* Mobile card footer */
+.mobdel-mobile-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e9ecef;
+}
+
+
 /* Mobile Filter Panel */
 .mobdel-mobile-filter-panel {
   position: fixed;

@@ -153,10 +153,10 @@ const MobileSubscriptionPlans = () => {
     let freqMultiplier = 1;
     switch (frequency) {
       case 'Weekly':
-        freqMultiplier = 4;
+        freqMultiplier = 5;
         break;
-      case 'Bi-Weekly':
-        freqMultiplier = 2;
+      case 'Bi-weekly':
+        freqMultiplier = 3;
         break;
       case 'Daily':
         freqMultiplier = 30;
@@ -232,7 +232,7 @@ const MobileSubscriptionPlans = () => {
     
     if (!user) {
       warningToast('Please log in to subscribe');
-      navigate('/login');
+      navigate('/auth');
       return;
     }
 

@@ -237,31 +237,6 @@ const MobileSubscriptions = () => {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="mobsubs-subscription-stats">
-        <div className="mobsubs-stat-card">
-          <div className="mobsubs-stat-icon mobsubs-active">
-            <FaFire />
-          </div>
-          <div className="mobsubs-stat-content">
-            <h3>Active</h3>
-            <p>{activeSubscriptions.length}</p>
-          </div>
-        </div>
-        
-        <div className="mobsubs-stat-card">
-          <div className="mobsubs-stat-icon mobsubs-total">
-            <FaCreditCard />
-          </div>
-          <div className="mobsubs-stat-content">
-            <h3>Monthly</h3>
-            <p>{formatCurrency(
-              activeSubscriptions.reduce((sum, sub) => sum + (sub.price || 0), 0)
-            )}</p>
-          </div>
-        </div>
-      </div>
-
       {/* Search and Create */}
       <div className="mobsubs-actions-bar">
         <div className="mobsubs-search-container">

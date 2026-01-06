@@ -407,33 +407,6 @@ const Subscriptions = () => {
         </div>
       )}
 
-      {/* Subscription Stats */}
-      <div className="sub-stats-container">
-        <div className="sub-stat-card">
-          <div className="sub-stat-icon active">
-            <FaWallet />
-          </div>
-          <h3>Active Subscriptions</h3>
-          <div className="sub-value">{activeSubscriptions.length}</div>
-        </div>
-
-        <div className="sub-stat-card">
-          <div className="sub-stat-icon total">
-            <FaCreditCard />
-          </div>
-          <h3>Total Spent</h3>
-          <div className="sub-value">{formatCurrency(paymentData.subscriptionTotal || 0)}</div>
-        </div>
-
-        <div className="sub-stat-card">
-          <div className="sub-stat-icon monthly">
-            <FaWallet />
-          </div>
-          <h3>This Month</h3>
-          <div className="sub-value">{formatCurrency(paymentData.subscriptionMonthly || 0)}</div>
-        </div>
-      </div>
-
       <div className="sub-sub-content-section">
         {/* Active Subscriptions */}
         {activeSubscriptions.length > 0 && (

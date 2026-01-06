@@ -52,6 +52,181 @@
   background: #3498db;
 }
 
+/* Add these styles to your existing CSS */
+
+/* Tab with counts */
+.adm-tab-count {
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.adm-tab.active .adm-tab-count {
+  background: #1976d2;
+  color: white;
+}
+
+/* Time context badges */
+.adm-time-context {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+
+.adm-time-today {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.adm-time-tomorrow {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.adm-time-this-week {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.adm-time-future {
+  background: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+.adm-time-overdue {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  animation: pulse 2s infinite;
+}
+
+.adm-time-delivered {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.adm-icon-sm {
+  font-size: 0.875rem;
+}
+
+/* Empty state */
+.adm-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.adm-empty-state-icon {
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.adm-empty-state h3 {
+  color: #343a40;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.adm-empty-state p {
+  color: #6c757d;
+  max-width: 400px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+}
+
+/* Pulse animation for overdue deliveries */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Card enhancements */
+.adm-delivery-card {
+  border-left: 4px solid #e9ecef;
+}
+
+.adm-delivery-card.adm-today {
+  border-left-color: #ffc107;
+}
+
+.adm-delivery-card.adm-overdue {
+  border-left-color: #dc3545;
+}
+
+.adm-delivery-card.adm-delivered {
+  border-left-color: #28a745;
+}
+
+/* Status message styling */
+.adm-message-error {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.adm-message-confirmed {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.adm-message-error .adm-icon,
+.adm-message-confirmed .adm-icon {
+  margin-right: 8px;
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .adm-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+  }
+  
+  .adm-tab {
+    white-space: nowrap;
+  }
+  
+  .adm-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .adm-filter-group,
+  .adm-sort-group {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
 /* Controls */
 .adm-controls {
   display: flex;
