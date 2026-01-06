@@ -5,6 +5,7 @@ import {
   FaShoppingCart, 
   FaCalendarAlt,
   FaHistory,
+  FaWallet,
   FaUser,
   FaFire,
   FaGasPump,
@@ -25,10 +26,10 @@ const MobileBottomTabs = () => {
       activeIcon: <FaHome style={{ color: '#FF6B35' }} />
     },
     {
-      id: 'order',
-      label: 'Order',
+      id: 'refill',
+      label: 'Refill',
       icon: <FaGasPump />,
-      path: '/dashboard/orders',
+      path: '/subscription-plan',
       activeIcon: <FaFire style={{ color: '#FF6B35' }} />
     },
     {
@@ -39,18 +40,18 @@ const MobileBottomTabs = () => {
       activeIcon: <FaCalendarAlt style={{ color: '#FF6B35' }} />
     },
     {
-      id: 'history',
-      label: 'Subs',
-      icon: <FaHistory />,
-      path: '/dashboard/subscriptions',
-      activeIcon: <FaReceipt style={{ color: '#FF6B35' }} />
+      id: 'wallet',
+      label: 'Wallet',
+      icon: <FaWallet />,
+      path: '/dashboard/payments',
+      activeIcon: <FaWallet style={{ color: '#FF6B35' }} />
     },
     {
       id: 'profile',
-      label: 'Wallet',
+      label: 'Profile',
       icon: <FaUser />,
-      path: '/dashboard/payments',
-      activeIcon: <FaCog style={{ color: '#FF6B35' }} />
+      path: '/dashboard/profile',
+      activeIcon: <FaUser style={{ color: '#FF6B35' }} />
     }
   ];
 

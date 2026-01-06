@@ -52,7 +52,7 @@ import "./App.css";
 // authentication
 // import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthPage from "./AuthForm/authPage";
-import ForgotPassword from './AuthForm/forgotPassword';
+import ForgotPassword from './AuthForm/ForgotPassword';
 
 
 // Order Section

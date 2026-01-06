@@ -1,8 +1,26 @@
+
 // components/mobile/MobileSubscriptionPlans.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MobileSubscriptionPlans.css';
-import { FaWallet, FaCreditCard, FaFire, FaGasPump, FaCalendar, FaCheck, FaTimes, FaPlus, FaMinus, FaExclamationTriangle, FaShieldAlt, FaTruck, FaBolt, FaTag, FaUserFriends } from 'react-icons/fa';
+import { 
+  FaWallet, 
+  FaCreditCard, 
+  FaFire, 
+  FaBolt, 
+  FaGasPump, 
+  FaCalendar, 
+  FaCheck, 
+  FaTimes, 
+  FaEye,
+  FaTag,
+  FaUserFriends,
+  FaExclamationTriangle,
+  FaArrowRight,
+  FaInfoCircle,
+  FaTruck,
+  FaShieldAlt
+} from 'react-icons/fa';
 import { successToast, errorToast, infoToast, warningToast } from "../../utils/toast";
 
 const MobileSubscriptionPlans = () => {
@@ -19,6 +37,7 @@ const MobileSubscriptionPlans = () => {
   const [error, setError] = useState('');
   const [showSummary, setShowSummary] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('paystack');
+  const [planDetailsModal, setPlanDetailsModal] = useState(null);
 
   const API_BASE_URL = 'https://egas-server-1.onrender.com/api/v1';
 
@@ -37,7 +56,6 @@ const MobileSubscriptionPlans = () => {
       }
 
       if (token) {
-        // Fetch wallet balance from dashboard
         const response = await fetch(`${API_BASE_URL}/dashboard/overview`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -63,7 +81,26 @@ const MobileSubscriptionPlans = () => {
       const result = await response.json();
       
       if (result.success) {
-        const sortedPlans = (result.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
+        const allPlans = result.data || [];
+        
+        // Sort plans: one-time first, then emergency, then custom, then preset plans
+        const sortedPlans = allPlans.sort((a, b) => {
+          // One-time plans first
+          if (a.type === 'one-time' && b.type !== 'one-time') return -1;
+          if (a.type !== 'one-time' && b.type === 'one-time') return 1;
+          
+          // Emergency plans second
+          if (a.type === 'emergency' && b.type !== 'emergency') return -1;
+          if (a.type !== 'emergency' && b.type === 'emergency') return 1;
+          
+          // Custom plans third
+          if (a.type === 'custom' && b.type !== 'custom') return -1;
+          if (a.type !== 'custom' && b.type === 'custom') return 1;
+          
+          // Preset plans sorted by displayOrder
+          return a.displayOrder - b.displayOrder;
+        });
+        
         setPlans(sortedPlans);
         
         // Initialize default selections
@@ -135,15 +172,15 @@ const MobileSubscriptionPlans = () => {
   const getPlanIcon = (planType) => {
     switch (planType) {
       case 'emergency':
-        return <FaBolt className="plan-icon emergency" />;
+        return <FaBolt className="mobsubplan-plan-icon mobsubplan-emergency" />;
       case 'custom':
-        return <FaGasPump className="plan-icon custom" />;
+        return <FaGasPump className="mobsubplan-plan-icon mobsubplan-custom" />;
       case 'one-time':
-        return <FaTag className="plan-icon one-time" />;
+        return <FaTag className="mobsubplan-plan-icon mobsubplan-one-time" />;
       case 'business':
-        return <FaUserFriends className="plan-icon business" />;
+        return <FaUserFriends className="mobsubplan-plan-icon mobsubplan-business" />;
       default:
-        return <FaFire className="plan-icon default" />;
+        return <FaFire className="mobsubplan-plan-icon mobsubplan-default" />;
     }
   };
 
@@ -162,19 +199,10 @@ const MobileSubscriptionPlans = () => {
     }
   };
 
-  const getPlanDescription = (plan) => {
-    if (plan.description) return plan.description;
-    
-    switch (plan.type) {
-      case 'emergency':
-        return 'Immediate delivery for urgent needs';
-      case 'custom':
-        return 'Build your own plan with custom options';
-      case 'one-time':
-        return 'Single purchase without commitment';
-      default:
-        return 'Regular delivery plan with fixed schedule';
-    }
+  const getFrequencyTag = (planType, frequency) => {
+    if (planType === 'one-time') return 'One-Time Purchase';
+    if (planType === 'emergency') return 'Emergency Delivery';
+    return frequency || 'Monthly';
   };
 
   const handlePlanSelection = (plan) => {
@@ -193,6 +221,10 @@ const MobileSubscriptionPlans = () => {
       price
     });
     setShowSummary(true);
+  };
+
+  const handleViewDetails = (plan) => {
+    setPlanDetailsModal(plan);
   };
 
   const handleSubscribe = async () => {
@@ -276,10 +308,288 @@ const MobileSubscriptionPlans = () => {
     return `₦${amount?.toLocaleString() || '0'}`;
   };
 
+  const renderPlanCard = (plan) => {
+    const currentSize = selectedSize[plan._id] || plan.baseSize;
+    const currentFrequency = selectedFrequency[plan._id] || 'Monthly';
+    const currentPeriod = selectedPeriod[plan._id] || 1;
+    const price = calculatePrice(plan, currentSize, currentFrequency, currentPeriod);
+
+    return (
+      <div 
+        key={plan._id} 
+        className="mobsubplan-plan-card"
+        style={{ borderLeftColor: getPlanColor(plan.type) }}
+      >
+        {/* Plan Header */}
+        <div className="mobsubplan-plan-card-header">
+          <div className="mobsubplan-plan-title-section">
+            {getPlanIcon(plan.type)}
+            <div className="mobsubplan-plan-title-content">
+              <h3>{plan.name}</h3>
+              <span className="mobsubplan-plan-type-badge" style={{ backgroundColor: getPlanColor(plan.type) }}>
+                {plan.type === 'one-time' ? 'Single Purchase' : 
+                 plan.type === 'emergency' ? 'Urgent' : 
+                 plan.type === 'custom' ? 'Custom' : 'Regular'}
+              </span>
+            </div>
+          </div>
+          <button 
+            className="mobsubplan-view-details-btn"
+            onClick={() => handleViewDetails(plan)}
+          >
+            <FaEye size={14} />
+          </button>
+        </div>
+
+        {/* Frequency Tag */}
+        <div className="mobsubplan-plan-frequency-tag">
+          <FaCalendar size={12} />
+          <span>{getFrequencyTag(plan.type, currentFrequency)}</span>
+        </div>
+
+        {/* Price Display */}
+        <div className="mobsubplan-plan-price-display">
+          <span className="mobsubplan-price-amount">{formatCurrency(price)}</span>
+          {plan.type !== 'one-time' && plan.type !== 'emergency' && (
+            <span className="mobsubplan-price-period"></span>
+          )}
+        </div>
+
+        {/* Size Selection */}
+        <div className="mobsubplan-plan-option-section">
+          <label className="mobsubplan-option-label">
+            <FaGasPump size={14} />
+            Cylinder Size
+          </label>
+          {(plan.type === 'custom' || plan.type === 'one-time' || plan.type === 'emergency') ? (
+            <select 
+              className="mobsubplan-option-select"
+              value={currentSize}
+              onChange={(e) => setSelectedSize(prev => ({
+                ...prev,
+                [plan._id]: e.target.value
+              }))}
+            >
+              {plan.cylinderSizes?.map(size => (
+                <option key={size} value={size}>
+                  {size}kg
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="mobsubplan-option-info">
+              <span>{plan.baseSize}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Frequency Selection for custom and preset plans */}
+        {(plan.type === 'custom' || plan.type === 'preset') && (
+          <div className="mobsubplan-plan-option-section">
+            <label className="mobsubplan-option-label">
+              <FaCalendar size={14} />
+              Delivery Frequency
+            </label>
+            <select 
+              className="mobsubplan-option-select"
+              value={currentFrequency}
+              onChange={(e) => setSelectedFrequency(prev => ({
+                ...prev,
+                [plan._id]: e.target.value
+              }))}
+            >
+              {plan.deliveryFrequency?.map(freq => (
+                <option key={freq} value={freq}>
+                  {freq}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Period Selection for non-one-time plans */}
+        {plan.type !== 'one-time' && plan.subscriptionPeriod?.length > 0 && (
+          <div className="mobsubplan-plan-option-section">
+            <label className="mobsubplan-option-label">
+              <FaCalendar size={14} />
+              Subscription Period
+            </label>
+            <select 
+              className="mobsubplan-option-select"
+              value={currentPeriod}
+              onChange={(e) => setSelectedPeriod(prev => ({
+                ...prev,
+                [plan._id]: parseInt(e.target.value)
+              }))}
+            >
+              {plan.subscriptionPeriod?.map(period => (
+                <option key={period} value={period}>
+                  {period} month{period > 1 ? 's' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Action Button */}
+        <button 
+          className="mobsubplan-select-plan-btn"
+          onClick={() => handlePlanSelection(plan)}
+          style={{ backgroundColor: getPlanColor(plan.type) }}
+          disabled={isProcessing}
+        >
+          {isProcessing ? 'Processing...' : 
+           plan.type === 'one-time' ? 'Buy Now' :
+           plan.type === 'emergency' ? 'Request Delivery' :
+           'Subscribe Now'}
+          <FaArrowRight className="mobsubplan-btn-icon" />
+        </button>
+      </div>
+    );
+  };
+
+  const renderPlanDetailsModal = () => {
+    if (!planDetailsModal) return null;
+
+    return (
+      <div className="mobsubplan-plan-details-modal">
+        <div className="mobsubplan-modal-content">
+          <div className="mobsubplan-modal-header">
+            <div className="mobsubplan-modal-title-section">
+              {getPlanIcon(planDetailsModal.type)}
+              <div>
+                <h2>{planDetailsModal.name}</h2>
+                <span 
+                  className="mobsubplan-modal-plan-type"
+                  style={{ backgroundColor: getPlanColor(planDetailsModal.type) }}
+                >
+                  {planDetailsModal.type === 'one-time' ? 'One-Time Purchase' : 
+                   planDetailsModal.type === 'emergency' ? 'Emergency Delivery' : 
+                   planDetailsModal.type === 'custom' ? 'Custom Plan' : 'Subscription Plan'}
+                </span>
+              </div>
+            </div>
+            <button 
+              className="mobsubplan-close-modal"
+              onClick={() => setPlanDetailsModal(null)}
+            >
+              <FaTimes />
+            </button>
+          </div>
+
+          <div className="mobsubplan-modal-body">
+            <div className="mobsubplan-modal-section">
+              <h3>Plan Description</h3>
+              <p className="mobsubplan-plan-description">{planDetailsModal.description}</p>
+            </div>
+
+            {planDetailsModal.features?.length > 0 && (
+              <div className="mobsubplan-modal-section">
+                <h3>Features</h3>
+                <div className="mobsubplan-features-list">
+                  {planDetailsModal.features.map((feature, index) => (
+                    <div key={index} className={`mobsubplan-feature-item ${feature.included ? 'mobsubplan-included' : 'mobsubplan-excluded'}`}>
+                      {feature.included ? 
+                        <FaCheck className="mobsubplan-feature-icon" /> : 
+                        <FaTimes className="mobsubplan-feature-icon" />
+                      }
+                      <div className="mobsubplan-feature-content">
+                        <strong>{feature.title}:</strong> {feature.description}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mobsubplan-modal-section">
+              <h3>Specifications</h3>
+              <div className="mobsubplan-specifications-grid">
+                <div className="mobsubplan-spec-item">
+                  <span className="mobsubplan-spec-label">Base Size:</span>
+                  <span className="mobsubplan-spec-value">{planDetailsModal.baseSize}</span>
+                </div>
+                <div className="mobsubplan-spec-item">
+                  <span className="mobsubplan-spec-label">Price per Kg:</span>
+                  <span className="mobsubplan-spec-value">{formatCurrency(planDetailsModal.pricePerKg)}</span>
+                </div>
+                {planDetailsModal.deliveryFrequency && (
+                  <div className="mobsubplan-spec-item">
+                    <span className="mobsubplan-spec-label">Delivery Frequency:</span>
+                    <span className="mobsubplan-spec-value">{planDetailsModal.deliveryFrequency.join(', ')}</span>
+                  </div>
+                )}
+                {planDetailsModal.subscriptionPeriod && (
+                  <div className="mobsubplan-spec-item">
+                    <span className="mobsubplan-spec-label">Subscription Period:</span>
+                    <span className="mobsubplan-spec-value">
+                      {planDetailsModal.subscriptionPeriod.map(p => `${p} month${p > 1 ? 's' : ''}`).join(', ')}
+                    </span>
+                  </div>
+                )}
+                {planDetailsModal.cylinderSizes && (
+                  <div className="mobsubplan-spec-item">
+                    <span className="mobsubplan-spec-label">Available Sizes:</span>
+                    <span className="mobsubplan-spec-value">{planDetailsModal.cylinderSizes.join(', ')}</span>
+                  </div>
+                )}
+                {planDetailsModal.deliveryInfo && (
+                  <>
+                    <div className="mobsubplan-spec-item">
+                      <span className="mobsubplan-spec-label">Delivery Time:</span>
+                      <span className="mobsubplan-spec-value">{planDetailsModal.deliveryInfo.deliveryTime}</span>
+                    </div>
+                    <div className="mobsubplan-spec-item">
+                      <span className="mobsubplan-spec-label">Free Delivery:</span>
+                      <span className="mobsubplan-spec-value">
+                        {planDetailsModal.deliveryInfo.freeDelivery ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mobsubplan-modal-footer">
+            <button 
+              className="mobsubplan-btn-secondary"
+              onClick={() => setPlanDetailsModal(null)}
+            >
+              Close
+            </button>
+            <button 
+              className="mobsubplan-btn-primary"
+              style={{ backgroundColor: getPlanColor(planDetailsModal.type) }}
+              onClick={() => {
+                setPlanDetailsModal(null);
+                const currentSize = selectedSize[planDetailsModal._id] || planDetailsModal.baseSize;
+                const currentFrequency = selectedFrequency[planDetailsModal._id] || 'Monthly';
+                const currentPeriod = selectedPeriod[planDetailsModal._id] || 1;
+                const price = calculatePrice(planDetailsModal, currentSize, currentFrequency, currentPeriod);
+                
+                setSelectedPlan({
+                  ...planDetailsModal,
+                  selectedSize: currentSize,
+                  selectedFrequency: currentFrequency,
+                  selectedPeriod: currentPeriod,
+                  price
+                });
+                setShowSummary(true);
+              }}
+            >
+              Select This Plan
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
-      <div className="mobile-subscription-plans loading">
-        <div className="loading-spinner"></div>
+      <div className="mobsubplan-mobile-subscription-plans mobsubplan-loading">
+        <div className="mobsubplan-loading-spinner"></div>
         <p>Loading plans...</p>
       </div>
     );
@@ -287,12 +597,12 @@ const MobileSubscriptionPlans = () => {
 
   if (error) {
     return (
-      <div className="mobile-subscription-plans error">
-        <div className="error-content">
-          <FaExclamationTriangle className="error-icon" />
+      <div className="mobsubplan-mobile-subscription-plans mobsubplan-error">
+        <div className="mobsubplan-error-content">
+          <FaExclamationTriangle className="mobsubplan-error-icon" />
           <h2>Unable to Load Plans</h2>
           <p>{error}</p>
-          <button className="retry-btn" onClick={fetchPlans}>
+          <button className="mobsubplan-retry-btn" onClick={fetchPlans}>
             Try Again
           </button>
         </div>
@@ -301,180 +611,95 @@ const MobileSubscriptionPlans = () => {
   }
 
   return (
-    <div className="mobile-subscription-plans">
+    <div className="mobsubplan-mobile-subscription-plans">
       {/* Header */}
-      <div className="plans-header">
-        <h1>Choose Your Plan</h1>
-        <div className="wallet-display">
-          <FaWallet className="wallet-icon" />
+      <div className="mobsubplan-plans-header">
+        <h1>Choose Your Gas Plan</h1>
+        <div className="mobsubplan-wallet-display">
+          <FaWallet className="mobsubplan-wallet-icon" />
           <span>{formatCurrency(walletBalance)}</span>
         </div>
       </div>
 
-      {/* Plans List */}
-      <div className="plans-list">
-        {plans.map(plan => (
-          <div 
-            key={plan._id} 
-            className="plan-card"
-            style={{ borderLeftColor: getPlanColor(plan.type) }}
-          >
-            <div className="plan-header">
-              <div className="plan-title">
-                {getPlanIcon(plan.type)}
-                <div>
-                  <h3>{plan.name}</h3>
-                  <p className="plan-type">{plan.type}</p>
-                </div>
-              </div>
-              <div className="plan-badge" style={{ backgroundColor: getPlanColor(plan.type) }}>
-                {plan.recommended && '🔥'}
-              </div>
-            </div>
-
-            <p className="plan-description">{getPlanDescription(plan)}</p>
-
-            {/* Plan Features */}
-            <div className="plan-features">
-              {plan.features?.map((feature, index) => (
-                <div key={index} className="feature-item">
-                  {feature.included ? (
-                    <FaCheck className="feature-icon included" />
-                  ) : (
-                    <FaTimes className="feature-icon excluded" />
-                  )}
-                  <span className={feature.included ? 'included' : 'excluded'}>
-                    {feature.title}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Plan Options */}
-            <div className="plan-options">
-              {/* Size Selection */}
-              {plan.type === 'custom' || plan.type === 'one-time' || plan.type === 'emergency' ? (
-                <div className="option-group">
-                  <label className="option-label">
-                    <FaGasPump className="option-icon" />
-                    Cylinder Size
-                  </label>
-                  <select 
-                    className="option-select"
-                    value={selectedSize[plan._id] || ''}
-                    onChange={(e) => setSelectedSize(prev => ({
-                      ...prev,
-                      [plan._id]: e.target.value
-                    }))}
-                  >
-                    {plan.cylinderSizes?.map(size => (
-                      <option key={size} value={size}>
-                        {size}kg
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="option-info">
-                  <FaGasPump className="info-icon" />
-                  <span>Cylinder Size: <strong>{plan.baseSize}</strong></span>
-                </div>
-              )}
-
-              {/* Frequency Selection */}
-              {plan.type === 'custom' || plan.deliveryFrequency?.length > 1 ? (
-                <div className="option-group">
-                  <label className="option-label">
-                    <FaCalendar className="option-icon" />
-                    Delivery Frequency
-                  </label>
-                  <select 
-                    className="option-select"
-                    value={selectedFrequency[plan._id] || ''}
-                    onChange={(e) => setSelectedFrequency(prev => ({
-                      ...prev,
-                      [plan._id]: e.target.value
-                    }))}
-                  >
-                    {plan.deliveryFrequency?.map(freq => (
-                      <option key={freq} value={freq}>
-                        {freq}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : plan.deliveryFrequency?.[0] ? (
-                <div className="option-info">
-                  <FaCalendar className="info-icon" />
-                  <span>Frequency: <strong>{plan.deliveryFrequency[0]}</strong></span>
-                </div>
-              ) : null}
-
-              {/* Period Selection */}
-              {plan.subscriptionPeriod?.length > 1 ? (
-                <div className="option-group">
-                  <label className="option-label">
-                    <FaCalendar className="option-icon" />
-                    Subscription Period
-                  </label>
-                  <select 
-                    className="option-select"
-                    value={selectedPeriod[plan._id] || ''}
-                    onChange={(e) => setSelectedPeriod(prev => ({
-                      ...prev,
-                      [plan._id]: parseInt(e.target.value)
-                    }))}
-                  >
-                    {plan.subscriptionPeriod?.map(period => (
-                      <option key={period} value={period}>
-                        {period} month{period > 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : null}
-            </div>
-
-            {/* Price and Action */}
-            <div className="plan-footer">
-              <div className="plan-price">
-                <span className="price-label">Starting from</span>
-                <span className="price-amount">
-                  {formatCurrency(
-                    calculatePrice(
-                      plan,
-                      selectedSize[plan._id] || plan.baseSize,
-                      selectedFrequency[plan._id] || 'Monthly',
-                      selectedPeriod[plan._id] || 1
-                    )
-                  )}
-                </span>
-                <span className="price-period">
-                  {selectedFrequency[plan._id] === 'Monthly' ? '/month' : 
-                   selectedFrequency[plan._id] === 'Weekly' ? '/week' : ''}
-                </span>
-              </div>
-              
-              <button 
-                className="select-btn"
-                onClick={() => handlePlanSelection(plan)}
-                style={{ backgroundColor: getPlanColor(plan.type) }}
-              >
-                Select Plan
-              </button>
-            </div>
+      {/* One-Time Purchase Section */}
+      <div className="mobsubplan-plan-category-section">
+        <div className="mobsubplan-category-header">
+          <FaTag className="mobsubplan-category-icon" />
+          <div>
+            <h2>One-Time Purchase</h2>
+            <p className="mobsubplan-category-description">
+              Perfect for occasional users. 
+              Purchase gas as needed without any subscription.
+            </p>
           </div>
-        ))}
+        </div>
+        <div className="mobsubplan-plans-list">
+          {plans.filter(p => p.type === 'one-time').map(plan => renderPlanCard(plan))}
+        </div>
       </div>
 
-      {/* Plan Summary Modal */}
+      {/* Emergency Delivery Section */}
+      <div className="mobsubplan-plan-category-section">
+        <div className="mobsubplan-category-header">
+          <FaBolt className="mobsubplan-category-icon" />
+          <div>
+            <h2>Emergency Delivery</h2>
+            <p className="mobsubplan-category-description">
+              Need gas urgently? Get immediate refill delivery within hours. 
+              Perfect for unexpected situations when you run out of gas.
+            </p>
+          </div>
+        </div>
+        <div className="mobsubplan-plans-list">
+          {plans.filter(p => p.type === 'emergency').map(plan => renderPlanCard(plan))}
+        </div>
+      </div>
+
+      {/* Preset Plans Section */}
+      <div className="mobsubplan-plan-category-section">
+        <div className="mobsubplan-category-header">
+          <FaFire className="mobsubplan-category-icon" />
+          <div>
+            <h2>Regular Subscription Plans</h2>
+            <p className="mobsubplan-category-description">
+              Choose from our flexible subscription plans for regular gas refill delivery. 
+              Save money and time with automatic deliveries based on your usage pattern.
+            </p>
+          </div>
+        </div>
+        <div className="mobsubplan-plans-list">
+          {plans.filter(p => p.type === 'preset').map(plan => renderPlanCard(plan))}
+        </div>
+      </div>
+
+      {/* Custom Plans Section */}
+      <div className="mobsubplan-plan-category-section">
+        <div className="mobsubplan-category-header">
+          <FaGasPump className="mobsubplan-category-icon" />
+          <div>
+            <h2>Build Your Own Plan</h2>
+            <p className="mobsubplan-category-description">
+              Customize every aspect of your gas delivery. 
+              Choose your cylinder size, delivery frequency, and subscription period.............coming soon.
+            </p>
+          </div>
+        </div>
+        <div className="mobsubplan-plans-list">
+          {plans.filter(p => p.type === 'custom').map(plan => renderPlanCard(plan))}
+        </div>
+      </div>
+
+      {/* Plan Details Modal */}
+      {renderPlanDetailsModal()}
+
+      {/* Payment Summary Modal */}
       {showSummary && selectedPlan && (
-        <div className="plan-summary-modal">
-          <div className="summary-content">
-            <div className="summary-header">
+        <div className="mobsubplan-plan-summary-modal">
+          <div className="mobsubplan-summary-content">
+            <div className="mobsubplan-summary-header">
               <h2>Confirm Your Plan</h2>
               <button 
-                className="close-summary"
+                className="mobsubplan-close-summary"
                 onClick={() => setShowSummary(false)}
                 disabled={isProcessing}
               >
@@ -482,79 +707,79 @@ const MobileSubscriptionPlans = () => {
               </button>
             </div>
 
-            <div className="summary-body">
-              <div className="plan-summary">
-                <div className="plan-summary-header">
+            <div className="mobsubplan-summary-body">
+              <div className="mobsubplan-plan-summary">
+                <div className="mobsubplan-plan-summary-header">
                   {getPlanIcon(selectedPlan.type)}
                   <div>
                     <h3>{selectedPlan.name}</h3>
-                    <p className="plan-type">{selectedPlan.type}</p>
+                    <span className="mobsubplan-plan-type">{selectedPlan.type}</span>
                   </div>
                 </div>
 
-                <div className="summary-details">
-                  <div className="detail-item">
-                    <span className="detail-label">Cylinder Size:</span>
-                    <span className="detail-value">{selectedPlan.selectedSize}</span>
+                <div className="mobsubplan-summary-details">
+                  <div className="mobsubplan-detail-item">
+                    <span className="mobsubplan-detail-label">Cylinder Size:</span>
+                    <span className="mobsubplan-detail-value">{selectedPlan.selectedSize}</span>
                   </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Delivery Frequency:</span>
-                    <span className="detail-value">{selectedPlan.selectedFrequency}</span>
+                  <div className="mobsubplan-detail-item">
+                    <span className="mobsubplan-detail-label">Delivery Frequency:</span>
+                    <span className="mobsubplan-detail-value">{selectedPlan.selectedFrequency}</span>
                   </div>
                   {selectedPlan.selectedPeriod > 1 && (
-                    <div className="detail-item">
-                      <span className="detail-label">Subscription Period:</span>
-                      <span className="detail-value">
+                    <div className="mobsubplan-detail-item">
+                      <span className="mobsubplan-detail-label">Subscription Period:</span>
+                      <span className="mobsubplan-detail-value">
                         {selectedPlan.selectedPeriod} month{selectedPlan.selectedPeriod > 1 ? 's' : ''}
                       </span>
                     </div>
                   )}
-                  <div className="detail-item total">
-                    <span className="detail-label">Total Price:</span>
-                    <span className="detail-value price">{formatCurrency(selectedPlan.price)}</span>
+                  <div className="mobsubplan-detail-item mobsubplan-total">
+                    <span className="mobsubplan-detail-label">Total Price:</span>
+                    <span className="mobsubplan-detail-value mobsubplan-price">{formatCurrency(selectedPlan.price)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Payment Method Selection */}
-              <div className="payment-method">
+              <div className="mobsubplan-payment-method">
                 <h4>Payment Method</h4>
-                <div className="payment-options">
+                <div className="mobsubplan-payment-options">
                   <div 
-                    className={`payment-option ${paymentMethod === 'paystack' ? 'selected' : ''}`}
+                    className={`mobsubplan-payment-option ${paymentMethod === 'paystack' ? 'mobsubplan-selected' : ''}`}
                     onClick={() => setPaymentMethod('paystack')}
                   >
-                    <div className="option-content">
-                      <FaCreditCard className="option-icon card" />
-                      <div className="option-text">
-                        <span className="option-title">Pay with Card</span>
-                        <span className="option-description">Secure payment via Paystack</span>
+                    <div className="mobsubplan-option-content">
+                      <FaCreditCard className="mobsubplan-option-icon mobsubplan-card" />
+                      <div className="mobsubplan-option-text">
+                        <span className="mobsubplan-option-title">Pay with Card</span>
+                        <span className="mobsubplan-option-description">Secure payment via Paystack</span>
                       </div>
                     </div>
-                    <div className="option-check">
+                    <div className="mobsubplan-option-check">
                       {paymentMethod === 'paystack' && <FaCheck />}
                     </div>
                   </div>
 
                   <div 
-                    className={`payment-option ${paymentMethod === 'wallet' ? 'selected' : ''}`}
+                    className={`mobsubplan-payment-option ${paymentMethod === 'wallet' ? 'mobsubplan-selected' : ''}`}
                     onClick={() => setPaymentMethod('wallet')}
                   >
-                    <div className="option-content">
-                      <FaWallet className="option-icon wallet" />
-                      <div className="option-text">
-                        <span className="option-title">Pay with Wallet</span>
-                        <span className="option-description">Balance: {formatCurrency(walletBalance)}</span>
+                    <div className="mobsubplan-option-content">
+                      <FaWallet className="mobsubplan-option-icon mobsubplan-wallet" />
+                      <div className="mobsubplan-option-text">
+                        <span className="mobsubplan-option-title">Pay with Wallet</span>
+                        <span className="mobsubplan-option-description">Balance: {formatCurrency(walletBalance)}</span>
                       </div>
                     </div>
-                    <div className="option-check">
+                    <div className="mobsubplan-option-check">
                       {paymentMethod === 'wallet' && <FaCheck />}
                     </div>
                   </div>
                 </div>
 
                 {paymentMethod === 'wallet' && walletBalance < selectedPlan.price && (
-                  <div className="wallet-warning">
+                  <div className="mobsubplan-wallet-warning">
                     <FaExclamationTriangle />
                     <span>Insufficient wallet balance. Top up or select card payment.</span>
                   </div>
@@ -562,22 +787,23 @@ const MobileSubscriptionPlans = () => {
               </div>
             </div>
 
-            <div className="summary-footer">
+            <div className="mobsubplan-summary-footer">
               <button 
-                className="summary-btn cancel"
+                className="mobsubplan-summary-btn mobsubplan-cancel"
                 onClick={() => setShowSummary(false)}
                 disabled={isProcessing}
               >
                 Cancel
               </button>
               <button 
-                className="summary-btn confirm"
+                className="mobsubplan-summary-btn mobsubplan-confirm"
                 onClick={handleSubscribe}
                 disabled={isProcessing || (paymentMethod === 'wallet' && walletBalance < selectedPlan.price)}
+                style={{ backgroundColor: getPlanColor(selectedPlan.type) }}
               >
                 {isProcessing ? (
                   <>
-                    <div className="processing-spinner"></div>
+                    <div className="mobsubplan-processing-spinner"></div>
                     Processing...
                   </>
                 ) : paymentMethod === 'wallet' ? (
@@ -588,6 +814,13 @@ const MobileSubscriptionPlans = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {isProcessing && (
+        <div className="mobsubplan-processing-overlay">
+          <div className="mobsubplan-processing-spinner-large"></div>
+          <p>Processing your request...</p>
         </div>
       )}
     </div>

@@ -18,7 +18,9 @@ import {
   FaChevronRight,
   FaFire,
   FaPercentage,
-  FaClock
+  FaClock,
+  FaCogs,
+  FaCog
 } from 'react-icons/fa';
 import './DashboardMobile.css';
 import { successToast, errorToast, infoToast, warningToast } from "../../utils/toast";
@@ -175,10 +177,10 @@ const DashboardMobile = () => {
         className: 'mobdash-action-btn mobdash-tertiary',
       },
       {
-        id: 'history',
-        title: 'History',
-        icon: <FaHistory />,
-        path: '/dashboard/history',
+        id: 'setting',
+        title: 'Setting',
+        icon: <FaCog />,
+        path: '/dashboard/settings',
         className: 'mobdash-action-btn mobdash-quaternary',
       },
        {
@@ -189,10 +191,10 @@ const DashboardMobile = () => {
         className: 'mobdash-action-btn mobdash-quaternary',
       },
        {
-        id: 'history',
-        title: 'History',
+        id: 'support',
+        title: 'Support',
         icon: <FaHistory />,
-        path: '/dashboard/history',
+        path: '/dashboard/support',
         className: 'mobdash-action-btn mobdash-quaternary',
       }
     ];

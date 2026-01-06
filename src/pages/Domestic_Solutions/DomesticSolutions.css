@@ -21,7 +21,7 @@
 
 .dom-sol-page-header h2 {
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin: 2rem 0;
   font-weight: 700;
 }
 
@@ -558,11 +558,11 @@
 }
 
 /* High DPI Screens */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+/* @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .dom-sol-page-header,
   .dom-sol-cta-section {
   }
-}
+} */
 
 /* Print Styles */
 @media print {

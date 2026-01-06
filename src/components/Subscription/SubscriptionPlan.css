@@ -1,288 +1,440 @@
-/* src/styles/SubscriptionPlans.css */
+/* src/components/SubscriptionPlan.css */
 
-/* Base Styles */
-.subs-plan-plans-container {
+.subplan-plans-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
+  padding: 2rem 1rem;
 }
 
-/* User Welcome Section */
-.subs-plan-user-welcome {
+/* Header Styles */
+.subplan-plans-header {
   text-align: center;
-  align-items:center;
-  margin-bottom: 40px;
-  color: #2c3e50; 
-  background: #3498db;
-  padding: 15px 0; 
-  border-radius: 8px;  
+  margin: 3rem;
 }
 
-.subs-plan-plan-subtitle {
-  font-size: 1.2rem;
+.subplan-plans-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.subplan-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.subplan-wallet-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
-  /* opacity: 0.9; */
-  margin: 0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+}
+
+.subplan-wallet-display svg {
+  font-size: 1.2rem;
+}
+
+/* Category Sections */
+.subplan-category-section {
+  margin-bottom: 4rem;
+  padding: 2rem 12rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.subplan-preset-category-section{
+  margin-bottom: 4rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.subplan-category-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f2f6;
+}
+
+.subplan-category-icon {
+  font-size: 2.5rem;
+  color: #3498db;
+  margin-top: 0.5rem;
+}
+
+.subplan-category-header h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.subplan-category-description {
+  color: #636e72;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 800px;
 }
 
 /* Plans Grid */
-.subs-plan-plans-grid {
+.subplan-plans-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
 }
 
-/* Plan Cards */
-.subs-plan-plan-card {
-  background: #deeaf7;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+/* Plan Card */
+.subplan-plan-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  border: 2px solid #9dcbfd;
 }
 
-.subs-plan-plan-card::before {
-  content: '';
+.subplan-plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.subplan-plan-card::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: #435f7b;
+  background: linear-gradient(90deg, var(--plan-color), transparent);
 }
 
-.subs-plan-plan-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+.subplan-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
-/* Special Plan Card Styles */
-.subs-plan-custom-plan-card {
-  border: 2px solid #4CAF50;
+.subplan-plan-title-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.subs-plan-custom-plan-card::before {
-  background: linear-gradient(90deg, #4CAF50, #45a049);
+.subplan-plan-title-section svg {
+  font-size: 1.8rem;
 }
 
-.subs-plan-one-time-card {
-  border: 2px solid #FF9800;
-}
-
-.subs-plan-one-time-card::before {
-  background: linear-gradient(90deg, #FF9800, #F57C00);
-}
-
-.subs-plan-emergency-card {
-  border: 2px solid #f44336;
-  animation: pulse 2s infinite;
-}
-
-.subs-plan-emergency-card::before {
-  background: linear-gradient(90deg, #f44336, #d32f2f);
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
-}
-
-/* Plan Header */
-.subs-plan-plan-card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+.subplan-plan-title-section h3 {
+  font-size: 1.3rem;
   color: #2c3e50;
-  font-weight: 700;
+  margin: 0;
 }
 
-.subs-plan-plan-card p {
-  color: #666;
-  margin-bottom: 10px;
-  line-height: 1.2;
-}
-
-/* Plan Features */
-.subs-plan-plan-features {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 25px 0;
-}
-
-.subs-plan-plan-features li {
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.subs-plan-plan-features li:last-child {
-  border-bottom: none;
-}
-
-.subs-plan-feature-included {
-  color: #4CAF50;
-}
-
-.subs-plan-feature-excluded {
-  color: #999;
-  text-decoration: line-through;
-}
-
-.subs-plan-plan-features strong {
-  color: #2c3e50;
-}
-
-/* Plan Details */
-.subs-plan-plan-details {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  border-left: 4px solid #667eea;
-}
-
-.subs-plan-plan-details p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 1rem;
-}
-
-/* Form Elements */
-.subs-plan-plan-card label {
-  display: block;
-  margin-bottom: 8px;
+.subplan-plan-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 600;
+  color: white;
+  margin-top: 0.25rem;
+}
+
+.subplan-view-details-btn {
+  background: none;
+  border: 1px solid #dfe6e9;
+  color: #636e72;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.subplan-view-details-btn:hover {
+  background: #f8f9fa;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.subplan-plan-frequency-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f8f9fa;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   color: #2c3e50;
-  font-size: 0.95rem;
+  margin-bottom: 5px;
 }
 
-.subs-plan-plan-card select {
-  width: 100%;
-  padding: 10px 15px;
-  border: 2px solid #e1e5e9;
-  border-radius: 10px;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  background: white;
-  transition: all 0.3s ease;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 12px;
+.subplan-plan-price-display {
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
-.subs-plan-plan-card select:focus {
-  outline: none;
-  border-color: #2c3e50;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* Price Display */
-.subs-plan-plan-price {
-  font-size: 1.5rem;
+.subplan-price-amount {
+  font-size: 2rem;
   font-weight: 700;
   color: #2c3e50;
-  text-align: center;
-  margin: 15px 0;
-  padding: 10px;
-  background: #435f7b;
-  color: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  /* display: block; */
 }
 
-/* Buttons */
-.subs-plan-plan-card button {
+.subplan-price-period {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-top: 0.25rem;
+}
+
+/* Plan Options */
+.subplan-plan-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.subplan-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.subplan-option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.subplan-option-select {
+  padding: 0.65rem 1rem;
+  border: 1px solid #dfe6e9;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: white;
+  transition: border-color 0.3s;
+}
+
+.subplan-option-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.subplan-option-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.subplan-option-info svg {
+  color: #3498db;
+}
+
+/* Action Button */
+.subplan-plan-action-btn {
   width: 100%;
-  padding: 10px 15px;
-  background: #435f7b;
+  padding: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--plan-color),
+    var(--plan-color-dark)
+  );
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
 }
 
-.subs-plan-plan-card button:hover:not(:disabled) {
-  background: rgb(87, 240, 235);
+.subplan-plan-action-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.subs-plan-plan-card button:disabled {
-  background: #ccc;
+.subplan-plan-action-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-.subs-plan-plan-card button:active:not(:disabled) {
-  transform: translateY(0);
+.subplan-btn-icon {
+  transition: transform 0.3s;
 }
 
-/* Special Button Styles */
-.subs-plan-custom-plan-card button {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+.subplan-plan-action-btn:hover .subplan-btn-icon {
+  transform: translateX(5px);
 }
 
-.subs-plan-one-time-card button {
-  background: linear-gradient(135deg, #FF9800, #F57C00);
+/* Plan Icons */
+.subplan-plan-icon {
+  font-size: 1.8rem;
 }
 
-.subs-plan-emergency-card button {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
-  animation: shake 2s infinite;
+.subplan-plan-icon.subplan-one-time {
+  color: #f39c12;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
+.subplan-plan-icon.subplan-emergency {
+  color: #e74c3c;
 }
 
-.subs-plan-emergency-card button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e53935, #c62828);
+.subplan-plan-icon.subplan-custom {
+  color: #2ecc71;
 }
 
-/* Summary Modal */
-.subs-plan-summary-modal {
+.subplan-plan-icon.subplan-preset {
+  color: #3498db;
+}
+
+/* Loading States */
+.subplan-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.subplan-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: subplan-spin 1s linear infinite;
+}
+
+@keyframes subplan-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error States */
+.subplan-error-message {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.subplan-error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.subplan-error-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.subplan-error-actions button:first-child {
+  background: #3498db;
+  color: white;
+}
+
+.subplan-error-actions button:first-child:hover {
+  background: #2980b9;
+}
+
+.subplan-error-actions button:last-child {
+  background: #f8f9fa;
+  color: #636e72;
+  border: 1px solid #dfe6e9;
+}
+
+.subplan-error-actions button:last-child:hover {
+  background: #e9ecef;
+}
+
+.subplan-debug-info {
+  margin-top: 1rem;
+  max-height: 200px;
+  overflow: auto;
+  background: #2c3e50;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* Plan Details Modal */
+.subplan-plan-details-modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
+  padding: 1rem;
+  animation: subplan-fadeIn 0.3s;
 }
 
-.subs-plan-summary-card {
+@keyframes subplan-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.subplan-modal-content {
   background: white;
-  padding: 40px;
   border-radius: 20px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  animation: slideUp 0.3s ease;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: subplan-slideUp 0.3s;
 }
 
-@keyframes slideUp {
+@keyframes subplan-slideUp {
   from {
     opacity: 0;
     transform: translateY(50px);
@@ -293,1103 +445,398 @@
   }
 }
 
-.subs-plan-summary-card h2 {
-  color: #2c3e50;
-  margin-bottom: 25px;
-  font-size: 1.8rem;
-}
-
-.subs-plan-summary-card p {
-  margin: 12px 0;
-  font-size: 1.1rem;
-  color: #555;
-  text-align: left;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.subs-plan-summary-card p:last-of-type {
-  border-bottom: none;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 2px solid rgb(87, 240, 235);
-}
-
-.subs-plan-summary-actions {
+.subplan-modal-header {
   display: flex;
-  gap: 15px;
-  margin-top: 30px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid #f1f2f6;
 }
 
-.subs-plan-summary-actions button {
-  flex: 1;
-  padding: 12px 20px;
+.subplan-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.subplan-modal-title svg {
+  font-size: 2.5rem;
+}
+
+.subplan-modal-title h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.subplan-modal-plan-type {
+  display: inline-block;
+  padding: 0.25rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+.subplan-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #636e72;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.subplan-close-modal:hover {
+  background: #f8f9fa;
+  color: #e74c3c;
+}
+
+.subplan-modal-body {
+  padding: 2rem;
+}
+
+.subplan-modal-body h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.subplan-plan-description p {
+  color: #636e72;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.subplan-plan-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+}
+
+.subplan-feature-included,
+.subplan-feature-excluded {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.subplan-feature-icon {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.subplan-feature-included .subplan-feature-icon {
+  color: #2ecc71;
+}
+
+.subplan-feature-excluded .subplan-feature-icon {
+  color: #e74c3c;
+}
+
+.subplan-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.subplan-spec-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.subplan-spec-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 0.25rem;
+}
+
+.subplan-spec-value {
+  display: block;
+  font-size: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.subplan-modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f1f2f6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.subplan-btn-secondary,
+.subplan-btn-primary {
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 }
 
-.subs-plan-summary-actions button:first-child {
-  background: #6c757d;
+.subplan-btn-secondary {
+  background: #f8f9fa;
+  color: #636e72;
+}
+
+.subplan-btn-secondary:hover {
+  background: #e9ecef;
+}
+
+.subplan-btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--plan-color),
+    var(--plan-color-dark)
+  );
   color: white;
 }
 
-.subs-plan-summary-actions button:first-child:hover:not(:disabled) {
-  background: #5a6268;
-}
-
-.subs-plan-summary-actions button:last-child {
-  background: #435f7b;
-  color: white;
-}
-
-.subs-plan-summary-actions button:last-child:hover:not(:disabled) {
-  background: rgb(87, 240, 235);
-  color: #2c3e50;
-}
-
-.subs-plan-summary-actions button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Loading States */
-.subs-plan-loading-spinner {
-  text-align: center;
-  padding: 60px 20px;
-  font-size: 1.3rem;
-  color: white;
-  font-weight: 600;
-}
-
-.subs-plan-loading-spinner::after {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-  margin-left: 10px;
-  vertical-align: middle;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.subs-plan-loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-/* Error Message */
-.subs-plan-error-message {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  margin: 50px auto;
-}
-
-.subs-plan-error-message h2 {
-  color: #e74c3c;
-  margin-bottom: 20px;
-}
-
-.subs-plan-error-message p {
-  color: #666;
-  margin-bottom: 25px;
-  font-size: 1.1rem;
-}
-
-.subs-plan-error-message button {
-  padding: 12px 25px;
-  margin: 0 5px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.subs-plan-error-message button:first-child {
-  background: #3498db;
-  color: white;
-}
-
-.subs-plan-error-message button:last-child {
-  background: #95a5a6;
-  color: white;
-}
-
-.subs-plan-error-message button:hover {
+.subplan-btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Login Prompt */
-.subs-plan-login-prompt {
-  background: white;
-  padding: 50px 40px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 100px auto;
-}
-
-.subs-plan-login-prompt h1 {
-  color: #2c3e50;
-  margin-bottom: 20px;
-}
-
-.subs-plan-login-prompt p {
-  color: #666;
-  margin-bottom: 30px;
-  font-size: 1.1rem;
-}
-
-.subs-plan-login-prompt button {
-  padding: 15px 40px;
-  background: #435f7b;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.subs-plan-login-prompt button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-}
-
-
-/* Wallet Info */
-.subs-plan-wallet-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 700;
-  color: #28a745;
-  border: 2px solid #e9ecef;
-  margin: 15px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.subs-plan-wallet-info::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
-  transition: left 0.6s ease;
-}
-
-.subs-plan-wallet-info:hover::before {
-  left: 100%;
-}
-
-.subs-plan-wallet-info:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  border-color: #28a745;
-}
-
-.wallet-icon {
-  color: #28a745;
-  font-size: 1.4em;
-  filter: drop-shadow(0 2px 4px rgba(40, 167, 69, 0.3));
-  transition: transform 0.3s ease;
-}
-
-.subs-plan-wallet-info:hover .wallet-icon {
-  transform: scale(1.1);
-}
-
-/* Payment Method Selection */
-.subs-plan-payment-method {
-  margin: 25px 0;
-  padding: 20px;
-  border: 2px solid #e9ecef;
-  border-radius: 16px;
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.subs-plan-payment-method::before {
-  content: '';
-  position: absolute;
-  top: 0;
+/* Payment Summary Modal */
+.subplan-summary-modal {
+  position: fixed;
+  top: 0px;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #007bff, #28a745);
-  opacity: 0.8;
-}
-
-.subs-plan-payment-method:hover {
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
-
-.subs-plan-payment-method h3 {
-  margin-bottom: 20px;
-  color: #2c3e50;
-  font-weight: 700;
-  font-size: 1.3em;
-  text-align: center;
-  position: relative;
-  padding-bottom: 10px;
-}
-
-.subs-plan-payment-method h3::after {
-  content: '';
-  position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #007bff, #28a745);
-  border-radius: 2px;
-}
-
-.subs-plan-payment-options {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.subs-plan-payment-option {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 18px 20px;
-  border: 2.5px solid #e9ecef;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background: white;
-  position: relative;
-  overflow: hidden;
-}
-
-.subs-plan-payment-option::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.05), transparent);
-  transition: left 0.6s ease;
-}
-
-.subs-plan-payment-option:hover::before {
-  left: 100%;
-}
-
-.subs-plan-payment-option:hover {
-  border-color: #007bff;
-  transform: translateX(8px);
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.15);
-}
-
-.subs-plan-payment-option.selected {
-  border-color: #007bff;
-  background: linear-gradient(135deg, #e7f3ff 0%, #d4e7ff 100%);
-  transform: translateX(8px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
-  animation: pulse-glow 2s infinite;
-}
-
-.subs-plan-payment-option.selected::after {
-  content: '✓';
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #007bff;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+  z-index: 1001;
+  padding: 1rem;
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 6px 25px rgba(0, 123, 255, 0.4);
-  }
+.subplan-summary-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0.7rem 2rem;
+  max-width: 500px;
+  width: 100%;
+  animation: subplan-slideUp 0.3s;
 }
 
-.subs-plan-payment-option input[type="radio"] {
+.subplan-order-details {
+  background: #f8f9fa;
+  padding: 0.5rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.subplan-order-details p {
+  margin: 0.5rem 0;
+  color: #2c3e50;
+}
+
+.subplan-payment-method {
+  margin-bottom: 1rem;
+}
+
+.subplan-payment-method h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.subplan-payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.subplan-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid #dfe6e9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.subplan-payment-option.subplan-selected {
+  border-color: #3498db;
+  background: #f0f9ff;
+}
+
+.subplan-payment-option input[type="radio"] {
   margin: 0;
   width: 20px;
   height: 20px;
-  accent-color: #007bff;
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
-}
-
-.subs-plan-payment-option:hover input[type="radio"] {
-  transform: scale(1.2);
-}
-
-.payment-icon {
-  font-size: 1.5em;
-  transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.subs-plan-payment-option:hover .payment-icon {
-  transform: scale(1.1);
-}
-
-.subs-plan-payment-option.selected .payment-icon {
-  transform: scale(1.2);
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
-}
-
-.subs-plan-payment-option .payment-icon[data-icon="wallet"] {
-  color: #28a745;
-}
-
-.subs-plan-payment-option.selected .payment-icon[data-icon="wallet"] {
-  color: #218838;
-}
-
-.subs-plan-payment-option .payment-icon[data-icon="credit-card"] {
-  color: #007bff;
-}
-
-.subs-plan-payment-option.selected .payment-icon[data-icon="credit-card"] {
-  color: #0056b3;
-}
-
-.subs-plan-payment-option span:not(.wallet-balance) {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 1.05em;
-  transition: color 0.3s ease;
-}
-
-.subs-plan-payment-option.selected span:not(.wallet-balance) {
-  color: #007bff;
-  font-weight: 700;
-}
-
-.wallet-balance {
-  margin-left: auto;
-  font-size: 0.85em;
-  color: #6c757d;
-  background: rgba(108, 117, 125, 0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.subs-plan-payment-option.selected .wallet-balance {
-  background: rgba(0, 123, 255, 0.1);
-  color: #007bff;
-}
-
-/* Wallet Warning */
-.subs-plan-wallet-warning {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  border: 2px solid #ffd43b;
-  color: #856404;
-  padding: 15px 20px;
+  padding: 10px;
+  border: 2px solid #e8e8e8;
   border-radius: 10px;
-  margin-top: 15px;
-  font-size: 0.95em;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: shake 0.5s ease-in-out;
-  box-shadow: 0 3px 10px rgba(255, 193, 7, 0.2);
-  position: relative;
-  overflow: hidden;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafafa;
 }
 
-.subs-plan-wallet-warning::before {
-  content: '⚠️';
-  font-size: 1.2em;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+.subplan-payment-option svg {
+  font-size: 1.2rem;
+  color: #3498db;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+.subplan-wallet-balance {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: #7f8c8d;
 }
 
-.subs-plan-wallet-warning:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
-}
-
-/* Order Details */
-.subs-plan-order-details {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  border: 2px solid #e9ecef;
-  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.subs-plan-order-details::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background: linear-gradient(180deg, #007bff, #28a745);
-}
-
-.subs-plan-order-details p {
-  margin: 8px 0;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.3s ease;
-}
-
-.subs-plan-order-details p:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin: 8px -12px;
-}
-
-.subs-plan-order-details p:last-child {
-  border-bottom: none;
-  font-weight: 700;
-  font-size: 1.1em;
-  color: #28a745;
-  background: rgba(40, 167, 69, 0.1);
+.subplan-wallet-info {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #e8f6f3;
+  color: #27ae60;
   border-radius: 8px;
-  padding: 12px;
-  margin: 12px -12px -8px -12px;
+  font-size: 0.9rem;
 }
 
-.subs-plan-order-details strong {
-  color: #2c3e50;
-  font-weight: 700;
-  min-width: 160px;
+.subplan-summary-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
 }
 
-.subs-plan-order-details p:last-child strong {
-  color: #28a745;
+.subplan-summary-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-/* Fixed Modal Styles - No Overflow */
-.subs-plan-summary-modal {
+.subplan-summary-actions button:first-child {
+  background: #f8f9fa;
+  color: #636e72;
+}
+
+.subplan-summary-actions button:first-child:hover {
+  background: #e9ecef;
+}
+
+.subplan-confirm-payment-btn {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.subplan-confirm-payment-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.subplan-confirm-payment-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.subplan-loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
-  padding: 20px;
-  overflow: hidden;
-}
-
-.subs-plan-summary-card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.subs-plan-summary-card h2 {
-  margin-bottom: 25px;
-  color: #2c3e50;
-  font-weight: 700;
-  font-size: 1.5em;
-  text-align: center;
-  position: relative;
-  padding-bottom: 15px;
-}
-
-.subs-plan-summary-card h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #007bff, #28a745);
-  border-radius: 2px;
-}
-
-.subs-plan-summary-actions {
-  display: flex;
-  gap: 15px;
-  margin-top: 25px;
-  flex-wrap: wrap;
-}
-
-.subs-plan-summary-actions button {
-  flex: 1;
-  min-width: 120px;
-  padding: 14px 20px;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.subs-plan-summary-actions button:first-child {
-  background: #6c757d;
+  z-index: 1002;
   color: white;
-}
-
-.subs-plan-summary-actions button:first-child:hover:not(:disabled) {
-  background: #5a6268;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-}
-
-.subs-plan-confirm-payment-btn {
-  background: linear-gradient(135deg, #28a745, #20c997);
-  color: white;
-  font-weight: 700;
-}
-
-.subs-plan-confirm-payment-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #218838, #1ea085);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-}
-
-.subs-plan-summary-actions button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* Loading Overlay */
-.subs-plan-loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10001;
-  color: white;
-  font-size: 1.2em;
-  font-weight: 600;
-}
-
-.subs-plan-loading-spinner {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 30px 40px;
-  border-radius: 15px;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-  }
+  font-size: 1.2rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .subs-plan-summary-modal {
-    padding: 15px;
+  .subplan-plans-header h1 {
+    font-size: 2rem;
   }
-  
-  .subs-plan-summary-card {
-    padding: 25px 20px;
-    max-height: 85vh;
-    border-radius: 16px;
-  }
-  
-  .subs-plan-summary-card h2 {
-    font-size: 1.3em;
-    margin-bottom: 20px;
-  }
-  
-  .subs-plan-payment-option {
-    padding: 15px;
-    gap: 12px;
-  }
-  
-  .subs-plan-payment-option span:not(.wallet-balance) {
-    font-size: 1em;
-  }
-  
-  .wallet-balance {
-    font-size: 0.8em;
-    padding: 3px 8px;
-  }
-  
-  .subs-plan-order-details p {
+
+  .subplan-category-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    gap: 0.75rem;
   }
-  
-  .subs-plan-order-details strong {
-    min-width: auto;
+
+  .subplan-category-icon {
+    font-size: 2rem;
   }
-  
-  .subs-plan-summary-actions {
+
+  .subplan-plans-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .subplan-plan-card {
+    padding: 1.25rem;
+  }
+
+  .subplan-modal-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .subplan-modal-header {
+    padding: 1.5rem;
+  }
+
+  .subplan-modal-body {
+    padding: 1.5rem;
+  }
+
+  .subplan-spec-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subplan-summary-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .subplan-summary-actions {
     flex-direction: column;
-  }
-  
-  .subs-plan-summary-actions button {
-    min-width: auto;
   }
 }
 
 @media (max-width: 480px) {
-  .subs-plan-summary-modal {
-    padding: 10px;
+  .subplan-plans-header {
+    margin-bottom: 2rem;
   }
-  
-  .subs-plan-summary-card {
-    padding: 20px 15px;
-    max-height: 80vh;
-  }
-  
-  .subs-plan-payment-method {
-    padding: 15px;
-    margin: 20px 0;
-  }
-  
-  .subs-plan-order-details {
-    padding: 15px;
-  }
-}
 
-/* Scrollbar Styling for Modal */
-.subs-plan-summary-card::-webkit-scrollbar {
-  width: 6px;
-}
+  .subplan-category-section {
+    padding: 1.5rem;
+  }
 
-.subs-plan-summary-card::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
+  .subplan-plan-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
-.subs-plan-summary-card::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
+  .subplan-view-details-btn {
+    align-self: flex-start;
+  }
 
-.subs-plan-summary-card::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .subs-plan-payment-method,
-  .subs-plan-order-details {
-    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-    border-color: #4a5568;
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-payment-option {
-    background: #2d3748;
-    border-color: #4a5568;
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-payment-option.selected {
-    background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
-  }
-  
-  .subs-plan-order-details p strong {
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-summary-card {
-    background: #2d3748;
-    color: #e2e8f0;
-    border-color: #4a5568;
-  }
-  
-  .subs-plan-summary-card h2 {
-    color: #e2e8f0;
-  }
-}
-
-/* Responsive Design */
-
-/* Tablets */
-@media (max-width: 1024px) {
-  .subs-plan-plans-container {
-    padding: 15px;
-  }
-  
-  .subs-plan-plans-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-  }
-  
-  .subs-plan-user-welcome h1 {
-    font-size: 2.2rem;
-  }
-  
-  .subs-plan-plan-card {
-    padding: 25px;
-  }
-}
-
-/* Large Mobile Devices */
-@media (max-width: 768px) {
-  .subs-plan-plans-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .subs-plan-user-welcome h1 {
-    font-size: 2rem;
-  }
-  
-  .subs-plan-plan-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .subs-plan-plan-card {
-    padding: 20px;
-  }
-  
-  .subs-plan-plan-card h2 {
-    font-size: 1.6rem;
-  }
-  
-  .subs-plan-plan-price {
-    font-size: 2rem;
-    margin: 20px 0;
-  }
-  
-  .subs-plan-summary-card {
-    padding: 30px 25px;
-  }
-  
-  .subs-plan-summary-actions {
+  .subplan-modal-footer {
     flex-direction: column;
   }
-}
 
-/* Small Mobile Devices */
-@media (max-width: 480px) {
-  .subs-plan-plans-container {
-    padding: 10px;
+  .subplan-btn-secondary,
+  .subplan-btn-primary {
+    width: 100%;
+    text-align: center;
   }
-  
-  .subs-plan-user-welcome h1 {
-    font-size: 1.8rem;
-  }
-  
-  .subs-plan-plan-subtitle {
-    font-size: 1rem;
-  }
-  
-  .subs-plan-plan-card {
-    padding: 15px;
-    border-radius: 15px;
-  }
-  
-  .subs-plan-plan-card h2 {
-    font-size: 1.4rem;
-  }
-  
-  .subs-plan-plan-price {
-    font-size: 1.8rem;
-    padding: 12px;
-  }
-  
-  .subs-plan-plan-card button {
-    padding: 12px 15px;
-    font-size: 1rem;
-  }
-  
-  .subs-plan-plan-card select {
-    padding: 10px 12px;
-    font-size: 0.95rem;
-  }
-  
-  .subs-plan-summary-card {
-    padding: 25px 20px;
-    width: 95%;
-  }
-  
-  .subs-plan-summary-card h2 {
-    font-size: 1.5rem;
-  }
-  
-  .subs-plan-summary-card p {
-    font-size: 1rem;
-  }
-  
-  .subs-plan-login-prompt {
-    padding: 30px 20px;
-    margin: 50px auto;
-  }
-  
-  .subs-plan-error-message {
-    padding: 30px 20px;
-    margin: 30px auto;
-  }
-}
-
-/* Extra Small Devices */
-@media (max-width: 360px) {
-  .subs-plan-plans-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .subs-plan-user-welcome h1 {
-    font-size: 1.6rem;
-  }
-  
-  .subs-plan-plan-card {
-    padding: 12px;
-  }
-  
-  .subs-plan-plan-card h2 {
-    font-size: 1.3rem;
-  }
-  
-  .subs-plan-plan-features li {
-    font-size: 0.9rem;
-  }
-  
-  .subs-plan-plan-price {
-    font-size: 1.6rem;
-  }
-}
-
-/* High DPI Screens */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .subs-plan-plan-card {
-    border-width: 0.5px;
-  }
-}
-
-/* Print Styles */
-@media print {
-  .subs-plan-plans-container {
-    background: white !important;
-  }
-  
-  .subs-plan-plan-card {
-    break-inside: avoid;
-    box-shadow: none !important;
-    border: 2px solid #000 !important;
-  }
-  
-  .subs-plan-plan-card button {
-    display: none;
-  }
-  
-  .subs-plan-summary-modal,
-  .subs-plan-loading-overlay {
-    display: none !important;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .subs-plan-plan-card {
-    background: #2d3748;
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-plan-card h2 {
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-plan-card p {
-    color: #cbd5e0;
-  }
-  
-  .subs-plan-plan-features li {
-    color: #cbd5e0;
-    border-bottom-color: #4a5568;
-  }
-  
-  .subs-plan-plan-features strong {
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-plan-details {
-    background: #4a5568;
-    color: #e2e8f0;
-  }
-  
-  .subs-plan-plan-card select {
-    background: #4a5568;
-    border-color: #718096;
-    color: #e2e8f0;
-  }
-}
-
-/* Accessibility Improvements */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .subs-plan-emergency-card {
-    animation: none;
-    border: 2px solid #f44336;
-  }
-}
-
-/* Focus Styles for Keyboard Navigation */
-.subs-plan-plan-card button:focus,
-.subs-plan-plan-card select:focus,
-.subs-plan-summary-actions button:focus {
-  outline: 3px solid #667eea;
-  outline-offset: 2px;
-}
-
-/* Hover effects for touch devices */
-@media (hover: none) {
-  .subs-plan-plan-card:hover {
-    transform: none;
-  }
-  
-  .subs-plan-plan-card button:hover:not(:disabled) {
-    transform: none;
-  }
-}
-
-
-
-/* Add to your SubscriptionPlan.css */
-.subs-plan-wallet-info {
-  background: #f8f9fa;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #28a745;
-  margin-top: 8px;
-  border-left: 3px solid #28a745;
-}
-
-.subs-plan-payment-option .wallet-balance {
-  font-size: 12px;
-  color: #666;
-  margin-left: 8px;
-}
-
-.subs-plan-payment-option.selected .wallet-balance {
-  color: #fff;
-}
-
-.payment-method-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.payment-method-icon {
-  font-size: 16px;
-}
-
-.payment-method-icon.wallet {
-  color: #28a745;
-}
-
-.payment-method-icon.card {
-  color: #007bff;
 }
