@@ -12,9 +12,6 @@ const Navbar = ({ isMenuOpen, location, user, authLoading }) => {
       <Link to="/products" className={isActive("/products")}>
         Products & Services
       </Link>
-      {/* <Link to="/services" className={isActive("/services")}>
-        Services
-      </Link> */}
       <Link to="/contact" className={isActive("/contact")}>
         Contact
       </Link>
@@ -26,7 +23,7 @@ const Navbar = ({ isMenuOpen, location, user, authLoading }) => {
           to="/dashboard"
           className={`dashboard-menu-link ${isActive("/dashboard")}`}
         >
-          Go To Dashboard
+          My Account
         </Link>
       )}
     </nav>

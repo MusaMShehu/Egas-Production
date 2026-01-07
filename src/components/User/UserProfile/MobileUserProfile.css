@@ -99,7 +99,6 @@
 
 /* Profile Image Section */
 .mobpro-mobile-profile-image-section {
-  margin-top: 60px;
   padding: 24px 16px;
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   text-align: center;
@@ -243,7 +242,6 @@
 /* Profile Content */
 .mobpro-mobile-profile-content {
   padding: 16px;
-  padding-bottom: 80px; /* Space for bottom nav */
 }
 
 .mobpro-mobile-section-content {

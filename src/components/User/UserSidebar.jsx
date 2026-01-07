@@ -48,7 +48,7 @@ const UserSidebar = () => {
 
   const menuItems = [
     { path: "overview", icon: <FaTachometerAlt />, label: "Overview" },
-    { path: "orders", icon: <FaShoppingCart />, label: "Orders" },
+    { path: "/subscription-plan", icon: <FaShoppingCart />, label: "Refill" },
     { path: "subscriptions", icon: <FaRedo />, label: "Subscriptions" },
     { path: "delivery", icon: <FaShippingFast />, label: "Delivery" },
     { path: "history", icon: <FaHistory />, label: "History" },

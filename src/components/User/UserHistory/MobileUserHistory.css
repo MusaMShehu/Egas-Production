@@ -140,7 +140,7 @@
 /* Mobile Filter Panel */
 .mobhis-mobile-filter-panel {
   position: fixed;
-  bottom: 0;
+  bottom: 70px;
   left: 0;
   right: 0;
   background: white;
@@ -196,6 +196,7 @@
 
 .mobhis-mobile-filter-select {
   width: 100%;
+  height: fit-content;
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;

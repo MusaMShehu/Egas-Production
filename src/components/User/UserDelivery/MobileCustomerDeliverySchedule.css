@@ -85,6 +85,13 @@
   background: #3498db;
 }
 
+.mobdel-remnant{
+  padding: 5px 0;
+  display: flex;
+  /* justify-items: flex-end; */
+  justify-content: flex-end;
+}
+
 
 /* MobileCustomerDeliverySchedule.css - Add these styles */
 
@@ -433,7 +440,7 @@
 /* Mobile Filter Panel */
 .mobdel-mobile-filter-panel {
   position: fixed;
-  bottom: 0;
+  bottom: 70px;
   left: 0;
   right: 0;
   background: white;
@@ -490,6 +497,7 @@
 .mobdel-mobile-filter-input,
 .mobdel-mobile-filter-select {
   width: 100%;
+  height: fit-content;
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;

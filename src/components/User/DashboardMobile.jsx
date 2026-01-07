@@ -20,6 +20,7 @@ import {
   FaPercentage,
   FaClock,
   FaCogs,
+  FaHeadset,
   FaCog
 } from 'react-icons/fa';
 import './DashboardMobile.css';
@@ -193,7 +194,7 @@ const DashboardMobile = () => {
        {
         id: 'support',
         title: 'Support',
-        icon: <FaHistory />,
+        icon: <FaHeadset />,
         path: '/dashboard/support',
         className: 'mobdash-action-btn mobdash-quaternary',
       }
@@ -289,9 +290,9 @@ const DashboardMobile = () => {
           className="mobdash-stat-card mobdash-purple"
           onClick={() => infoToast(`Wallet balance: ${formatCurrency(walletBalance)}`)}
         >
-          <div className="mobdash-stat-icon">
+          {/* <div className="mobdash-stat-icon">
             <FaWallet />
-          </div>
+          </div> */}
           <div className="mobdash-stat-content">
             <h3>Wallet Balance</h3>
             <div className="mobdash-stat-value">{formatCurrency(walletBalance)}</div>
@@ -303,9 +304,9 @@ const DashboardMobile = () => {
           className="mobdash-stat-card mobdash-blue"
           onClick={() => infoToast(`Total spent: ${formatCurrency(totalSpent)}`)}
         >
-          <div className="mobdash-stat-icon">
+          {/* <div className="mobdash-stat-icon">
             <FaChartLine />
-          </div>
+          </div> */}
           <div className="mobdash-stat-content">
             <h3>Total Spent</h3>
             <div className="mobdash-stat-value">{formatCurrency(totalSpent)}</div>
@@ -315,9 +316,9 @@ const DashboardMobile = () => {
 
         <div 
           className="mobdash-stat-card mobdash-green">
-          <div className="mobdash-stat-icon">
+          {/* <div className="mobdash-stat-icon">
             <FaFileInvoiceDollar />
-          </div>
+          </div> */}
           <div className="mobdash-stat-content">
             <h3>Subscriptions</h3>
             <div className="mobdash-stat-value">{subscriptionCount}</div>
@@ -329,9 +330,9 @@ const DashboardMobile = () => {
           className="mobdash-stat-card mobdash-orange"
           onClick={() => infoToast(`${orderCount} orders • ${activeOrderCount} active`)}
         >
-          <div className="mobdash-stat-icon">
+          {/* <div className="mobdash-stat-icon">
             <FaShoppingCart />
-          </div>
+          </div> */}
           <div className="mobdash-stat-content">
             <h3>Orders</h3>
             <div className="mobdash-stat-value">{orderCount}</div>
