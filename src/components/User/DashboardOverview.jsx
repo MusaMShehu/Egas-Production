@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import { format, parseISO, isAfter } from 'date-fns';
+import { format, parseISO } from 'date-fns';
+import axios from 'axios';
 import { 
   FaChartLine,
   FaShoppingCart, 
@@ -30,6 +32,18 @@ const dashboardAPI = {
     }
     
     return response.json();
+  },
+
+  getNextDelivery: async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('https://egas-server-1.onrender.com/api/v1/admin/delivery/next-delivery', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    return response.data;
   }
 };
 
@@ -78,7 +92,7 @@ const formatDate = (dateString) => {
   
   try {
     const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'MMM dd, yyyy');
+    return format(date, 'EEE, MMM dd, yyyy');
   } catch (error) {
     console.error('Date formatting error:', error);
     return 'Invalid Date';
@@ -131,63 +145,146 @@ const StatCard = ({ title, value, subtitle, icon, color = 'primary' }) => (
   </div>
 );
 
-// Delivery Status Component
-const DeliveryStatus = ({ nextDeliveryDate, activeSubscriptions }) => {
-  const isUpcoming = nextDeliveryDate && isAfter(new Date(nextDeliveryDate), new Date());
-  
-  const handleDeliveryClick = () => {
-    if (nextDeliveryDate) {
-      infoToast(`Next delivery scheduled for ${formatDate(nextDeliveryDate)}`);
-    } else {
-      infoToast('No upcoming deliveries scheduled');
+// NEW: Next Delivery Component with API call
+const NextDeliveryComponent = () => {
+  const [nextDelivery, setNextDelivery] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchNextDelivery();
+  }, []);
+
+  const fetchNextDelivery = async () => {
+    try {
+      setLoading(true);
+      const response = await dashboardAPI.getNextDelivery();
+      
+      if (response.success && response.data) {
+        setNextDelivery(response.data);
+      } else {
+        setNextDelivery(null);
+      }
+    } catch (err) {
+      console.error('Error fetching next delivery:', err);
+      setError('Failed to fetch delivery information');
+      setNextDelivery(null);
+    } finally {
+      setLoading(false);
     }
   };
-  
+
+  const handleDeliveryClick = () => {
+    if (nextDelivery) {
+      infoToast(`Delivery scheduled for ${formatDate(nextDelivery.deliveryDate)} - Status: ${nextDelivery.status}`);
+    }
+  };
+
+  const handleSubscriptionClick = () => {
+    if (nextDelivery?.subscription) {
+      infoToast(
+        `Subscription: ${nextDelivery.subscription.name || 'Unnamed'} - ` +
+        `Size: ${nextDelivery.subscription.size || 'Standard'} - ` +
+        `Frequency: ${nextDelivery.subscription.frequency || 'Regular'}`
+      );
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="card">
+        <div className="card-header">
+          <FaTruck className="card-icon" />
+          <h3>Next Delivery</h3>
+        </div>
+        <div className="card-content">
+          <div className="loading-state">Loading delivery information...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="card">
+        <div className="card-header">
+          <FaTruck className="card-icon" />
+          <h3>Next Delivery</h3>
+        </div>
+        <div className="card-content">
+          <div className="error-state">
+            <FaExclamationTriangle /> {error}
+            <button className="small-retry-button" onClick={fetchNextDelivery}>
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="card">
       <div className="card-header">
         <FaTruck className="card-icon" />
         <h3>Next Delivery</h3>
+        <button className="refresh-icon-button" onClick={fetchNextDelivery}>
+          <FaRedo />
+        </button>
       </div>
       <div className="card-content">
-        {nextDeliveryDate ? (
+        {nextDelivery ? (
           <>
             <div 
-              className={`delivery-banner ${isUpcoming ? 'upcoming' : 'pending'}`}
+              className={`delivery-banner ${nextDelivery.isUpcoming ? 'upcoming' : 'pending'}`}
               onClick={handleDeliveryClick}
               style={{ cursor: 'pointer' }}
             >
-              <div className="delivery-date">{formatDate(nextDeliveryDate)}</div>
+              <div className="delivery-date">{formatDate(nextDelivery.deliveryDate)}</div>
               <div className="delivery-status">
-                {isUpcoming ? 'Upcoming delivery' : 'Delivery pending'}
+                {nextDelivery.isUpcoming ? 'Upcoming delivery' : 'Delivery pending'}
+              </div>
+              <div className="delivery-status-badge">
+                {nextDelivery.status.replace('_', ' ')}
               </div>
             </div>
             
-            <div className="subscriptions-list">
-              <h4>Active Subscriptions ({activeSubscriptions.length})</h4>
-              <div className="subscriptions">
-                {activeSubscriptions.slice(0, 3).map((sub, index) => (
-                  <div 
-                    key={index} 
-                    className="subscription-item"
-                    onClick={() => infoToast(`Subscription: ${sub.name || 'Unnamed'} - ${sub.deliveryFrequency || 'Regular'}`)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <FaCheckCircle className="subscription-icon" />
-                    <div className="subscription-details">
-                      <div className="subscription-name">{sub.name || 'Subscription'}</div>
-                      <div className="subscription-info">
-                        {sub.deliveryFrequency || 'Regular'} • {formatDate(sub.nextDeliveryDate)}
-                      </div>
+            <div className="subscription-details">
+              <h4>From This Subscription</h4>
+              {nextDelivery.subscription ? (
+                <div 
+                  className="subscription-item"
+                  onClick={handleSubscriptionClick}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <FaCheckCircle className="subscription-icon" />
+                  <div className="subscription-details-content">
+                    <div className="subscription-name">
+                      {nextDelivery.subscription.name || 'Subscription'}
+                    </div>
+                    <div className="subscription-info">
+                      <span className="subscription-size">{nextDelivery.subscription.size || 'Standard'}</span>
+                      <span className="separator">•</span>
+                      <span className="subscription-frequency">{nextDelivery.subscription.frequency || 'Regular'}</span>
+                    </div>
+                    <div className="subscription-status">
+                      Status: <span className={`status-${nextDelivery.subscription.status}`}>
+                        {nextDelivery.subscription.status}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="no-subscription">
+                  <p>No subscription information available for this delivery</p>
+                </div>
+              )}
             </div>
           </>
         ) : (
           <div className="no-deliveries">
-            No upcoming deliveries
+            <p>No upcoming deliveries scheduled</p>
+            <small>When you have an active subscription, your next delivery will appear here.</small>
           </div>
         )}
       </div>
@@ -456,7 +553,7 @@ const DashboardOverview = () => {
     topupMonthly,
     orderCount,
     activeOrderCount,
-    nextDeliveryDate,
+    nextDeliveryDate, // This is from old API, kept for backward compatibility
     subscriptionCount,
     activeSubscriptions = [],
     walletBalance,
@@ -568,12 +665,9 @@ const DashboardOverview = () => {
           </div>
         </div>
 
-        {/* Delivery Status */}
+        {/* Delivery Status - REPLACED with new component */}
         <div className="content-column">
-          <DeliveryStatus 
-            nextDeliveryDate={nextDeliveryDate}
-            activeSubscriptions={activeSubscriptions}
-          />
+          <NextDeliveryComponent />
         </div>
 
         {/* Spending Chart */}

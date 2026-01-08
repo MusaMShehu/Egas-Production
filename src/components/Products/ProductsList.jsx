@@ -409,19 +409,20 @@ const Products = () => {
               delivered directly to their home, office, or preferred location.
             </p>
             <p>
-              We also sell high-quality gas cylinders, burners, regulators, hoses,
-              and other gas accessories to ensure safe and efficient usage.
+              We also sell high-quality gas cylinders, burners, regulators,
+              hoses, and other gas accessories to ensure safe and efficient
+              usage.
             </p>
             <p>
               For added convenience, we offer subscription-based routine gas
               delivery, so you never run out of cooking gas again. With our
-              subscription service, your LPG refill is automatically delivered on
-              schedule without the need to reorder. Our goal is to deliver
+              subscription service, your LPG refill is automatically delivered
+              on schedule without the need to reorder. Our goal is to deliver
               comfort, safety, and reliability with every order.
             </p>
           </div>
-          <Link to="/order" className="pro-list-btn">
-            Place Order
+          <Link to="/subscription-plan" className="pro-list-btn">
+            Refill Now
           </Link>
         </div>
       </section>
@@ -475,8 +476,12 @@ const Products = () => {
                       {product.capacity}
                     </span>
                   )}
-                  {product.category === "safety" && (
-                    <span className="pro-list-safety-badge">Safety</span>
+                  {["safety", "gas", "cylinder", "cooker"].includes(
+                    product.category
+                  ) && (
+                    <span className="pro-list-coming-soon-badge">
+                      Coming Soon...
+                    </span>
                   )}
                 </div>
                 <div className="pro-list-product-info">

@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO, isAfter } from 'date-fns';
+import { format, parseISO } from 'date-fns';
+import axios from 'axios';
 import { 
   FaChartLine,
   FaShoppingCart, 
@@ -42,6 +44,22 @@ const dashboardAPI = {
     }
     
     return response.json();
+  },
+
+  getNextDelivery: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('https://egas-server-1.onrender.com/api/v1/admin/delivery/next-delivery', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching next delivery:', error);
+      throw new Error('Failed to fetch next delivery');
+    }
   }
 };
 
@@ -85,7 +103,7 @@ const formatDate = (dateString) => {
   
   try {
     const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'MMM dd, yyyy');
+    return format(date, 'EEE, MMM dd, yyyy');
   } catch (error) {
     console.error('Date formatting error:', error);
     return 'Invalid Date';
@@ -114,13 +132,199 @@ const ErrorMessage = ({ message, onRetry }) => (
   </div>
 );
 
+// UPDATED: Next Delivery Component for Mobile
+const NextDeliveryMobile = () => {
+  const navigate = useNavigate();
+  const [nextDelivery, setNextDelivery] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchNextDelivery = async () => {
+    try {
+      setLoading(true);
+      const response = await dashboardAPI.getNextDelivery();
+      
+      if (response.success && response.data) {
+        setNextDelivery(response.data);
+      } else {
+        setNextDelivery(null);
+      }
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching next delivery:', err);
+      setError('Failed to fetch delivery information');
+      setNextDelivery(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNextDelivery();
+  }, []);
+
+  const handleDeliveryClick = () => {
+    if (nextDelivery) {
+      infoToast(`Delivery scheduled for ${formatDate(nextDelivery.deliveryDate)}`);
+      navigate('/tracking');
+    } else {
+      infoToast('No upcoming deliveries');
+    }
+  };
+
+  const handleSubscriptionClick = () => {
+    if (nextDelivery?.subscription) {
+      infoToast(
+        `Subscription: ${nextDelivery.subscription.name} - ` +
+        `Size: ${nextDelivery.subscription.size} - ` +
+        `Frequency: ${nextDelivery.subscription.frequency}`
+      );
+      navigate('/subscriptions');
+    }
+  };
+
+  const handleRefresh = () => {
+    infoToast('Refreshing delivery info...');
+    fetchNextDelivery();
+  };
+
+  if (loading) {
+    return (
+      <div className="mobdash-mobile-delivery-card">
+        <div className="mobdash-delivery-header">
+          <FaTruck />
+          <h3>Next Delivery</h3>
+          <button 
+            className="mobdash-view-all-btn"
+            onClick={handleRefresh}
+          >
+            <FaRedo />
+          </button>
+        </div>
+        <div className="mobdash-delivery-content">
+          <div className="mobdash-loading-state">
+            <div className="mobdash-loading-spinner-small"></div>
+            <p>Loading delivery information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mobdash-mobile-delivery-card">
+        <div className="mobdash-delivery-header">
+          <FaTruck />
+          <h3>Next Delivery</h3>
+          <button 
+            className="mobdash-view-all-btn"
+            onClick={handleRefresh}
+          >
+            <FaRedo />
+          </button>
+        </div>
+        <div className="mobdash-delivery-content">
+          <div className="mobdash-error-state">
+            <FaExclamationTriangle className="mobdash-error-icon" />
+            <p>Failed to load delivery</p>
+            <button className="mobdash-retry-btn-small" onClick={fetchNextDelivery}>
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mobdash-mobile-delivery-card">
+      <div className="mobdash-delivery-header">
+        <FaTruck />
+        <h3>Next Delivery</h3>
+        <button 
+          className="mobdash-view-all-btn"
+          onClick={handleRefresh}
+        >
+          <FaRedo />
+        </button>
+      </div>
+      
+      <div className="mobdash-delivery-content">
+        {nextDelivery ? (
+          <>
+            <div 
+              className={`mobdash-delivery-schedule ${nextDelivery.isUpcoming ? 'mobdash-upcoming' : 'mobdash-pending'}`}
+              onClick={handleDeliveryClick}
+            >
+              <div className="mobdash-delivery-date-badge">
+                <span className="mobdash-date-label">Delivery Date</span>
+                <span className="mobdash-date-value">{formatDate(nextDelivery.deliveryDate)}</span>
+              </div>
+              <div className="mobdash-delivery-status">
+                <span className={`mobdash-status-indicator ${nextDelivery.isUpcoming ? 'mobdash-status-upcoming' : 'mobdash-status-pending'}`}></span>
+                {nextDelivery.isUpcoming ? 'Upcoming' : 'Pending'}
+                <span className="mobdash-delivery-status-badge">
+                  {nextDelivery.status.replace('_', ' ')}
+                </span>
+              </div>
+            </div>
+            
+            {/* Subscription Details */}
+            <div className="mobdash-subscription-details">
+              <h4>From this Subscription</h4>
+              {nextDelivery.subscription ? (
+                <div 
+                  className="mobdash-subscription-item"
+                  onClick={handleSubscriptionClick}
+                >
+                  <FaCheckCircle className="mobdash-subscription-icon" />
+                  <div className="mobdash-subscription-content">
+                    <div className="mobdash-subscription-name">
+                      {nextDelivery.subscription.name || 'Subscription'}
+                    </div>
+                    <div className="mobdash-subscription-info">
+                      <span className="mobdash-subscription-size">{nextDelivery.subscription.size || 'Standard'}</span>
+                      <span className="mobdash-subscription-separator">•</span>
+                      <span className="mobdash-subscription-frequency">{nextDelivery.subscription.frequency || 'Regular'}</span>
+                    </div>
+                    <div className="mobdash-subscription-status">
+                      Status: <span className={`mobdash-status-${nextDelivery.subscription.status}`}>
+                        {nextDelivery.subscription.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mobdash-no-subscription">
+                  <p>No subscription information available</p>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="mobdash-no-delivery">
+            <p>No upcoming deliveries scheduled</p>
+            <small>When you have an active subscription, your next delivery will appear here.</small>
+            <button 
+              className="mobdash-explore-subscriptions"
+              onClick={() => navigate('/dashboard/subscriptions')}
+            >
+              Explore Subscriptions
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Main Dashboard Component
 const DashboardMobile = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview'); // overview, orders, subscriptions
   const [showPromo, setShowPromo] = useState(true);
 
   const fetchDashboardData = async () => {
@@ -255,7 +459,6 @@ const DashboardMobile = () => {
     topupMonthly,
     orderCount,
     activeOrderCount,
-    nextDeliveryDate,
     subscriptionCount,
     activeSubscriptions = [],
     walletBalance,
@@ -288,11 +491,7 @@ const DashboardMobile = () => {
       <div className="mobdash-stats-grid">
          <div 
           className="mobdash-stat-card mobdash-purple"
-          onClick={() => infoToast(`Wallet balance: ${formatCurrency(walletBalance)}`)}
         >
-          {/* <div className="mobdash-stat-icon">
-            <FaWallet />
-          </div> */}
           <div className="mobdash-stat-content">
             <h3>Wallet Balance</h3>
             <div className="mobdash-stat-value">{formatCurrency(walletBalance)}</div>
@@ -302,11 +501,7 @@ const DashboardMobile = () => {
 
         <div 
           className="mobdash-stat-card mobdash-blue"
-          onClick={() => infoToast(`Total spent: ${formatCurrency(totalSpent)}`)}
         >
-          {/* <div className="mobdash-stat-icon">
-            <FaChartLine />
-          </div> */}
           <div className="mobdash-stat-content">
             <h3>Total Spent</h3>
             <div className="mobdash-stat-value">{formatCurrency(totalSpent)}</div>
@@ -316,9 +511,6 @@ const DashboardMobile = () => {
 
         <div 
           className="mobdash-stat-card mobdash-green">
-          {/* <div className="mobdash-stat-icon">
-            <FaFileInvoiceDollar />
-          </div> */}
           <div className="mobdash-stat-content">
             <h3>Subscriptions</h3>
             <div className="mobdash-stat-value">{subscriptionCount}</div>
@@ -328,11 +520,7 @@ const DashboardMobile = () => {
 
         <div 
           className="mobdash-stat-card mobdash-orange"
-          onClick={() => infoToast(`${orderCount} orders • ${activeOrderCount} active`)}
         >
-          {/* <div className="mobdash-stat-icon">
-            <FaShoppingCart />
-          </div> */}
           <div className="mobdash-stat-content">
             <h3>Orders</h3>
             <div className="mobdash-stat-value">{orderCount}</div>
@@ -369,72 +557,6 @@ const DashboardMobile = () => {
         >
           Save Now
         </button>
-      </div>
-    );
-  };
-
-  // Next Delivery Component
-  const NextDelivery = () => {
-    const isUpcoming = nextDeliveryDate && isAfter(new Date(nextDeliveryDate), new Date());
-    
-    return (
-      <div className="mobdash-mobile-delivery-card">
-        <div className="mobdash-delivery-header">
-          <FaTruck />
-          <h3>Track Delivery</h3>
-          <button 
-            className="mobdash-view-all-btn"
-            onClick={() => {
-              navigate('/tracking');
-            }}
-          >
-            View All <FaChevronRight />
-          </button>
-        </div>
-        
-        <div className="mobdash-delivery-content">
-          {nextDeliveryDate ? (
-            <div className="mobdash-delivery-schedule">
-              <div className="mobdash-delivery-date-badge">
-                <span className="mobdash-date-label">Next Delivery</span>
-                <span className="mobdash-date-value">{formatDate(nextDeliveryDate)}</span>
-              </div>
-              <div className="mobdash-delivery-status">
-                <span className={`mobdash-status-indicator ${isUpcoming ? 'mobdash-upcoming' : 'mobdash-pending'}`}></span>
-                {isUpcoming ? 'Upcoming' : 'Pending'}
-              </div>
-            </div>
-          ) : (
-            <div className="mobdash-no-delivery">
-              <p>No upcoming deliveries scheduled</p>
-            </div>
-          )}
-          
-          {activeSubscriptions.length > 0 && (
-            <div className="mobdash-active-subscriptions">
-              <h4>Active Subscriptions</h4>
-              <div className="mobdash-subscriptions-list">
-                {activeSubscriptions.slice(0, 2).map((sub, index) => (
-                  <div 
-                    key={index} 
-                    className="mobdash-subscription-item"
-                    onClick={() => {
-                      infoToast(`Subscription: ${sub.name || 'Unnamed'}`);
-                      navigate('/subscriptions');
-                    }}
-                  >
-                    <FaCheckCircle />
-                    <div className="mobdash-subscription-details">
-                      <span className="mobdash-subscription-name">{sub.name || 'Subscription'}</span>
-                      <span className="mobdash-subscription-frequency">{sub.deliveryFrequency || 'Regular'}</span>
-                    </div>
-                    <span className="mobdash-subscription-amount">{formatCurrency(sub.amount || 0)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     );
   };
@@ -540,7 +662,7 @@ const DashboardMobile = () => {
       {/* Header */}
       <div className="mobdash-mobile-dashboard-header">
         <div className="mobdash-header-content">
-          <h1>eGas Dashboard</h1>
+          <h1>e-Gas Dashboard</h1>
           <button className="mobdash-mobile-refresh-btn" onClick={handleRefresh}>
             <FaRedo />
           </button>
@@ -561,8 +683,8 @@ const DashboardMobile = () => {
         {/* Promotions */}
         <PromotionsBanner />
         
-        {/* Delivery Status */}
-        <NextDelivery />
+        {/* UPDATED: Next Delivery Component */}
+        <NextDeliveryMobile />
         
         {/* Recent Activities */}
         <RecentActivities />

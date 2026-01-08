@@ -560,3 +560,246 @@ body{
     border: 1px solid #dee2e6;
   }
 }
+
+
+
+/* Add these styles to your Dashboard.css file */
+
+/* Next Delivery Component Styles */
+.delivery-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 16px;
+  color: white;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease;
+}
+
+.delivery-banner:hover {
+  transform: translateY(-2px);
+}
+
+.delivery-banner.upcoming {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.delivery-banner.pending {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.delivery-date {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.delivery-status {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.delivery-status-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  text-transform: capitalize;
+}
+
+.subscription-details h4 {
+  margin: 0 0 12px 0;
+  color: #374151;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.subscription-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.subscription-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.subscription-icon {
+  color: #10b981;
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+.subscription-details-content {
+  flex: 1;
+}
+
+.subscription-name {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.subscription-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.subscription-size {
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+.subscription-frequency {
+  font-weight: 500;
+  color: #8b5cf6;
+}
+
+.separator {
+  opacity: 0.5;
+}
+
+.subscription-status {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.status-active {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.status-paused {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.status-cancelled {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.no-deliveries {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+}
+
+.no-deliveries p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.no-deliveries small {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.no-subscription {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.error-state {
+  color: #ef4444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.small-retry-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.small-retry-button:hover {
+  background: #2563eb;
+}
+
+.refresh-icon-button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.refresh-icon-button:hover {
+  color: #3b82f6;
+  background: #f3f4f6;
+}
+
+/* Update card header to include refresh button */
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 20px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.card-icon {
+  font-size: 24px;
+  color: #3b82f6;
+  margin-right: 12px;
+}
+
+/* Additional utility classes */
+.error-state .error-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.error-state button {
+  margin-top: 8px;
+}
+
+/* Ensure the delivery card fits well in the layout */
+.content-column .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-column .card .card-content {
+  flex: 1;
+}

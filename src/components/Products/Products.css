@@ -191,7 +191,7 @@
   z-index: 2;
 }
 
-.pro-list-safety-badge {
+.pro-list-coming-soon-badge {
   position: absolute;
   top: 0.8rem;
   left: 0.8rem;
@@ -235,7 +235,6 @@
   line-height: 1.5;
   flex-grow: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -274,12 +273,13 @@
 }
 
 .pro-list-order-now-btn {
-  background-color: #ff9a3d;
-  color: white;
+  background-color: #ccc;
+  color: #666;
   border: none;
   padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(0.8rem, 2vw, 1rem);
   border-radius: 6px;
-  cursor: pointer;
+  cursor: not-allowed;
+  pointer-events: none;
   transition: all 0.3s ease;
   flex: 1;
   text-decoration: none;
@@ -292,7 +292,7 @@
 }
 
 .pro-list-order-now-btn:hover {
-  background-color: #e6892a;
+  background-color: #ccc;
   transform: translateY(-2px);
 }
 
