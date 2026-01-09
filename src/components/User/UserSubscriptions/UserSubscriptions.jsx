@@ -339,10 +339,10 @@ const Subscriptions = () => {
 
   const getFrequencyText = (frequency) => {
     switch (frequency) {
-      case 'Monthly': return '/month';
-      case 'Weekly': return '/week';
-      case 'Bi-Weekly': return '/2 weeks';
-      case 'One-Time': return 'one-time';
+      case 'Monthly': return 'Once every month';
+      case 'Weekly': return 'Every week';
+      case 'Bi-weekly': return 'Every 2 weeks';
+      case 'One-Time': return 'Once';
       default: return frequency || 'N/A';
     }
   };
@@ -358,7 +358,7 @@ const Subscriptions = () => {
   const getPaymentMethodText = (paymentMethod) => {
     switch (paymentMethod) {
       case 'wallet': return 'Wallet Balance';
-      case 'paystack': return 'Card Payment';
+      case 'paystack': return 'Paid through Paystack';
       default: return paymentMethod || 'N/A';
     }
   };
@@ -446,7 +446,7 @@ const Subscriptions = () => {
                               className="sub-dropdown-item"
                               onClick={() => handleViewDetails(subscription)}
                             >
-                              View Subscription Details
+                              View Details
                             </button>
                             {subscription.status === 'active' && (
                               <button 
@@ -486,8 +486,6 @@ const Subscriptions = () => {
                       <span className="sub-detail-label">Price:</span>
                       <span className="sub-detail-value">
                         {formatCurrency(subscription.price)}
-                        {subscription.frequency && subscription.frequency !== 'One-Time' && 
-                          getFrequencyText(subscription.frequency)}
                       </span>
                     </div>
                     <div className="sub-detail-row">
@@ -585,8 +583,6 @@ const Subscriptions = () => {
                       <span className="sub-detail-label">Price:</span>
                       <span className="sub-detail-value">
                         {formatCurrency(subscription.price)}
-                        {subscription.frequency && subscription.frequency !== 'One-Time' && 
-                          getFrequencyText(subscription.frequency)}
                       </span>
                     </div>
                     <div className="sub-detail-row">
@@ -667,8 +663,6 @@ const Subscriptions = () => {
                     <span className="sub-detail-label">Price:</span>
                     <span className="sub-detail-value">
                       {formatCurrency(selectedSubscription.price)}
-                      {selectedSubscription.frequency && selectedSubscription.frequency !== 'One-Time' && 
-                        getFrequencyText(selectedSubscription.frequency)}
                     </span>
                   </div>
                 </div>

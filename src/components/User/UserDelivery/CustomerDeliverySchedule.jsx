@@ -764,7 +764,8 @@ const CustomerDeliveryHistory = () => {
           'pending': 4,
           'failed': 5,
           'cancelled': 6,
-          'delivered': 7
+          'delivered': 7,
+          'paused':8,
         };
         
         return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
@@ -825,6 +826,7 @@ const CustomerDeliveryHistory = () => {
       delivered: "adm-status-delivered",
       failed: "adm-status-failed",
       cancelled: "adm-status-cancelled",
+      paused: "adm-status-paused",
     };
     return `adm-status-chip ${statusMap[status] || "adm-status-pending"}`;
   };

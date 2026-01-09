@@ -43,7 +43,7 @@
   color: white;
 }
 
-.adm-rem-tab{
+.adm-rem-tab {
   background: #34495e;
   color: white;
 }
@@ -210,16 +210,16 @@
     white-space: nowrap;
     padding-bottom: 10px;
   }
-  
+
   .adm-tab {
     white-space: nowrap;
   }
-  
+
   .adm-controls {
     flex-wrap: wrap;
     gap: 10px;
   }
-  
+
   .adm-filter-group,
   .adm-sort-group {
     flex: 1;
@@ -291,7 +291,7 @@
 .adm-delivery-card {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #3498db;
   position: relative;
   overflow: hidden;
@@ -359,13 +359,38 @@
   text-transform: uppercase;
 }
 
-.adm-status-pending { background: #fff3cd; color: #856404; }
-.adm-status-assigned { background: #d1ecf1; color: #0c5460; }
-.adm-status-accepted { background: #d1ecf1; color: #0c5460; }
-.adm-status-out_for_delivery { background: #ffeaa7; color: #e17055; }
-.adm-status-delivered { background: #d4edda; color: #155724; }
-.adm-status-failed { background: #f8d7da; color: #721c24; }
-.adm-status-cancelled { background: #f8d7da; color: #721c24; }
+.adm-status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+.adm-status-assigned {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+.adm-status-accepted {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+.adm-status-out_for_delivery {
+  background: #ffeaa7;
+  color: #e17055;
+}
+.adm-status-delivered {
+  background: #d4edda;
+  color: #155724;
+}
+.adm-status-failed {
+  background: #f8d7da;
+  color: #721c24;
+}
+.adm-status-cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+.adm-status-paused {
+  background-color: #f39c12;
+  color: white;
+}
 
 .adm-delivery-date {
   color: #7f8c8d;
@@ -544,7 +569,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -660,8 +685,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive Design */
@@ -669,42 +698,41 @@
   .adm-customer-delivery {
     padding: 10px;
   }
-  
+
   .adm-tabs {
     flex-direction: column;
   }
-  
+
   .adm-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .adm-filter-group,
   .adm-sort-group {
     justify-content: space-between;
   }
-  
+
   .adm-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .adm-card-footer {
     flex-direction: column;
     gap: 10px;
     align-items: stretch;
   }
-  
+
   .adm-dialog-footer {
     flex-direction: column;
   }
 }
 
 @media (max-width: 350px) {
-.adm-time-context {
- 
-  padding: 7px 4px;
-  font-size: 0.6rem;
-}
+  .adm-time-context {
+    padding: 7px 4px;
+    font-size: 0.6rem;
+  }
 }

@@ -1,14 +1,23 @@
-/* MobileSubscriptions.css */
+/* MobileSubscriptions.css - Complete Rewrite */
+
+/* Main Container */
 .mobsubs-mobile-subscriptions {
   padding-bottom: 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
+/* Header */
 .mobsubs-subscriptions-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 15px;
+  padding: 20px 16px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .mobsubs-subscriptions-header h1 {
@@ -25,70 +34,21 @@
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 25px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .mobsubs-wallet-icon {
   font-size: 16px;
 }
 
-.mobsubs-subscription-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 0 15px;
-}
-
-.mobsubs-stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.mobsubs-stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: white;
-}
-
-.mobsubs-stat-icon.mobsubs-active {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
-}
-
-.mobsubs-stat-icon.mobsubs-total {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-}
-
-.mobsubs-stat-content h3 {
-  margin: 0 0 4px 0;
-  font-size: 14px;
-  color: #666;
-}
-
-.mobsubs-stat-content p {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #2c3e50;
-}
-
+/* Search and Create Bar */
 .mobsubs-actions-bar {
   display: flex;
-  /* flex-direction: column; */
   gap: 12px;
-  margin-bottom: 20px;
-  padding: 15px;
+  margin: 16px;
+  align-items: center;
 }
 
 .mobsubs-search-container {
@@ -101,16 +61,25 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #95a5a6;
+  font-size: 16px;
 }
 
 .mobsubs-search-container input {
   width: 100%;
-  padding: 14px 16px 14px 48px;
+  padding: 14px 16px 14px 44px;
   border: 1px solid #e0e0e0;
   border-radius: 25px;
-  font-size: 16px;
+  font-size: 15px;
   background: white;
+  color: #2c3e50;
+  transition: border-color 0.2s ease;
+}
+
+.mobsubs-search-container input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
 }
 
 .mobsubs-clear-search {
@@ -120,14 +89,16 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #666;
+  color: #95a5a6;
   cursor: pointer;
   padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mobsubs-new-subscription-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
-  width: fit-content;
   color: white;
   border: none;
   padding: 14px 20px;
@@ -139,12 +110,15 @@
   gap: 8px;
   cursor: pointer;
   white-space: nowrap;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .mobsubs-new-subscription-btn:active {
   transform: scale(0.98);
+  opacity: 0.9;
 }
 
+/* Section Headers */
 .mobsubs-subscription-section {
   margin-bottom: 24px;
 }
@@ -153,14 +127,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding: 0 30px;
+  margin: 0 16px 12px 16px;
+  padding: 0;
 }
 
 .mobsubs-section-header h2 {
   margin: 0;
   font-size: 18px;
   color: #2c3e50;
+  font-weight: 600;
 }
 
 .mobsubs-count-badge {
@@ -168,22 +143,30 @@
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
+/* Subscription List */
 .mobsubs-subscriptions-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  gap: 16px;
+  padding: 0 16px;
 }
 
+/* Subscription Cards */
 .mobsubs-subscription-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobsubs-subscription-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
 }
 
 .mobsubs-subscription-card.mobsubs-active {
@@ -194,6 +177,7 @@
   border-left: 4px solid #95a5a6;
 }
 
+/* Subscription Header */
 .mobsubs-subscription-header {
   display: flex;
   justify-content: space-between;
@@ -205,119 +189,70 @@
 
 .mobsubs-subscription-title {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 
 .mobsubs-subscription-icon {
   font-size: 24px;
   color: #e74c3c;
+  margin-top: 2px;
 }
 
 .mobsubs-subscription-title h3 {
   margin: 0 0 4px 0;
-  font-size: 16px;
+  font-size: 17px;
   color: #2c3e50;
+  font-weight: 600;
 }
 
 .mobsubs-subscription-id {
   margin: 0;
   font-size: 12px;
-  color: #666;
+  color: #7f8c8d;
+  font-family: 'Courier New', monospace;
 }
 
-.mobsubs-subscription-actions {
-  position: relative;
-}
-
+/* Status Badges */
 .mobsubs-status-badge {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  margin-bottom: 8px;
+  text-transform: capitalize;
 }
 
 .mobsubs-status-active {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
 }
 
 .mobsubs-status-paused {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba(243, 156, 18, 0.15);
+  color: #d35400;
 }
 
 .mobsubs-status-cancelled {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
 }
 
 .mobsubs-status-expired {
-  background: #e2e3e5;
-  color: #383d41;
+  background: rgba(149, 165, 166, 0.15);
+  color: #7f8c8d;
 }
 
-.mobsubs-action-menu-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.mobsubs-status-pending {
+  background: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
 }
 
-.mobsubs-action-menu-btn:active {
-  background: #f0f0f0;
-}
-
-.mobsubs-action-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  min-width: 150px;
-  z-index: 10;
-  overflow: hidden;
-}
-
-.mobsubs-menu-item {
-  width: 100%;
-  padding: 12px 16px;
-  border: none;
-  background: none;
-  text-align: left;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.mobsubs-menu-item:last-child {
-  border-bottom: none;
-}
-
-.mobsubs-menu-item:hover {
-  background: #f8f9fa;
-}
-
-.mobsubs-menu-item.mobsubs-danger {
-  color: #e74c3c;
-}
-
+/* Subscription Details */
 .mobsubs-subscription-details {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .mobsubs-detail-row {
@@ -328,7 +263,8 @@
 
 .mobsubs-detail-row .mobsubs-label {
   font-size: 14px;
-  color: #666;
+  color: #7f8c8d;
+  font-weight: 500;
 }
 
 .mobsubs-detail-row .mobsubs-value {
@@ -347,83 +283,115 @@
 }
 
 .mobsubs-detail-row .mobsubs-value .mobsubs-icon {
-  color: #888;
+  color: #95a5a6;
+  font-size: 13px;
 }
 
-.mobsubs-subscription-footer {
-  display: flex;
-  gap: 12px;
+/* Action Buttons */
+.mobsubs-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.mobsubs-manage-btn,
+.mobsubs-view-details-btn,
+.mobsubs-pause-btn,
+.mobsubs-cancel-btn,
 .mobsubs-resume-btn,
 .mobsubs-renew-btn {
-  flex: 1;
   padding: 12px;
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
-.mobsubs-manage-btn {
-  background: #2c3e50;
-  color: white;
-}
-
-.mobsubs-resume-btn {
+.mobsubs-view-details-btn {
   background: #3498db;
   color: white;
 }
 
-.mobsubs-renew-btn {
+.mobsubs-pause-btn {
+  background: #f39c12;
+  color: white;
+}
+
+.mobsubs-cancel-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.mobsubs-resume-btn {
   background: #2ecc71;
   color: white;
 }
 
-.mobsubs-manage-btn:active,
+.mobsubs-renew-btn {
+  background: #9b59b6;
+  color: white;
+}
+
+.mobsubs-view-details-btn:hover,
+.mobsubs-pause-btn:hover,
+.mobsubs-cancel-btn:hover,
+.mobsubs-resume-btn:hover,
+.mobsubs-renew-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobsubs-view-details-btn:active,
+.mobsubs-pause-btn:active,
+.mobsubs-cancel-btn:active,
 .mobsubs-resume-btn:active,
 .mobsubs-renew-btn:active {
-  transform: scale(0.98);
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* No Subscriptions */
 .mobsubs-no-subscriptions {
   text-align: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   background: white;
   border-radius: 16px;
-  margin-top: 20px;
+  margin: 20px 16px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
 }
 
 .mobsubs-no-subscriptions-icon {
-  font-size: 48px;
-  color: #ddd;
-  margin-bottom: 16px;
+  font-size: 60px;
+  color: #ecf0f1;
+  margin-bottom: 20px;
 }
 
 .mobsubs-no-subscriptions h3 {
-  margin: 0 0 8px 0;
-  color: #666;
-  font-size: 20px;
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 .mobsubs-no-subscriptions p {
-  margin: 0 0 20px 0;
-  color: #888;
+  margin: 0 0 30px 0;
+  color: #7f8c8d;
   font-size: 16px;
+  line-height: 1.5;
 }
 
 .mobsubs-create-btn {
   background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 25px;
   font-weight: 600;
   font-size: 16px;
@@ -432,10 +400,277 @@
   align-items: center;
   gap: 8px;
   margin: 0 auto;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .mobsubs-create-btn:active {
   transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Modal Overlay */
+.mobsubs-modal-overlay {
+  position: fixed;
+  margin-top: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 70px;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: mobsubs-fadeIn 0.2s ease;
+}
+
+@keyframes mobsubs-fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Modal */
+.mobsubs-modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  animation: mobsubs-slideUp 0.3s ease;
+}
+
+@keyframes mobsubs-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobsubs-details-modal {
+  max-width: 500px;
+}
+
+.mobsubs-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.mobsubs-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.mobsubs-modal-close {
+  background: #f8f9fa;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  transition: background-color 0.2s ease;
+}
+
+.mobsubs-modal-close:hover {
+  background: #ecf0f1;
+}
+
+.mobsubs-modal-body {
+  padding: 24px;
+}
+
+/* Confirmation Modal */
+.mobsubs-modal-icon {
+  font-size: 56px;
+  color: #f39c12;
+  display: block;
+  margin: 0 auto 20px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.mobsubs-modal-body p {
+  margin: 0;
+  font-size: 16px;
+  color: #2c3e50;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.mobsubs-modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px 24px 24px;
+  border-top: 1px solid #ecf0f1;
+}
+
+.mobsubs-modal-btn-cancel,
+.mobsubs-modal-btn-confirm {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobsubs-modal-btn-cancel {
+  background: #f8f9fa;
+  color: #2c3e50;
+}
+
+.mobsubs-modal-btn-cancel:hover {
+  background: #ecf0f1;
+}
+
+.mobsubs-modal-btn-confirm {
+  color: white;
+}
+
+.mobsubs-modal-btn-warning {
+  background: #f39c12;
+}
+
+.mobsubs-modal-btn-danger {
+  background: #e74c3c;
+}
+
+.mobsubs-modal-btn-info {
+  background: #3498db;
+}
+
+.mobsubs-modal-btn-confirm:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobsubs-modal-btn-confirm:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Details Modal Styles */
+.mobsubs-details-section {
+  margin-bottom: 24px;
+}
+
+.mobsubs-details-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.mobsubs-details-section h4 svg {
+  color: #3498db;
+}
+
+.mobsubs-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.mobsubs-details-row:last-child {
+  border-bottom: none;
+}
+
+.mobsubs-details-row span:first-child {
+  color: #7f8c8d;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobsubs-details-row span:last-child {
+  color: #2c3e50;
+  font-weight: 500;
+  text-align: right;
+  font-size: 14px;
+}
+
+.mobsubs-details-row code {
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #e74c3c;
+}
+
+.mobsubs-details-row .mobsubs-price {
+  font-weight: 700;
+  color: #27ae60;
+  font-size: 15px;
+}
+
+.mobsubs-details-row .mobsubs-status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.mobsubs-details-row .active {
+  background: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+.mobsubs-details-row .paused {
+  background: rgba(243, 156, 18, 0.15);
+  color: #d35400;
+}
+
+.mobsubs-details-row .cancelled {
+  background: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.mobsubs-details-row .expired {
+  background: rgba(149, 165, 166, 0.15);
+  color: #7f8c8d;
+}
+
+.mobsubs-details-row .pending {
+  background: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
 }
 
 /* Loading State */
@@ -448,52 +683,161 @@
 }
 
 .mobsubs-loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #f0f0f0;
+  width: 50px;
+  height: 50px;
+  border: 3px solid #ecf0f1;
   border-top-color: #2c3e50;
   border-radius: 50%;
   animation: mobsubs-spin 1s linear infinite;
+  margin-bottom: 20px;
 }
 
 @keyframes mobsubs-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
+.mobsubs-loading p {
+  color: #7f8c8d;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Responsive Design */
 @media (max-width: 480px) {
   .mobsubs-subscriptions-header h1 {
     font-size: 20px;
   }
-  
+
   .mobsubs-wallet-info {
     padding: 6px 12px;
-    font-size: 14px;
-  }
-  
-  .mobsubs-stat-card {
-    padding: 16px;
-  }
-  
-  .mobsubs-stat-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-  }
-  
-  .mobsubs-stat-content h3 {
-    font-size: 12px;
-  }
-  
-  .mobsubs-stat-content p {
-    font-size: 18px;
-  }
-  
-  .mobsubs-new-subscription-btn {
-    padding: 12px 16px;
     font-size: 13px;
   }
-  
+
+  .mobsubs-actions-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mobsubs-new-subscription-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .mobsubs-subscription-card {
     padding: 16px;
   }
+
+  .mobsubs-subscription-title h3 {
+    font-size: 16px;
+  }
+
+  .mobsubs-action-buttons {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mobsubs-view-details-btn,
+  .mobsubs-pause-btn,
+  .mobsubs-cancel-btn,
+  .mobsubs-resume-btn,
+  .mobsubs-renew-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .mobsubs-modal {
+    margin: 10px;
+  }
+
+  .mobsubs-details-modal {
+    max-width: 100%;
+  }
+
+  .mobsubs-modal-header {
+    padding: 20px 20px 16px 20px;
+  }
+
+  .mobsubs-modal-body {
+    padding: 20px;
+  }
+
+  .mobsubs-modal-footer {
+    padding: 16px 20px 20px 20px;
+  }
+
+  .mobsubs-details-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 0;
+  }
+
+  .mobsubs-details-row span:first-child,
+  .mobsubs-details-row span:last-child {
+    width: 100%;
+    text-align: left;
+  }
+
+  .mobsubs-details-row span:last-child {
+    font-weight: 600;
+  }
+
+  .mobsubs-no-subscriptions {
+    padding: 40px 16px;
+    margin: 16px;
+  }
+
+  .mobsubs-no-subscriptions-icon {
+    font-size: 48px;
+  }
+
+  .mobsubs-no-subscriptions h3 {
+    font-size: 20px;
+  }
+
+  .mobsubs-no-subscriptions p {
+    font-size: 15px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+  .mobsubs-action-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mobsubs-cancel-btn {
+    grid-column: span 2;
+  }
+}
+
+/* Scrollbar Styling */
+.mobsubs-modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobsubs-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.mobsubs-modal::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.mobsubs-modal::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Status Colors */
+.mobsubs-detail-row .mobsubs-value {
+  word-break: break-word;
+}
+
+.mobsubs-subscription-id {
+  user-select: all;
 }

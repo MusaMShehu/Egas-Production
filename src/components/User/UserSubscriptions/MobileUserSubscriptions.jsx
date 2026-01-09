@@ -1,8 +1,169 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MobileUserSubscriptions.css';
-import { FaPlus, FaSearch, FaTimes, FaEllipsisV, FaWallet, FaCreditCard, FaFire, FaCalendar, FaMapMarkerAlt, FaPause, FaPlay, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaTimes, FaWallet, FaFire, FaCalendar, FaPause, FaPlay, FaTrash, FaEye, FaInfoCircle, FaClock, FaCalendarCheck } from 'react-icons/fa';
 import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
+
+// Confirmation Modal Component
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Confirm", cancelText = "Cancel", type = "warning" }) => {
+  if (!isOpen) return null;
+
+  const getButtonStyle = () => {
+    switch (type) {
+      case 'danger': return 'mobsubs-modal-btn-danger';
+      case 'info': return 'mobsubs-modal-btn-info';
+      default: return 'mobsubs-modal-btn-warning';
+    }
+  };
+
+  return (
+    <div className="mobsubs-modal-overlay">
+      <div className="mobsubs-modal">
+        <div className="mobsubs-modal-header">
+          <h3>{title}</h3>
+          <button className="mobsubs-modal-close" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
+        <div className="mobsubs-modal-body">
+          <FaInfoCircle className="mobsubs-modal-icon" />
+          <p>{message}</p>
+        </div>
+        <div className="mobsubs-modal-footer">
+          <button className="mobsubs-modal-btn-cancel" onClick={onClose}>
+            {cancelText}
+          </button>
+          <button className={`mobsubs-modal-btn-confirm ${getButtonStyle()}`} onClick={onConfirm}>
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Subscription Details Modal Component
+const SubscriptionDetailsModal = ({ isOpen, onClose, subscription }) => {
+  if (!isOpen || !subscription) return null;
+
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getFrequencyText = (frequency) => {
+    switch (frequency) {
+      case 'Monthly': return 'Once every month';
+      case 'Weekly': return 'Every week';
+      case 'Bi-Weekly': return 'Every 2 weeks';
+      case 'One-Time': return 'Once';
+      default: return frequency || 'N/A';
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    return `₦${(amount || 0).toLocaleString()}`;
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'active': return 'active';
+      case 'paused': return 'paused';
+      case 'cancelled': return 'cancelled';
+      case 'expired': return 'expired';
+      default: return 'pending';
+    }
+  };
+
+  const getStatusText = (status) => {
+    return status?.charAt(0).toUpperCase() + status?.slice(1) || 'Pending';
+  };
+
+  return (
+    <div className="mobsubs-modal-overlay">
+      <div className="mobsubs-modal mobsubs-details-modal">
+        <div className="mobsubs-modal-header">
+          <h3>Subscription Details</h3>
+          <button className="mobsubs-modal-close" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
+        <div className="mobsubs-modal-body">
+          <div className="mobsubs-details-section">
+            <h4><FaFire /> Plan Information</h4>
+            <div className="mobsubs-details-row">
+              <span>Plan Name:</span>
+              <strong>{subscription.planName || 'Premium Plan'}</strong>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Subscription ID:</span>
+              <code>#{subscription._id?.slice(-8)}</code>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Cylinder Size:</span>
+              <span>{subscription.size || '15 kg'}</span>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Frequency:</span>
+              <span>{getFrequencyText(subscription.frequency)}</span>
+            </div>
+          </div>
+
+          <div className="mobsubs-details-section">
+            <h4><FaCalendarCheck /> Subscription Period</h4>
+            <div className="mobsubs-details-row">
+              <span><FaClock /> Start Date:</span>
+              <span>{formatDate(subscription.startDate || subscription.createdAt)}</span>
+            </div>
+            {subscription.endDate && (
+              <div className="mobsubs-details-row">
+                <span><FaCalendarCheck /> End Date:</span>
+                <span>{formatDate(subscription.endDate)}</span>
+              </div>
+            )}
+            <div className="mobsubs-details-row">
+              <span>Next Delivery:</span>
+              <span>{formatDate(subscription.nextDeliveryDate)}</span>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Last Delivery:</span>
+              <span>{formatDate(subscription.lastDeliveryDate) || 'Not yet delivered'}</span>
+            </div>
+          </div>
+
+          <div className="mobsubs-details-section">
+            <h4><FaInfoCircle /> Payment & Status</h4>
+            <div className="mobsubs-details-row">
+              <span>Price:</span>
+              <strong className="mobsubs-price">{formatCurrency(subscription.price)}</strong>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Status:</span>
+              <span className={`mobsubs-status-badge ${getStatusClass(subscription.status)}`}>
+                {getStatusText(subscription.status)}
+              </span>
+            </div>
+            <div className="mobsubs-details-row">
+              <span>Payment Method:</span>
+              <span>{subscription.paymentMethod || 'Wallet/Card'}</span>
+            </div>
+          </div>
+        </div>
+        <div className="mobsubs-modal-footer">
+          <button className="mobsubs-modal-btn-cancel" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MobileSubscriptions = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -10,8 +171,18 @@ const MobileSubscriptions = () => {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [walletBalance, setWalletBalance] = useState(0);
+  
+  // Modal states
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    type: 'warning'
+  });
   const [selectedSubscription, setSelectedSubscription] = useState(null);
-  const [showActionMenu, setShowActionMenu] = useState(null);
+  
   const navigate = useNavigate();
 
   const API_BASE_URL = 'https://egas-server-1.onrender.com/api/v1';
@@ -27,7 +198,6 @@ const MobileSubscriptions = () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Fetch subscriptions
       const subscriptionsResponse = await fetch(`${API_BASE_URL}/subscriptions/my-subscriptions`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -35,12 +205,19 @@ const MobileSubscriptions = () => {
       const subscriptionsResult = await subscriptionsResponse.json();
       
       if (subscriptionsResponse.ok) {
-        setSubscriptions(subscriptionsResult.data || []);
+        const subsWithFixedDates = (subscriptionsResult.data || []).map(sub => ({
+          ...sub,
+          nextDeliveryDate: calculateNextDeliveryDate(sub),
+          // Ensure startDate exists, fallback to createdAt
+          startDate: sub.startDate || sub.createdAt,
+          // Ensure endDate exists (might be null for active subscriptions)
+          endDate: sub.endDate || null
+        }));
+        setSubscriptions(subsWithFixedDates);
       } else {
         throw new Error(subscriptionsResult.message || 'Failed to load subscriptions');
       }
 
-      // Fetch wallet balance
       const dashboardResponse = await fetch(`${API_BASE_URL}/dashboard/overview`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -59,6 +236,31 @@ const MobileSubscriptions = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const calculateNextDeliveryDate = (subscription) => {
+    if (!subscription.lastDeliveryDate || subscription.status !== 'active') {
+      return subscription.nextDeliveryDate;
+    }
+    
+    const lastDelivery = new Date(subscription.lastDeliveryDate);
+    const frequency = subscription.frequency;
+    
+    switch (frequency) {
+      case 'Weekly':
+        lastDelivery.setDate(lastDelivery.getDate() + 7);
+        break;
+      case 'Bi-Weekly':
+        lastDelivery.setDate(lastDelivery.getDate() + 14);
+        break;
+      case 'Monthly':
+        lastDelivery.setMonth(lastDelivery.getMonth() + 1);
+        break;
+      default:
+        return subscription.nextDeliveryDate;
+    }
+    
+    return lastDelivery.toISOString();
   };
 
   const handleCreateSubscription = () => {
@@ -99,114 +301,135 @@ const MobileSubscriptions = () => {
 
   const getFrequencyText = (frequency) => {
     switch (frequency) {
-      case 'Monthly': return '/month';
-      case 'Weekly': return '/week';
-      case 'Bi-Weekly': return '/2 weeks';
-      case 'One-Time': return 'One Time';
+      case 'Monthly': return 'Once every month';
+      case 'Weekly': return 'Every week';
+      case 'Bi-Weekly': return 'Every 2 weeks';
+      case 'One-Time': return 'Once';
       default: return frequency || 'N/A';
     }
+  };
+
+  const showConfirmationModal = (config) => {
+    setModalConfig(config);
+    setShowConfirmModal(true);
+  };
+
+  const handleViewDetails = (subscription) => {
+    setSelectedSubscription(subscription);
+    setShowDetailsModal(true);
   };
 
   const handlePauseSubscription = async (subscriptionId) => {
     const subscription = subscriptions.find(s => s._id === subscriptionId);
     if (!subscription) return;
 
-    if (!window.confirm('Pause this subscription?')) {
-      infoToast('Pause cancelled');
-      return;
-    }
+    showConfirmationModal({
+      title: 'Pause Subscription',
+      message: 'Are you sure you want to pause this subscription? You can resume it later.',
+      onConfirm: async () => {
+        setShowConfirmModal(false);
+        warningToast('Pausing subscription...');
+        
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/pause`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
 
-    warningToast('Pausing subscription...');
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/pause`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      const result = await response.json();
-      
-      if (response.ok) {
-        setSubscriptions(prev => prev.map(s =>
-          s._id === subscriptionId ? { ...s, status: 'paused' } : s
-        ));
-        setShowActionMenu(null);
-        successToast('Subscription paused');
-      } else {
-        throw new Error(result.message || 'Failed to pause');
-      }
-    } catch (err) {
-      errorToast(err.message || 'Failed to pause subscription');
-    }
+          const result = await response.json();
+          
+          if (response.ok) {
+            setSubscriptions(prev => prev.map(s =>
+              s._id === subscriptionId ? { ...s, status: 'paused' } : s
+            ));
+            successToast('Subscription paused successfully');
+          } else {
+            throw new Error(result.message || 'Failed to pause');
+          }
+        } catch (err) {
+          errorToast(err.message || 'Failed to pause subscription');
+        }
+      },
+      type: 'warning'
+    });
   };
 
   const handleResumeSubscription = async (subscriptionId) => {
     const subscription = subscriptions.find(s => s._id === subscriptionId);
     if (!subscription) return;
 
-    if (!window.confirm('Resume this subscription?')) {
-      infoToast('Resume cancelled');
-      return;
-    }
+    showConfirmationModal({
+      title: 'Resume Subscription',
+      message: 'Are you sure you want to resume this subscription?',
+      onConfirm: async () => {
+        setShowConfirmModal(false);
+        infoToast('Resuming subscription...');
+        
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/resume`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
 
-    infoToast('Resuming subscription...');
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/resume`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      const result = await response.json();
-      
-      if (response.ok) {
-        setSubscriptions(prev => prev.map(s =>
-          s._id === subscriptionId ? { ...s, status: 'active' } : s
-        ));
-        setShowActionMenu(null);
-        successToast('Subscription resumed');
-      } else {
-        throw new Error(result.message || 'Failed to resume');
-      }
-    } catch (err) {
-      errorToast(err.message || 'Failed to resume subscription');
-    }
+          const result = await response.json();
+          
+          if (response.ok) {
+            setSubscriptions(prev => prev.map(s =>
+              s._id === subscriptionId ? { 
+                ...s, 
+                status: 'active',
+                nextDeliveryDate: calculateNextDeliveryDate({ ...s, status: 'active' })
+              } : s
+            ));
+            successToast('Subscription resumed successfully');
+          } else {
+            throw new Error(result.message || 'Failed to resume');
+          }
+        } catch (err) {
+          errorToast(err.message || 'Failed to resume subscription');
+        }
+      },
+      type: 'info'
+    });
   };
 
   const handleCancelSubscription = async (subscriptionId) => {
     const subscription = subscriptions.find(s => s._id === subscriptionId);
     if (!subscription) return;
 
-    if (!window.confirm('Cancel this subscription? This cannot be undone.')) {
-      infoToast('Cancellation cancelled');
-      return;
-    }
+    showConfirmationModal({
+      title: 'Cancel Subscription',
+      message: 'Are you sure you want to cancel this subscription? This action cannot be undone.',
+      onConfirm: async () => {
+        setShowConfirmModal(false);
+        warningToast('Cancelling subscription...');
+        
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/cancel-my`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
 
-    warningToast('Cancelling subscription...');
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/subscriptions/${subscriptionId}/cancel-my`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      const result = await response.json();
-      
-      if (response.ok) {
-        setSubscriptions(prev => prev.map(s =>
-          s._id === subscriptionId ? { ...s, status: 'cancelled' } : s
-        ));
-        setShowActionMenu(null);
-        successToast('Subscription cancelled');
-      } else {
-        throw new Error(result.message || 'Failed to cancel');
-      }
-    } catch (err) {
-      errorToast(err.message || 'Failed to cancel subscription');
-    }
+          const result = await response.json();
+          
+          if (response.ok) {
+            setSubscriptions(prev => prev.map(s =>
+              s._id === subscriptionId ? { ...s, status: 'cancelled' } : s
+            ));
+            successToast('Subscription cancelled successfully');
+          } else {
+            throw new Error(result.message || 'Failed to cancel');
+          }
+        } catch (err) {
+          errorToast(err.message || 'Failed to cancel subscription');
+        }
+      },
+      type: 'danger',
+      confirmText: 'Yes, Cancel'
+    });
   };
 
   const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
@@ -279,36 +502,8 @@ const MobileSubscriptions = () => {
                     </div>
                   </div>
                   
-                  <div className="mobsubs-subscription-actions">
-                    <div className={`mobsubs-status-badge ${getStatusClass(subscription.status)}`}>
-                      {getStatusText(subscription.status)}
-                    </div>
-                    
-                    <button 
-                      className="mobsubs-action-menu-btn"
-                      onClick={() => setShowActionMenu(
-                        showActionMenu === subscription._id ? null : subscription._id
-                      )}
-                    >
-                      <FaEllipsisV />
-                    </button>
-                    
-                    {showActionMenu === subscription._id && (
-                      <div className="mobsubs-action-menu">
-                        <button 
-                          className="mobsubs-menu-item"
-                          onClick={() => handlePauseSubscription(subscription._id)}
-                        >
-                          <FaPause /> Pause
-                        </button>
-                        <button 
-                          className="mobsubs-menu-item mobsubs-danger"
-                          onClick={() => handleCancelSubscription(subscription._id)}
-                        >
-                          <FaTrash /> Cancel
-                        </button>
-                      </div>
-                    )}
+                  <div className={`mobsubs-status-badge ${getStatusClass(subscription.status)}`}>
+                    {getStatusText(subscription.status)}
                   </div>
                 </div>
                 
@@ -329,8 +524,6 @@ const MobileSubscriptions = () => {
                     <span className="mobsubs-label">Price:</span>
                     <span className="mobsubs-value mobsubs-price">
                       {formatCurrency(subscription.price)}
-                      {subscription.frequency && subscription.frequency !== 'One-Time' && 
-                        ` ${getFrequencyText(subscription.frequency)}`}
                     </span>
                   </div>
                   
@@ -343,12 +536,24 @@ const MobileSubscriptions = () => {
                   </div>
                 </div>
                 
-                <div className="mobsubs-subscription-footer">
+                <div className="mobsubs-action-buttons">
                   <button 
-                    className="mobsubs-manage-btn"
-                    onClick={() => navigate(`/subscriptions/${subscription._id}`)}
+                    className="mobsubs-view-details-btn"
+                    onClick={() => handleViewDetails(subscription)}
                   >
-                    Manage
+                    <FaEye /> View Details
+                  </button>
+                  <button 
+                    className="mobsubs-pause-btn"
+                    onClick={() => handlePauseSubscription(subscription._id)}
+                  >
+                    <FaPause /> Pause
+                  </button>
+                  <button 
+                    className="mobsubs-cancel-btn"
+                    onClick={() => handleCancelSubscription(subscription._id)}
+                  >
+                    <FaTrash /> Cancel
                   </button>
                 </div>
               </div>
@@ -394,32 +599,35 @@ const MobileSubscriptions = () => {
                     <span className="mobsubs-label">Price:</span>
                     <span className="mobsubs-value mobsubs-price">
                       {formatCurrency(subscription.price)}
-                      {subscription.frequency && subscription.frequency !== 'One-Time' && 
-                        ` ${getFrequencyText(subscription.frequency)}`}
                     </span>
                   </div>
                   
-                  {subscription.status === 'paused' && (
-                    <div className="mobsubs-subscription-footer">
+                  <div className="mobsubs-action-buttons">
+                    <button 
+                      className="mobsubs-view-details-btn"
+                      onClick={() => handleViewDetails(subscription)}
+                    >
+                      <FaEye /> View Details
+                    </button>
+                    
+                    {subscription.status === 'paused' && (
                       <button 
                         className="mobsubs-resume-btn"
                         onClick={() => handleResumeSubscription(subscription._id)}
                       >
                         <FaPlay /> Resume
                       </button>
-                    </div>
-                  )}
-                  
-                  {subscription.status === 'expired' && (
-                    <div className="mobsubs-subscription-footer">
+                    )}
+                    
+                    {subscription.status === 'expired' && (
                       <button 
                         className="mobsubs-renew-btn"
                         onClick={handleCreateSubscription}
                       >
                         Renew
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -438,6 +646,24 @@ const MobileSubscriptions = () => {
           </button>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        type={modalConfig.type}
+      />
+
+      {/* Details Modal */}
+      <SubscriptionDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        subscription={selectedSubscription}
+      />
     </div>
   );
 };

@@ -47,7 +47,7 @@ header {
 }
 
 .nav-links .active{
-  max-width: 200px;
+  max-width: fit-content;
   background: #5ffff9;
   padding: 8px 15px;
   border-radius: 30px;
@@ -60,17 +60,16 @@ header {
 }
 
 .nav-links .dashboard-menu-link{
-  /* margin-left: 80px; */
   max-width: 120px;
-  background: #5ffff9;
   border-radius: 25px;
-  color: #2c3e50;
+  color: #5ffff9;
+  border: 1px solid #5ffff9;
   padding: 8px 15px;
 }
 
 .nav-links .dashboard-menu-link:hover{
-  background: #2c3e50;
-  color: #5ffff9;
+  background: #5ffff9;
+  color: #2c3e50;
   border: 1px solid #5ffff9;
 }
 
