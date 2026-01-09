@@ -595,9 +595,6 @@
 
 // export default CustomerDeliveryHistory;
 
-
-
-
 // components/CustomerDeliveryHistory.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -613,7 +610,7 @@ import {
   FaSort,
   FaCalendarAlt,
   FaExclamationTriangle,
-  FaGasPump
+  FaGasPump,
 } from "react-icons/fa";
 import "./CustomerDeliverySchedule.css";
 
@@ -641,28 +638,32 @@ const CustomerDeliveryHistory = () => {
   const categorizedDeliveries = useMemo(() => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    
-    return deliveries.reduce((acc, delivery) => {
-      const deliveryDate = new Date(delivery.deliveryDate);
-      deliveryDate.setHours(0, 0, 0, 0);
-      
-      // Determine if delivery is overdue
-      const isOverdue = deliveryDate < now && 
-        !['delivered', 'cancelled', 'failed'].includes(delivery.status);
-      
-      // Categorize
-      if (delivery.status === 'delivered') {
-        acc.delivered.push(delivery);
-      } else if (isOverdue) {
-        acc.overdue.push(delivery);
-      } else if (deliveryDate >= now && delivery.status !== 'delivered') {
-        acc.upcoming.push(delivery);
-      } else {
-        acc.other.push(delivery);
-      }
-      
-      return acc;
-    }, { upcoming: [], delivered: [], overdue: [], other: [] });
+
+    return deliveries.reduce(
+      (acc, delivery) => {
+        const deliveryDate = new Date(delivery.deliveryDate);
+        deliveryDate.setHours(0, 0, 0, 0);
+
+        // Determine if delivery is overdue
+        const isOverdue =
+          deliveryDate < now &&
+          !["delivered", "cancelled", "failed"].includes(delivery.status);
+
+        // Categorize
+        if (delivery.status === "delivered") {
+          acc.delivered.push(delivery);
+        } else if (isOverdue) {
+          acc.overdue.push(delivery);
+        } else if (deliveryDate >= now && delivery.status !== "delivered") {
+          acc.upcoming.push(delivery);
+        } else {
+          acc.other.push(delivery);
+        }
+
+        return acc;
+      },
+      { upcoming: [], delivered: [], overdue: [], other: [] }
+    );
   }, [deliveries]);
 
   // Get deliveries for current tab
@@ -728,49 +729,49 @@ const CustomerDeliveryHistory = () => {
   const sortDeliveriesByPriority = (deliveries) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    
+
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     return deliveries.sort((a, b) => {
       const dateA = new Date(a.deliveryDate);
       const dateB = new Date(b.deliveryDate);
-      
+
       // Get day comparison
       dateA.setHours(0, 0, 0, 0);
       dateB.setHours(0, 0, 0, 0);
-      
+
       // Check if today
       const isAToday = dateA.getTime() === now.getTime();
       const isBToday = dateB.getTime() === now.getTime();
-      
+
       // Check if tomorrow
       const isATomorrow = dateA.getTime() === tomorrow.getTime();
       const isBTomorrow = dateB.getTime() === tomorrow.getTime();
-      
+
       // Priority: Today > Tomorrow > Upcoming > Overdue > Past
       if (isAToday && !isBToday) return -1;
       if (!isAToday && isBToday) return 1;
-      
+
       if (isATomorrow && !isBTomorrow) return -1;
       if (!isATomorrow && isBTomorrow) return 1;
-      
+
       // For same day, sort by status priority
       if (dateA.getTime() === dateB.getTime()) {
         const statusOrder = {
-          'out_for_delivery': 1,
-          'accepted': 2,
-          'assigned': 3,
-          'pending': 4,
-          'failed': 5,
-          'cancelled': 6,
-          'delivered': 7,
-          'paused':8,
+          out_for_delivery: 1,
+          accepted: 2,
+          assigned: 3,
+          pending: 4,
+          failed: 5,
+          cancelled: 6,
+          delivered: 7,
+          paused: 8,
         };
-        
+
         return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
       }
-      
+
       // Sort by date
       if (sortOrder === "asc") {
         return dateA - dateB;
@@ -845,27 +846,33 @@ const CustomerDeliveryHistory = () => {
     const date = new Date(dateString);
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    
+
     const deliveryDate = new Date(date);
     deliveryDate.setHours(0, 0, 0, 0);
-    
+
     if (deliveryDate.getTime() === now.getTime()) {
-      return "Today " + date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return (
+        "Today " +
+        date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }
-    
+
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     if (deliveryDate.getTime() === tomorrow.getTime()) {
-      return "Tomorrow " + date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return (
+        "Tomorrow " +
+        date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }
-    
+
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -877,10 +884,10 @@ const CustomerDeliveryHistory = () => {
   const getDeliveryTimeContext = (delivery) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    
+
     const deliveryDate = new Date(delivery.deliveryDate);
     deliveryDate.setHours(0, 0, 0, 0);
-    
+
     const timeDiff = deliveryDate - now;
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
@@ -888,44 +895,44 @@ const CustomerDeliveryHistory = () => {
       return {
         type: "delivered",
         text: `Delivered`,
-        icon: <FaCheckCircle className="adm-icon-sm" />
+        icon: <FaCheckCircle className="adm-icon-sm" />,
       };
     } else if (daysDiff === 0) {
-      return { 
-        type: "today", 
+      return {
+        type: "today",
         text: "Today",
-        icon: <FaExclamationTriangle className="adm-icon-sm" />
+        icon: <FaExclamationTriangle className="adm-icon-sm" />,
       };
     } else if (daysDiff === 1) {
-      return { 
-        type: "tomorrow", 
+      return {
+        type: "tomorrow",
         text: "Tomorrow",
-        icon: <FaClock className="adm-icon-sm" />
+        icon: <FaClock className="adm-icon-sm" />,
       };
     } else if (daysDiff > 1 && daysDiff <= 7) {
-      return { 
-        type: "this-week", 
+      return {
+        type: "this-week",
         text: `In ${daysDiff} days`,
-        icon: <FaClock className="adm-icon-sm" />
+        icon: <FaClock className="adm-icon-sm" />,
       };
     } else if (daysDiff > 7) {
       return {
         type: "future",
         text: `${Math.floor(daysDiff / 7)} weeks`,
-        icon: <FaCalendarAlt className="adm-icon-sm" />
+        icon: <FaCalendarAlt className="adm-icon-sm" />,
       };
     } else if (daysDiff < 0) {
-      return { 
-        type: "overdue", 
+      return {
+        type: "overdue",
         text: `${Math.abs(daysDiff)} days overdue`,
-        icon: <FaExclamationTriangle className="adm-icon-sm" />
+        icon: <FaExclamationTriangle className="adm-icon-sm" />,
       };
     }
 
-    return { 
-      type: "scheduled", 
+    return {
+      type: "scheduled",
       text: "Scheduled",
-      icon: <FaCalendarAlt className="adm-icon-sm" />
+      icon: <FaCalendarAlt className="adm-icon-sm" />,
     };
   };
 
@@ -987,25 +994,31 @@ const CustomerDeliveryHistory = () => {
             className={`adm-tab ${activeTab === "upcoming" ? "active" : ""}`}
             onClick={() => handleTabChange("upcoming")}
           >
-            Upcoming Deliveries 
-            <span className="adm-tab-count">{categorizedDeliveries.upcoming.length}</span>
+            Upcoming Deliveries
+            <span className="adm-tab-count">
+              {categorizedDeliveries.upcoming.length}
+            </span>
           </button>
           <button
             className={`adm-tab ${activeTab === "delivered" ? "active" : ""}`}
             onClick={() => handleTabChange("delivered")}
           >
             Delivered
-            <span className="adm-tab-count">{categorizedDeliveries.delivered.length}</span>
+            <span className="adm-tab-count">
+              {categorizedDeliveries.delivered.length}
+            </span>
           </button>
           <button
             className={`adm-tab ${activeTab === "overdue" ? "active" : ""}`}
             onClick={() => handleTabChange("overdue")}
           >
             Overdue
-            <span className="adm-tab-count">{categorizedDeliveries.overdue.length}</span>
+            <span className="adm-tab-count">
+              {categorizedDeliveries.overdue.length}
+            </span>
           </button>
 
-          <Link to="/dashboard/remnant" className='adm-tab adm-rem-tab'>
+          <Link to="/dashboard/remnant" className="adm-tab adm-rem-tab">
             My Gas Remnant
           </Link>
         </div>
@@ -1039,6 +1052,7 @@ const CustomerDeliveryHistory = () => {
                 <option value="out_for_delivery">Out for Delivery</option>
                 <option value="failed">Failed</option>
                 <option value="cancelled">Cancelled</option>
+                <option value="paused">Paused</option>
               </select>
             </div>
           )}
@@ -1102,6 +1116,19 @@ const CustomerDeliveryHistory = () => {
                     <div className="adm-detail-text">{delivery.address}</div>
                   </div>
 
+                  {delivery.status === "paused" && (
+                    <div className="adm-status-message adm-message-warning">
+                      <FaExclamationTriangle className="adm-icon" />
+                      <strong>
+                        {" "}
+                        Delivery paused due to subscription pause
+                      </strong>
+                      {delivery.pausedAt && (
+                        <div>Paused on: {formatDate(delivery.pausedAt)}</div>
+                      )}
+                    </div>
+                  )}
+
                   {delivery.deliveryAgent && (
                     <div className="adm-agent-info">
                       <div className="adm-detail-item">
@@ -1150,7 +1177,8 @@ const CustomerDeliveryHistory = () => {
                     <div className="adm-status-message adm-message-error">
                       <div>
                         <FaTimesCircle className="adm-icon" />
-                        <strong> Failure Reason:</strong> {delivery.failedReason}
+                        <strong> Failure Reason:</strong>{" "}
+                        {delivery.failedReason}
                       </div>
                     </div>
                   )}
@@ -1237,8 +1265,9 @@ const CustomerDeliveryHistory = () => {
       {totalPages > 1 && (
         <div className="adm-pagination">
           <div className="adm-pagination-info">
-            Page {page} of {totalPages} • Showing {currentDeliveries.length} deliveries
-            • Sorted: {sortOrder === "asc" ? "Nearest First" : "Furthest First"}
+            Page {page} of {totalPages} • Showing {currentDeliveries.length}{" "}
+            deliveries • Sorted:{" "}
+            {sortOrder === "asc" ? "Nearest First" : "Furthest First"}
             {dateFilter && ` • Date: ${dateFilter}`}
             {statusFilter !== "all" && ` • Status: ${statusFilter}`}
           </div>
