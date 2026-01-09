@@ -891,7 +891,14 @@ const CustomerDeliveryHistory = () => {
     const timeDiff = deliveryDate - now;
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
-    if (delivery.status === "delivered") {
+    // Handle paused status first
+    if (delivery.status === "paused") {
+      return {
+        type: "paused",
+        text: "Paused",
+        icon: <FaExclamationTriangle className="adm-icon-sm" />,
+      };
+    } else if (delivery.status === "delivered") {
       return {
         type: "delivered",
         text: `Delivered`,
@@ -968,6 +975,62 @@ const CustomerDeliveryHistory = () => {
     setDateFilter("");
     setPage(1);
   };
+
+  // Add this function to calculate delivery sequence
+  const calculateDeliverySequence = (delivery) => {
+    if (!delivery.sequenceNumber || !delivery.totalSequences) {
+      return null;
+    }
+
+    return {
+      current: delivery.sequenceNumber,
+      total: delivery.totalSequences,
+      isInitial: delivery.sequenceNumber === 1,
+    };
+  };
+
+
+  // In SubscriptionPlans.jsx - Update price calculation function
+const getPriceBreakdown = (plan, size, frequency, subscriptionPeriod) => {
+  const sizeKg = parseInt(String(size).replace("kg", ""), 10) || parseInt(size, 10);
+  const baseAmount = sizeKg * (plan.pricePerKg || 0);
+  
+  let deliveriesPerMonth = 0;
+  switch (frequency) {
+    case "Daily": deliveriesPerMonth = 30; break;
+    case "Weekly": deliveriesPerMonth = 4; break;
+    case "Bi-weekly": deliveriesPerMonth = 2; break;
+    case "Monthly": deliveriesPerMonth = 1; break;
+    default: deliveriesPerMonth = 1;
+  }
+
+  let totalDeliveries = 0;
+  let breakdown = [];
+
+  if (frequency === "One-Time" || frequency === "Emergency") {
+    totalDeliveries = 1;
+    breakdown.push(`${totalDeliveries} delivery`);
+  } else {
+    if (subscriptionPeriod === 1) {
+      totalDeliveries = deliveriesPerMonth + 1;
+      breakdown.push(`${deliveriesPerMonth + 1} deliveries (${deliveriesPerMonth} regular + 1 initial)`);
+    } else {
+      totalDeliveries = (deliveriesPerMonth + 1) + (deliveriesPerMonth * (subscriptionPeriod - 1));
+      breakdown.push(`${totalDeliveries} total deliveries`);
+      breakdown.push(`- Month 1: ${deliveriesPerMonth + 1} (${deliveriesPerMonth} + 1 initial)`);
+      breakdown.push(`- Subsequent months: ${deliveriesPerMonth} per month`);
+    }
+  }
+
+  const totalPrice = baseAmount * totalDeliveries;
+
+  return {
+    totalPrice: Math.round(totalPrice),
+    breakdown,
+    pricePerKg: plan.pricePerKg || 0,
+    totalDeliveries
+  };
+};
 
   // Get deliveries for current tab
   const currentDeliveries = getTabDeliveries();
@@ -1080,8 +1143,7 @@ const CustomerDeliveryHistory = () => {
 
           return (
             <div key={delivery._id} className="adm-delivery-card">
-              <div className="adm-card-content">
-                {/* Delivery Time Context Badge */}
+              {/* <div className="adm-card-content">
                 <div
                   className={`adm-time-context adm-time-${timeContext.type}`}
                 >
@@ -1106,6 +1168,69 @@ const CustomerDeliveryHistory = () => {
                   {delivery.subscriptionId?.frequency && (
                     <div className="adm-plan-frequency">
                       Frequency: {delivery.subscriptionId.frequency}
+                    </div>
+                  )}
+                </div> */}
+
+              {/* Add delivery sequence badge */}
+              {delivery.sequenceNumber && delivery.totalSequences && (
+                <div className="adm-delivery-sequence">
+                  <span className="adm-sequence-badge">
+                    Delivery {delivery.sequenceNumber} of{" "}
+                    {delivery.totalSequences}
+                    {delivery.sequenceNumber === 1 && " (Initial)"}
+                  </span>
+                </div>
+              )}
+
+              <div className="adm-card-content">
+                <div
+                  className={`adm-time-context adm-time-${timeContext.type}`}
+                >
+                  {timeContext.icon}
+                  <span>{timeContext.text}</span>
+                </div>
+
+                <div className="adm-card-header">
+                  <span className={getStatusClass(delivery.status)}>
+                    {delivery.status.replace(/_/g, " ").toUpperCase()}
+                  </span>
+                  <span className="adm-delivery-date">
+                    {formatDateShort(delivery.deliveryDate)}
+                  </span>
+                </div>
+
+                <div className="adm-plan-info">
+                  <div className="adm-plan-name">
+                    {delivery.planDetails?.planName ||
+                      delivery.subscriptionId?.planName ||
+                      "N/A"}{" "}
+                    -
+                    {delivery.planDetails?.size ||
+                      delivery.subscriptionId?.size ||
+                      "N/A"}
+                  </div>
+
+                  {/* Show subscription period */}
+                  {delivery.planDetails?.subscriptionPeriod && (
+                    <div className="adm-plan-period">
+                      Subscription: {delivery.planDetails.subscriptionPeriod}{" "}
+                      month(s)
+                    </div>
+                  )}
+
+                  {/* Show delivery frequency */}
+                  <div className="adm-plan-frequency">
+                    Frequency:{" "}
+                    {delivery.planDetails?.frequency ||
+                      delivery.subscriptionId?.frequency ||
+                      "N/A"}
+                  </div>
+
+                  {/* Show if this is initial delivery */}
+                  {delivery.isInitialDelivery && (
+                    <div className="adm-initial-badge">
+                      <FaGasPump className="adm-icon-sm" /> Initial Delivery
                     </div>
                   )}
                 </div>

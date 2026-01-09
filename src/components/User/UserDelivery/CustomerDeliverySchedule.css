@@ -392,6 +392,24 @@
   color: white;
 }
 
+.adm-message-warning {
+  background-color: #fef5e7;
+  border-left: 4px solid #f39c12;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.adm-message-warning .adm-icon {
+  color: #f39c12;
+  margin-right: 8px;
+}
+
+.adm-time-paused {
+  background-color: #f39c12;
+  color: white;
+}
+
 .adm-delivery-date {
   color: #7f8c8d;
   font-size: 0.9rem;
@@ -735,4 +753,83 @@
     padding: 7px 4px;
     font-size: 0.6rem;
   }
+}
+
+
+
+/* Delivery sequence styling */
+.adm-delivery-sequence {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.adm-sequence-badge {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Plan period styling */
+.adm-plan-period {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Initial delivery badge */
+.adm-initial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.adm-icon-sm {
+  font-size: 0.8rem;
+}
+
+/* Subscription type indicator */
+.adm-plan-type {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-right: 5px;
+}
+
+.adm-plan-type.one-time {
+  background: #f39c12;
+  color: white;
+}
+
+.adm-plan-type.emergency {
+  background: #e74c3c;
+  color: white;
+}
+
+.adm-plan-type.preset {
+  background: #3498db;
+  color: white;
+}
+
+.adm-plan-type.custom {
+  background: #9b59b6;
+  color: white;
 }

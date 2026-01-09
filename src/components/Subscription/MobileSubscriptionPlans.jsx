@@ -140,34 +140,89 @@ const MobileSubscriptionPlans = () => {
     }
   };
 
-  const calculatePrice = (plan, size, frequency, period = 1) => {
-    if (!plan || !plan.pricePerKg) return 0;
+  // const calculatePrice = (plan, size, frequency, period = 1) => {
+  //   if (!plan || !plan.pricePerKg) return 0;
     
-    // Extract numeric size
-    const sizeNum = parseInt(size.toString().replace('kg', ''));
+  //   // Extract numeric size
+  //   const sizeNum = parseInt(size.toString().replace('kg', ''));
     
-    // Base price
-    let basePrice = sizeNum * plan.pricePerKg;
+  //   // Base price
+  //   let basePrice = sizeNum * plan.pricePerKg;
     
-    // Frequency multiplier
-    let freqMultiplier = 1;
-    switch (frequency) {
-      case 'Weekly':
-        freqMultiplier = 5;
-        break;
-      case 'Bi-weekly':
-        freqMultiplier = 3;
-        break;
-      case 'Daily':
-        freqMultiplier = 30;
-        break;
-      default: // Monthly
-        freqMultiplier = 1;
+  //   // Frequency multiplier
+  //   let freqMultiplier = 1;
+  //   switch (frequency) {
+  //     case 'Weekly':
+  //       freqMultiplier = 5;
+  //       break;
+  //     case 'Bi-weekly':
+  //       freqMultiplier = 3;
+  //       break;
+  //     case 'Daily':
+  //       freqMultiplier = 30;
+  //       break;
+  //     default: // Monthly
+  //       freqMultiplier = 1;
+  //   }
+    
+  //   // Calculate total
+  //   return Math.round(basePrice * freqMultiplier * period);
+  // };
+
+  const calculatePrice = (plan, size, frequency, subscriptionPeriod = 1) => {
+  if (!plan) return 0;
+
+  // Extract numeric size value
+  const sizeKg = parseInt(String(size).replace("kg", ""), 10) || parseInt(size, 10);
+
+  // Calculate base price
+  let baseAmount = sizeKg * (plan.pricePerKg || 0);
+
+  // Delivery counts based on frequency
+  let deliveriesPerMonth = 0;
+  
+  switch (frequency) {
+    case "Daily":
+      deliveriesPerMonth = 30;
+      break;
+    case "Weekly":
+      deliveriesPerMonth = 4;
+      break;
+    case "Bi-weekly":
+      deliveriesPerMonth = 2;
+      break;
+    case "Monthly":
+      deliveriesPerMonth = 1;
+      break;
+    case "One-Time":
+    case "Emergency":
+      deliveriesPerMonth = 1;
+      break;
+    default:
+      deliveriesPerMonth = 1;
+  }
+
+  // Calculate total deliveries with initial extra delivery
+  let totalDeliveries = 0;
+  
+  if (frequency === "One-Time" || frequency === "Emergency") {
+    totalDeliveries = 1;
+  } else {
+    if (subscriptionPeriod === 1) {
+      // First month only
+      totalDeliveries = deliveriesPerMonth + 1;
+    } else {
+      // Multiple months
+      totalDeliveries = (deliveriesPerMonth + 1) + (deliveriesPerMonth * (subscriptionPeriod - 1));
     }
-    
-    // Calculate total
-    return Math.round(basePrice * freqMultiplier * period);
-  };
+  }
+
+  // Total price = base amount × total deliveries
+  const totalAmount = baseAmount * totalDeliveries;
+
+  return Math.round(totalAmount);
+};
+
 
   const getPlanIcon = (planType) => {
     switch (planType) {
@@ -212,6 +267,30 @@ const MobileSubscriptionPlans = () => {
       selectedFrequency[plan._id] || 'Monthly',
       selectedPeriod[plan._id] || 1
     );
+
+    // Add this to the summary modal or plan details
+const getDeliveryBreakdown = (frequency, period) => {
+  let deliveriesPerMonth = 0;
+  
+  switch (frequency) {
+    case "Daily": deliveriesPerMonth = 30; break;
+    case "Weekly": deliveriesPerMonth = 4; break;
+    case "Bi-weekly": deliveriesPerMonth = 2; break;
+    case "Monthly": deliveriesPerMonth = 1; break;
+    default: deliveriesPerMonth = 1;
+  }
+
+  if (frequency === "One-Time" || frequency === "Emergency") {
+    return "1 delivery total";
+  }
+
+  if (period === 1) {
+    return `${deliveriesPerMonth + 1} deliveries (${deliveriesPerMonth} regular + 1 initial)`;
+  } else {
+    const total = (deliveriesPerMonth + 1) + (deliveriesPerMonth * (period - 1));
+    return `${total} deliveries total\n- Month 1: ${deliveriesPerMonth + 1} (${deliveriesPerMonth} + 1 initial)\n- Subsequent months: ${deliveriesPerMonth} per month`;
+  }
+};
 
     setSelectedPlan({
       ...plan,
