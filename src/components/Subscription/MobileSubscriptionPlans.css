@@ -75,7 +75,7 @@
 .mobsubplan-plans-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 /* Plan Card */
@@ -574,13 +574,14 @@
   background: white;
   border-radius: 20px 20px 0 0;
   width: 100%;
-  max-height: 85vh;
+  max-height: 99vh;
   overflow-y: auto;
+  scrollbar-width: none;
   animation: mobsubplan-slideUp 0.3s;
 }
 
 .mobsubplan-summary-header {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid #f1f2f6;
   display: flex;
   justify-content: space-between;
@@ -608,13 +609,13 @@
 }
 
 .mobsubplan-summary-body {
-  padding: 1.5rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .mobsubplan-plan-summary {
   background: #f8f9fa;
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 0.5rem 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -652,7 +653,6 @@
 .mobsubplan-detail-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid #dfe6e9;
 }
@@ -891,4 +891,425 @@
   .mobsubplan-specifications-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+
+
+
+/* Delivery Info for Mobile Plan Cards */
+.mobsubplan-plan-delivery-info {
+  margin: 8px 0;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+}
+
+.mobsubplan-delivery-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+}
+
+.mobsubplan-initial-note {
+  font-size: 0.75rem;
+  color: #27ae60;
+  margin-top: 4px;
+  padding-left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Updated Plan Card */
+.mobsubplan-plan-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobsubplan-plan-card:active {
+  transform: scale(0.98);
+}
+
+/* Price Display */
+.mobsubplan-plan-price-display {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.mobsubplan-price-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Plan Options */
+.mobsubplan-plan-option-section {
+  margin-bottom: 12px;
+}
+
+.mobsubplan-option-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.mobsubplan-option-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #333;
+  background: white;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+.mobsubplan-option-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.mobsubplan-option-info {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  font-size: 0.9rem;
+  color: #495057;
+  text-align: center;
+}
+
+/* Action Button */
+.mobsubplan-select-plan-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.mobsubplan-select-plan-btn:active {
+  transform: scale(0.98);
+}
+
+.mobsubplan-select-plan-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.mobsubplan-btn-icon {
+  transition: transform 0.3s ease;
+}
+
+.mobsubplan-select-plan-btn:active .mobsubplan-btn-icon {
+  transform: translateX(4px);
+}
+
+/* Delivery Breakdown in Summary */
+.mobsubplan-delivery-breakdown {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.mobsubplan-breakdown-details {
+  margin-top: 8px;
+}
+
+.mobsubplan-breakdown-details div {
+  padding: 4px 0;
+  line-height: 1.4;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.mobsubplan-breakdown-details div:first-child {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Updated Summary Details */
+.mobsubplan-summary-details {
+  margin: 0;
+}
+
+.mobsubplan-detail-item {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.mobsubplan-detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.mobsubplan-detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.mobsubplan-detail-value {
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.mobsubplan-total {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #3498db;
+}
+
+.mobsubplan-total .mobsubplan-detail-label {
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.mobsubplan-total .mobsubplan-detail-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.mobsubplan-price {
+  font-size: 1.3rem !important;
+  color: #2c3e50 !important;
+}
+
+/* Payment Options Updates */
+.mobsubplan-payment-options {
+  margin: 12px 0;
+}
+
+.mobsubplan-payment-option {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobsubplan-payment-option.mobsubplan-selected {
+  border-color: #3498db;
+  background-color: #e8f4fc;
+}
+
+.mobsubplan-option-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.mobsubplan-option-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+}
+
+.mobsubplan-option-icon.mobsubplan-card {
+  color: #3498db;
+}
+
+.mobsubplan-option-icon.mobsubplan-wallet {
+  color: #f39c12;
+}
+
+.mobsubplan-option-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobsubplan-option-title {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.mobsubplan-option-description {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+
+.mobsubplan-option-check {
+  color: #27ae60;
+  font-size: 1rem;
+}
+
+/* Wallet Warning */
+.mobsubplan-wallet-warning {
+  padding: 10px;
+  background-color: #fef5e7;
+  border: 1px solid #f8c471;
+  border-radius: 6px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #d35400;
+}
+
+.mobsubplan-wallet-warning .mobsubplan-option-icon {
+  color: #e74c3c;
+  font-size: 0.9rem;
+}
+
+/* Summary Footer Buttons */
+.mobsubplan-summary-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.mobsubplan-summary-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.mobsubplan-summary-btn.mobsubplan-cancel {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.mobsubplan-summary-btn.mobsubplan-cancel:active {
+  background-color: #e9ecef;
+}
+
+.mobsubplan-summary-btn.mobsubplan-confirm {
+  background-color: #3498db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mobsubplan-summary-btn.mobsubplan-confirm:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.mobsubplan-summary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Processing Spinner */
+.mobsubplan-processing-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+.mobsubplan-processing-spinner-large {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.mobsubplan-processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.mobsubplan-processing-overlay p {
+  margin-top: 16px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Plan Type Badge Updates */
+.mobsubplan-plan-type-badge {
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: white;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+
+
+/* Animation for plan selection */
+@keyframes planSelect {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+}
+
+.mobsubplan-plan-card:hover {
+  animation: planSelect 0.3s ease;
 }
