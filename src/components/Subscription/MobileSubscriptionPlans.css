@@ -1191,11 +1191,6 @@
 }
 
 /* Summary Footer Buttons */
-.mobsubplan-summary-footer {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
 
 .mobsubplan-summary-btn {
   flex: 1;
@@ -1313,3 +1308,6 @@
 .mobsubplan-plan-card:hover {
   animation: planSelect 0.3s ease;
 }
+
+
+

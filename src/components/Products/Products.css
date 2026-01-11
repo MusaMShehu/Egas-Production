@@ -625,7 +625,7 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .pro-list-product-card {
     background-color: #2d3748;
     color: #e2e8f0;
@@ -638,4 +638,4 @@
   .pro-list-product-description {
     color: #a0aec0;
   }
-}
+} */
