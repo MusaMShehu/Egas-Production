@@ -833,3 +833,161 @@
   background: #9b59b6;
   color: white;
 }
+
+
+
+/* Subscription Actions */
+.adm-subscription-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.adm-subscription-quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.adm-subscription-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.adm-subscription-status {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-active {
+  background: #d1f7c4;
+  color: #27ae60;
+}
+
+.status-paused {
+  background: #fff3cd;
+  color: #f39c12;
+}
+
+.adm-btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Sync Warning Banner */
+.adm-sync-warning-banner {
+  background: #fff3cd;
+  border-left: 4px solid #f39c12;
+  padding: 10px 15px;
+  margin: -15px -15px 15px -15px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #856404;
+}
+
+.adm-sync-warning-banner .adm-icon {
+  color: #f39c12;
+}
+
+.adm-sync-warning-banner .adm-btn {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* Subscription Status Indicator */
+.adm-subscription-status-indicator {
+  font-size: 13px;
+  margin-top: 5px;
+  padding: 3px 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Original Date Display */
+.adm-original-date {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+/* Paused Status Styling */
+.adm-status-paused {
+  background: #fff3cd !important;
+  color: #856404 !important;
+  border: 1px solid #ffeaa7 !important;
+}
+
+/* Time Context for Paused */
+.adm-time-paused {
+  background: #fff3cd !important;
+  color: #856404 !important;
+}
+
+.adm-time-paused .adm-icon-sm {
+  color: #f39c12 !important;
+}
+
+/* Card with Paused Status */
+.adm-delivery-card[data-status="paused"] {
+  border-left: 4px solid #f39c12;
+  background: #fef9e7;
+}
+
+.adm-delivery-card[data-status="paused"] .adm-card-content {
+  opacity: 0.9;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .adm-subscription-quick-action {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .adm-sync-warning-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .adm-sync-warning-banner .adm-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Enhanced hover effects for paused deliveries */
+.adm-delivery-card:hover .adm-sync-warning-banner {
+  background: #ffeaa7;
+}
+
+/* Animation for sync actions */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.adm-btn:active {
+  animation: pulse 0.3s;
+}
