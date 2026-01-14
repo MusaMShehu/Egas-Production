@@ -1,58 +1,144 @@
-/* CustomerDeliveryHistory.css - Mobile First Design */
+/* MobileCustomerDeliverySchedule.css - Enhanced Mobile App Design */
 
-/* Base Styles - Mobile */
+/* ==================== BASE & LAYOUT ==================== */
 .mobdel-customer-delivery {
   padding: 0;
   margin: 0;
-  background: #f5f5f5;
+  background: linear-gradient(180deg, #f5f7fa 0%, #e8eaf6 100%);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Mobile Header */
+/* Status Bar Height Compensation */
+.mobdel-status-bar-spacer {
+  height: env(safe-area-inset-top);
+  background: transparent;
+}
+
+/* ==================== HEADER STYLES ==================== */
 .mobdel-mobile-header {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: white;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16px 20px 12px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
+  margin-bottom: 20px;
 }
 
 .mobdel-mobile-header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  position: relative;
 }
 
 .mobdel-customer-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
   margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .mobdel-mobile-filter-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.25);
   border: none;
-  font-size: 18px;
-  color: #007bff;
-  padding: 8px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-size: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-/* Mobile Tabs */
-.mobdel-mobile-tabs {
+.mobdel-mobile-filter-btn:active {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0.92);
+}
+
+/* ==================== SUBSCRIPTION ACTIONS ==================== */
+.mobdel-mobile-subscription-actions {
   display: flex;
-  gap: 5px;
+  gap: 10px;
+  margin-bottom: 16px;
   overflow-x: auto;
   padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobdel-mobile-subscription-actions::-webkit-scrollbar {
+  display: none;
+}
+
+.mobdel-subscription-quick-action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  min-width: 280px;
+}
+
+.mobdel-subscription-name {
+  font-weight: 600;
+  color: white;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.mobdel-subscription-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-active {
+  background: rgba(76, 217, 100, 0.9);
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 217, 100, 0.3);
+}
+
+.status-paused {
+  background: rgba(255, 149, 0, 0.9);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+}
+
+/* ==================== TABS STYLES ==================== */
+.mobdel-mobile-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 0;
+  margin: 0 -20px;
+  padding-left: 20px;
+  scrollbar-width: none;
 }
 
 .mobdel-mobile-tabs::-webkit-scrollbar {
@@ -60,397 +146,650 @@
 }
 
 .mobdel-mobile-tab {
-  flex-shrink: 0;
-  padding: 8px 16px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
   border: none;
-  background: #b8bdc2;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #1c7fd5;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobdel-mobile-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-mobile-tab:active::before {
+  opacity: 1;
 }
 
 .mobdel-mobile-tab.active {
-  background: #007bff;
-  color: white;
+  background: white;
+  color: #667eea;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.mobdel-remnant {
+  padding: 12px 0 0;
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 -20px;
+  padding-right: 20px;
 }
 
 .mobdel-rem-tab {
-  background: #34495e;
-  color: white;
-}
-
-.mobdel-rem-tab:hover {
-  background: #3498db;
-}
-
-.mobdel-remnant{
-  padding: 5px 0;
-  display: flex;
-  /* justify-items: flex-end; */
-  justify-content: flex-end;
-}
-
-
-/* MobileCustomerDeliverySchedule.css - Add these styles */
-
-/* Tab with counts */
-.mobdel-mobile-tab-count,
-.mobdel-tab-count {
-  background: #e3f2fd;
-  color: #1976d2;
-  border-radius: 10px;
-  padding: 1px 6px;
-  font-size: 0.7rem;
-  margin-left: 6px;
-  font-weight: 600;
-  min-width: 20px;
-  text-align: center;
-}
-
-.mobdel-mobile-tab.active .mobdel-mobile-tab-count,
-.mobdel-tab.active .mobdel-tab-count {
-  background: #1976d2;
-  color: white;
-}
-
-/* Time context badges */
-.mobdel-mobile-time-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  font-weight: 700;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.mobdel-rem-tab:active {
+  background: white;
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* ==================== TAB COUNTS ==================== */
+.mobdel-mobile-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
   border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  width: fit-content;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.mobdel-time-today {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
+.mobdel-mobile-tab.active .mobdel-mobile-tab-count {
+  background: #667eea;
+  color: white;
 }
 
-.mobdel-time-tomorrow {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+/* ==================== FILTER INDICATOR ==================== */
+.mobdel-filter-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #ff5e7d, #ff2e63);
+  border-radius: 50%;
+  border: 3px solid #667eea;
+  box-shadow: 0 0 0 2px rgba(255, 94, 125, 0.3);
+  animation: filter-pulse 2s infinite;
 }
 
-.mobdel-time-this-week {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.mobdel-time-future {
-  background: #e2e3e5;
-  color: #383d41;
-  border: 1px solid #d6d8db;
-}
-
-.mobdel-time-overdue {
-  background: #e67e86;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  animation: mobdel-pulse 2s infinite;
-}
-
-.mobdel-time-delivered {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.mobdel-icon-sm {
-  font-size: 0.75rem;
-}
-
-/* Empty state */
-.mobdel-empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin: 16px 0;
-}
-
-.mobdel-empty-state-icon {
-  color: #6c757d;
-  margin-bottom: 16px;
-}
-
-.mobdel-empty-state h3 {
-  color: #343a40;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.mobdel-empty-state p {
-  color: #6c757d;
-  max-width: 300px;
-  margin: 0 auto 16px;
-  line-height: 1.4;
-  font-size: 0.9rem;
-}
-
-/* Pulse animation for overdue deliveries */
-@keyframes mobdel-pulse {
-  0% {
+@keyframes filter-pulse {
+  0%, 100% { 
+    transform: scale(1);
     opacity: 1;
   }
-  50% {
+  50% { 
+    transform: scale(1.2);
     opacity: 0.8;
   }
-  100% {
-    opacity: 1;
-  }
 }
 
-/* Card enhancements */
+/* ==================== DELIVERY CARDS ==================== */
+.mobdel-deliveries-list {
+  padding: 0 20px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .mobdel-delivery-card {
-  border-left: 3px solid #e9ecef;
-  margin-bottom: 12px;
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mobdel-delivery-card.mobdel-today {
-  border-left-color: #ffc107;
+.mobdel-delivery-card[data-status="paused"] {
+  background: linear-gradient(135deg, #fff9e6, #ffeaa7);
+  border: 2px solid #ffc107;
 }
 
-.mobdel-delivery-card.mobdel-overdue {
-  border-left-color: #dc3545;
+.mobdel-delivery-card[data-status="delivered"] {
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border: 2px solid #4caf50;
 }
 
-.mobdel-delivery-card.mobdel-delivered {
-  border-left-color: #28a745;
+.mobdel-delivery-card[data-status="overdue"] {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border: 2px solid #f44336;
+  animation: shake 0.5s ease-in-out infinite alternate;
 }
 
-/* Mobile card header improvements */
-/* .mobdel-mobile-card-header {
+@keyframes shake {
+  0% { transform: translateX(-2px); }
+  100% { transform: translateX(2px); }
+}
+
+/* ==================== SYNC WARNING BANNER ==================== */
+.mobdel-sync-warning-banner {
+  position: relative;
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #f39c12;
+  z-index: 1;
+}
+
+.mobdel-sync-warning-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+  animation: progress-bar 2s linear infinite;
+}
+
+@keyframes progress-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.mobdel-sync-warning-banner .mobdel-icon {
+  color: #d35400;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mobdel-sync-warning-banner span {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #856404;
+}
+
+.mobdel-sync-warning-banner .mobdel-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==================== MOBILE CARD ==================== */
+.mobdel-mobile-card {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform-origin: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mobdel-mobile-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mobdel-mobile-sync-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #856404;
+  border-bottom: 2px solid #f39c12;
+}
+
+/* ==================== CARD HEADER ==================== */
+.mobdel-mobile-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  padding: 20px 20px 0;
+  gap: 12px;
 }
 
 .mobdel-mobile-card-left {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mobdel-mobile-time-badge {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  width: fit-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.mobdel-mobile-time-badge:active {
+  transform: scale(0.95);
+}
+
+/* Time Context Colors */
+.mobdel-time-today {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+}
+
+.mobdel-time-tomorrow {
+  background: linear-gradient(135deg, #ffa726, #ff9800);
+}
+
+.mobdel-time-this-week {
+  background: linear-gradient(135deg, #29b6f6, #0288d1);
+}
+
+.mobdel-time-future {
+  background: linear-gradient(135deg, #66bb6a, #43a047);
+}
+
+.mobdel-time-overdue {
+  background: linear-gradient(135deg, #ef5350, #d32f2f);
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.mobdel-time-delivered {
+  background: linear-gradient(135deg, #66bb6a, #43a047);
+}
+
+.mobdel-time-paused {
+  background: linear-gradient(135deg, #ffb74d, #f57c00);
+}
+
+/* Status Chips */
+.mobdel-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobdel-status-pending {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
+}
+
+.mobdel-status-assigned {
+  background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+  color: #0c5460;
+}
+
+.mobdel-status-accepted {
+  background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+  color: #0c5460;
+}
+
+.mobdel-status-out_for_delivery {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  color: #e17055;
+}
+
+.mobdel-status-delivered {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+}
+
+.mobdel-status-failed {
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+  color: #721c24;
+}
+
+.mobdel-status-cancelled {
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+  color: #721c24;
+}
+
+.mobdel-status-paused {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
 }
 
 .mobdel-mobile-date {
-  font-size: 0.8rem;
-  color: #6c757d;
-  font-weight: 500;
-} */
-
-/* Status message styling */
-.mobdel-message-error {
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 6px;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 0.85rem;
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+  background: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 16px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.mobdel-message-confirmed {
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 6px;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 0.85rem;
-}
-
-.mobdel-message-error .mobdel-icon,
-.mobdel-message-confirmed .mobdel-icon {
-  margin-right: 6px;
-  font-size: 0.9rem;
-}
-
-/* Filter indicator */
-.mobdel-filter-indicator {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  background: #dc3545;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-.mobdel-mobile-filter-btn {
-  position: relative;
-}
-
-/* Mobile retry badge */
-.mobdel-mobile-retry {
-  background: #f39c12;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .mobdel-mobile-tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-  }
-  
-  .mobdel-mobile-tab {
-    white-space: nowrap;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-  }
-  
-  .mobdel-mobile-card {
-    padding: 12px;
-  }
-  
-  .mobdel-mobile-plan-info h3 {
-    font-size: 1rem;
-    margin-bottom: 4px;
-  }
-  
-  .mobdel-mobile-plan-info p {
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-  }
-  
-  .mobdel-mobile-detail-row {
-    margin-bottom: 6px;
-  }
-  
-  .mobdel-mobile-detail-text {
-    font-size: 0.85rem;
-  }
-  
-  .mobdel-mobile-confirm-btn {
-    font-size: 0.85rem;
-    padding: 8px 12px;
-  }
-}
-
-@media (min-width: 769px) {
-  .mobdel-mobile-header,
-  .mobdel-mobile-tabs {
-    display: none;
-  }
-  
-  .mobdel-desktop-header {
-    display: block;
-  }
-  
-  .mobdel-mobile-card {
-    display: none;
-  }
-  
-  .mobdel-desktop-card {
-    display: block;
-  }
-}
-
-@media (max-width: 768px) {
-  .mobdel-desktop-header {
-    display: none;
-  }
-  
-  .mobdel-desktop-card {
-    display: none;
-  }
-  
-  .mobdel-mobile-card {
-    display: block;
-  }
-  
-  .mobdel-desktop-pagination {
-    display: none;
-  }
-  
-  .mobdel-mobile-pagination {
-    display: flex;
-  }
-}
-
-/* Desktop time context */
-.mobdel-time-context {
+/* ==================== CARD BODY ==================== */
+.mobdel-mobile-card-body {
+  padding: 20px;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Sequence Badge */
+.mobdel-mobile-sequence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #5c6bc0, #3f51b5);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+  align-self: flex-start;
+}
+
+/* Plan Info */
+.mobdel-mobile-plan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobdel-mobile-plan-info h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a237e;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.mobdel-mobile-plan-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Subscription Status Indicator */
+.mobdel-mobile-subscription-status-indicator {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 8px 14px;
+  background: #f5f7fa;
   border-radius: 16px;
-  font-size: 0.75rem;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 12px;
-  width: fit-content;
+  color: #333;
+  border: 2px solid #e8eaf6;
+  align-self: flex-start;
 }
 
-/* Mobile card body improvements */
-/* .mobdel-mobile-card-body {
-  margin: 10px 0;
+/* Initial Badge */
+.mobdel-mobile-initial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+  align-self: flex-start;
+}
+
+/* Details Section */
+.mobdel-mobile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e8eaf6;
+}
+
+.mobdel-mobile-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mobdel-icon {
+  color: #5c6bc0;
+  font-size: 18px;
+  min-width: 24px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.mobdel-icon-sm {
+  font-size: 16px;
+}
+
+.mobdel-mobile-detail-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Status Messages */
+.mobdel-mobile-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-left: 6px solid #f39c12;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .mobdel-mobile-error {
-  background: #f8d7da;
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
   color: #721c24;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  margin: 8px 0;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-left: 6px solid #dc3545;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .mobdel-mobile-confirmed {
-  background: #d4edda;
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
   color: #155724;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  margin: 8px 0;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-left: 6px solid #28a745;
   display: flex;
-  align-items: center;
-  gap: 6px;
-} */
-
-/* Mobile card footer */
-.mobdel-mobile-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #e9ecef;
+  flex-direction: column;
+  gap: 8px;
 }
 
+.mobdel-mobile-subtext {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 500;
+  margin-top: 4px;
+  padding-left: 24px;
+}
 
-/* Mobile Filter Panel */
+/* ==================== CARD FOOTER ==================== */
+.mobdel-mobile-card-footer {
+  padding: 20px;
+  border-top: 2px solid #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fafbfc;
+  border-radius: 0 0 24px 24px;
+}
+
+.mobdel-mobile-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  align-self: flex-start;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+/* Action Buttons */
+.mobdel-mobile-confirm-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobdel-mobile-confirm-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-mobile-confirm-btn:active::before {
+  opacity: 1;
+}
+
+.mobdel-mobile-sync-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #757575, #424242);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobdel-mobile-sync-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-mobile-sync-btn:active::before {
+  opacity: 1;
+}
+
+/* ==================== FILTER PANEL ==================== */
 .mobdel-mobile-filter-panel {
   position: fixed;
-  bottom: 70px;
+  bottom: 0;
   left: 0;
   right: 0;
   background: white;
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-  z-index: 1000;
-  animation: mobdel-slideUp 0.3s ease;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.25);
+  z-index: 3000;
+  animation: slide-up-modal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes mobdel-slideUp {
+@keyframes slide-up-modal {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
@@ -459,858 +798,1349 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  position: relative;
+}
+
+.mobdel-filter-panel-header::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: white;
+  border-radius: 20px 20px 0 0;
 }
 
 .mobdel-filter-panel-header h3 {
   margin: 0;
-  font-size: 18px;
-  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .mobdel-filter-panel-header button {
-  background: none;
+  background: rgba(255, 255, 255, 0.25);
   border: none;
-  font-size: 18px;
-  color: #6c757d;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.mobdel-filter-panel-header button:active {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0.9);
 }
 
 .mobdel-filter-panel-content {
-  padding: 16px;
-  max-height: 70vh;
+  flex: 1;
+  padding: 40px 24px 24px;
   overflow-y: auto;
+  background: white;
 }
 
+/* Filter Groups */
 .mobdel-mobile-filter-group {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+}
+
+.mobdel-mobile-filter-group:last-child {
+  margin-bottom: 0;
 }
 
 .mobdel-mobile-filter-group label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #2c3e50;
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a237e;
+  letter-spacing: -0.3px;
 }
 
 .mobdel-mobile-filter-input,
 .mobdel-mobile-filter-select {
   width: 100%;
-  height: fit-content;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 18px;
+  border: 2px solid #e8eaf6;
+  border-radius: 20px;
+  font-size: 17px;
+  background: #f8f9fa;
+  color: #333;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.mobdel-mobile-filter-input:focus,
+.mobdel-mobile-filter-select:focus {
+  outline: none;
+  border-color: #667eea;
   background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
 .mobdel-mobile-sort-btn {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 18px;
+  border: 2px solid #e8eaf6;
+  border-radius: 20px;
+  background: #f8f9fa;
+  font-size: 17px;
+  color: #1a237e;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mobdel-mobile-sort-btn:active {
   background: white;
-  font-size: 16px;
-  color: #2c3e50;
+  border-color: #667eea;
+  transform: scale(0.98);
 }
 
 .mobdel-mobile-clear-btn {
   width: 100%;
-  padding: 14px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 8px;
-}
-
-/* Mobile Card */
-.mobdel-deliveries-list {
   padding: 20px;
-}
-
-.mobdel-mobile-card {
-  background: white;
-  border-radius: 16px;
-  margin-bottom: 16px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.mobdel-mobile-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.mobdel-mobile-card-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mobdel-mobile-time-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
-}
-
-.mobdel-time-today { background: #e74c3c; }
-.mobdel-time-tomorrow { background: #e67e22; }
-.mobdel-time-this-week { background: #f39c12; }
-.mobdel-time-future { background: #3498db; }
-.mobdel-time-past { background: #95a5a6; }
-.mobdel-time-delivered { background: #27ae60; }
-
-.mobdel-status-chip {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.mobdel-status-pending { background: #fff3cd; color: #856404; }
-.mobdel-status-assigned { background: #d1ecf1; color: #0c5460; }
-.mobdel-status-accepted { background: #d1ecf1; color: #0c5460; }
-.mobdel-status-out_for_delivery { background: #ffeaa7; color: #e17055; }
-.mobdel-status-delivered { background: #d4edda; color: #155724; }
-.mobdel-status-failed { background: #f8d7da; color: #721c24; }
-.mobdel-status-cancelled { background: #f8d7da; color: #721c24; }
-
-.mobdel-mobile-more-btn {
-  background: none;
-  border: none;
-  color: #6c757d;
-  padding: 4px;
-}
-
-.mobdel-mobile-card-body {
-  margin-bottom: 12px;
-}
-
-.mobdel-mobile-plan-info h3 {
-  margin: 0 0 4px 0;
-  font-size: 16px;
-  color: #2c3e50;
-}
-
-.mobdel-mobile-plan-info p {
-  margin: 0 0 12px 0;
-  color: #6c757d;
-  font-size: 14px;
-}
-
-.mobdel-mobile-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobdel-mobile-detail-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mobdel-icon {
-  color: #6c757d;
-  font-size: 14px;
-  min-width: 16px;
-}
-
-.mobdel-mobile-detail-text {
-  font-size: 14px;
-  color: #2c3e50;
-}
-
-.mobdel-mobile-error {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #dc3545;
-  font-size: 13px;
-  margin-top: 8px;
-  padding: 8px;
-  background: #f8d7da;
-  border-radius: 8px;
-}
-
-.mobdel-mobile-confirmed {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #28a745;
-  font-size: 13px;
-  margin-top: 8px;
-  padding: 8px;
-  background: #d4edda;
-  border-radius: 8px;
-}
-
-.mobdel-mobile-card-footer {
-  padding-top: 12px;
-  border-top: 1px solid #e9ecef;
-}
-
-.mobdel-mobile-confirm-btn {
-  width: 100%;
-  padding: 12px;
-  background: #28a745;
+  background: linear-gradient(135deg, #ff5e7d, #ff2e63);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 32px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(255, 94, 125, 0.3);
 }
 
-/* Mobile Pagination */
-.mobdel-mobile-pagination {
-  position: sticky;
+.mobdel-mobile-clear-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-mobile-clear-btn:active::before {
+  opacity: 1;
+}
+
+/* ==================== PAGINATION ==================== */
+.mobdel-mobile-pagination {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: white;
-  padding: 12px 16px;
-  border-top: 1px solid #e0e0e0;
+  padding: 20px;
+  border-top: 2px solid #f5f7fa;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+  z-index: 900;
 }
 
 .mobdel-mobile-page-btn {
-  background: #007bff;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 22px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.mobdel-mobile-page-btn:active:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8, #6b46c1);
+  transform: scale(0.92);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .mobdel-mobile-page-btn:disabled {
-  background: #6c757d;
+  background: #b0bec5;
+  color: #78909c;
+  box-shadow: none;
   opacity: 0.5;
 }
 
 .mobdel-mobile-page-info {
-  font-size: 14px;
-  color: #2c3e50;
-  font-weight: 500;
+  font-size: 16px;
+  color: #1a237e;
+  font-weight: 700;
+  padding: 12px 20px;
+  background: #f5f7fa;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Mobile Dialog */
+/* ==================== LOADING STATE ==================== */
+.mobdel-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  padding: 40px;
+  background: transparent;
+}
+
+.mobdel-spinner {
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(102, 126, 234, 0.1);
+  border-top: 5px solid #667eea;
+  border-right: 5px solid #764ba2;
+  border-radius: 50%;
+  animation: spin-enhanced 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.mobdel-spinner::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border: 5px solid rgba(102, 126, 234, 0.05);
+  border-radius: 50%;
+}
+
+@keyframes spin-enhanced {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mobdel-loading p {
+  color: #667eea;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== EMPTY STATE ==================== */
+.mobdel-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 30px;
+  margin: 40px 20px;
+  background: white;
+  border-radius: 32px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobdel-empty-state::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #ff5e7d);
+  animation: gradient-move 3s ease infinite;
+}
+
+@keyframes gradient-move {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.mobdel-empty-state-icon {
+  font-size: 80px;
+  color: #e8eaf6;
+  margin-bottom: 30px;
+  opacity: 0.8;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.mobdel-empty-state h3 {
+  margin: 0 0 16px 0;
+  color: #1a237e;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+.mobdel-empty-state p {
+  color: #666;
+  margin-bottom: 40px;
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.mobdel-btn-outline {
+  padding: 18px 36px;
+  background: transparent;
+  border: 3px solid #667eea;
+  color: #667eea;
+  border-radius: 25px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.mobdel-btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-btn-outline:active::before {
+  opacity: 1;
+}
+
+.mobdel-btn-outline:active {
+  color: white;
+  transform: translateY(2px);
+  border-color: transparent;
+}
+
+/* ==================== DIALOGS ==================== */
 .mobdel-mobile-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 2000;
-  padding: 16px;
+  z-index: 5000;
+  padding: 20px;
+  animation: fade-in-dialog 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes fade-in-dialog {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; backdrop-filter: blur(10px); }
 }
 
 .mobdel-mobile-dialog {
   background: white;
-  border-radius: 20px;
+  border-radius: 32px;
   width: 100%;
-  max-width: 400px;
-  animation: mobdel-slideUp 0.3s ease;
+  max-width: 420px;
+  animation: slide-up-dialog 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slide-up-dialog {
+  from { transform: translateY(100%) scale(0.9); }
+  to { transform: translateY(0) scale(1); }
 }
 
 .mobdel-mobile-dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 28px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  position: relative;
+}
+
+.mobdel-mobile-dialog-header::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: white;
+  border-radius: 20px 20px 0 0;
 }
 
 .mobdel-mobile-dialog-header h2 {
   margin: 0;
-  font-size: 20px;
-  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .mobdel-mobile-dialog-header button {
-  background: none;
+  background: rgba(255, 255, 255, 0.25);
   border: none;
-  color: #6c757d;
-  font-size: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 26px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.mobdel-mobile-dialog-header button:active {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0.9);
 }
 
 .mobdel-mobile-dialog-content {
-  padding: 20px;
+  flex: 1;
+  padding: 40px 28px 28px;
+  overflow-y: auto;
+  background: white;
 }
 
 .mobdel-mobile-dialog-content p {
-  margin: 0 0 16px 0;
-  color: #6c757d;
-  font-size: 16px;
+  margin: 0 0 28px 0;
+  color: #666;
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .mobdel-mobile-form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #2c3e50;
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: #1a237e;
+  font-size: 16px;
+  letter-spacing: -0.3px;
 }
 
 .mobdel-mobile-form-group textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 20px;
+  border: 2px solid #e8eaf6;
+  border-radius: 20px;
+  font-size: 17px;
   resize: none;
+  min-height: 120px;
+  color: #333;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.mobdel-mobile-form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
 .mobdel-mobile-dialog-footer {
   display: flex;
-  gap: 12px;
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
+  gap: 16px;
+  padding: 28px;
+  border-top: 2px solid #f5f7fa;
+  background: #fafbfc;
+  border-radius: 0 0 32px 32px;
 }
 
 .mobdel-mobile-dialog-btn {
   flex: 1;
-  padding: 14px;
+  padding: 20px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mobdel-mobile-dialog-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobdel-mobile-dialog-btn:active::before {
+  opacity: 1;
 }
 
 .mobdel-mobile-dialog-btn.primary {
-  background: #007bff;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
   color: white;
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+}
+
+.mobdel-mobile-dialog-btn.primary:active {
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  transform: translateY(2px);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
 }
 
 .mobdel-mobile-dialog-btn.secondary {
-  background: #6c757d;
+  background: linear-gradient(135deg, #757575, #424242);
   color: white;
+  box-shadow: 0 8px 24px rgba(117, 117, 117, 0.3);
 }
 
-/* Mobile Snackbar */
+.mobdel-mobile-dialog-btn.secondary:active {
+  background: linear-gradient(135deg, #616161, #212121);
+  transform: translateY(2px);
+  box-shadow: 0 4px 16px rgba(117, 117, 117, 0.4);
+}
+
+/* ==================== SNACKBAR ==================== */
 .mobdel-mobile-snackbar {
   position: fixed;
-  bottom: 80px;
-  left: 16px;
-  right: 16px;
-  padding: 16px;
-  border-radius: 12px;
+  bottom: 120px;
+  left: 20px;
+  right: 20px;
+  padding: 20px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  z-index: 3000;
-  animation: mobdel-slideInUp 0.3s ease;
+  gap: 16px;
+  z-index: 6000;
+  animation: slide-up-snackbar 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform-origin: center;
 }
 
-@keyframes mobdel-slideInUp {
-  from {
-    transform: translateY(100%);
+@keyframes slide-up-snackbar {
+  0% {
+    transform: translateY(100%) scale(0.8);
     opacity: 0;
   }
-  to {
-    transform: translateY(0);
+  100% {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
 .mobdel-mobile-snackbar.success {
-  background: #28a745;
+  background: linear-gradient(135deg, rgba(76, 217, 100, 0.95), rgba(39, 174, 96, 0.95));
   color: white;
+  border: 1px solid rgba(76, 217, 100, 0.4);
 }
 
 .mobdel-mobile-snackbar.error {
-  background: #dc3545;
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.95), rgba(211, 47, 47, 0.95));
   color: white;
+  border: 1px solid rgba(255, 59, 48, 0.4);
 }
 
-/* Loading State */
-.mobdel-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
+.mobdel-mobile-snackbar svg {
+  font-size: 24px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.mobdel-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #007bff;
-  border-radius: 50%;
-  animation: mobdel-spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes mobdel-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Empty State */
-.mobdel-empty-state {
-  text-align: center;
-  padding: 48px 16px;
-}
-
-.mobdel-empty-state-icon {
-  font-size: 48px;
-  color: #ddd;
-  margin-bottom: 16px;
-}
-
-.mobdel-empty-state h3 {
-  margin: 0 0 8px 0;
-  color: #2c3e50;
-}
-
-.mobdel-empty-state p {
-  color: #6c757d;
-  margin-bottom: 20px;
-}
-
-.mobdel-btn-outline {
-  background: transparent;
-  border: 1px solid #007bff;
-  color: #007bff;
-  padding: 12px 24px;
-  border-radius: 8px;
+.mobdel-mobile-snackbar span {
+  flex: 1;
   font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Hide Desktop Elements on Mobile */
-.mobdel-desktop-header,
-.mobdel-desktop-card,
-.mobdel-desktop-pagination,
-.mobdel-dialog-overlay,
-.mobdel-snackbar {
-  display: none;
+/* ==================== DESKTOP HIDING ==================== */
+@media (max-width: 768px) {
+  .mobdel-desktop-header,
+  .mobdel-desktop-card,
+  .mobdel-desktop-pagination,
+  .mobdel-dialog-overlay,
+  .mobdel-snackbar {
+    display: none !important;
+  }
 }
 
-/* ============================================
-   DESKTOP STYLES (min-width: 768px)
-   ============================================ */
-@media (min-width: 768px) {
-  /* Hide Mobile Elements on Desktop */
+@media (min-width: 769px) {
   .mobdel-mobile-header,
   .mobdel-mobile-filter-panel,
   .mobdel-mobile-card,
   .mobdel-mobile-pagination,
   .mobdel-mobile-dialog-overlay,
   .mobdel-mobile-snackbar {
-    display: none;
-  }
-
-  /* Show Desktop Elements */
-  .mobdel-desktop-header,
-  .mobdel-desktop-card,
-  .mobdel-desktop-pagination,
-  .mobdel-dialog-overlay,
-  .mobdel-snackbar {
-    display: block;
-  }
-
-  /* Desktop Container */
-  .mobdel-customer-delivery {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  /* Desktop Header */
-  .mobdel-desktop-header {
-    margin-bottom: 30px;
-  }
-
-  .mobdel-desktop-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ecf0f1;
-    padding-bottom: 10px;
-  }
-
-  .mobdel-tab {
-    padding: 10px 20px;
-    border: none;
-    background: #f8f9fa;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-  }
-
-  .mobdel-tab:hover {
-    background: #e9ecef;
-  }
-
-  .mobdel-tab.active {
-    background: #3498db;
-    color: white;
-  }
-
-  /* Desktop Controls */
-  .mobdel-desktop-controls {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
-  .mobdel-filter-group,
-  .mobdel-sort-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-  }
-
-  .mobdel-control-icon {
-    color: #7f8c8d;
-  }
-
-  .mobdel-filter-input,
-  .mobdel-filter-select {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 14px;
-  }
-
-  .mobdel-sort-btn {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 14px;
-    color: #2c3e50;
-  }
-
-  .mobdel-clear-filters {
-    padding: 8px 16px;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  .mobdel-clear-filters:hover {
-    background: #c0392b;
-  }
-
-  /* Desktop Card */
-  .mobdel-desktop-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-left: 4px solid #3498db;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .mobdel-card-content {
-    padding: 20px;
-  }
-
-  /* Time Context Badges */
-  .mobdel-time-context {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  /* Card Header */
-  .mobdel-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    gap: 15px;
-  }
-
-  .mobdel-delivery-date {
-    color: #7f8c8d;
-    font-size: 14px;
-  }
-
-  /* Plan Info */
-  .mobdel-plan-info {
-    margin-bottom: 15px;
-  }
-
-  .mobdel-plan-name {
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 18px;
-  }
-
-  .mobdel-plan-frequency {
-    color: #7f8c8d;
-    font-size: 14px;
-  }
-
-  /* Delivery Details */
-  .mobdel-delivery-details {
-    margin-bottom: 15px;
-  }
-
-  .mobdel-detail-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-
-  .mobdel-detail-text {
-    color: #2c3e50;
-    line-height: 1.4;
-  }
-
-  .mobdel-detail-label {
-    font-weight: 600;
-    color: #34495e;
-  }
-
-  /* Status Messages */
-  .mobdel-status-message {
-    padding: 10px;
-    border-radius: 6px;
-    margin-top: 10px;
-  }
-
-  .mobdel-message-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-
-  .mobdel-message-confirmed {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-
-  /* Card Footer */
-  .mobdel-card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid #ecf0f1;
-  }
-
-  .mobdel-delivery-meta {
-    color: #7f8c8d;
-    font-size: 14px;
-  }
-
-  /* Buttons */
-  .mobdel-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s ease;
-  }
-
-  .mobdel-btn-success {
-    background: #27ae60;
-    color: white;
-  }
-
-  .mobdel-btn-success:hover {
-    background: #219a52;
-  }
-
-  /* Desktop Pagination */
-  .mobdel-desktop-pagination {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .mobdel-pagination-info {
-    color: #7f8c8d;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .mobdel-pagination-buttons {
-    display: flex;
-    gap: 5px;
-  }
-
-  .mobdel-page-btn {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    background: white;
-    cursor: pointer;
-    border-radius: 4px;
-    min-width: 40px;
-  }
-
-  .mobdel-page-btn:hover:not(:disabled) {
-    background: #f8f9fa;
-  }
-
-  .mobdel-page-btn.active {
-    background: #3498db;
-    color: white;
-    border-color: #3498db;
-  }
-
-  .mobdel-page-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* Desktop Dialog */
-  .mobdel-dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  .mobdel-dialog {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .mobdel-dialog-header {
-    padding: 20px;
-    border-bottom: 1px solid #ecf0f1;
-  }
-
-  .mobdel-dialog-title {
-    margin: 0;
-    color: #2c3e50;
-  }
-
-  .mobdel-dialog-content {
-    padding: 20px;
-  }
-
-  .mobdel-dialog-footer {
-    padding: 20px;
-    border-top: 1px solid #ecf0f1;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  /* Form Elements */
-  .mobdel-form-group {
-    margin-bottom: 15px;
-  }
-
-  .mobdel-form-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #2c3e50;
-    font-weight: 500;
-  }
-
-  .mobdel-form-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    resize: vertical;
-    font-family: inherit;
-  }
-
-  /* Desktop Snackbar */
-  .mobdel-snackbar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    border-radius: 6px;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    z-index: 1001;
-    animation: mobdel-slideIn 0.3s ease;
-  }
-
-  @keyframes mobdel-slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  .mobdel-snackbar.success {
-    background: #27ae60;
-  }
-
-  .mobdel-snackbar.error {
-    background: #e74c3c;
+    display: none !important;
   }
 }
 
-/* Large Desktop */
-@media (min-width: 1024px) {
+/* ==================== DARK MODE SUPPORT ==================== */
+@media (prefers-color-scheme: dark) {
   .mobdel-customer-delivery {
-    padding: 30px;
+    background: linear-gradient(180deg, #121212 0%, #1a1a1a 100%);
   }
+  
+  .mobdel-mobile-header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  }
+  
+  .mobdel-mobile-card {
+    background: #1e1e1e;
+    border-color: #333;
+  }
+  
+  .mobdel-mobile-plan-info h3 {
+    color: #e2e8f0;
+  }
+  
+  .mobdel-mobile-plan-info p {
+    color: #a0aec0;
+  }
+  
+  .mobdel-mobile-detail-text {
+    color: #cbd5e0;
+  }
+  
+  .mobdel-mobile-details {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+  
+  .mobdel-icon {
+    color: #718096;
+  }
+  
+  .mobdel-empty-state {
+    background: #1e1e1e;
+  }
+  
+  .mobdel-empty-state h3 {
+    color: #e2e8f0;
+  }
+  
+  .mobdel-empty-state p {
+    color: #a0aec0;
+  }
+}
 
-  .mobdel-desktop-controls {
-    gap: 20px;
+/* ==================== SAFE AREA INSETS ==================== */
+@supports (padding: max(0px)) {
+  .mobdel-mobile-header {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
   }
+  
+  .mobdel-mobile-pagination {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+  
+  .mobdel-mobile-filter-panel,
+  .mobdel-mobile-dialog-overlay {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+  
+  .mobdel-mobile-dialog-overlay {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
 
-  .mobdel-filter-group,
-  .mobdel-sort-group {
-    padding: 10px 15px;
+/* ==================== PERFORMANCE OPTIMIZATIONS ==================== */
+.mobdel-mobile-card,
+.mobdel-mobile-tab,
+.mobdel-btn,
+.mobdel-mobile-dialog-btn,
+.mobdel-mobile-confirm-btn,
+.mobdel-mobile-sync-btn {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .mobdel-mobile-card,
+  .mobdel-mobile-tab,
+  .mobdel-btn,
+  .mobdel-mobile-dialog-btn,
+  .mobdel-mobile-confirm-btn,
+  .mobdel-mobile-sync-btn,
+  .mobdel-mobile-page-btn,
+  .mobdel-mobile-clear-btn,
+  .mobdel-btn-outline,
+  .mobdel-rem-tab,
+  .mobdel-mobile-filter-btn,
+  .mobdel-mobile-sort-btn,
+  .mobdel-filter-panel-header button,
+  .mobdel-mobile-dialog-header button,
+  .mobdel-mobile-time-badge,
+  .mobdel-status-chip,
+  .mobdel-mobile-sequence-badge,
+  .mobdel-mobile-initial-badge,
+  .mobdel-mobile-retry,
+  .mobdel-subscription-status,
+  .mobdel-mobile-tab-count {
+    transition: none !important;
+    animation: none !important;
   }
+  
+  .mobdel-delivery-card[data-status="overdue"] {
+    animation: none !important;
+  }
+  
+  .mobdel-mobile-filter-panel,
+  .mobdel-mobile-dialog,
+  .mobdel-mobile-snackbar,
+  .mobdel-mobile-dialog-overlay {
+    animation: none !important;
+  }
+  
+  .mobdel-spinner {
+    animation-duration: 2s !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .mobdel-mobile-header {
+    background: #000 !important;
+  }
+  
+  .mobdel-mobile-card {
+    border: 3px solid #000 !important;
+  }
+  
+  .mobdel-btn,
+  .mobdel-mobile-dialog-btn,
+  .mobdel-mobile-confirm-btn,
+  .mobdel-mobile-sync-btn {
+    border: 2px solid #000 !important;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .mobdel-mobile-header,
+  .mobdel-mobile-pagination,
+  .mobdel-mobile-filter-btn,
+  .mobdel-remnant,
+  .mobdel-mobile-confirm-btn,
+  .mobdel-mobile-sync-btn,
+  .mobdel-btn,
+  .mobdel-mobile-dialog-overlay,
+  .mobdel-mobile-snackbar,
+  .mobdel-mobile-filter-panel {
+    display: none !important;
+  }
+  
+  .mobdel-customer-delivery {
+    background: white !important;
+    min-height: auto;
+  }
+  
+  .mobdel-deliveries-list {
+    padding: 0 !important;
+  }
+  
+  .mobdel-mobile-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    margin-bottom: 20px;
+  }
+}
+
+/* ==================== CUSTOM PROPERTIES ==================== */
+:root {
+  --mobdel-primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+  --mobdel-success-gradient: linear-gradient(135deg, #4caf50, #2e7d32);
+  --mobdel-warning-gradient: linear-gradient(135deg, #ff9800, #f57c00);
+  --mobdel-danger-gradient: linear-gradient(135deg, #ef5350, #d32f2f);
+  --mobdel-info-gradient: linear-gradient(135deg, #29b6f6, #0288d1);
+  --mobdel-dark-gradient: linear-gradient(135deg, #757575, #424242);
+  --mobdel-pink-gradient: linear-gradient(135deg, #ff5e7d, #ff2e63);
+  
+  --mobdel-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --mobdel-button-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  --mobdel-dialog-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  --mobdel-snackbar-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  
+  --mobdel-border-radius-sm: 12px;
+  --mobdel-border-radius-md: 16px;
+  --mobdel-border-radius-lg: 20px;
+  --mobdel-border-radius-xl: 24px;
+  --mobdel-border-radius-2xl: 32px;
+  
+  --mobdel-transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --mobdel-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --mobdel-transition-slow: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.mobdel-text-gradient {
+  background: var(--mobdel-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mobdel-shadow-lg {
+  box-shadow: var(--mobdel-card-shadow);
+}
+
+.mobdel-shadow-xl {
+  box-shadow: var(--mobdel-dialog-shadow);
+}
+
+.mobdel-transition-normal {
+  transition: var(--mobdel-transition-normal);
+}
+
+.mobdel-rounded-xl {
+  border-radius: var(--mobdel-border-radius-xl);
+}
+
+.mobdel-rounded-2xl {
+  border-radius: var(--mobdel-border-radius-2xl);
+}
+
+
+
+
+/* MobileCustomerDeliverySchedule.css - Updated with missing desktop features */
+
+/* ===== PARTIAL DELIVERY STYLES ===== */
+.mobdel-partial-delivery-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 8px 0;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); }
+  50% { box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5); }
+  100% { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); }
+}
+
+.mobdel-partial-delivery-details {
+  background: #f8f9ff;
+  border-left: 4px solid #667eea;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mobdel-partial-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mobdel-delivered-amount,
+.mobdel-remaining-amount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #333;
+}
+
+.mobdel-delivered-amount {
+  color: #27ae60;
+}
+
+.mobdel-remaining-amount {
+  color: #667eea;
+}
+
+.mobdel-remnant-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff8e1;
+  border: 1px solid #ffd54f;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 12px;
+  color: #5d4037;
+  line-height: 1.4;
+}
+
+/* Remnant delivery info */
+.mobdel-remnant-delivery-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.mobdel-remnant-delivery-info > div {
+  flex: 1;
+}
+
+.mobdel-remnant-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2e7d32;
+  font-weight: 500;
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: 6px;
+}
+
+.mobdel-remnant-link a:hover {
+  text-decoration: underline;
+}
+
+/* ===== DELIVERY SEQUENCE STYLES ===== */
+.mobdel-delivery-sequence {
+  margin: 8px 0;
+}
+
+.mobdel-sequence-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+/* Mobile-specific sequence badge */
+.mobdel-mobile-sequence-badge {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 6px 0;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== ORIGINAL DATE STYLES ===== */
+.mobdel-original-date {
+  display: block;
+  font-size: 11px;
+  color: #7f8c8d;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* ===== SUBSCRIPTION STATUS INDICATOR ===== */
+.mobdel-subscription-status-indicator,
+.mobdel-mobile-subscription-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f5f5;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.mobdel-subscription-status-indicator .status-active {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.mobdel-subscription-status-indicator .status-paused {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+/* ===== INITIAL DELIVERY BADGE ===== */
+.mobdel-initial-badge,
+.mobdel-mobile-initial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  margin: 4px 8px 4px 0;
+}
+
+/* ===== PLAN PERIOD STYLES ===== */
+.mobdel-plan-period {
+  color: #3498db;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 4px 0;
+}
+
+/* ===== IMPROVED CARD LAYOUTS ===== */
+.mobdel-mobile-card .mobdel-mobile-plan-info h3 {
+  margin: 8px 0 4px;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mobdel-mobile-card .mobdel-mobile-plan-info p {
+  color: #7f8c8d;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+/* ===== IMPROVED DETAIL ROWS ===== */
+.mobdel-mobile-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobdel-mobile-detail-row:last-child {
+  border-bottom: none;
+}
+
+.mobdel-mobile-detail-text {
+  flex: 1;
+  font-size: 13px;
+  color: #34495e;
+  line-height: 1.4;
+}
+
+/* ===== STATUS MESSAGES ===== */
+.mobdel-message-warning {
+  background: #fff8e1;
+  border-left: 4px solid #ffb300;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.mobdel-message-error {
+  background: #ffebee;
+  border-left: 4px solid #f44336;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.mobdel-message-confirmed {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+/* ===== REMNANT TAB SPECIFIC ===== */
+.mobdel-remnant {
+  margin-top: 12px;
+  padding: 0 16px;
+}
+
+.mobdel-mobile-tab.mobdel-rem-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.mobdel-mobile-tab.mobdel-rem-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ===== ENHANCED SYNC WARNING ===== */
+.mobdel-sync-warning-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: #5d4037;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mobdel-mobile-sync-warning {
+  background: #f6d365;
+  color: #5d4037;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* ===== IMPROVED BUTTONS ===== */
+.mobdel-mobile-confirm-btn {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.mobdel-mobile-confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.mobdel-mobile-sync-btn {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+/* ===== ENHANCED WARNING/ERROR MESSAGES ===== */
+.mobdel-mobile-warning {
+  background: #fff8e1;
+  border: 1px solid #ffd54f;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  color: #5d4037;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobdel-mobile-error {
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  color: #c62828;
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mobdel-mobile-confirmed {
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  color: #2e7d32;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobdel-mobile-subtext {
+  font-size: 12px;
+  color: #546e7a;
+  margin-top: 4px;
+}
+
+/* ===== IMPROVED RETRY COUNT DISPLAY ===== */
+.mobdel-mobile-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f39c12;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+/* ===== CARD FOOTER IMPROVEMENTS ===== */
+.mobdel-mobile-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 12px;
+}
+
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 480px) {
+  .mobdel-partial-delivery-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  
+  .mobdel-sequence-badge,
+  .mobdel-mobile-sequence-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+  
+  .mobdel-sync-warning-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .mobdel-mobile-confirm-btn,
+  .mobdel-mobile-sync-btn {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+  
+  .mobdel-remnant-note {
+    font-size: 11px;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobdel-delivery-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.mobdel-deliveries-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mobdel-deliveries-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.mobdel-deliveries-list::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 2px;
+}
+
+.mobdel-deliveries-list::-webkit-scrollbar-thumb:hover {
+  background: #5a67d8;
 }

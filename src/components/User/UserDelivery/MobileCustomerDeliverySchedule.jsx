@@ -16,6 +16,9 @@
 //   FaChevronRight,
 //   FaExclamationTriangle,
 //   FaGasPump,
+//   FaPauseCircle,
+//   FaPlayCircle,
+//   FaSync,
 // } from "react-icons/fa";
 // import { Link } from "react-router-dom";
 // import "./MobileCustomerDeliverySchedule.css";
@@ -28,6 +31,7 @@
 //   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 //   const [selectedDelivery, setSelectedDelivery] = useState(null);
 //   const [confirmationNotes, setConfirmationNotes] = useState("");
+//   const [subscriptions, setSubscriptions] = useState([]);
 //   const [snackbar, setSnackbar] = useState({
 //     open: false,
 //     message: "",
@@ -40,6 +44,11 @@
 //   const [dateFilter, setDateFilter] = useState("");
 //   const [sortOrder, setSortOrder] = useState("asc");
 //   const [showFilters, setShowFilters] = useState(false);
+
+//   // Fetch subscriptions to check pause status
+//   useEffect(() => {
+//     fetchSubscriptions();
+//   }, []);
 
 //   // Categorize deliveries based on status and date
 //   const categorizedDeliveries = useMemo(() => {
@@ -87,6 +96,25 @@
 //     fetchDeliveries();
 //   }, [page, activeTab, statusFilter, dateFilter, sortOrder]);
 
+//   const fetchSubscriptions = async () => {
+//     try {
+//       const response = await fetch(
+//         `https://egas-server-1.onrender.com/api/v1/subscriptions/my-subscriptions`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+//       const data = await response.json();
+//       if (data.success) {
+//         setSubscriptions(data.data);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching subscriptions:", error);
+//     }
+//   };
+
 //   const fetchDeliveries = async () => {
 //     try {
 //       setLoading(true);
@@ -123,6 +151,110 @@
 //       showSnackbar("Error fetching delivery history", "error");
 //     } finally {
 //       setLoading(false);
+//     }
+//   };
+
+//   // Get subscription for a delivery
+//   const getDeliverySubscription = (delivery) => {
+//     return subscriptions.find(sub => sub._id === delivery.subscriptionId?._id);
+//   };
+
+//   // Check if delivery should be paused based on subscription
+//   const checkDeliverySyncStatus = (delivery) => {
+//     const subscription = getDeliverySubscription(delivery);
+//     if (!subscription) return { shouldBeSynced: false };
+
+//     const shouldBePaused = subscription.status === "paused" && delivery.status !== "paused";
+//     const shouldBeActive = subscription.status === "active" && delivery.status === "paused";
+
+//     return {
+//       shouldBeSynced: shouldBePaused || shouldBeActive,
+//       subscriptionStatus: subscription.status,
+//       deliveryStatus: delivery.status,
+//       action: shouldBePaused ? "pause" : "resume"
+//     };
+//   };
+
+//   // Sync delivery with subscription
+//   const syncDeliveryWithSubscription = async (deliveryId) => {
+//     try {
+//       const response = await fetch(
+//         `https://egas-server-1.onrender.com/api/v1/delivery/${deliveryId}/sync-subscription`,
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+
+//       const data = await response.json();
+
+//       if (data.success) {
+//         showSnackbar(`Delivery synced: ${data.data.action}`, "success");
+//         fetchDeliveries();
+//       } else {
+//         showSnackbar(data.message || "Sync failed", "error");
+//       }
+//     } catch (error) {
+//       showSnackbar("Error syncing delivery", "error");
+//     }
+//   };
+
+//   // Pause subscription and its deliveries
+//   const handlePauseSubscription = async (subscriptionId) => {
+//     try {
+//       const response = await fetch(
+//         `https://egas-server-1.onrender.com/api/v1/subscriptions/${subscriptionId}/pause`,
+//         {
+//           method: "PUT",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+
+//       const data = await response.json();
+
+//       if (data.success) {
+//         showSnackbar("Subscription and deliveries paused successfully", "success");
+//         fetchSubscriptions();
+//         fetchDeliveries();
+//       } else {
+//         showSnackbar(data.message, "error");
+//       }
+//     } catch (error) {
+//       showSnackbar("Error pausing subscription", "error");
+//     }
+//   };
+
+//   // Resume subscription and its deliveries
+//   const handleResumeSubscription = async (subscriptionId) => {
+//     try {
+//       const response = await fetch(
+//         `https://egas-server-1.onrender.com/api/v1/subscriptions/${subscriptionId}/resume`,
+//         {
+//           method: "PUT",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+
+//       const data = await response.json();
+
+//       if (data.success) {
+//         showSnackbar("Subscription and deliveries resumed successfully", "success");
+//         fetchSubscriptions();
+//         fetchDeliveries();
+//       } else {
+//         showSnackbar(data.message, "error");
+//       }
+//     } catch (error) {
+//       showSnackbar("Error resuming subscription", "error");
 //     }
 //   };
 
@@ -166,7 +298,8 @@
 //           'pending': 4,
 //           'failed': 5,
 //           'cancelled': 6,
-//           'delivered': 7
+//           'delivered': 7,
+//           'paused': 8,
 //         };
         
 //         return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
@@ -227,6 +360,7 @@
 //       delivered: "mobdel-status-delivered",
 //       failed: "mobdel-status-failed",
 //       cancelled: "mobdel-status-cancelled",
+//       paused: "mobdel-status-paused",
 //     };
 //     return `mobdel-status-chip ${statusMap[status] || "mobdel-status-pending"}`;
 //   };
@@ -284,7 +418,14 @@
 //     const timeDiff = deliveryDate - now;
 //     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
-//     if (delivery.status === "delivered") {
+//     // Handle paused status first
+//     if (delivery.status === "paused") {
+//       return {
+//         type: "paused",
+//         text: "Paused",
+//         icon: <FaPauseCircle className="mobdel-icon-sm" />
+//       };
+//     } else if (delivery.status === "delivered") {
 //       return {
 //         type: "delivered",
 //         text: `Delivered`,
@@ -305,19 +446,19 @@
 //     } else if (daysDiff > 1 && daysDiff <= 7) {
 //       return { 
 //         type: "this-week", 
-//         text: `In ${daysDiff}d`,
+//         text: `In ${daysDiff} days`,
 //         icon: <FaClock className="mobdel-icon-sm" />
 //       };
 //     } else if (daysDiff > 7) {
 //       return {
 //         type: "future",
-//         text: `${Math.floor(daysDiff / 7)}w`,
+//         text: `${Math.floor(daysDiff / 7)} weeks`,
 //         icon: <FaCalendarAlt className="mobdel-icon-sm" />
 //       };
 //     } else if (daysDiff < 0) {
 //       return { 
 //         type: "overdue", 
-//         text: `${Math.abs(daysDiff)}d ago`,
+//         text: `${Math.abs(daysDiff)} days overdue`,
 //         icon: <FaExclamationTriangle className="mobdel-icon-sm" />
 //       };
 //     }
@@ -370,7 +511,7 @@
 //       <div className="mobdel-customer-delivery">
 //         <div className="mobdel-loading">
 //           <div className="mobdel-spinner"></div>
-//           <p>Loading deliveries...</p>
+//           <p>Loading your deliveries...</p>
 //         </div>
 //       </div>
 //     );
@@ -392,6 +533,40 @@
 //             )}
 //           </button>
 //         </div>
+
+//         {/* Subscription Quick Actions - Mobile */}
+//         {/* {subscriptions.filter(sub => ["active", "paused"].includes(sub.status)).length > 0 && (
+//           <div className="mobdel-mobile-subscription-actions">
+//             {subscriptions
+//               .filter(sub => ["active", "paused"].includes(sub.status))
+//               .slice(0, 2) // Show only 2 on mobile
+//               .map(subscription => (
+//                 <div key={subscription._id} className="mobdel-subscription-quick-action">
+//                   <span className="mobdel-subscription-name">
+//                     {subscription.planName} - {subscription.size}
+//                   </span>
+//                   <span className={`mobdel-subscription-status status-${subscription.status}`}>
+//                     {subscription.status}
+//                   </span>
+//                   {subscription.status === "active" ? (
+//                     <button
+//                       className="mobdel-btn mobdel-btn-warning mobdel-btn-xs"
+//                       onClick={() => handlePauseSubscription(subscription._id)}
+//                     >
+//                       <FaPauseCircle /> Pause
+//                     </button>
+//                   ) : (
+//                     <button
+//                       className="mobdel-btn mobdel-btn-success mobdel-btn-xs"
+//                       onClick={() => handleResumeSubscription(subscription._id)}
+//                     >
+//                       <FaPlayCircle /> Resume
+//                     </button>
+//                   )}
+//                 </div>
+//               ))}
+//           </div>
+//         )} */}
 
 //         {/* Mobile Tabs - Scrollable */}
 //         <div className="mobdel-mobile-tabs">
@@ -430,7 +605,7 @@
 //           </button>
 //         </div>
 //         <div className="mobdel-remnant">
-//            <Link to="/dashboard/remnant" className="mobdel-mobile-tab mobdel-rem-tab">
+//           <Link to="/dashboard/remnant" className="mobdel-mobile-tab mobdel-rem-tab">
 //             My Gas Remnant
 //           </Link>
 //         </div>
@@ -439,6 +614,39 @@
 //       {/* Desktop Header (Hidden on mobile) */}
 //       <div className="mobdel-desktop-header">
 //         <h1 className="mobdel-customer-title">My Delivery Schedule</h1>
+
+//         {/* Subscription Quick Actions - Desktop */}
+//         {subscriptions.filter(sub => ["active", "paused"].includes(sub.status)).length > 0 && (
+//           <div className="mobdel-subscription-actions">
+//             {subscriptions
+//               .filter(sub => ["active", "paused"].includes(sub.status))
+//               .map(subscription => (
+//                 <div key={subscription._id} className="mobdel-subscription-quick-action">
+//                   <span className="mobdel-subscription-name">
+//                     {subscription.planName} - {subscription.size}
+//                   </span>
+//                   <span className={`mobdel-subscription-status status-${subscription.status}`}>
+//                     {subscription.status}
+//                   </span>
+//                   {subscription.status === "active" ? (
+//                     <button
+//                       className="mobdel-btn mobdel-btn-warning mobdel-btn-sm"
+//                       onClick={() => handlePauseSubscription(subscription._id)}
+//                     >
+//                       <FaPauseCircle /> Pause
+//                     </button>
+//                   ) : (
+//                     <button
+//                       className="mobdel-btn mobdel-btn-success mobdel-btn-sm"
+//                       onClick={() => handleResumeSubscription(subscription._id)}
+//                     >
+//                       <FaPlayCircle /> Resume
+//                     </button>
+//                   )}
+//                 </div>
+//               ))}
+//           </div>
+//         )}
 
 //         {/* Desktop Tabs */}
 //         <div className="mobdel-desktop-tabs">
@@ -506,6 +714,7 @@
 //                 <option value="out_for_delivery">Out for Delivery</option>
 //                 <option value="failed">Failed</option>
 //                 <option value="cancelled">Cancelled</option>
+//                 <option value="paused">Paused</option>
 //               </select>
 //             </div>
 //           )}
@@ -561,6 +770,7 @@
 //                   <option value="out_for_delivery">Out for Delivery</option>
 //                   <option value="failed">Failed</option>
 //                   <option value="cancelled">Cancelled</option>
+//                   <option value="paused">Paused</option>
 //                 </select>
 //               </div>
 //             )}
@@ -590,11 +800,36 @@
 //       <div className="mobdel-deliveries-list">
 //         {currentDeliveries.map((delivery) => {
 //           const timeContext = getDeliveryTimeContext(delivery);
+//           const subscription = getDeliverySubscription(delivery);
+//           const syncStatus = checkDeliverySyncStatus(delivery);
 
 //           return (
-//             <div key={delivery._id} className="mobdel-delivery-card">
+//             <div key={delivery._id} className="mobdel-delivery-card" data-status={delivery.status}>
+//               {/* Sync Warning Banner - Mobile */}
+//               {syncStatus.shouldBeSynced && (
+//                 <div className="mobdel-sync-warning-banner">
+//                   <FaExclamationTriangle className="mobdel-icon" />
+//                   <span>
+//                     Delivery out of sync with subscription
+//                   </span>
+//                   <button
+//                     className="mobdel-btn mobdel-btn-sm mobdel-btn-outline"
+//                     onClick={() => syncDeliveryWithSubscription(delivery._id)}
+//                   >
+//                     <FaSync /> Sync Now
+//                   </button>
+//                 </div>
+//               )}
+
 //               {/* Mobile Card View */}
 //               <div className="mobdel-mobile-card">
+//                 {/* Sync Warning Banner - Mobile Card */}
+//                 {syncStatus.shouldBeSynced && (
+//                   <div className="mobdel-mobile-sync-warning">
+//                     <FaExclamationTriangle /> Out of sync
+//                   </div>
+//                 )}
+
 //                 <div className="mobdel-mobile-card-header">
 //                   <div className="mobdel-mobile-card-left">
 //                     <div
@@ -616,13 +851,53 @@
 //                 </div>
 
 //                 <div className="mobdel-mobile-card-body">
+//                   {/* Delivery Sequence Badge (Mobile) */}
+//                   {delivery.sequenceNumber && delivery.totalSequences && (
+//                     <div className="mobdel-mobile-sequence-badge">
+//                       Delivery {delivery.sequenceNumber} of {delivery.totalSequences}
+//                       {delivery.sequenceNumber === 1 && " (Initial)"}
+//                     </div>
+//                   )}
+
 //                   <div className="mobdel-mobile-plan-info">
-//                     <h3>{delivery.subscriptionId?.planName || "N/A"}</h3>
+//                     <h3>
+//                       {delivery.planDetails?.planName ||
+//                         delivery.subscriptionId?.planName ||
+//                         "N/A"}
+//                     </h3>
 //                     <p>
-//                       {delivery.subscriptionId?.size || "N/A"} •{" "}
-//                       {delivery.subscriptionId?.frequency || "N/A"}
+//                       {delivery.planDetails?.size ||
+//                         delivery.subscriptionId?.size ||
+//                         "N/A"}{" "}
+//                       •{" "}
+//                       {delivery.planDetails?.frequency ||
+//                         delivery.subscriptionId?.frequency ||
+//                         "N/A"}
+//                       {/* Show subscription period if available */}
+//                       {delivery.planDetails?.subscriptionPeriod && (
+//                         <span>
+//                           {" "}
+//                           • {delivery.planDetails.subscriptionPeriod} month(s)
+//                         </span>
+//                       )}
 //                     </p>
 //                   </div>
+
+//                   {/* Show subscription status */}
+//                   {subscription && (
+//                     <div className="mobdel-mobile-subscription-status-indicator">
+//                       <span className={`status-${subscription.status}`}>
+//                         Subscription: {subscription.status}
+//                       </span>
+//                     </div>
+//                   )}
+
+//                   {/* Show if this is initial delivery (Mobile) */}
+//                   {delivery.isInitialDelivery && (
+//                     <div className="mobdel-mobile-initial-badge">
+//                       <FaGasPump className="mobdel-icon-sm" /> Initial Delivery
+//                     </div>
+//                   )}
 
 //                   <div className="mobdel-mobile-details">
 //                     <div className="mobdel-mobile-detail-row">
@@ -654,15 +929,42 @@
 //                     )}
 //                   </div>
 
+//                   {/* Paused status message (Mobile) */}
+//                   {delivery.status === "paused" && (
+//                     <div className="mobdel-mobile-warning">
+//                       <FaPauseCircle /> Delivery paused
+//                       {delivery.pausedAt && (
+//                         <div className="mobdel-mobile-subtext">
+//                           Paused on: {formatDate(delivery.pausedAt)}
+//                         </div>
+//                       )}
+//                     </div>
+//                   )}
+
 //                   {delivery.failedReason && (
 //                     <div className="mobdel-mobile-error">
 //                       <FaTimesCircle /> {delivery.failedReason}
 //                     </div>
 //                   )}
 
+//                   {delivery.agentNotes && (
+//                     <div className="mobdel-mobile-detail-row">
+//                       <FaClock className="mobdel-icon" />
+//                       <span className="mobdel-mobile-detail-text">
+//                         {delivery.agentNotes}
+//                       </span>
+//                     </div>
+//                   )}
+
 //                   {delivery.customerConfirmation?.confirmed && (
 //                     <div className="mobdel-mobile-confirmed">
-//                       <FaCheckCircle /> Confirmed
+//                       <FaCheckCircle /> Confirmed on{" "}
+//                       {formatDate(delivery.customerConfirmation.confirmedAt)}
+//                       {delivery.customerConfirmation.customerNotes && (
+//                         <div className="mobdel-mobile-subtext">
+//                           Notes: {delivery.customerConfirmation.customerNotes}
+//                         </div>
+//                       )}
 //                     </div>
 //                   )}
 //                 </div>
@@ -686,12 +988,48 @@
 //                         <FaCheckCircle /> Confirm Delivery
 //                       </button>
 //                     )}
+
+//                   {/* Sync button for out-of-sync deliveries (Mobile) */}
+//                   {syncStatus.shouldBeSynced && (
+//                     <button
+//                       className="mobdel-mobile-sync-btn"
+//                       onClick={() => syncDeliveryWithSubscription(delivery._id)}
+//                     >
+//                       <FaSync /> Sync with Subscription
+//                     </button>
+//                   )}
 //                 </div>
 //               </div>
 
 //               {/* Desktop Card View */}
 //               <div className="mobdel-desktop-card">
+//                 {/* Sync Warning Banner - Desktop */}
+//                 {syncStatus.shouldBeSynced && (
+//                   <div className="mobdel-sync-warning-banner">
+//                     <FaExclamationTriangle className="mobdel-icon" />
+//                     <span>
+//                       Delivery is out of sync with subscription ({subscription?.status || "unknown"})
+//                     </span>
+//                     <button
+//                       className="mobdel-btn mobdel-btn-sm mobdel-btn-outline"
+//                       onClick={() => syncDeliveryWithSubscription(delivery._id)}
+//                     >
+//                       <FaSync /> Sync Now
+//                     </button>
+//                   </div>
+//                 )}
+
 //                 <div className="mobdel-card-content">
+//                   {/* Delivery Sequence (Desktop) */}
+//                   {delivery.sequenceNumber && delivery.totalSequences && (
+//                     <div className="mobdel-delivery-sequence">
+//                       <span className="mobdel-sequence-badge">
+//                         Delivery {delivery.sequenceNumber} of {delivery.totalSequences}
+//                         {delivery.sequenceNumber === 1 && " (Initial)"}
+//                       </span>
+//                     </div>
+//                   )}
+
 //                   <div
 //                     className={`mobdel-time-context mobdel-time-${timeContext.type}`}
 //                   >
@@ -705,17 +1043,56 @@
 //                     </span>
 //                     <span className="mobdel-delivery-date">
 //                       {formatDateShort(delivery.deliveryDate)}
+//                       {/* Show original date if delivery was rescheduled */}
+//                       {delivery.originalDeliveryDate && (
+//                         <span className="mobdel-original-date">
+//                           (Originally: {formatDateShort(delivery.originalDeliveryDate)})
+//                         </span>
+//                       )}
 //                     </span>
 //                   </div>
 
 //                   <div className="mobdel-plan-info">
 //                     <div className="mobdel-plan-name">
-//                       {delivery.subscriptionId?.planName || "N/A"} -{" "}
-//                       {delivery.subscriptionId?.size || "N/A"}
+//                       {delivery.planDetails?.planName ||
+//                         delivery.subscriptionId?.planName ||
+//                         "N/A"}{" "}
+//                       -
+//                       {delivery.planDetails?.size ||
+//                         delivery.subscriptionId?.size ||
+//                         "N/A"}
 //                     </div>
-//                     {delivery.subscriptionId?.frequency && (
-//                       <div className="mobdel-plan-frequency">
-//                         Frequency: {delivery.subscriptionId.frequency}
+
+//                     {/* Show subscription status */}
+//                     {subscription && (
+//                       <div className="mobdel-subscription-status-indicator">
+//                         <span className={`status-${subscription.status}`}>
+//                           Subscription: {subscription.status}
+//                           {subscription.pausedAt && ` (since ${formatDate(subscription.pausedAt)})`}
+//                         </span>
+//                       </div>
+//                     )}
+
+//                     {/* Show subscription period */}
+//                     {delivery.planDetails?.subscriptionPeriod && (
+//                       <div className="mobdel-plan-period">
+//                         Subscription: {delivery.planDetails.subscriptionPeriod}{" "}
+//                         month(s)
+//                       </div>
+//                     )}
+
+//                     {/* Show delivery frequency */}
+//                     <div className="mobdel-plan-frequency">
+//                       Frequency:{" "}
+//                       {delivery.planDetails?.frequency ||
+//                         delivery.subscriptionId?.frequency ||
+//                         "N/A"}
+//                     </div>
+
+//                     {/* Show if this is initial delivery */}
+//                     {delivery.isInitialDelivery && (
+//                       <div className="mobdel-initial-badge">
+//                         <FaGasPump className="mobdel-icon-sm" /> Initial Delivery
 //                       </div>
 //                     )}
 //                   </div>
@@ -727,6 +1104,29 @@
 //                         {delivery.address}
 //                       </div>
 //                     </div>
+
+//                     {/* Paused status details */}
+//                     {delivery.status === "paused" && (
+//                       <div className="mobdel-status-message mobdel-message-warning">
+//                         <FaPauseCircle className="mobdel-icon" />
+//                         <strong>
+//                           {" "}
+//                           Delivery paused {subscription ? "due to subscription pause" : ""}
+//                         </strong>
+//                         {delivery.pausedAt && (
+//                           <div>Paused on: {formatDate(delivery.pausedAt)}</div>
+//                         )}
+//                         {delivery.originalDeliveryDate && subscription?.pauseHistory && (
+//                           <div>
+//                             Will resume on: {formatDateShort(
+//                               new Date(new Date(delivery.originalDeliveryDate).getTime() + 
+//                               (subscription?.pauseHistory?.reduce((total, pause) => 
+//                                 total + (pause.durationMs || 0), 0) || 0))
+//                             )}
+//                           </div>
+//                         )}
+//                       </div>
+//                     )}
 
 //                     {delivery.deliveryAgent && (
 //                       <div className="mobdel-agent-info">
@@ -814,6 +1214,12 @@
 //                           Retry attempt: {delivery.retryCount}
 //                         </div>
 //                       )}
+//                       {/* Show if delivery was extended due to pause */}
+//                       {delivery.resumedAt && (
+//                         <div style={{ color: "#27ae60", fontSize: "0.9rem" }}>
+//                           Resumed after pause: {formatDate(delivery.resumedAt)}
+//                         </div>
+//                       )}
 //                     </div>
 
 //                     {delivery.status === "delivered" &&
@@ -829,6 +1235,17 @@
 //                           Confirm Delivery
 //                         </button>
 //                       )}
+
+//                     {/* Sync button for out-of-sync deliveries (Desktop) */}
+//                     {syncStatus.shouldBeSynced && (
+//                       <button
+//                         className="mobdel-btn mobdel-btn-outline"
+//                         onClick={() => syncDeliveryWithSubscription(delivery._id)}
+//                       >
+//                         <FaSync className="mobdel-icon" />
+//                         Sync with Subscription
+//                       </button>
+//                     )}
 //                   </div>
 //                 </div>
 //               </div>
@@ -1055,9 +1472,6 @@
 
 
 
-
-
-// components/MobileCustomerDeliveryHistory.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import {
   FaCheckCircle,
@@ -1074,9 +1488,14 @@ import {
   FaChevronRight,
   FaExclamationTriangle,
   FaGasPump,
+  FaPauseCircle,
+  FaPlayCircle,
+  FaSync,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./MobileCustomerDeliverySchedule.css";
+import "./SharedPartialDeliveryStyle.css";
 
 const MobileCustomerDeliveryHistory = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -1085,7 +1504,9 @@ const MobileCustomerDeliveryHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
+  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
   const [confirmationNotes, setConfirmationNotes] = useState("");
+  const [subscriptions, setSubscriptions] = useState([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -1098,6 +1519,11 @@ const MobileCustomerDeliveryHistory = () => {
   const [dateFilter, setDateFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Fetch subscriptions to check pause status
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   // Categorize deliveries based on status and date
   const categorizedDeliveries = useMemo(() => {
@@ -1145,6 +1571,25 @@ const MobileCustomerDeliveryHistory = () => {
     fetchDeliveries();
   }, [page, activeTab, statusFilter, dateFilter, sortOrder]);
 
+  const fetchSubscriptions = async () => {
+    try {
+      const response = await fetch(
+        `https://egas-server-1.onrender.com/api/v1/subscriptions/my-subscriptions`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setSubscriptions(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+    }
+  };
+
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
@@ -1182,6 +1627,67 @@ const MobileCustomerDeliveryHistory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Get subscription for a delivery
+  const getDeliverySubscription = (delivery) => {
+    return subscriptions.find(sub => sub._id === delivery.subscriptionId?._id);
+  };
+
+  // Check if delivery should be paused based on subscription
+  const checkDeliverySyncStatus = (delivery) => {
+    const subscription = getDeliverySubscription(delivery);
+    if (!subscription) return { shouldBeSynced: false };
+
+    const shouldBePaused = subscription.status === "paused" && delivery.status !== "paused";
+    const shouldBeActive = subscription.status === "active" && delivery.status === "paused";
+
+    return {
+      shouldBeSynced: shouldBePaused || shouldBeActive,
+      subscriptionStatus: subscription.status,
+      deliveryStatus: delivery.status,
+      action: shouldBePaused ? "pause" : "resume"
+    };
+  };
+
+  // Sync delivery with subscription
+  const syncDeliveryWithSubscription = async (deliveryId) => {
+    try {
+      const response = await fetch(
+        `https://egas-server-1.onrender.com/api/v1/delivery/${deliveryId}/sync-subscription`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSnackbar(`Delivery synced: ${data.data.action}`, "success");
+        fetchDeliveries();
+      } else {
+        showSnackbar(data.message || "Sync failed", "error");
+      }
+    } catch (error) {
+      showSnackbar("Error syncing delivery", "error");
+    }
+  };
+
+  // Calculate delivery sequence
+  const calculateDeliverySequence = (delivery) => {
+    if (!delivery.sequenceNumber || !delivery.totalSequences) {
+      return null;
+    }
+
+    return {
+      current: delivery.sequenceNumber,
+      total: delivery.totalSequences,
+      isInitial: delivery.sequenceNumber === 1,
+    };
   };
 
   // Sort deliveries with priority: Today's deliveries first
@@ -1349,7 +1855,7 @@ const MobileCustomerDeliveryHistory = () => {
       return {
         type: "paused",
         text: "Paused",
-        icon: <FaExclamationTriangle className="mobdel-icon-sm" />
+        icon: <FaPauseCircle className="mobdel-icon-sm" />
       };
     } else if (delivery.status === "delivered") {
       return {
@@ -1429,19 +1935,6 @@ const MobileCustomerDeliveryHistory = () => {
     setShowFilters(false);
   };
 
-  // Add this function to calculate delivery sequence
-  const calculateDeliverySequence = (delivery) => {
-    if (!delivery.sequenceNumber || !delivery.totalSequences) {
-      return null;
-    }
-
-    return {
-      current: delivery.sequenceNumber,
-      total: delivery.totalSequences,
-      isInitial: delivery.sequenceNumber === 1,
-    };
-  };
-
   // Get deliveries for current tab
   const currentDeliveries = getTabDeliveries();
 
@@ -1510,7 +2003,7 @@ const MobileCustomerDeliveryHistory = () => {
           </button>
         </div>
         <div className="mobdel-remnant">
-           <Link to="/dashboard/remnant" className="mobdel-mobile-tab mobdel-rem-tab">
+          <Link to="/dashboard/remnant" className="mobdel-mobile-tab mobdel-rem-tab">
             My Gas Remnant
           </Link>
         </div>
@@ -1672,12 +2165,54 @@ const MobileCustomerDeliveryHistory = () => {
       <div className="mobdel-deliveries-list">
         {currentDeliveries.map((delivery) => {
           const timeContext = getDeliveryTimeContext(delivery);
-          const sequence = calculateDeliverySequence(delivery);
+          const subscription = getDeliverySubscription(delivery);
+          const syncStatus = checkDeliverySyncStatus(delivery);
+          const sequenceInfo = calculateDeliverySequence(delivery);
+          const isPartialDelivery = delivery.partialDelivery?.isPartial;
 
           return (
-            <div key={delivery._id} className="mobdel-delivery-card">
+            <div key={delivery._id} className="mobdel-delivery-card" data-status={delivery.status}>
+              {/* Sync Warning Banner - Mobile */}
+              {syncStatus.shouldBeSynced && (
+                <div className="mobdel-sync-warning-banner">
+                  <FaExclamationTriangle className="mobdel-icon" />
+                  <span>
+                    Delivery out of sync with subscription
+                  </span>
+                  <button
+                    className="mobdel-btn mobdel-btn-sm mobdel-btn-outline"
+                    onClick={() => syncDeliveryWithSubscription(delivery._id)}
+                  >
+                    <FaSync /> Sync Now
+                  </button>
+                </div>
+              )}
+
               {/* Mobile Card View */}
               <div className="mobdel-mobile-card">
+                {/* Sync Warning Banner - Mobile Card */}
+                {syncStatus.shouldBeSynced && (
+                  <div className="mobdel-mobile-sync-warning">
+                    <FaExclamationTriangle /> Out of sync
+                  </div>
+                )}
+
+                {/* Delivery Sequence */}
+                {sequenceInfo && (
+                  <div className="mobdel-mobile-sequence-badge">
+                    Delivery {sequenceInfo.current} of {sequenceInfo.total}
+                    {sequenceInfo.isInitial && " (Initial)"}
+                  </div>
+                )}
+
+                {/* Partial Delivery Badge */}
+                {isPartialDelivery && (
+                  <div className="mobdel-partial-delivery-badge">
+                    <FaGasPump className="mobdel-icon-sm" />
+                    <span>Partial Delivery</span>
+                  </div>
+                )}
+
                 <div className="mobdel-mobile-card-header">
                   <div className="mobdel-mobile-card-left">
                     <div
@@ -1691,22 +2226,20 @@ const MobileCustomerDeliveryHistory = () => {
                         .replace(/_/g, " ")
                         .charAt(0)
                         .toUpperCase() + delivery.status.slice(1)}
+                      {isPartialDelivery && " (Partial)"}
                     </span>
                   </div>
                   <span className="mobdel-mobile-date">
                     {formatDateShort(delivery.deliveryDate)}
+                    {delivery.originalDeliveryDate && (
+                      <span className="mobdel-original-date">
+                        (Originally: {formatDateShort(delivery.originalDeliveryDate)})
+                      </span>
+                    )}
                   </span>
                 </div>
 
                 <div className="mobdel-mobile-card-body">
-                  {/* Delivery Sequence Badge (Mobile) */}
-                  {sequence && (
-                    <div className="mobdel-mobile-sequence-badge">
-                      Delivery {sequence.current} of {sequence.total}
-                      {sequence.isInitial && " (Initial)"}
-                    </div>
-                  )}
-
                   <div className="mobdel-mobile-plan-info">
                     <h3>
                       {delivery.planDetails?.planName ||
@@ -1731,10 +2264,55 @@ const MobileCustomerDeliveryHistory = () => {
                     </p>
                   </div>
 
+                  {/* Partial Delivery Details */}
+                  {isPartialDelivery && (
+                    <div className="mobdel-partial-delivery-details">
+                      <div className="mobdel-partial-breakdown">
+                        <span className="mobdel-delivered-amount">
+                          <FaCheckCircle className="mobdel-icon-sm" /> Delivered: {delivery.deliveredKg}kg
+                        </span>
+                        <span className="mobdel-remaining-amount">
+                          <FaGasPump className="mobdel-icon-sm" /> Added to remnant: {delivery.remainingKg}kg
+                        </span>
+                      </div>
+                      <div className="mobdel-remnant-note">
+                        <FaInfoCircle className="mobdel-icon-sm" />
+                        Please confirm this remnant entry in your Remnant Dashboard
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show subscription status */}
+                  {subscription && (
+                    <div className="mobdel-mobile-subscription-status-indicator">
+                      <span className={`status-${subscription.status}`}>
+                        Subscription: {subscription.status}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Show if this is initial delivery (Mobile) */}
                   {delivery.isInitialDelivery && (
                     <div className="mobdel-mobile-initial-badge">
                       <FaGasPump className="mobdel-icon-sm" /> Initial Delivery
+                    </div>
+                  )}
+
+                  {/* Remnant Delivery Info */}
+                  {delivery.isRemnantDelivery && (
+                    <div className="mobdel-remnant-delivery-info">
+                      <FaGasPump className="mobdel-icon" />
+                      <div>
+                        <strong>Remnant Delivery</strong>
+                        <div>Requested: {delivery.requestedKg}kg</div>
+                        {delivery.remnantId && (
+                          <div className="mobdel-remnant-link">
+                            <Link to="/dashboard/remnant">
+                              View in Remnant Dashboard
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -1771,7 +2349,7 @@ const MobileCustomerDeliveryHistory = () => {
                   {/* Paused status message (Mobile) */}
                   {delivery.status === "paused" && (
                     <div className="mobdel-mobile-warning">
-                      <FaExclamationTriangle /> Delivery paused due to subscription pause
+                      <FaPauseCircle /> Delivery paused
                       {delivery.pausedAt && (
                         <div className="mobdel-mobile-subtext">
                           Paused on: {formatDate(delivery.pausedAt)}
@@ -1816,7 +2394,8 @@ const MobileCustomerDeliveryHistory = () => {
                   )}
                   
                   {delivery.status === "delivered" &&
-                    !delivery.customerConfirmation?.confirmed && (
+                    !delivery.customerConfirmation?.confirmed &&
+                    !isPartialDelivery && (
                       <button
                         className="mobdel-mobile-confirm-btn"
                         onClick={() => {
@@ -1827,19 +2406,64 @@ const MobileCustomerDeliveryHistory = () => {
                         <FaCheckCircle /> Confirm Delivery
                       </button>
                     )}
+
+                  {/* Remnant confirmation link for partial deliveries */}
+                  {isPartialDelivery && !delivery.customerConfirmation?.confirmed && (
+                    <Link
+                      to="/dashboard/remnant"
+                      className="mobdel-btn mobdel-btn-warning"
+                    >
+                      <FaGasPump className="mobdel-icon" />
+                      Confirm Remnant Entry
+                    </Link>
+                  )}
+
+                  {/* Sync button for out-of-sync deliveries (Mobile) */}
+                  {syncStatus.shouldBeSynced && (
+                    <button
+                      className="mobdel-mobile-sync-btn"
+                      onClick={() => syncDeliveryWithSubscription(delivery._id)}
+                    >
+                      <FaSync /> Sync with Subscription
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Desktop Card View */}
               <div className="mobdel-desktop-card">
+                {/* Sync Warning Banner - Desktop */}
+                {syncStatus.shouldBeSynced && (
+                  <div className="mobdel-sync-warning-banner">
+                    <FaExclamationTriangle className="mobdel-icon" />
+                    <span>
+                      Delivery is out of sync with subscription ({subscription?.status || "unknown"})
+                    </span>
+                    <button
+                      className="mobdel-btn mobdel-btn-sm mobdel-btn-outline"
+                      onClick={() => syncDeliveryWithSubscription(delivery._id)}
+                    >
+                      <FaSync /> Sync Now
+                    </button>
+                  </div>
+                )}
+
                 <div className="mobdel-card-content">
-                  {/* Delivery Sequence (Desktop) */}
-                  {sequence && (
+                  {/* Delivery Sequence */}
+                  {sequenceInfo && (
                     <div className="mobdel-delivery-sequence">
                       <span className="mobdel-sequence-badge">
-                        Delivery {sequence.current} of {sequence.total}
-                        {sequence.isInitial && " (Initial)"}
+                        Delivery {sequenceInfo.current} of {sequenceInfo.total}
+                        {sequenceInfo.isInitial && " (Initial)"}
                       </span>
+                    </div>
+                  )}
+
+                  {/* Partial Delivery Badge */}
+                  {isPartialDelivery && (
+                    <div className="mobdel-partial-delivery-badge">
+                      <FaGasPump className="mobdel-icon-sm" />
+                      <span>Partial Delivery</span>
                     </div>
                   )}
 
@@ -1853,9 +2477,16 @@ const MobileCustomerDeliveryHistory = () => {
                   <div className="mobdel-card-header">
                     <span className={getStatusClass(delivery.status)}>
                       {delivery.status.replace(/_/g, " ").toUpperCase()}
+                      {isPartialDelivery && " (Partial)"}
                     </span>
                     <span className="mobdel-delivery-date">
                       {formatDateShort(delivery.deliveryDate)}
+                      {/* Show original date if delivery was rescheduled */}
+                      {delivery.originalDeliveryDate && (
+                        <span className="mobdel-original-date">
+                          (Originally: {formatDateShort(delivery.originalDeliveryDate)})
+                        </span>
+                      )}
                     </span>
                   </div>
 
@@ -1869,6 +2500,34 @@ const MobileCustomerDeliveryHistory = () => {
                         delivery.subscriptionId?.size ||
                         "N/A"}
                     </div>
+
+                    {/* Partial Delivery Details */}
+                    {isPartialDelivery && (
+                      <div className="mobdel-partial-delivery-details">
+                        <div className="mobdel-partial-breakdown">
+                          <span className="mobdel-delivered-amount">
+                            <FaCheckCircle className="mobdel-icon-sm" /> Delivered: {delivery.deliveredKg}kg
+                          </span>
+                          <span className="mobdel-remaining-amount">
+                            <FaGasPump className="mobdel-icon-sm" /> Added to remnant: {delivery.remainingKg}kg
+                          </span>
+                        </div>
+                        <div className="mobdel-remnant-note">
+                          <FaInfoCircle className="mobdel-icon-sm" />
+                          Please confirm this remnant entry in your Remnant Dashboard
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show subscription status */}
+                    {subscription && (
+                      <div className="mobdel-subscription-status-indicator">
+                        <span className={`status-${subscription.status}`}>
+                          Subscription: {subscription.status}
+                          {subscription.pausedAt && ` (since ${formatDate(subscription.pausedAt)})`}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Show subscription period */}
                     {delivery.planDetails?.subscriptionPeriod && (
@@ -1902,17 +2561,44 @@ const MobileCustomerDeliveryHistory = () => {
                       </div>
                     </div>
 
-                    {/* Paused status message (Desktop) */}
+                    {/* Paused status details */}
                     {delivery.status === "paused" && (
                       <div className="mobdel-status-message mobdel-message-warning">
-                        <FaExclamationTriangle className="mobdel-icon" />
+                        <FaPauseCircle className="mobdel-icon" />
                         <strong>
                           {" "}
-                          Delivery paused due to subscription pause
+                          Delivery paused {subscription ? "due to subscription pause" : ""}
                         </strong>
                         {delivery.pausedAt && (
                           <div>Paused on: {formatDate(delivery.pausedAt)}</div>
                         )}
+                        {delivery.originalDeliveryDate && subscription?.pauseHistory && (
+                          <div>
+                            Will resume on: {formatDateShort(
+                              new Date(new Date(delivery.originalDeliveryDate).getTime() + 
+                              (subscription?.pauseHistory?.reduce((total, pause) => 
+                                total + (pause.durationMs || 0), 0) || 0))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Remnant Delivery Info */}
+                    {delivery.isRemnantDelivery && (
+                      <div className="mobdel-remnant-delivery-info">
+                        <FaGasPump className="mobdel-icon" />
+                        <div>
+                          <strong>Remnant Delivery</strong>
+                          <div>Requested: {delivery.requestedKg}kg</div>
+                          {delivery.remnantId && (
+                            <div className="mobdel-remnant-link">
+                              <Link to="/dashboard/remnant">
+                                View in Remnant Dashboard
+                              </Link>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
 
@@ -2002,10 +2688,17 @@ const MobileCustomerDeliveryHistory = () => {
                           Retry attempt: {delivery.retryCount}
                         </div>
                       )}
+                      {/* Show if delivery was extended due to pause */}
+                      {delivery.resumedAt && (
+                        <div style={{ color: "#27ae60", fontSize: "0.9rem" }}>
+                          Resumed after pause: {formatDate(delivery.resumedAt)}
+                        </div>
+                      )}
                     </div>
 
                     {delivery.status === "delivered" &&
-                      !delivery.customerConfirmation?.confirmed && (
+                      !delivery.customerConfirmation?.confirmed &&
+                      !isPartialDelivery && (
                         <button
                           className="mobdel-btn mobdel-btn-success"
                           onClick={() => {
@@ -2017,6 +2710,28 @@ const MobileCustomerDeliveryHistory = () => {
                           Confirm Delivery
                         </button>
                       )}
+
+                    {/* Remnant confirmation link for partial deliveries */}
+                    {isPartialDelivery && !delivery.customerConfirmation?.confirmed && (
+                      <Link
+                        to="/dashboard/remnant"
+                        className="mobdel-btn mobdel-btn-warning"
+                      >
+                        <FaGasPump className="mobdel-icon" />
+                        Confirm Remnant Entry
+                      </Link>
+                    )}
+
+                    {/* Sync button for out-of-sync deliveries (Desktop) */}
+                    {syncStatus.shouldBeSynced && (
+                      <button
+                        className="mobdel-btn mobdel-btn-outline"
+                        onClick={() => syncDeliveryWithSubscription(delivery._id)}
+                      >
+                        <FaSync className="mobdel-icon" />
+                        Sync with Subscription
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

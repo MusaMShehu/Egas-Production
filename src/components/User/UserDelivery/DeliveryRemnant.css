@@ -1123,3 +1123,356 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+
+
+/* ===== CUSTOMER REMNANT PARTIAL DELIVERY STYLES ===== */
+
+/* Confirmation Required Banner */
+.delrem-confirmation-required {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border: 3px solid #f39c12;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15);
+  animation: borderPulse 3s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes borderPulse {
+  0%, 100% { border-color: #f39c12; }
+  50% { border-color: #e67e22; }
+}
+
+.delrem-confirmation-required::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f39c12, #e67e22, #f39c12);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.delrem-confirmation-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.delrem-confirmation-icon {
+  color: #e67e22;
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.delrem-confirmation-header h4 {
+  color: #d35400;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.delrem-confirmation-content p {
+  color: #856404;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Pending Entries List */
+.delrem-pending-entries {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.delrem-pending-entry {
+  background: linear-gradient(135deg, white, #f8f9fa);
+  border: 2px solid #fdcb6e;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.delrem-pending-entry:hover {
+  transform: translateX(5px);
+  box-shadow: 0 6px 15px rgba(253, 203, 110, 0.3);
+  border-color: #f39c12;
+}
+
+.delrem-entry-icon {
+  color: #f39c12;
+  font-size: 1.2rem;
+  background: rgba(243, 156, 18, 0.1);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.delrem-entry-details {
+  flex: 1;
+}
+
+.delrem-entry-date {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+
+.delrem-entry-amount {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delrem-agent-notes {
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  border-left: 3px solid #6c757d;
+}
+
+/* Confirm Entry Button */
+.delrem-confirm-entry-btn {
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.delrem-confirm-entry-btn:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+}
+
+.delrem-confirm-entry-btn:active {
+  transform: translateY(0);
+}
+
+/* More Entries Text */
+.delrem-more-entries {
+  text-align: center;
+  color: #e67e22;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 10px 0;
+  padding: 10px;
+  background: rgba(243, 156, 18, 0.1);
+  border-radius: 8px;
+}
+
+/* Confirm All Button */
+.delrem-confirm-all-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.delrem-confirm-all-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.delrem-confirm-all-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Activity Item Styles for Partial */
+.delrem-activity-item.partial {
+  border-left: 4px solid #f39c12;
+}
+
+.delrem-activity-icon.pending {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #e67e22;
+  border: 2px solid #f39c12;
+}
+
+.delrem-activity-icon.confirmed {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #28a745;
+  border: 2px solid #28a745;
+}
+
+.delrem-status-badge.pending {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #d35400;
+  border: 1px solid #f39c12;
+}
+
+.delrem-status-badge.confirmed {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+  border: 1px solid #28a745;
+}
+
+/* Table Row Styles */
+.delrem-confirmed-row {
+  background: linear-gradient(135deg, #f0fff4, #e8f6f3) !important;
+}
+
+.delrem-pending-row {
+  background: linear-gradient(135deg, #fffaf0, #fff8e1) !important;
+  animation: rowPulse 2s infinite;
+}
+
+@keyframes rowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+.delrem-confirm-btn {
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.delrem-confirm-btn:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.delrem-confirmed-text {
+  color: #28a745;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modal Warning */
+.delrem-modal-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border: 2px solid #f39c12;
+  color: #856404;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Quick Action Card for Partial */
+.delrem-quick-action-card.partial {
+  border: 2px solid #f39c12;
+  background: linear-gradient(135deg, #fffdf6, #fff8e1);
+}
+
+.delrem-quick-action-card.partial:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(243, 156, 18, 0.2);
+  border-color: #e67e22;
+}
+
+.delrem-quick-action-icon.partial {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+}
+
+/* Stats Card for Partial */
+.delrem-stat-card.partial {
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border: 2px solid #f39c12;
+}
+
+.delrem-stat-card.partial .delrem-stat-card-title {
+  color: #d35400;
+}
+
+.delrem-stat-card.partial .delrem-stat-card-value {
+  color: #e67e22;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Progress Bar for Partial */
+.delrem-progress-bar-large.partial .delrem-progress-fill {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .delrem-pending-entry {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .delrem-confirm-entry-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .delrem-confirmation-required {
+    padding: 15px;
+  }
+  
+  .delrem-confirm-all-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,578 +1,645 @@
-/* CustomerDeliveryHistory.css */
+/* components/CustomerDeliverySchedule.css */
+
+/* ===== BASE STYLES ===== */
 .adm-customer-delivery {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ===== LOADING STATE ===== */
+.adm-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.adm-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: adm-spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes adm-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== HEADER SECTION ===== */
 .adm-customer-header {
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .adm-customer-title {
-  color: #2c3e50;
-  margin-bottom: 20px;
-  font-size: 2rem;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Tabs */
+/* ===== SUBSCRIPTION ACTIONS ===== */
+.adm-subscription-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.adm-subscription-quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.adm-subscription-quick-action:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transform: translateY(-1px);
+}
+
+.adm-subscription-name {
+  font-weight: 600;
+  color: #475569;
+  font-size: 14px;
+}
+
+.adm-subscription-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-paused {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ===== TABS ===== */
 .adm-tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ecf0f1;
-  padding-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  overflow-x: auto;
 }
 
 .adm-tab {
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
   border: none;
-  background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #64748b;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
 }
 
 .adm-tab:hover {
-  background: #e9ecef;
+  color: #3b82f6;
+  background: #f1f5f9;
 }
 
 .adm-tab.active {
-  background: #3498db;
+  color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.adm-tab-count {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.adm-tab.active .adm-tab-count {
+  background: #3b82f6;
   color: white;
 }
 
 .adm-rem-tab {
-  background: #34495e;
-  color: white;
+  margin-left: auto;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white !important;
 }
 
 .adm-rem-tab:hover {
-  background: #3498db;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
 }
 
-/* Add these styles to your existing CSS */
-
-/* Tab with counts */
-.adm-tab-count {
-  background: #e3f2fd;
-  color: #1976d2;
-  border-radius: 12px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  margin-left: 8px;
-  font-weight: 600;
-}
-
-.adm-tab.active .adm-tab-count {
-  background: #1976d2;
-  color: white;
-}
-
-/* Time context badges */
-.adm-time-context {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-  width: fit-content;
-}
-
-.adm-time-today {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
-}
-
-.adm-time-tomorrow {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
-}
-
-.adm-time-this-week {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.adm-time-future {
-  background: #e2e3e5;
-  color: #383d41;
-  border: 1px solid #d6d8db;
-}
-
-.adm-time-overdue {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  animation: pulse 2s infinite;
-}
-
-.adm-time-delivered {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.adm-icon-sm {
-  font-size: 0.875rem;
-}
-
-/* Empty state */
-.adm-empty-state {
-  text-align: center;
-  padding: 48px 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin: 20px 0;
-}
-
-.adm-empty-state-icon {
-  color: #6c757d;
-  margin-bottom: 20px;
-}
-
-.adm-empty-state h3 {
-  color: #343a40;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.adm-empty-state p {
-  color: #6c757d;
-  max-width: 400px;
-  margin: 0 auto 20px;
-  line-height: 1.5;
-}
-
-/* Pulse animation for overdue deliveries */
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Card enhancements */
-.adm-delivery-card {
-  border-left: 4px solid #e9ecef;
-}
-
-.adm-delivery-card.adm-today {
-  border-left-color: #ffc107;
-}
-
-.adm-delivery-card.adm-overdue {
-  border-left-color: #dc3545;
-}
-
-.adm-delivery-card.adm-delivered {
-  border-left-color: #28a745;
-}
-
-/* Status message styling */
-.adm-message-error {
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 10px 0;
-}
-
-.adm-message-confirmed {
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 10px 0;
-}
-
-.adm-message-error .adm-icon,
-.adm-message-confirmed .adm-icon {
-  margin-right: 8px;
-}
-
-/* Mobile responsive improvements */
-@media (max-width: 768px) {
-  .adm-tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 10px;
-  }
-
-  .adm-tab {
-    white-space: nowrap;
-  }
-
-  .adm-controls {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .adm-filter-group,
-  .adm-sort-group {
-    flex: 1;
-    min-width: 150px;
-  }
-}
-
-/* Controls */
+/* ===== CONTROLS ===== */
 .adm-controls {
   display: flex;
-  gap: 15px;
-  align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
 }
 
 .adm-filter-group,
 .adm-sort-group {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  gap: 10px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .adm-control-icon {
-  color: #7f8c8d;
+  color: #64748b;
+  font-size: 14px;
 }
 
 .adm-filter-input,
-.adm-filter-select {
-  border: none;
-  outline: none;
-  background: transparent;
+.adm-filter-select,
+.adm-sort-btn,
+.adm-clear-filters {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 14px;
+  color: #475569;
+  background: white;
+  transition: all 0.2s ease;
 }
 
-.adm-sort-btn {
-  border: none;
-  background: transparent;
+.adm-filter-input:focus,
+.adm-filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.adm-sort-btn,
+.adm-clear-filters {
+  background: #f8fafc;
   cursor: pointer;
-  font-size: 14px;
-  color: #2c3e50;
+  font-weight: 500;
+  text-align: left;
+}
+
+.adm-sort-btn:hover,
+.adm-clear-filters:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .adm-clear-filters {
-  padding: 8px 16px;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
+  color: #ef4444;
+  border-color: #fecaca;
+  background: #fef2f2;
 }
 
 .adm-clear-filters:hover {
-  background: #c0392b;
+  background: #fee2e2;
+  border-color: #fca5a5;
 }
 
-/* Delivery Cards */
+/* ===== DELIVERY CARDS ===== */
 .adm-deliveries-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 20px;
+  margin-bottom: 32px;
 }
 
 .adm-delivery-card {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #3498db;
-  position: relative;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.adm-delivery-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.adm-sync-warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid #fbbf24;
+}
+
+.adm-sync-warning-banner .adm-btn {
+  margin-left: auto;
+  padding: 6px 16px;
+  font-size: 12px;
 }
 
 .adm-card-content {
-  padding: 20px;
+  padding: 24px;
 }
 
-/* Time Context Badges */
+/* ===== TIME CONTEXT ===== */
 .adm-time-context {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 7px 6px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.adm-time-today {
-  background: #e74c3c;
-  color: white;
-}
-
-.adm-time-tomorrow {
-  background: #e67e22;
-  color: white;
-}
-
-.adm-time-this-week {
-  background: #f39c12;
-  color: white;
-}
-
-.adm-time-future {
-  background: #3498db;
-  color: white;
-}
-
-.adm-time-past {
-  background: #95a5a6;
-  color: white;
-}
-
-.adm-time-delivered {
-  background: #27ae60;
-  color: white;
-}
-
-/* Card Header */
-.adm-card-header {
-  display: flex;
-  justify-content: between;
-  align-items: center;
-  margin-bottom: 15px;
-  gap: 15px;
-}
-
-.adm-status-chip {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.adm-status-pending {
-  background: #fff3cd;
-  color: #856404;
-}
-.adm-status-assigned {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-.adm-status-accepted {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-.adm-status-out_for_delivery {
-  background: #ffeaa7;
-  color: #e17055;
-}
-.adm-status-delivered {
-  background: #d4edda;
-  color: #155724;
-}
-.adm-status-failed {
-  background: #f8d7da;
-  color: #721c24;
-}
-.adm-status-cancelled {
-  background: #f8d7da;
-  color: #721c24;
-}
-.adm-status-paused {
-  background-color: #f39c12;
-  color: white;
-}
-
-.adm-message-warning {
-  background-color: #fef5e7;
-  border-left: 4px solid #f39c12;
-  padding: 12px;
-  border-radius: 4px;
-  margin: 10px 0;
-}
-
-.adm-message-warning .adm-icon {
-  color: #f39c12;
-  margin-right: 8px;
-}
-
-.adm-time-paused {
-  background-color: #f39c12;
-  color: white;
-}
-
-.adm-delivery-date {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-/* Plan Info */
-.adm-plan-info {
-  margin-bottom: 15px;
-}
-
-.adm-plan-name {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 1.1rem;
-}
-
-.adm-plan-frequency {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-/* Delivery Details */
-.adm-delivery-details {
-  margin-bottom: 15px;
-}
-
-.adm-detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.adm-icon {
-  color: #7f8c8d;
-  margin-top: 2px;
-  min-width: 16px;
-}
-
-.adm-detail-text {
-  color: #2c3e50;
-  line-height: 1.4;
-}
-
-.adm-detail-label {
-  font-weight: 600;
-  color: #34495e;
-}
-
-/* Status Messages */
-.adm-status-message {
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
-.adm-message-error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.adm-message-confirmed {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-/* Card Footer */
-.adm-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 15px;
-  border-top: 1px solid #ecf0f1;
-}
-
-.adm-delivery-meta {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-/* Buttons */
-.adm-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.adm-time-context .adm-icon-sm {
+  font-size: 12px;
+}
+
+.adm-time-today {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.adm-time-tomorrow {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #60a5fa;
+}
+
+.adm-time-paused {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.adm-time-delivered {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.adm-time-overdue {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* ===== CARD HEADER ===== */
+.adm-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.adm-status-chip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.adm-status-pending { background: #fef3c7; color: #92400e; }
+.adm-status-assigned { background: #dbeafe; color: #1e40af; }
+.adm-status-accepted { background: #dbeafe; color: #1e40af; }
+.adm-status-out_for_delivery { background: #f3e8ff; color: #7c3aed; }
+.adm-status-delivered { background: #dcfce7; color: #166534; }
+.adm-status-failed { background: #fee2e2; color: #991b1b; }
+.adm-status-cancelled { background: #f3f4f6; color: #6b7280; }
+.adm-status-paused { background: #f3f4f6; color: #6b7280; }
+
+.adm-delivery-date {
   font-size: 14px;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  color: #475569;
+  background: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.adm-original-date {
+  display: block;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-weight: normal;
+}
+
+/* ===== PLAN INFO ===== */
+.adm-plan-info {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+}
+
+.adm-plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.adm-plan-frequency,
+.adm-plan-period,
+.adm-subscription-status-indicator {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-initial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
+  color: #3730a3;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.adm-initial-badge .adm-icon-sm {
+  font-size: 10px;
+}
+
+/* ===== DELIVERY DETAILS ===== */
+.adm-delivery-details {
+  margin-bottom: 20px;
+}
+
+.adm-detail-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.adm-detail-item:hover {
+  background: #f1f5f9;
+}
+
+.adm-detail-item .adm-icon {
+  color: #64748b;
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.adm-detail-text {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.adm-detail-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+/* ===== STATUS MESSAGES ===== */
+.adm-status-message {
+  padding: 16px;
+  border-radius: 12px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.adm-message-warning {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  color: #92400e;
+}
+
+.adm-message-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.adm-message-confirmed {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.adm-status-message .adm-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ===== CARD FOOTER ===== */
+.adm-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.adm-delivery-meta {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* ===== BUTTONS ===== */
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.adm-btn:hover {
+  transform: translateY(-1px);
+}
+
+.adm-btn:active {
+  transform: translateY(0);
+}
+
+.adm-btn-sm {
+  padding: 6px 16px;
+  font-size: 13px;
 }
 
 .adm-btn-success {
-  background: #27ae60;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
 .adm-btn-success:hover {
-  background: #219a52;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.adm-btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.adm-btn-warning:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .adm-btn-outline {
   background: transparent;
-  border: 1px solid #bdc3c7;
-  color: #7f8c8d;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
 }
 
 .adm-btn-outline:hover {
-  background: #f8f9fa;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
 }
 
-/* Empty State */
+/* ===== EMPTY STATE ===== */
 .adm-empty-state {
   text-align: center;
-  padding: 60px 20px;
-  color: #7f8c8d;
+  padding: 80px 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 2px dashed #e2e8f0;
+}
+
+.adm-empty-state-icon {
+  color: #cbd5e1;
+  margin-bottom: 24px;
 }
 
 .adm-empty-state h3 {
-  margin-bottom: 10px;
-  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
 }
 
-/* Pagination */
+.adm-empty-state p {
+  color: #64748b;
+  font-size: 16px;
+  max-width: 400px;
+  margin: 0 auto 24px;
+  line-height: 1.5;
+}
+
+/* ===== PAGINATION ===== */
 .adm-pagination {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
 }
 
 .adm-pagination-info {
-  color: #7f8c8d;
-  font-size: 0.9rem;
   text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .adm-pagination-buttons {
   display: flex;
-  gap: 5px;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .adm-page-btn {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border: 1px solid #e2e8f0;
   background: white;
+  color: #475569;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
-  min-width: 40px;
+  transition: all 0.2s ease;
+  min-width: 44px;
+  text-align: center;
 }
 
 .adm-page-btn:hover:not(:disabled) {
-  background: #f8f9fa;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .adm-page-btn.active {
-  background: #3498db;
+  background: #3b82f6;
   color: white;
-  border-color: #3498db;
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .adm-page-btn:disabled {
@@ -580,7 +647,7 @@
   cursor: not-allowed;
 }
 
-/* Dialog */
+/* ===== DIALOGS ===== */
 .adm-dialog-overlay {
   position: fixed;
   top: 0;
@@ -588,93 +655,108 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 20px;
 }
 
 .adm-dialog {
   background: white;
-  border-radius: 12px;
-  width: 90%;
+  border-radius: 24px;
+  width: 100%;
   max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  animation: adm-dialog-appear 0.3s ease-out;
+}
+
+@keyframes adm-dialog-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .adm-dialog-header {
-  padding: 20px;
-  border-bottom: 1px solid #ecf0f1;
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .adm-dialog-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
   margin: 0;
-  color: #2c3e50;
 }
 
 .adm-dialog-content {
-  padding: 20px;
+  padding: 24px;
 }
 
 .adm-dialog-footer {
-  padding: 20px;
-  border-top: 1px solid #ecf0f1;
+  padding: 24px;
+  border-top: 1px solid #e2e8f0;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
 }
 
-/* Form Elements */
 .adm-form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .adm-form-label {
   display: block;
-  margin-bottom: 5px;
-  color: #2c3e50;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
 }
 
 .adm-form-textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #475569;
   resize: vertical;
   font-family: inherit;
+  transition: all 0.2s ease;
 }
 
 .adm-form-textarea:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Snackbar */
+/* ===== SNACKBAR ===== */
 .adm-snackbar {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 6px;
-  color: white;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   z-index: 1001;
-  animation: slideIn 0.3s ease;
+  animation: adm-slide-in 0.3s ease-out;
+  max-width: 400px;
 }
 
-.adm-snackbar.success {
-  background: #27ae60;
-}
-
-.adm-snackbar.error {
-  background: #e74c3c;
-}
-
-@keyframes slideIn {
+@keyframes adm-slide-in {
   from {
     transform: translateX(100%);
     opacity: 0;
@@ -685,309 +767,361 @@
   }
 }
 
-/* Loading */
-.adm-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
+.adm-snackbar.success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
 }
 
-.adm-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.adm-snackbar.error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .adm-customer-delivery {
-    padding: 10px;
+    padding: 16px;
   }
-
-  .adm-tabs {
-    flex-direction: column;
+  
+  .adm-customer-title {
+    font-size: 24px;
   }
-
+  
   .adm-controls {
     flex-direction: column;
-    align-items: stretch;
   }
-
+  
   .adm-filter-group,
   .adm-sort-group {
-    justify-content: space-between;
+    min-width: 100%;
   }
-
+  
   .adm-card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
   }
-
+  
   .adm-card-footer {
     flex-direction: column;
-    gap: 10px;
     align-items: stretch;
   }
-
-  .adm-dialog-footer {
-    flex-direction: column;
+  
+  .adm-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .adm-tabs {
+    gap: 4px;
+  }
+  
+  .adm-tab {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }
 
-@media (max-width: 350px) {
-  .adm-time-context {
-    padding: 7px 4px;
-    font-size: 0.6rem;
-  }
-}
-
-
-
-/* Delivery sequence styling */
-.adm-delivery-sequence {
-  position: absolute;
-  top: 167px;
-  right: 10px;
-  z-index: 1;
-}
-
-.adm-sequence-badge {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Plan period styling */
-.adm-plan-period {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Initial delivery badge */
-.adm-initial-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-.adm-icon-sm {
-  font-size: 0.8rem;
-}
-
-/* Subscription type indicator */
-.adm-plan-type {
-  display: inline-block;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-right: 5px;
-}
-
-.adm-plan-type.one-time {
-  background: #f39c12;
-  color: white;
-}
-
-.adm-plan-type.emergency {
-  background: #e74c3c;
-  color: white;
-}
-
-.adm-plan-type.preset {
-  background: #3498db;
-  color: white;
-}
-
-.adm-plan-type.custom {
-  background: #9b59b6;
-  color: white;
-}
-
-
-
-/* Subscription Actions */
-.adm-subscription-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #3498db;
-}
-
-.adm-subscription-quick-action {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 15px;
-  background: white;
-  border: 1px solid #e1e8ed;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.adm-subscription-name {
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.adm-subscription-status {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-active {
-  background: #d1f7c4;
-  color: #27ae60;
-}
-
-.status-paused {
-  background: #fff3cd;
-  color: #f39c12;
-}
-
-.adm-btn-sm {
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-}
-
-/* Sync Warning Banner */
-.adm-sync-warning-banner {
-  background: #fff3cd;
-  border-left: 4px solid #f39c12;
-  padding: 10px 15px;
-  margin: -15px -15px 15px -15px;
-  border-radius: 8px 8px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #856404;
-}
-
-.adm-sync-warning-banner .adm-icon {
-  color: #f39c12;
-}
-
-.adm-sync-warning-banner .adm-btn {
-  margin-left: auto;
-  font-size: 12px;
-  padding: 4px 8px;
-}
-
-/* Subscription Status Indicator */
-.adm-subscription-status-indicator {
-  font-size: 13px;
-  margin-top: 5px;
-  padding: 3px 8px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-/* Original Date Display */
-.adm-original-date {
-  font-size: 12px;
-  color: #7f8c8d;
-  margin-left: 8px;
-  font-style: italic;
-}
-
-/* Paused Status Styling */
-.adm-status-paused {
-  background: #fff3cd !important;
-  color: #856404 !important;
-  border: 1px solid #ffeaa7 !important;
-}
-
-/* Time Context for Paused */
-.adm-time-paused {
-  background: #fff3cd !important;
-  color: #856404 !important;
-}
-
-.adm-time-paused .adm-icon-sm {
-  color: #f39c12 !important;
-}
-
-/* Card with Paused Status */
-.adm-delivery-card[data-status="paused"] {
-  border-left: 4px solid #f39c12;
-  background: #fef9e7;
-}
-
-.adm-delivery-card[data-status="paused"] .adm-card-content {
-  opacity: 0.9;
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .adm-subscription-quick-action {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-
+  
   .adm-sync-warning-banner {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-
+  
   .adm-sync-warning-banner .adm-btn {
     margin-left: 0;
     width: 100%;
   }
 }
 
-/* Enhanced hover effects for paused deliveries */
-.adm-delivery-card:hover .adm-sync-warning-banner {
-  background: #ffeaa7;
+/* ===== UTILITY CLASSES ===== */
+.adm-icon {
+  font-size: 16px;
 }
 
-/* Animation for sync actions */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+.adm-icon-sm {
+  font-size: 12px;
 }
 
-.adm-btn:active {
-  animation: pulse 0.3s;
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+/* Delivery Sequence Styles */
+.adm-delivery-sequence {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.adm-sequence-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #764ba2;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  border: 1px solid #764ba2;
+}
+
+/* If you want to style the initial delivery differently */
+.adm-sequence-badge[data-initial="true"] {
+  background: #ffeb3b;
+  color: #333;
+  border-color: #ffc107;
+}
+
+
+
+
+/* ===== PARTIAL DELIVERY CUSTOMER STYLES ===== */
+
+/* Partial Delivery Badge */
+.adm-partial-delivery-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Partial Delivery Details Section */
+.adm-partial-delivery-details {
+  background: linear-gradient(135deg, #fff9e6, #ffeaa7);
+  border: 2px solid #fdcb6e;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.adm-partial-delivery-details::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.adm-partial-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.adm-delivered-amount, .adm-remaining-amount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.adm-delivered-amount:hover, .adm-remaining-amount:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.adm-delivered-amount {
+  color: #27ae60;
+  border-left: 4px solid #27ae60;
+}
+
+.adm-remaining-amount {
+  color: #e67e22;
+  border-left: 4px solid #e67e22;
+}
+
+.adm-remnant-note {
+  background: linear-gradient(135deg, #d5f4e6, #c8f7dc);
+  border: 2px solid #2ecc71;
+  color: #155724;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: gentlePulse 3s infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { border-color: #2ecc71; }
+  50% { border-color: #27ae60; }
+}
+
+/* Remnant Delivery Info */
+.adm-remnant-delivery-info {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #64b5f6;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.adm-remnant-delivery-info strong {
+  color: #1565c0;
+  font-size: 1.1rem;
+}
+
+.adm-remnant-link a {
+  color: #2196f3;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.adm-remnant-link a:hover {
+  background: #2196f3;
+  color: white;
+  transform: translateX(5px);
+}
+
+/* Confirmation Button for Partial Deliveries */
+.adm-btn-remnant-confirm {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.adm-btn-remnant-confirm:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+}
+
+/* Partial Delivery Status Messages */
+.adm-partial-status-message {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+
+/* Sequence Badge for Partial Deliveries */
+.adm-sequence-badge.partial {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border: 2px solid #d35400;
+}
+
+/* Enhanced Delivery Card for Partial */
+.adm-delivery-card.partial-delivery {
+  background: linear-gradient(135deg, #fffdf6, #fff8e1);
+  border: 2px solid #fdcb6e;
+  box-shadow: 0 8px 25px rgba(253, 203, 110, 0.15);
+}
+
+.adm-delivery-card.partial-delivery .adm-card-header {
+  border-bottom: 2px dashed #fdcb6e;
+}
+
+/* Partial Delivery Confirmation Required */
+.adm-confirmation-required {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  border: 2px solid #f39c12;
+  color: #d35400;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  animation: attentionPulse 2s infinite;
+}
+
+@keyframes attentionPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Tab Highlight for Partial */
+.adm-tab.partial-highlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.adm-tab.partial-highlight::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
