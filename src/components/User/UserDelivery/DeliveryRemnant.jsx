@@ -144,67 +144,164 @@ const CustomerRemnant = () => {
     }
   };
 
+
   const handleRequestDelivery = async () => {
-    if (!requestedKg) {
-      showSnackbar('Please enter amount to deliver', 'error');
-      return;
+  if (!requestedKg) {
+    showSnackbar('Please enter amount to deliver', 'error');
+    return;
+  }
+
+  const requested = parseFloat(requestedKg);
+  const accumulated = remnant?.accumulatedKg || 0;
+
+  if (requested < 6) {
+    showSnackbar('Minimum 6kg required for delivery', 'error');
+    return;
+  }
+
+  if (requested > accumulated) {
+    showSnackbar(`Cannot request more than ${accumulated}kg available`, 'error');
+    return;
+  }
+
+  // Check if remnant is confirmed
+  if (!remnant?.customerConfirmation?.confirmed) {
+    showSnackbar('Please confirm your remnant entries first', 'error');
+    return;
+  }
+
+  // Check if all partial deliveries are confirmed
+  const unconfirmedEntries = remnant?.partialDeliveries?.filter(p => !p.confirmed) || [];
+  if (unconfirmedEntries.length > 0) {
+    showSnackbar(`Please confirm ${unconfirmedEntries.length} pending remnant entries first`, 'error');
+    return;
+  }
+
+  try {
+    setLoading(true);
+    const response = await fetch('https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/request-delivery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ 
+        requestedKg: requested,
+        deliveryDate,
+        notes: deliveryNotes
+      })
+    });
+
+    const data = await response.json();
+    
+    if (data.success) {
+      showSnackbar('Remnant delivery requested successfully', 'success');
+      setRequestDialogOpen(false);
+      setRequestedKg('');
+      setDeliveryDate('');
+      setDeliveryNotes('');
+      fetchRemnant();
+    } else {
+      showSnackbar(data.message, 'error');
     }
+  } catch (error) {
+    showSnackbar('Error requesting delivery: ' + error.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+};
 
-    const requested = parseFloat(requestedKg);
-    const accumulated = remnant?.accumulatedKg || 0;
+// Update the UI to show confirmation requirement
+const renderRequestDeliveryButton = () => {
+  const canRequest = remnant?.canRequestDelivery || 
+                     (remnant?.accumulatedKg >= 6 && 
+                      remnant?.customerConfirmation?.confirmed &&
+                      remnant?.partialDeliveries?.every(p => p.confirmed));
+  
+  const reason = !remnant?.customerConfirmation?.confirmed 
+    ? 'Confirm remnant entries first'
+    : remnant?.partialDeliveries?.some(p => !p.confirmed)
+    ? `${remnant.partialDeliveries.filter(p => !p.confirmed).length} entries pending confirmation`
+    : remnant?.accumulatedKg < 6
+    ? `Need ${6 - remnant.accumulatedKg}kg more`
+    : null;
 
-    if (requested < 6) {
-      showSnackbar('Minimum 6kg required for delivery', 'error');
-      return;
-    }
+  return (
+    <button 
+      className="delrem-header-btn delrem-primary"
+      onClick={() => setRequestDialogOpen(true)}
+      disabled={!canRequest}
+      title={reason}
+    >
+      <FaShoppingCart />
+      Request Delivery
+      {reason && <span className="delrem-button-hint">{reason}</span>}
+    </button>
+  );
+};
 
-    if (requested > accumulated) {
-      showSnackbar(`Cannot request more than ${accumulated}kg available`, 'error');
-      return;
-    }
 
-    // Check if customer has confirmed all partial deliveries
-    const unconfirmedEntries = remnant?.partialDeliveries?.filter(p => !p.confirmed) || [];
-    if (unconfirmedEntries.length > 0) {
-      showSnackbar(`Please confirm ${unconfirmedEntries.length} pending remnant entries first`, 'error');
-      return;
-    }
+  // const handleRequestDelivery = async () => {
+  //   if (!requestedKg) {
+  //     showSnackbar('Please enter amount to deliver', 'error');
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch('https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/request-delivery', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ 
-          requestedKg: requested,
-          deliveryDate,
-          notes: deliveryNotes
-        })
-      });
+  //   const requested = parseFloat(requestedKg);
+  //   const accumulated = remnant?.accumulatedKg || 0;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //   if (requested < 6) {
+  //     showSnackbar('Minimum 6kg required for delivery', 'error');
+  //     return;
+  //   }
 
-      const data = await response.json();
+  //   if (requested > accumulated) {
+  //     showSnackbar(`Cannot request more than ${accumulated}kg available`, 'error');
+  //     return;
+  //   }
+
+  //   // Check if customer has confirmed all partial deliveries
+  //   const unconfirmedEntries = remnant?.partialDeliveries?.filter(p => !p.confirmed) || [];
+  //   if (unconfirmedEntries.length > 0) {
+  //     showSnackbar(`Please confirm ${unconfirmedEntries.length} pending remnant entries first`, 'error');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch('https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/request-delivery', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //       },
+  //       body: JSON.stringify({ 
+  //         requestedKg: requested,
+  //         deliveryDate,
+  //         notes: deliveryNotes
+  //       })
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
       
-      if (data.success) {
-        showSnackbar('Remnant delivery requested successfully', 'success');
-        setRequestDialogOpen(false);
-        setRequestedKg('');
-        setDeliveryDate('');
-        setDeliveryNotes('');
-        fetchRemnant(); // Refresh data
-      } else {
-        showSnackbar(data.message, 'error');
-      }
-    } catch (error) {
-      console.error('Error requesting delivery:', error);
-      showSnackbar('Error requesting delivery: ' + error.message, 'error');
-    }
-  };
+  //     if (data.success) {
+  //       showSnackbar('Remnant delivery requested successfully', 'success');
+  //       setRequestDialogOpen(false);
+  //       setRequestedKg('');
+  //       setDeliveryDate('');
+  //       setDeliveryNotes('');
+  //       fetchRemnant(); // Refresh data
+  //     } else {
+  //       showSnackbar(data.message, 'error');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error requesting delivery:', error);
+  //     showSnackbar('Error requesting delivery: ' + error.message, 'error');
+  //   }
+  // };
 
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
