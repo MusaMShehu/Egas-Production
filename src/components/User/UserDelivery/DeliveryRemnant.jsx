@@ -1001,33 +1001,54 @@ const CustomerRemnant = () => {
   const fetchRemnant = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      // FIX 1: Correct API endpoint
       const response = await fetch('https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/my-remnant', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
+      
       const data = await response.json();
       
       if (data.success) {
-        setRemnant(data.data);
+        // FIX 2: Handle the nested data structure correctly
+        // Backend returns { success: true, data: { current: {...}, history: [...] } }
+        if (data.data && data.data.current) {
+          setRemnant(data.data.current);
+        } else if (data.data) {
+          setRemnant(data.data);
+        } else {
+          setRemnant(null);
+        }
+      } else {
+        showSnackbar(data.message || 'Error fetching remnant data', 'error');
       }
     } catch (error) {
-      showSnackbar('Error fetching remnant data', 'error');
+      console.error('Fetch error:', error);
+      showSnackbar('Error connecting to server', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   const handleConfirmEntry = async () => {
-    try {
-      console.log('Confirming remnant entries for:', remnant?._id);
-      console.log('Confirmation notes:', confirmationNotes);
+    if (!remnant?._id) {
+      showSnackbar('No remnant record found', 'error');
+      return;
+    }
 
-      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/${remnant?._id}/confirmmm`, {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      // FIX 3: Correct endpoint (removed extra 'm')
+      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/${remnant._id}/confirm`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ 
           notes: confirmationNotes
@@ -1035,54 +1056,69 @@ const CustomerRemnant = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('Response data:', data);
       
       if (data.success) {
         showSnackbar('Remnant entries confirmed successfully', 'success');
         setConfirmDialogOpen(false);
         setConfirmationNotes('');
-        fetchRemnant();
+        fetchRemnant(); // Refresh data
       } else {
-        showSnackbar(data.message, 'error');
+        showSnackbar(data.message || 'Failed to confirm entries', 'error');
       }
     } catch (error) {
       console.error('Error confirming entry:', error);
-      showSnackbar('Error confirming entries: ' + error.message, 'error');
+      showSnackbar(error.message || 'Error confirming entries', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleConfirmPartialDelivery = async (deliveryId) => {
+    if (!remnant?._id || !deliveryId) {
+      showSnackbar('Invalid delivery information', 'error');
+      return;
+    }
+
     try {
-      console.log('Confirming individual delivery:', deliveryId);
+      setLoading(true);
+      const token = localStorage.getItem('token');
       
-      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/${remnant?._id}/confirm`, {
+      // FIX 4: Use the same confirm endpoint for individual confirmation
+      const response = await fetch(`https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/${remnant._id}/confirm`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ notes: 'Confirmed individual delivery' })
+        body: JSON.stringify({ 
+          notes: 'Confirmed individual delivery',
+          deliveryId: deliveryId // Add deliveryId to confirm specific one
+        })
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
       if (data.success) {
         showSnackbar('Remnant entry confirmed successfully', 'success');
-        fetchRemnant();
+        fetchRemnant(); // Refresh data
       } else {
-        showSnackbar(data.message, 'error');
+        showSnackbar(data.message || 'Failed to confirm entry', 'error');
       }
     } catch (error) {
       console.error('Error confirming partial delivery:', error);
-      showSnackbar('Error confirming entry: ' + error.message, 'error');
+      showSnackbar(error.message || 'Error confirming entry', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1105,6 +1141,7 @@ const CustomerRemnant = () => {
       return;
     }
 
+    // FIX 5: Check both overall confirmation and individual entry confirmations
     if (!remnant?.customerConfirmation?.confirmed) {
       showSnackbar('Please confirm your remnant entries first', 'error');
       return;
@@ -1118,18 +1155,25 @@ const CustomerRemnant = () => {
 
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
+      
       const response = await fetch('https://egas-server-1.onrender.com/api/v1/admin/delivery/remnant/request-delivery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ 
           requestedKg: requested,
-          deliveryDate,
+          deliveryDate: deliveryDate || new Date().toISOString().split('T')[0],
           notes: deliveryNotes
         })
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
       
@@ -1139,12 +1183,13 @@ const CustomerRemnant = () => {
         setRequestedKg('');
         setDeliveryDate('');
         setDeliveryNotes('');
-        fetchRemnant();
+        fetchRemnant(); // Refresh data
       } else {
-        showSnackbar(data.message, 'error');
+        showSnackbar(data.message || 'Failed to request delivery', 'error');
       }
     } catch (error) {
-      showSnackbar('Error requesting delivery: ' + error.message, 'error');
+      console.error('Request error:', error);
+      showSnackbar(error.message || 'Error requesting delivery', 'error');
     } finally {
       setLoading(false);
     }
@@ -1153,7 +1198,7 @@ const CustomerRemnant = () => {
   const showSnackbar = (message, severity) => {
     setSnackbar({ open: true, message, severity });
     setTimeout(() => {
-      setSnackbar({ ...snackbar, open: false });
+      setSnackbar({ open: false, message: '', severity: 'success' });
     }, 6000);
   };
 
@@ -1176,13 +1221,33 @@ const CustomerRemnant = () => {
     return remnant?.partialDeliveries?.filter(p => !p.confirmed) || [];
   };
 
-  // Helper function to safely format numbers
   const formatNumber = (value, decimals = 1) => {
     if (value === undefined || value === null) return '0';
     return Number(value).toFixed(decimals);
   };
 
-  if (loading) {
+  // FIX 6: Check if user can request delivery
+  const canRequestDelivery = () => {
+    if (!remnant) return false;
+    
+    const hasEnoughKg = (remnant.accumulatedKg || 0) >= 6;
+    const isConfirmed = remnant.customerConfirmation?.confirmed === true;
+    const noPendingEntries = (remnant.partialDeliveries?.filter(p => !p.confirmed) || []).length === 0;
+    
+    return hasEnoughKg && isConfirmed && noPendingEntries;
+  };
+
+  // FIX 7: Get request reason for tooltip
+  const getRequestDisabledReason = () => {
+    if (!remnant) return 'No remnant data';
+    if ((remnant.accumulatedKg || 0) < 6) return `Need ${formatNumber(6 - (remnant.accumulatedKg || 0))}kg more`;
+    if (!remnant.customerConfirmation?.confirmed) return 'Confirm remnant entries first';
+    const pendingCount = (remnant.partialDeliveries?.filter(p => !p.confirmed) || []).length;
+    if (pendingCount > 0) return `${pendingCount} entries pending confirmation`;
+    return '';
+  };
+
+  if (loading && !remnant) {
     return (
       <div className="delrem-remnant-container">
         <div className="delrem-remnant-loading">
@@ -1214,7 +1279,8 @@ const CustomerRemnant = () => {
             <button 
               className="delrem-header-btn delrem-primary"
               onClick={() => setRequestDialogOpen(true)}
-              disabled={!remnant || (remnant.accumulatedKg || 0) < 6 || pendingEntries.length > 0}
+              disabled={!canRequestDelivery()}
+              title={getRequestDisabledReason()}
             >
               <FaShoppingCart />
               Request Delivery
@@ -1385,7 +1451,8 @@ const CustomerRemnant = () => {
                   <button 
                     className="delrem-quick-action-card"
                     onClick={() => setRequestDialogOpen(true)}
-                    disabled={(remnant.accumulatedKg || 0) < 6 || pendingEntries.length > 0}
+                    disabled={!canRequestDelivery()}
+                    title={getRequestDisabledReason()}
                   >
                     <div className="delrem-quick-action-icon delrem-primary">
                       <FaShoppingCart />
@@ -1405,6 +1472,7 @@ const CustomerRemnant = () => {
                     className="delrem-quick-action-card"
                     onClick={() => setConfirmDialogOpen(true)}
                     disabled={pendingEntries.length === 0}
+                    title={pendingEntries.length === 0 ? 'No entries to confirm' : ''}
                   >
                     <div className="delrem-quick-action-icon delrem-success">
                       <FaCheckCircle />
@@ -1544,7 +1612,7 @@ const CustomerRemnant = () => {
                                   {entry.confirmed ? 'Confirmed' : 'Pending'}
                                 </span>
                               </td>
-                              <td>{entry.deliveryId?.agentNotes || '-'}</td>
+                              <td>{entry.agentNotes || entry.deliveryId?.agentNotes || '-'}</td>
                               <td>
                                 {!entry.confirmed ? (
                                   <button
@@ -1588,7 +1656,7 @@ const CustomerRemnant = () => {
                             <tr key={index}>
                               <td>{formatDate(request.date)}</td>
                               <td>{formatNumber(request.requestedKg)}kg</td>
-                              <td>{request.deliveryDate || '-'}</td>
+                              <td>{request.deliveryDate ? formatDate(request.deliveryDate) : '-'}</td>
                               <td>
                                 <span className={`delrem-status-badge ${request.status}`}>
                                   {request.status?.toUpperCase() || 'PENDING'}
@@ -1606,14 +1674,12 @@ const CustomerRemnant = () => {
                               <td>{request.notes || '-'}</td>
                               <td>
                                 <div className="delrem-table-actions">
-                                  <button className="delrem-action-btn delrem-view-btn">
+                                  <button 
+                                    className="delrem-action-btn delrem-view-btn"
+                                    onClick={() => window.location.href = `/dashboard/delivery/${request.deliveryId?._id}`}
+                                  >
                                     <FaEye /> View
                                   </button>
-                                  {request.status === 'pending' && (
-                                    <button className="delrem-action-btn delrem-cancel-btn">
-                                      <FaTimes /> Cancel
-                                    </button>
-                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -1778,7 +1844,7 @@ const CustomerRemnant = () => {
               <button 
                 className="delrem-btn delrem-btn-success"
                 onClick={handleConfirmEntry}
-                disabled={!remnant?._id}
+                disabled={!remnant?._id || pendingEntries.length === 0}
               >
                 <FaCheckCircle />
                 Confirm All Entries

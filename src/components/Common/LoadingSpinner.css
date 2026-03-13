@@ -1,0 +1,385 @@
+/* LoadingSpinner.css */
+
+/* Full page overlay */
+.full-page-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .full-page-spinner {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  
+  .spinner-text {
+    color: #ffffff;
+  }
+}
+
+/* Container for inline spinner */
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+/* Main spinner animation - Classic Circle */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Spinner text */
+.spinner-text {
+  margin: 0;
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ============================================
+   VARIANT 1: Dotted Spinner
+   ============================================ */
+.spinner.dotted {
+  width: 60px;
+  height: 60px;
+  border: none;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  animation: none;
+}
+
+.spinner.dotted::before,
+.spinner.dotted::after,
+.spinner.dotted span {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-color: #3498db;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.spinner.dotted::before { animation-delay: -0.32s; }
+.spinner.dotted span { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* ============================================
+   VARIANT 2: Dual Ring Spinner
+   ============================================ */
+.spinner.dual-ring {
+  width: 48px;
+  height: 48px;
+  border: 4px solid transparent;
+  border-top-color: #3498db;
+  border-bottom-color: #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner.dual-ring::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 4px solid transparent;
+  border-top-color: #e74c3c;
+  border-bottom-color: #e74c3c;
+  border-radius: 50%;
+  animation: spin 2s linear infinite reverse;
+}
+
+/* ============================================
+   VARIANT 3: Ripple Spinner
+   ============================================ */
+.spinner.ripple {
+  width: 60px;
+  height: 60px;
+  border: none;
+  position: relative;
+}
+
+.spinner.ripple div {
+  position: absolute;
+  border: 4px solid #3498db;
+  opacity: 1;
+  border-radius: 50%;
+  animation: ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.spinner.ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+
+@keyframes ripple {
+  0% {
+    top: 28px;
+    left: 28px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  4.9% {
+    top: 28px;
+    left: 28px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  5% {
+    top: 28px;
+    left: 28px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: -1px;
+    left: -1px;
+    width: 58px;
+    height: 58px;
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   VARIANT 4: Heartbeat Spinner
+   ============================================ */
+.spinner.heartbeat {
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: linear-gradient(45deg, #e74c3c, #3498db);
+  border-radius: 50%;
+  animation: heartbeat 1.4s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.3); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.3); }
+  70% { transform: scale(1); }
+}
+
+/* ============================================
+   VARIANT 5: Progress Bar Spinner
+   ============================================ */
+.spinner.progress-bar {
+  width: 200px;
+  height: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.spinner.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #e74c3c);
+  border-radius: 4px;
+  animation: progress 1.5s ease-in-out infinite;
+}
+
+@keyframes progress {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+
+/* ============================================
+   VARIANT 6: Minimal Dot Spinner
+   ============================================ */
+.spinner.minimal {
+  width: 60px;
+  height: 60px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.spinner.minimal .dot {
+  width: 8px;
+  height: 8px;
+  background: #3498db;
+  border-radius: 50%;
+  animation: minimalBounce 1.4s infinite ease-in-out both;
+}
+
+.spinner.minimal .dot:nth-child(1) { animation-delay: -0.32s; }
+.spinner.minimal .dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes minimalBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.6; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   Size Variations
+   ============================================ */
+.spinner.small {
+  width: 30px;
+  height: 30px;
+  border-width: 3px;
+}
+
+.spinner.medium {
+  width: 50px;
+  height: 50px;
+  border-width: 4px;
+}
+
+.spinner.large {
+  width: 70px;
+  height: 70px;
+  border-width: 5px;
+}
+
+/* Text size variations */
+.spinner.small + .spinner-text {
+  font-size: 0.875rem;
+}
+
+.spinner.medium + .spinner-text {
+  font-size: 1rem;
+}
+
+.spinner.large + .spinner-text {
+  font-size: 1.25rem;
+}
+
+/* ============================================
+   Color Variations
+   ============================================ */
+.spinner.primary {
+  border-top-color: #3498db;
+  border-bottom-color: #3498db;
+}
+
+.spinner.success {
+  border-top-color: #2ecc71;
+  border-bottom-color: #2ecc71;
+}
+
+.spinner.warning {
+  border-top-color: #f39c12;
+  border-bottom-color: #f39c12;
+}
+
+.spinner.danger {
+  border-top-color: #e74c3c;
+  border-bottom-color: #e74c3c;
+}
+
+/* Color variations for text */
+.spinner.primary + .spinner-text {
+  color: #3498db;
+}
+
+.spinner.success + .spinner-text {
+  color: #2ecc71;
+}
+
+.spinner.warning + .spinner-text {
+  color: #f39c12;
+}
+
+.spinner.danger + .spinner-text {
+  color: #e74c3c;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+  .full-page-spinner .spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+  
+  .full-page-spinner .spinner-text {
+    font-size: 0.875rem;
+  }
+  
+  .spinner-container {
+    padding: 1rem;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .spinner::before,
+  .spinner::after,
+  .spinner * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .spinner {
+    border: 4px dotted #3498db;
+  }
+}
+
+/* Print styles */
+@media print {
+  .full-page-spinner {
+    display: none !important;
+  }
+}

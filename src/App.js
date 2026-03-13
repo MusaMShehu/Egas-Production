@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from './contexts/AuthContext';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { isMobile } from 'react-device-detect';
 
@@ -81,7 +82,7 @@ import DesktopLayout from "./components/User/DestopLayout";
 
 // USER PANEL DESKTOP
 
-import DesktopDashboardOverview from "./components/User/DashboardOverview";
+import DesktopDashboardOverview from "./components/User/UserDashboard/DashboardOverview";
 import DesktopUserOrders from "./components/User/UserOrders/UserOrders";
 import DesktopUserSubscriptions from "./components/User/UserSubscriptions/UserSubscriptions";
 import DesktopUserHistory from "./components/User/UserHistory/UserHistory";
@@ -93,7 +94,7 @@ import DesktopCustomerDeliverySchedule from "./components/User/UserDelivery/Cust
 import DesktopDeliveryRemnant from "./components/User/UserDelivery/DeliveryRemnant";
 
 // USER PANEL MOBILE VIEW
-import MobileDashboardOverview from "./components/User/DashboardMobile";
+import MobileDashboardOverview from "./components/User/UserDashboard/DashboardMobile";
 import MobileUserOrders from "./components/User/UserOrders/MobileUserOrders";
 import MobileUserSubscriptions from "./components/User/UserSubscriptions/MobileUserSubscriptions";
 import MobileUserHistory from "./components/User/UserHistory/MobileUserHistory";
@@ -153,9 +154,11 @@ function App() {
   const SubscriptionPlans = isMobile ? MobileSubscriptionPlans : DesktopSubscriptionPlans;
   const DeliveryRemnant = isMobile ? MobileDeliveryRemnant : DesktopDeliveryRemnant;
 
+  const queryClient = new QueryClient();
 
   return (
 
+    <QueryClientProvider client={queryClient}>
     <NotificationProvider userId={userId}>
     <AuthProvider>
       <PaymentProvider>
@@ -251,6 +254,7 @@ function App() {
       </PaymentProvider>
     </AuthProvider>
     </NotificationProvider>
+    </QueryClientProvider>
   );
 }
 

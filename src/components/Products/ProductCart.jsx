@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import cartAPI from '../../api/cartApi';
+import { cartAPI } from '../../api/cartApi';
 import { useNavigate } from 'react-router-dom';
 import './ProductCart.css';
 

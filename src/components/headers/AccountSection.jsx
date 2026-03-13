@@ -43,7 +43,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import "../../styles/AccountSection.css";
 
 const AccountSection = ({ onLoginClick }) => {
-  const { user, logout } = useAuth(); // Your context uses 'user' not 'currentUser'
+  const { user, logout } = useAuth(); 
 
   // Get profile image URL from Cloudinary structure
   const getProfileImageUrl = () => {

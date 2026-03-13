@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaShoppingCart, FaFilter, FaSortAmountDown, FaExclamationTriangle } from 'react-icons/fa';
 import { productAPI } from '../../api/UserProductApi';
-import cartAPI from '../../api/cartApi';
+import { cartAPI } from '../../api/cartApi';
 import './ProductSelection.css';
 
 const ProductSelection = () => {

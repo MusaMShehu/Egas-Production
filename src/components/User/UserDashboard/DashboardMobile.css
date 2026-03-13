@@ -136,7 +136,7 @@
 
 /* Hero Banner */
 .mobdash-mobile-hero-banner {
-  background: url("../../../public/images/Banner.png");
+  background: url("../../../../public/images/Banner.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
