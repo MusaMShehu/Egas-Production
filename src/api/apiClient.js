@@ -9,7 +9,7 @@ class ApiClient {
     this.client = axios.create({
       baseURL: process.env.REACT_APP_API_URL || 'https://egas-server-1.onrender.com/api/v1',
       timeout: 30000,
-      withCredentials: true, // Critical for HTTP-only cookies
+      withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
         // 'X-Client-Version': process.env.REACT_APP_VERSION || '1.0.0'

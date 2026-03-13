@@ -128,6 +128,137 @@
 
 
 
+// // contexts/AuthContext.jsx
+// import React, { createContext, useState, useContext, useEffect } from 'react';
+// import apiClient from '../api/apiClient';
+
+// const AuthContext = createContext();
+
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// };
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+//   useEffect(() => {
+//     // Check if user is logged in on mount
+//     checkAuthStatus();
+    
+//     // Listen for logout events
+//     window.addEventListener('auth:logout', handleLogout);
+    
+//     return () => {
+//       window.removeEventListener('auth:logout', handleLogout);
+//     };
+//   }, []);
+
+//   const checkAuthStatus = async () => {
+//     try {
+//       const response = await apiClient.get('/auth/me');
+//       if (response.success && response.data) {
+//         setUser(response.data);
+//         setIsAuthenticated(true);
+//       }
+//     } catch (error) {
+//       console.error('Auth check failed:', error);
+//       setUser(null);
+//       setIsAuthenticated(false);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const login = async (email, password) => {
+//     try {
+//       const response = await apiClient.post('/auth/login', { email, password });
+      
+//       if (response.success) {
+//         setUser(response.data.user);
+//         setIsAuthenticated(true);
+//         return { success: true, data: response.data };
+//       }
+      
+//       throw new Error('Login failed');
+//     } catch (error) {
+//       console.error('Login error:', error);
+//       throw error;
+//     }
+//   };
+
+//   const logout = async () => {
+//     try {
+//       await apiClient.get('/auth/logout');
+//     } catch (error) {
+//       console.error('Logout error:', error);
+//     } finally {
+//       setUser(null);
+//       setIsAuthenticated(false);
+//     }
+//   };
+
+//   const register = async (userData) => {
+//     try {
+//       const response = await apiClient.post('/auth/register', userData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+      
+//       if (response.success) {
+//         setUser(response.data.user);
+//         setIsAuthenticated(true);
+//         return { success: true, data: response.data };
+//       }
+      
+//       throw new Error('Registration failed');
+//     } catch (error) {
+//       console.error('Registration error:', error);
+//       throw error;
+//     }
+//   };
+
+//   const handleLogout = () => {
+//     setUser(null);
+//     setIsAuthenticated(false);
+//   };
+
+//   const value = {
+//     user,
+//     loading,
+//     isAuthenticated,
+//     login,
+//     logout,
+//     register,
+//     checkAuthStatus,
+//   };
+
+//   return (
+//     <AuthContext.Provider value={value}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // contexts/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../api/apiClient';
@@ -147,8 +278,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Check auth status on mount
   useEffect(() => {
-    // Check if user is logged in on mount
     checkAuthStatus();
     
     // Listen for logout events
@@ -161,15 +292,27 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      // This endpoint should return user data if cookie is valid
       const response = await apiClient.get('/auth/me');
-      if (response.success && response.data) {
-        setUser(response.data);
+      
+      // Handle different response structures
+      if (response && (response.success || response.data)) {
+        const userData = response.data?.user || response.data || response;
+        setUser(userData);
         setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error('Auth check failed:', error.message);
       setUser(null);
       setIsAuthenticated(false);
+      
+      // Don't redirect on 401 during initial check - let components handle it
+      if (error.status === 401) {
+        console.log('Not authenticated - user needs to login');
+      }
     } finally {
       setLoading(false);
     }
@@ -179,48 +322,63 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiClient.post('/auth/login', { email, password });
       
-      if (response.success) {
-        setUser(response.data.user);
+      if (response.success || response.data) {
+        const userData = response.data?.user || response.data;
+        setUser(userData);
         setIsAuthenticated(true);
+        
+        // Re-check auth status to ensure cookie is set
+        await checkAuthStatus();
+        
         return { success: true, data: response.data };
       }
       
-      throw new Error('Login failed');
+      throw new Error(response.message || 'Login failed');
     } catch (error) {
       console.error('Login error:', error);
-      throw error;
+      return {
+        success: false,
+        message: error.message || 'Login failed'
+      };
     }
   };
 
   const logout = async () => {
     try {
-      await apiClient.get('/auth/logout');
+      await apiClient.post('/auth/logout');
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      // Redirect to home or login page
+      window.location.href = '/';
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await apiClient.post('/auth/register', userData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await apiClient.post('/auth/register', userData);
       
-      if (response.success) {
-        setUser(response.data.user);
+      if (response.success || response.data) {
+        const userData = response.data?.user || response.data;
+        setUser(userData);
         setIsAuthenticated(true);
+        
+        // Re-check auth status
+        await checkAuthStatus();
+        
         return { success: true, data: response.data };
       }
       
-      throw new Error('Registration failed');
+      throw new Error(response.message || 'Registration failed');
     } catch (error) {
       console.error('Registration error:', error);
-      throw error;
+      return {
+        success: false,
+        message: error.message || 'Registration failed',
+        validationErrors: error.validationErrors
+      };
     }
   };
 
