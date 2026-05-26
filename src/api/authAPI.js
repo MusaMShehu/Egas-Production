@@ -76,23 +76,75 @@
 
 
 
+// import apiClient from './apiClient';
+
+// export const authAPI = {
+//   // Admin login
+//   login: async (credentials) => {
+//     if (!credentials) throw new Error('Credentials are required');
+//     return apiClient.post('/auth/login', credentials);
+//   },
+
+//   // Admin logout
+//   logout: async () => {
+//     return apiClient.post('/auth/logout');
+//   },
+
+//   // Verify token
+//   verifyToken: async () => {
+//     return apiClient.get('/auth/verify');
+//   },
+
+//   // Refresh token
+//   refreshToken: async () => {
+//     return apiClient.post('/auth/refresh');
+//   },
+
+//   // Change password
+//   changePassword: async (passwordData) => {
+//     if (!passwordData) throw new Error('Password data is required');
+//     return apiClient.post('/auth/change-password', passwordData);
+//   },
+
+//   // Request password reset
+//   requestPasswordReset: async (email) => {
+//     return apiClient.post('/auth/forgot-password', { email });
+//   },
+
+//   // Reset password with token
+//   resetPassword: async (token, newPassword) => {
+//     return apiClient.post('/auth/reset-password', { token, password: newPassword });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
 import apiClient from './apiClient';
 
 export const authAPI = {
-  // Admin login
+  // Login
   login: async (credentials) => {
     if (!credentials) throw new Error('Credentials are required');
     return apiClient.post('/auth/login', credentials);
   },
 
-  // Admin logout
+  // Logout
   logout: async () => {
     return apiClient.post('/auth/logout');
   },
 
-  // Verify token
-  verifyToken: async () => {
-    return apiClient.get('/auth/verify');
+  // Get current user
+  getMe: async () => {
+    return apiClient.get('/auth/me');
   },
 
   // Refresh token
@@ -100,19 +152,33 @@ export const authAPI = {
     return apiClient.post('/auth/refresh');
   },
 
-  // Change password
-  changePassword: async (passwordData) => {
-    if (!passwordData) throw new Error('Password data is required');
-    return apiClient.post('/auth/change-password', passwordData);
+  // Register
+  register: async (formData) => {
+    return apiClient.post('/auth/register', formData);
   },
 
-  // Request password reset
-  requestPasswordReset: async (email) => {
-    return apiClient.post('/auth/forgot-password', { email });
+  // Update password
+  updatePassword: async (passwordData) => {
+    return apiClient.put('/auth/updatepassword', passwordData);
   },
 
-  // Reset password with token
+  // Forgot password
+  forgotPassword: async (email) => {
+    return apiClient.post('/auth/forgotpassword', { email });
+  },
+
+  // Reset password
   resetPassword: async (token, newPassword) => {
-    return apiClient.post('/auth/reset-password', { token, password: newPassword });
+    return apiClient.put(`/auth/resetpassword/${token}`, { password: newPassword });
+  },
+
+  // Update profile
+  updateProfile: async (profileData) => {
+    return apiClient.put('/auth/profile', profileData);
+  },
+
+  // Update preferences
+  updatePreferences: async (userId, preferences) => {
+    return apiClient.put(`/auth/profile/preferences/${userId}`, preferences);
   }
 };

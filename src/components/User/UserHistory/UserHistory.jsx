@@ -1,139 +1,148 @@
-import React, { useState, useEffect } from 'react';
-import { FaTimes, FaFilter, FaEye, FaRedo, FaShoppingCart, FaCreditCard, FaCalendarAlt, FaSpinner, FaChevronLeft, FaChevronRight, FaSearch, FaBox, FaTruck, FaCheckCircle, FaExclamationTriangle, FaClock, FaPause, FaExclamationCircle } from 'react-icons/fa';
-import './UserHistory.css';
-import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
+import React, { useState, useEffect } from "react";
+import {
+  FaTimes,
+  FaFilter,
+  FaEye,
+  FaRedo,
+  FaShoppingCart,
+  FaCreditCard,
+  FaCalendarAlt,
+  FaSpinner,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSearch,
+  FaBox,
+  FaTruck,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaClock,
+  FaPause,
+  FaExclamationCircle,
+} from "react-icons/fa";
+import ApiService from "../../../api/apiService";
+import "./UserHistory.css";
+import {
+  successToast,
+  errorToast,
+  infoToast,
+  warningToast,
+} from "../../../utils/toast";
 
 const History = () => {
-  const [activeTab, setActiveTab] = useState('orders');
+  const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [payments, setPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [filter, setFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeItem, setActiveItem] = useState(null);
-  
-  // Separate loading states for each tab
+
   const [loadingStates, setLoadingStates] = useState({
     orders: true,
     subscriptions: true,
-    payments: true
+    payments: true,
   });
 
-  // Pagination states for each tab
   const [pagination, setPagination] = useState({
     orders: { page: 1, limit: 10, total: 0, pages: 0 },
     subscriptions: { page: 1, limit: 10, total: 0, pages: 0 },
-    payments: { page: 1, limit: 10, total: 0, pages: 0 }
+    payments: { page: 1, limit: 10, total: 0, pages: 0 },
   });
 
-  // Track loaded data for each tab
   const [loadedData, setLoadedData] = useState({
     orders: false,
     subscriptions: false,
-    payments: false
+    payments: false,
   });
 
-  const API_BASE_URL = 'https://egas-server-1.onrender.com/api/v1';
-
-  // Fetch history data with pagination
-  const fetchHistoryData = async (type, page = 1, limit = 10, statusFilter = 'all', search = '') => {
+  const fetchHistoryData = async (
+    type,
+    page = 1,
+    limit = 10,
+    statusFilter = "all",
+    search = "",
+  ) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        warningToast('Please log in to view your history');
-        return null;
+      switch (type) {
+        case "orders":
+          return await ApiService.history.getOrders(
+            page,
+            limit,
+            statusFilter,
+            search,
+          );
+        case "subscriptions":
+          return await ApiService.history.getSubscriptions(
+            page,
+            limit,
+            statusFilter,
+            search,
+          );
+        case "payments":
+          return await ApiService.history.getPayments(
+            page,
+            limit,
+            statusFilter,
+            search,
+          );
+        default:
+          throw new Error(`Unknown type: ${type}`);
       }
-
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
-
-      // Build query parameters
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString()
-      });
-
-      if (statusFilter && statusFilter !== 'all') {
-        params.append('status', statusFilter);
-      }
-
-      if (search) {
-        params.append('q', search);
-      }
-
-      infoToast(`Loading ${type} history...`);
-
-      const response = await fetch(
-        `${API_BASE_URL}/user/history/${type}?${params}`,
-        { headers }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${type} data: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
     } catch (err) {
       console.error(`Error fetching ${type}:`, err);
       throw err;
     }
   };
 
-  // Load data for specific tab
   const loadTabData = async (tab, page = 1) => {
-    setLoadingStates(prev => ({ ...prev, [tab]: true }));
-    setError('');
+    setLoadingStates((prev) => ({ ...prev, [tab]: true }));
+    setError("");
 
     try {
       const currentPagination = pagination[tab];
       const limit = currentPagination.limit;
-      
+
       const response = await fetchHistoryData(
-        tab, 
-        page, 
-        limit, 
+        tab,
+        page,
+        limit,
         filter,
-        searchQuery
+        searchQuery,
       );
 
-      if (response && response.success) {
-        // Update data based on tab
+      const data = response.data;
+
+      if (data && data.success) {
         switch (tab) {
-          case 'orders':
-            setOrders(response.data || []);
+          case "orders":
+            setOrders(data.data || []);
             break;
-          case 'subscriptions':
-            setSubscriptions(response.data || []);
+          case "subscriptions":
+            setSubscriptions(data.data || []);
             break;
-          case 'payments':
-            setPayments(response.data || []);
+          case "payments":
+            setPayments(data.data || []);
             break;
           default:
             break;
         }
 
-        // Update pagination for the specific tab
-        setPagination(prev => ({
+        setPagination((prev) => ({
           ...prev,
           [tab]: {
-            page: response.page || page,
+            page: data.page || page,
             limit: limit,
-            total: response.total || 0,
-            pages: response.pages || Math.ceil((response.total || 0) / limit) || 1
-          }
+            total: data.total || 0,
+            pages: data.pages || Math.ceil((data.total || 0) / limit) || 1,
+          },
         }));
 
-        // Mark this tab as loaded
-        setLoadedData(prev => ({ ...prev, [tab]: true }));
+        setLoadedData((prev) => ({ ...prev, [tab]: true }));
 
-        // Show success toast for search/filter results
-        if (searchQuery || filter !== 'all') {
-          const resultCount = response.data?.length || 0;
+        if (searchQuery || filter !== "all") {
+          const resultCount = data.data?.length || 0;
           if (resultCount > 0) {
             successToast(`Found ${resultCount} ${tab} matching your criteria`);
           } else {
@@ -142,57 +151,52 @@ const History = () => {
         } else if (page > 1) {
           infoToast(`Loaded page ${page} of ${tab}`);
         }
-
       } else {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
     } catch (err) {
-      const errorMessage = err.message || `Failed to load ${tab}. Please try again.`;
+      const errorMessage =
+        err.message || `Failed to load ${tab}. Please try again.`;
       setError(errorMessage);
       errorToast(errorMessage);
-      
-      // Clear data on error for this tab
+
       switch (tab) {
-        case 'orders':
+        case "orders":
           setOrders([]);
           break;
-        case 'subscriptions':
+        case "subscriptions":
           setSubscriptions([]);
           break;
-        case 'payments':
+        case "payments":
           setPayments([]);
           break;
         default:
           break;
       }
     } finally {
-      setLoadingStates(prev => ({ ...prev, [tab]: false }));
+      setLoadingStates((prev) => ({ ...prev, [tab]: false }));
     }
   };
 
-  // Load data for active tab
   const loadActiveTabData = async (page = 1) => {
     await loadTabData(activeTab, page);
   };
 
-  // Initial load when component mounts - load all tabs
   useEffect(() => {
     const loadAllTabs = async () => {
       setIsLoading(true);
-      infoToast('Loading your history...');
-      
+      infoToast("Loading your history...");
+
       try {
-        // Load all tabs initially but only show loading for active tab
         await Promise.all([
-          loadTabData('orders', 1),
-          loadTabData('subscriptions', 1),
-          loadTabData('payments', 1)
+          loadTabData("orders", 1),
+          loadTabData("subscriptions", 1),
+          loadTabData("payments", 1),
         ]);
-        
-        successToast('History loaded successfully');
+        successToast("History loaded successfully");
       } catch (err) {
-        console.error('Error loading initial data:', err);
-        errorToast('Failed to load history data');
+        console.error("Error loading initial data:", err);
+        errorToast("Failed to load history data");
       } finally {
         setIsLoading(false);
       }
@@ -201,24 +205,21 @@ const History = () => {
     loadAllTabs();
   }, []);
 
-  // Load data when tab changes (only if not already loaded)
   useEffect(() => {
     if (!loadedData[activeTab]) {
       loadActiveTabData(1);
     }
   }, [activeTab]);
 
-  // Reload active tab when filter or search changes
   useEffect(() => {
     if (loadedData[activeTab]) {
       loadActiveTabData(1);
     }
   }, [filter, searchQuery]);
 
-  // Helpers
   const viewItemDetails = (item) => {
     setActiveItem(item);
-    infoToast('Viewing item details');
+    infoToast("Viewing item details");
   };
 
   const closeItemDetails = () => {
@@ -226,159 +227,194 @@ const History = () => {
   };
 
   const formatDate = (date) => {
-    if (!date) return 'N/A';
+    if (!date) return "N/A";
     try {
-      return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
-      return 'Invalid Date';
+      return "Invalid Date";
     }
   };
 
   const formatCurrency = (amount) => {
-    const num = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+    const num = typeof amount === "number" ? amount : parseFloat(amount) || 0;
     return `₦${num.toLocaleString()}`;
   };
 
-  // Updated status classes with all required statuses
   const getStatusClass = (status) => {
-  if (!status) {
-    // Return default status class based on active tab
-    if (activeTab === 'orders') return 'his-status-processing';
-    if (activeTab === 'subscriptions') return 'his-status-pending';
-    if (activeTab === 'payments') return 'his-status-pending';
-    return 'his-status-pending';
-  }
-  
-  const statusLower = status.toLowerCase();
-  
-  // Subscription statuses
-  if (activeTab === 'subscriptions') {
-    switch (statusLower) {
-      case 'active': return 'his-status-active';
-      case 'paused': return 'his-status-paused';
-      case 'pending': return 'his-status-pending';
-      case 'expired': return 'his-status-expired';
-      case 'cancelled': return 'his-status-cancelled';
-      default: return 'his-status-pending';
+    if (!status) {
+      if (activeTab === "orders") return "his-status-processing";
+      if (activeTab === "subscriptions") return "his-status-pending";
+      if (activeTab === "payments") return "his-status-pending";
+      return "his-status-pending";
     }
-  }
-  
-  // Order statuses
-  if (activeTab === 'orders') {
-    switch (statusLower) {
-      case 'processing': return 'his-status-processing';
-      case 'in-transit':
-      case 'in_transit':
-      case 'intransit': return 'his-status-in-transit';
-      case 'delivered': return 'his-status-delivered';
-      case 'cancelled': return 'his-status-cancelled';
-      default: return 'his-status-processing';
+
+    const statusLower = status.toLowerCase();
+
+    if (activeTab === "subscriptions") {
+      switch (statusLower) {
+        case "active":
+          return "his-status-active";
+        case "paused":
+          return "his-status-paused";
+        case "pending":
+          return "his-status-pending";
+        case "expired":
+          return "his-status-expired";
+        case "cancelled":
+          return "his-status-cancelled";
+        default:
+          return "his-status-pending";
+      }
     }
-  }
-  
-  // Payment statuses
-  if (activeTab === 'payments') {
-    switch (statusLower) {
-      case 'pending': return 'his-status-pending';
-      case 'completed': return 'his-status-completed';
-      case 'failed': return 'his-status-failed';
-      default: return 'his-status-pending';
+
+    if (activeTab === "orders") {
+      switch (statusLower) {
+        case "processing":
+          return "his-status-processing";
+        case "in-transit":
+        case "in_transit":
+        case "intransit":
+          return "his-status-in-transit";
+        case "delivered":
+          return "his-status-delivered";
+        case "cancelled":
+          return "his-status-cancelled";
+        default:
+          return "his-status-processing";
+      }
     }
-  }
-  
-  return 'his-status-pending';
-};
+
+    if (activeTab === "payments") {
+      switch (statusLower) {
+        case "pending":
+          return "his-status-pending";
+        case "completed":
+          return "his-status-completed";
+        case "failed":
+          return "his-status-failed";
+        default:
+          return "his-status-pending";
+      }
+    }
+
+    return "his-status-pending";
+  };
 
   const getStatusIcon = (status) => {
-  if (!status) {
-    // Return default icon based on active tab
-    if (activeTab === 'orders') return <FaSpinner />;
-    if (activeTab === 'subscriptions') return <FaClock />;
-    if (activeTab === 'payments') return <FaClock />;
+    if (!status) {
+      if (activeTab === "orders") return <FaSpinner />;
+      if (activeTab === "subscriptions") return <FaClock />;
+      if (activeTab === "payments") return <FaClock />;
+      return <FaClock />;
+    }
+
+    const statusLower = status.toLowerCase();
+
+    if (activeTab === "subscriptions") {
+      switch (statusLower) {
+        case "active":
+          return <FaCheckCircle />;
+        case "paused":
+          return <FaPause />;
+        case "pending":
+          return <FaClock />;
+        case "expired":
+          return <FaExclamationTriangle />;
+        case "cancelled":
+          return <FaTimes />;
+        default:
+          return <FaClock />;
+      }
+    }
+
+    if (activeTab === "orders") {
+      switch (statusLower) {
+        case "processing":
+          return <FaSpinner />;
+        case "in-transit":
+          return <FaTruck />;
+        case "delivered":
+          return <FaCheckCircle />;
+        case "cancelled":
+          return <FaTimes />;
+        default:
+          return <FaSpinner />;
+      }
+    }
+
+    if (activeTab === "payments") {
+      switch (statusLower) {
+        case "pending":
+          return <FaClock />;
+        case "completed":
+          return <FaCheckCircle />;
+        case "failed":
+          return <FaExclamationCircle />;
+        default:
+          return <FaClock />;
+      }
+    }
+
     return <FaClock />;
-  }
-  
-  const statusLower = status.toLowerCase();
-  
-  if (activeTab === 'subscriptions') {
-    switch (statusLower) {
-      case 'active': return <FaCheckCircle />;
-      case 'paused': return <FaPause />;
-      case 'pending': return <FaClock />;
-      case 'expired': return <FaExclamationTriangle />;
-      case 'cancelled': return <FaTimes />;
-      default: return <FaClock />;
+  };
+
+  const getStatusText = (status) => {
+    if (!status) {
+      if (activeTab === "orders") return "Processing";
+      if (activeTab === "subscriptions") return "Pending";
+      if (activeTab === "payments") return "Pending";
+      return "Pending";
     }
-  }
-  
-  if (activeTab === 'orders') {
-    switch (statusLower) {
-      case 'processing': return <FaSpinner />;
-      case 'in-transit':
-      case 'in_transit':
-      case 'intransit': return <FaTruck />;
-      case 'delivered': return <FaCheckCircle />;
-      case 'cancelled': return <FaTimes />;
-      default: return <FaSpinner />;
+
+    const statusLower = status.toLowerCase();
+    if (
+      activeTab === "orders" &&
+      (statusLower === "in-transit" ||
+        statusLower === "in_transit" ||
+        statusLower === "intransit")
+    ) {
+      return "In Transit";
     }
-  }
-  
-  if (activeTab === 'payments') {
-    switch (statusLower) {
-      case 'pending': return <FaClock />;
-      case 'completed': return <FaCheckCircle />;
-      case 'failed': return <FaExclamationCircle />;
-      default: return <FaClock />;
-    }
-  }
-  
-  return <FaClock />;
-};
- const getStatusText = (status) => {
-  if (!status) {
-    if (activeTab === 'orders') return 'Processing';
-    if (activeTab === 'subscriptions') return 'Pending';
-    if (activeTab === 'payments') return 'Pending';
-    return 'Pending';
-  }
-  
-  // Format status text with proper capitalization
-  const statusLower = status.toLowerCase();
-  
-  if (activeTab === 'orders' && (statusLower === 'in-transit' || statusLower === 'in_transit' || statusLower === 'intransit')) {
-    return 'In Transit';
-  }
-  
-  return status
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-};
+
+    return status
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
   const getMethodName = (method) => {
-    if (!method) return 'Unknown';
+    if (!method) return "Unknown";
     switch (method.toLowerCase()) {
-      case 'card': return 'Credit/Debit Card';
-      case 'bank_transfer':
-      case 'bank transfer': return 'Bank Transfer';
-      case 'ussd': return 'USSD';
-      case 'wallet': return 'Wallet';
-      case 'auto_debit':
-      case 'auto debit': return 'Auto-Debit';
-      default: return method.charAt(0).toUpperCase() + method.slice(1);
+      case "card":
+        return "Credit/Debit Card";
+      case "bank_transfer":
+      case "bank transfer":
+        return "Bank Transfer";
+      case "ussd":
+        return "USSD";
+      case "wallet":
+        return "Wallet";
+      case "auto_debit":
+      case "auto debit":
+        return "Auto-Debit";
+      default:
+        return method.charAt(0).toUpperCase() + method.slice(1);
     }
   };
 
   const getFilteredData = () => {
     const data =
-      activeTab === 'orders' ? orders :
-      activeTab === 'subscriptions' ? subscriptions : payments;
-
+      activeTab === "orders"
+        ? orders
+        : activeTab === "subscriptions"
+          ? subscriptions
+          : payments;
     if (!Array.isArray(data)) return [];
     return data;
   };
@@ -387,7 +423,6 @@ const History = () => {
   const currentPagination = pagination[activeTab];
   const currentLoading = loadingStates[activeTab];
 
-  // Pagination handlers
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= currentPagination.pages) {
       loadActiveTabData(newPage);
@@ -407,73 +442,56 @@ const History = () => {
   };
 
   const clearSearch = () => {
-    setSearchQuery('');
-    infoToast('Search cleared');
+    setSearchQuery("");
+    infoToast("Search cleared");
     loadActiveTabData(1);
   };
 
   const clearFilters = () => {
-    setFilter('all');
-    setSearchQuery('');
-    successToast('All filters cleared');
+    setFilter("all");
+    setSearchQuery("");
+    successToast("All filters cleared");
     loadActiveTabData(1);
   };
 
-  // Action handlers for modal buttons
   const handleReorder = (item) => {
-    successToast(`Reorder initiated for ${item.orderId || 'selected item'}`);
+    successToast(`Reorder initiated for ${item.orderId || "selected item"}`);
     closeItemDetails();
-    // Add your reorder logic here
   };
 
   const handleRetryPayment = (item) => {
     infoToast(`Retrying payment for transaction ${item.transactionId}`);
     closeItemDetails();
-    // Add your payment retry logic here
   };
 
-  // Generate page numbers for pagination with ellipsis
   const getPageNumbers = () => {
     const { page, pages } = currentPagination;
     const pageNumbers = [];
-    
+
     if (pages <= 7) {
-      for (let i = 1; i <= pages; i++) {
-        pageNumbers.push(i);
-      }
+      for (let i = 1; i <= pages; i++) pageNumbers.push(i);
     } else {
       if (page <= 4) {
-        for (let i = 1; i <= 5; i++) {
-          pageNumbers.push(i);
-        }
-        pageNumbers.push('...');
+        for (let i = 1; i <= 5; i++) pageNumbers.push(i);
+        pageNumbers.push("...");
         pageNumbers.push(pages);
       } else if (page >= pages - 3) {
         pageNumbers.push(1);
-        pageNumbers.push('...');
-        for (let i = pages - 4; i <= pages; i++) {
-          pageNumbers.push(i);
-        }
+        pageNumbers.push("...");
+        for (let i = pages - 4; i <= pages; i++) pageNumbers.push(i);
       } else {
         pageNumbers.push(1);
-        pageNumbers.push('...');
-        for (let i = page - 1; i <= page + 1; i++) {
-          pageNumbers.push(i);
-        }
-        pageNumbers.push('...');
+        pageNumbers.push("...");
+        for (let i = page - 1; i <= page + 1; i++) pageNumbers.push(i);
+        pageNumbers.push("...");
         pageNumbers.push(pages);
       }
     }
-    
     return pageNumbers;
   };
 
-  // Get total count for each tab badge
-  const getTabBadgeCount = (tab) => {
-    return pagination[tab].total;
-  };
+  const getTabBadgeCount = (tab) => pagination[tab].total;
 
-  // Loading state for initial page load
   if (isLoading && filteredData.length === 0) {
     return (
       <div className="his-history-page his-loading">
@@ -487,11 +505,9 @@ const History = () => {
 
   return (
     <div className="his-history-page">
-      {/* Header */}
       <div className="his-dashboard-header">
         <h1>History</h1>
         <div className="his-header-actions">
-          {/* Search Input */}
           <form onSubmit={handleSearchSubmit} className="his-search-wrapper">
             <div className="his-search-input-wrapper">
               <FaSearch className="his-search-icon" />
@@ -503,9 +519,9 @@ const History = () => {
                 className="his-search-input"
               />
               {searchQuery && (
-                <button 
+                <button
                   type="button"
-                  onClick={clearSearch} 
+                  onClick={clearSearch}
                   className="his-clear-search"
                 >
                   <FaTimes />
@@ -516,22 +532,19 @@ const History = () => {
               Search
             </button>
           </form>
-
-          {/* Filter */}
           <div className="his-filter-wrapper">
             <FaFilter className="his-filter-icon" />
             <select
               value={filter}
               onChange={(e) => {
                 setFilter(e.target.value);
-                if (e.target.value !== 'all') {
+                if (e.target.value !== "all")
                   infoToast(`Filtering by ${e.target.value} status`);
-                }
               }}
               className="his-filter-select"
             >
               <option value="all">All {activeTab}</option>
-              {activeTab === 'subscriptions' && (
+              {activeTab === "subscriptions" && (
                 <>
                   <option value="active">Active</option>
                   <option value="paused">Paused</option>
@@ -540,7 +553,7 @@ const History = () => {
                   <option value="cancelled">Cancelled</option>
                 </>
               )}
-              {activeTab === 'orders' && (
+              {activeTab === "orders" && (
                 <>
                   <option value="processing">Processing</option>
                   <option value="in-transit">In Transit</option>
@@ -548,7 +561,7 @@ const History = () => {
                   <option value="cancelled">Cancelled</option>
                 </>
               )}
-              {activeTab === 'payments' && (
+              {activeTab === "payments" && (
                 <>
                   <option value="pending">Pending</option>
                   <option value="completed">Completed</option>
@@ -560,70 +573,77 @@ const History = () => {
         </div>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="his-error-message">
           <span>{error}</span>
-          <button onClick={() => setError('')} className="his-close-error">
+          <button onClick={() => setError("")} className="his-close-error">
             <FaTimes />
           </button>
         </div>
       )}
 
-      {/* Tabs */}
       <div className="his-history-tabs">
         <button
-          className={activeTab === 'orders' ? 'his-tab his-tab-active' : 'his-tab'}
+          className={
+            activeTab === "orders" ? "his-tab his-tab-active" : "his-tab"
+          }
           onClick={() => {
-            setActiveTab('orders');
-            infoToast('Switching to order history');
+            setActiveTab("orders");
+            infoToast("Switching to order history");
           }}
         >
           <FaShoppingCart className="his-tab-icon" />
           <span className="his-tab-text">Orders</span>
-          <span className="his-count-badge">{getTabBadgeCount('orders')}</span>
+          <span className="his-count-badge">{getTabBadgeCount("orders")}</span>
         </button>
         <button
-          className={activeTab === 'subscriptions' ? 'his-tab his-tab-active' : 'his-tab'}
+          className={
+            activeTab === "subscriptions" ? "his-tab his-tab-active" : "his-tab"
+          }
           onClick={() => {
-            setActiveTab('subscriptions');
-            infoToast('Switching to subscription history');
+            setActiveTab("subscriptions");
+            infoToast("Switching to subscription history");
           }}
         >
           <FaCalendarAlt className="his-tab-icon" />
           <span className="his-tab-text">Subscriptions</span>
-          <span className="his-count-badge">{getTabBadgeCount('subscriptions')}</span>
+          <span className="his-count-badge">
+            {getTabBadgeCount("subscriptions")}
+          </span>
         </button>
         <button
-          className={activeTab === 'payments' ? 'his-tab his-tab-active' : 'his-tab'}
+          className={
+            activeTab === "payments" ? "his-tab his-tab-active" : "his-tab"
+          }
           onClick={() => {
-            setActiveTab('payments');
-            infoToast('Switching to payment history');
+            setActiveTab("payments");
+            infoToast("Switching to payment history");
           }}
         >
           <FaCreditCard className="his-tab-icon" />
           <span className="his-tab-text">Payments</span>
-          <span className="his-count-badge">{getTabBadgeCount('payments')}</span>
+          <span className="his-count-badge">
+            {getTabBadgeCount("payments")}
+          </span>
         </button>
       </div>
 
-      {/* Content Section */}
       <div className="his-content-section">
         <div className="his-section-header">
           <h2>
-            {activeTab === 'orders' && 'Order History'}
-            {activeTab === 'subscriptions' && 'Subscription History'}
-            {activeTab === 'payments' && 'Payment History'}
+            {activeTab === "orders" && "Order History"}
+            {activeTab === "subscriptions" && "Subscription History"}
+            {activeTab === "payments" && "Payment History"}
           </h2>
           <div className="his-pagination-info">
             <span className="his-count-badge">
               Showing {filteredData.length} of {currentPagination.total} items
-              {currentPagination.pages > 1 && ` • Page ${currentPagination.page} of ${currentPagination.pages}`}
+              {currentPagination.pages > 1 &&
+                ` • Page ${currentPagination.page} of ${currentPagination.pages}`}
             </span>
           </div>
         </div>
 
-        {/* Loading state for active tab */}
         {currentLoading ? (
           <div className="his-table-loading">
             <div className="his-loading-spinner">
@@ -637,7 +657,7 @@ const History = () => {
               <table className="his-history-table">
                 <thead>
                   <tr>
-                    {activeTab === 'orders' && (
+                    {activeTab === "orders" && (
                       <>
                         <th>Order ID</th>
                         <th>Date</th>
@@ -647,7 +667,7 @@ const History = () => {
                         <th>Actions</th>
                       </>
                     )}
-                    {activeTab === 'subscriptions' && (
+                    {activeTab === "subscriptions" && (
                       <>
                         <th>Plan</th>
                         <th>Size</th>
@@ -658,7 +678,7 @@ const History = () => {
                         <th>Actions</th>
                       </>
                     )}
-                    {activeTab === 'payments' && (
+                    {activeTab === "payments" && (
                       <>
                         <th>Transaction ID</th>
                         <th>Date</th>
@@ -673,103 +693,132 @@ const History = () => {
                 </thead>
                 <tbody>
                   {filteredData.map((item) => (
-  <tr key={item._id || item.id}>
-    {activeTab === 'orders' && (
-      <>
-        <td data-label="Order ID">{item.orderId || item._id || 'N/A'}</td>
-        <td data-label="Date">{formatDate(item.createdAt)}</td>
-        <td data-label="Items">
-          {item.items?.length ? (
-            item.items.map((p, i) => (
-              <div key={i} className="his-product-item">
-                {(p.quantity || 1)} × {p.name || 'Unnamed Product'}
-              </div>
-            ))
-          ) : (
-            <div>No items</div>
-          )}
-        </td>
-        <td data-label="Amount">{formatCurrency(item.totalAmount || item.amount || 0)}</td>
-        <td data-label="Status" className={getStatusClass(item.status)}>
-          <span className="his-status-content">
-            {getStatusIcon(item.status)}
-            {getStatusText(item.status)}
-          </span>
-        </td>
-        <td data-label="Actions">
-          <button
-            className="his-btn-view"
-            onClick={() => viewItemDetails(item)}
-          >
-            <FaEye className="his-btn-icon" />
-            View
-          </button>
-        </td>
-      </>
-    )}
-
-    {activeTab === 'subscriptions' && (
-      <>
-        <td data-label="Plan">{item.planName || 'N/A'}</td>
-        <td data-label="Size">{item.size || 'N/A'}</td>
-        <td data-label="Frequency">{item.frequency || 'N/A'}</td>
-        <td data-label="Price">{formatCurrency(item.price || 0)}</td>
-        <td data-label="Period">
-          {formatDate(item.startDate)} -{' '}
-          {item.endDate ? formatDate(item.endDate) : 'Present'}
-        </td>
-        <td data-label="Status" className={getStatusClass(item.status)}>
-          <span className="his-status-content">
-            {getStatusIcon(item.status)}
-            {getStatusText(item.status)}
-          </span>
-        </td>
-        <td data-label="Actions">
-          <button
-            className="his-btn-view"
-            onClick={() => viewItemDetails(item)}
-          >
-            <FaEye className="his-btn-icon" />
-            View
-          </button>
-        </td>
-      </>
-    )}
-
-    {activeTab === 'payments' && (
-      <>
-        <td data-label="Transaction ID">{item.transactionId || item._id || 'N/A'}</td>
-        <td data-label="Date">{formatDate(item.createdAt)}</td>
-        <td data-label="Description">{item.description || 'Payment'}</td>
-        <td data-label="Amount">{formatCurrency(item.amount || 0)}</td>
-        <td data-label="Method">{getMethodName(item.method)}</td>
-        <td data-label="Status" className={getStatusClass(item.status)}>
-          <span className="his-status-content">
-            {getStatusIcon(item.status)}
-            {getStatusText(item.status)}
-          </span>
-          {item.failureReason && (
-            <div className="his-failure-reason">({item.failureReason})</div>
-          )}
-        </td>
-        <td data-label="Actions">
-          <button
-            className="his-btn-view"
-            onClick={() => viewItemDetails(item)}
-          >
-            <FaEye className="his-btn-icon" />
-            View
-          </button>
-        </td>
-      </>
-    )}
-  </tr>
-))}
+                    <tr key={item._id || item.id}>
+                      {activeTab === "orders" && (
+                        <>
+                          <td data-label="Order ID">
+                            {item.orderId || item._id || "N/A"}
+                          </td>
+                          <td data-label="Date">
+                            {formatDate(item.createdAt)}
+                          </td>
+                          <td data-label="Items">
+                            {item.items?.length ? (
+                              item.items.map((p, i) => (
+                                <div key={i} className="his-product-item">
+                                  {p.quantity || 1} ×{" "}
+                                  {p.name || "Unnamed Product"}
+                                </div>
+                              ))
+                            ) : (
+                              <div>No items</div>
+                            )}
+                          </td>
+                          <td data-label="Amount">
+                            {formatCurrency(
+                              item.totalAmount || item.amount || 0,
+                            )}
+                          </td>
+                          <td
+                            data-label="Status"
+                            className={getStatusClass(item.status)}
+                          >
+                            <span className="his-status-content">
+                              {getStatusIcon(item.status)}
+                              {getStatusText(item.status)}
+                            </span>
+                          </td>
+                          <td data-label="Actions">
+                            <button
+                              className="his-btn-view"
+                              onClick={() => viewItemDetails(item)}
+                            >
+                              <FaEye className="his-btn-icon" /> View
+                            </button>
+                          </td>
+                        </>
+                      )}
+                      {activeTab === "subscriptions" && (
+                        <>
+                          <td data-label="Plan">{item.planName || "N/A"}</td>
+                          <td data-label="Size">{item.size || "N/A"}</td>
+                          <td data-label="Frequency">
+                            {item.frequency || "N/A"}
+                          </td>
+                          <td data-label="Price">
+                            {formatCurrency(item.price || 0)}
+                          </td>
+                          <td data-label="Period">
+                            {formatDate(item.startDate)} -{" "}
+                            {item.endDate
+                              ? formatDate(item.endDate)
+                              : "Present"}
+                          </td>
+                          <td
+                            data-label="Status"
+                            className={getStatusClass(item.status)}
+                          >
+                            <span className="his-status-content">
+                              {getStatusIcon(item.status)}
+                              {getStatusText(item.status)}
+                            </span>
+                          </td>
+                          <td data-label="Actions">
+                            <button
+                              className="his-btn-view"
+                              onClick={() => viewItemDetails(item)}
+                            >
+                              <FaEye className="his-btn-icon" /> View
+                            </button>
+                          </td>
+                        </>
+                      )}
+                      {activeTab === "payments" && (
+                        <>
+                          <td data-label="Transaction ID">
+                            {item.transactionId || item._id || "N/A"}
+                          </td>
+                          <td data-label="Date">
+                            {formatDate(item.createdAt)}
+                          </td>
+                          <td data-label="Description">
+                            {item.description || "Payment"}
+                          </td>
+                          <td data-label="Amount">
+                            {formatCurrency(item.amount || 0)}
+                          </td>
+                          <td data-label="Method">
+                            {getMethodName(item.method)}
+                          </td>
+                          <td
+                            data-label="Status"
+                            className={getStatusClass(item.status)}
+                          >
+                            <span className="his-status-content">
+                              {getStatusIcon(item.status)}
+                              {getStatusText(item.status)}
+                            </span>
+                            {item.failureReason && (
+                              <div className="his-failure-reason">
+                                ({item.failureReason})
+                              </div>
+                            )}
+                          </td>
+                          <td data-label="Actions">
+                            <button
+                              className="his-btn-view"
+                              onClick={() => viewItemDetails(item)}
+                            >
+                              <FaEye className="his-btn-icon" /> View
+                            </button>
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-
-            {/* Pagination Controls */}
             {currentPagination.pages > 1 && (
               <div className="his-pagination-controls">
                 <button
@@ -777,37 +826,34 @@ const History = () => {
                   onClick={() => handlePageChange(currentPagination.page - 1)}
                   disabled={currentPagination.page <= 1}
                 >
-                  <FaChevronLeft />
-                  Previous
+                  <FaChevronLeft /> Previous
                 </button>
-                
                 <div className="his-pagination-numbers">
-                  {getPageNumbers().map((pageNum, index) => (
-                    pageNum === '...' ? (
-                      <span key={`ellipsis-${index}`} className="his-pagination-ellipsis">
+                  {getPageNumbers().map((pageNum, index) =>
+                    pageNum === "..." ? (
+                      <span
+                        key={`ellipsis-${index}`}
+                        className="his-pagination-ellipsis"
+                      >
                         ...
                       </span>
                     ) : (
                       <button
                         key={pageNum}
-                        className={`his-pagination-number ${
-                          currentPagination.page === pageNum ? 'his-pagination-active' : ''
-                        }`}
+                        className={`his-pagination-number ${currentPagination.page === pageNum ? "his-pagination-active" : ""}`}
                         onClick={() => handlePageChange(pageNum)}
                       >
                         {pageNum}
                       </button>
-                    )
-                  ))}
+                    ),
+                  )}
                 </div>
-
                 <button
                   className="his-pagination-btn his-pagination-next"
                   onClick={() => handlePageChange(currentPagination.page + 1)}
                   disabled={currentPagination.page >= currentPagination.pages}
                 >
-                  Next
-                  <FaChevronRight />
+                  Next <FaChevronRight />
                 </button>
               </div>
             )}
@@ -816,8 +862,8 @@ const History = () => {
           <div className="his-no-history">
             <div className="his-no-history-content">
               <p>No {activeTab} history found.</p>
-              {(filter !== 'all' || searchQuery) && (
-                <button 
+              {(filter !== "all" || searchQuery) && (
+                <button
                   className="his-btn-clear-filters"
                   onClick={clearFilters}
                 >
@@ -829,60 +875,74 @@ const History = () => {
         )}
       </div>
 
-      {/* Detail Modal */}
       {activeItem && (
         <div className="his-history-detail-modal">
           <div className="his-modal-overlay" onClick={closeItemDetails}></div>
           <div className="his-modal-content">
             <div className="his-modal-header">
               <h2>
-                {activeTab === 'orders' && `Order #${activeItem.orderId || activeItem._id}`}
-                {activeTab === 'subscriptions' && `Subscription - ${activeItem.planName}`}
-                {activeTab === 'payments' && `Payment #${activeItem.transactionId || activeItem._id}`}
+                {activeTab === "orders" &&
+                  `Order #${activeItem.orderId || activeItem._id}`}
+                {activeTab === "subscriptions" &&
+                  `Subscription - ${activeItem.planName}`}
+                {activeTab === "payments" &&
+                  `Payment #${activeItem.transactionId || activeItem._id}`}
               </h2>
               <button className="his-close-btn" onClick={closeItemDetails}>
                 <FaTimes />
               </button>
             </div>
-
             <div className="his-modal-body">
               <div className="his-modal-details">
-                {/* Order Details */}
-                {activeTab === 'orders' && (
+                {activeTab === "orders" && (
                   <>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Order ID:</span>
-                      <span className="his-detail-value">{activeItem.orderId || activeItem._id}</span>
+                      <span className="his-detail-value">
+                        {activeItem.orderId || activeItem._id}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Order Date:</span>
-                      <span className="his-detail-value">{formatDate(activeItem.createdAt)}</span>
+                      <span className="his-detail-value">
+                        {formatDate(activeItem.createdAt)}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
-                        {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
+                      <span
+                        className={`his-detail-value ${getStatusClass(activeItem.status)}`}
+                      >
+                        {getStatusIcon(activeItem.status)}{" "}
+                        {getStatusText(activeItem.status)}
                       </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Total Amount:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.totalAmount)}</span>
+                      <span className="his-detail-value his-amount">
+                        {formatCurrency(activeItem.totalAmount)}
+                      </span>
                     </div>
                     <div className="his-detail-row">
-                      <span className="his-detail-label">Delivery Address:</span>
-                      <span className="his-detail-value">{activeItem.deliveryAddress || 'Not specified'}</span>
+                      <span className="his-detail-label">
+                        Delivery Address:
+                      </span>
+                      <span className="his-detail-value">
+                        {activeItem.deliveryAddress || "Not specified"}
+                      </span>
                     </div>
-                    
                     <div className="his-detail-section">
                       <h3>Order Items</h3>
                       {activeItem.items?.map((item, index) => (
                         <div key={index} className="his-order-item">
                           <div className="his-item-name">{item.name}</div>
                           <div className="his-item-details">
-                            Quantity: {item.quantity} • Price: {formatCurrency(item.price)}
+                            Quantity: {item.quantity} • Price:{" "}
+                            {formatCurrency(item.price)}
                           </div>
                           <div className="his-item-total">
-                            Subtotal: {formatCurrency(item.quantity * item.price)}
+                            Subtotal:{" "}
+                            {formatCurrency(item.quantity * item.price)}
                           </div>
                         </div>
                       ))}
@@ -892,113 +952,145 @@ const History = () => {
                     </div>
                   </>
                 )}
-
-                {/* Subscription Details */}
-                {activeTab === 'subscriptions' && (
+                {activeTab === "subscriptions" && (
                   <>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Plan Name:</span>
-                      <span className="his-detail-value">{activeItem.planName}</span>
+                      <span className="his-detail-value">
+                        {activeItem.planName}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
-                        {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
+                      <span
+                        className={`his-detail-value ${getStatusClass(activeItem.status)}`}
+                      >
+                        {getStatusIcon(activeItem.status)}{" "}
+                        {getStatusText(activeItem.status)}
                       </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Size:</span>
-                      <span className="his-detail-value">{activeItem.size}</span>
-                    </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Frequency:</span>
-                      <span className="his-detail-value">{activeItem.frequency}</span>
-                    </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Price:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.price)}</span>
-                    </div>
-                    <div className="his-detail-row">
-                      <span className="his-detail-label">Subscription Period:</span>
                       <span className="his-detail-value">
-                        {formatDate(activeItem.startDate)} to {formatDate(activeItem.endDate) || 'Present'}
+                        {activeItem.size}
                       </span>
                     </div>
                     <div className="his-detail-row">
-                      <span className="his-detail-label">Next Billing Date:</span>
-                      <span className="his-detail-value">{formatDate(activeItem.nextBillingDate) || 'N/A'}</span>
+                      <span className="his-detail-label">Frequency:</span>
+                      <span className="his-detail-value">
+                        {activeItem.frequency}
+                      </span>
+                    </div>
+                    <div className="his-detail-row">
+                      <span className="his-detail-label">Price:</span>
+                      <span className="his-detail-value his-amount">
+                        {formatCurrency(activeItem.price)}
+                      </span>
+                    </div>
+                    <div className="his-detail-row">
+                      <span className="his-detail-label">
+                        Subscription Period:
+                      </span>
+                      <span className="his-detail-value">
+                        {formatDate(activeItem.startDate)} to{" "}
+                        {formatDate(activeItem.endDate) || "Present"}
+                      </span>
+                    </div>
+                    <div className="his-detail-row">
+                      <span className="his-detail-label">
+                        Next Billing Date:
+                      </span>
+                      <span className="his-detail-value">
+                        {formatDate(activeItem.nextBillingDate) || "N/A"}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Auto-renew:</span>
-                      <span className="his-detail-value">{activeItem.autoRenew ? 'Yes' : 'No'}</span>
+                      <span className="his-detail-value">
+                        {activeItem.autoRenew ? "Yes" : "No"}
+                      </span>
                     </div>
                   </>
                 )}
-
-                {/* Payment Details */}
-                {activeTab === 'payments' && (
+                {activeTab === "payments" && (
                   <>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Transaction ID:</span>
-                      <span className="his-detail-value">{activeItem.transactionId || activeItem._id}</span>
+                      <span className="his-detail-value">
+                        {activeItem.transactionId || activeItem._id}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Payment Date:</span>
-                      <span className="his-detail-value">{formatDate(activeItem.createdAt)}</span>
+                      <span className="his-detail-value">
+                        {formatDate(activeItem.createdAt)}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Status:</span>
-                      <span className={`his-detail-value ${getStatusClass(activeItem.status)}`}>
-                        {getStatusIcon(activeItem.status)} {getStatusText(activeItem.status)}
+                      <span
+                        className={`his-detail-value ${getStatusClass(activeItem.status)}`}
+                      >
+                        {getStatusIcon(activeItem.status)}{" "}
+                        {getStatusText(activeItem.status)}
                       </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Amount:</span>
-                      <span className="his-detail-value his-amount">{formatCurrency(activeItem.amount)}</span>
+                      <span className="his-detail-value his-amount">
+                        {formatCurrency(activeItem.amount)}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Payment Method:</span>
-                      <span className="his-detail-value">{getMethodName(activeItem.method)}</span>
+                      <span className="his-detail-value">
+                        {getMethodName(activeItem.method)}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Description:</span>
-                      <span className="his-detail-value">{activeItem.description}</span>
+                      <span className="his-detail-value">
+                        {activeItem.description}
+                      </span>
                     </div>
                     <div className="his-detail-row">
                       <span className="his-detail-label">Reference:</span>
-                      <span className="his-detail-value">{activeItem.reference || 'N/A'}</span>
+                      <span className="his-detail-value">
+                        {activeItem.reference || "N/A"}
+                      </span>
                     </div>
                     {activeItem.failureReason && (
                       <div className="his-detail-row">
-                        <span className="his-detail-label">Failure Reason:</span>
-                        <span className="his-detail-value his-failure-reason">{activeItem.failureReason}</span>
+                        <span className="his-detail-label">
+                          Failure Reason:
+                        </span>
+                        <span className="his-detail-value his-failure-reason">
+                          {activeItem.failureReason}
+                        </span>
                       </div>
                     )}
                   </>
                 )}
               </div>
             </div>
-
             <div className="his-modal-footer">
               <button className="his-btn-close" onClick={closeItemDetails}>
                 Close
               </button>
-              {activeTab === 'orders' && activeItem.status === 'delivered' && (
-                <button 
+              {activeTab === "orders" && activeItem.status === "delivered" && (
+                <button
                   className="his-btn-reorder"
                   onClick={() => handleReorder(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
-                  Reorder
+                  <FaRedo className="his-btn-icon" /> Reorder
                 </button>
               )}
-              {activeTab === 'payments' && activeItem.status === 'failed' && (
-                <button 
+              {activeTab === "payments" && activeItem.status === "failed" && (
+                <button
                   className="his-btn-retry"
                   onClick={() => handleRetryPayment(activeItem)}
                 >
-                  <FaRedo className="his-btn-icon" />
-                  Retry Payment
+                  <FaRedo className="his-btn-icon" /> Retry Payment
                 </button>
               )}
             </div>

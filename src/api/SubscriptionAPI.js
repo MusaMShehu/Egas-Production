@@ -129,16 +129,8 @@
 // services/subscriptionApi.js
 import apiClient from './apiClient';
 
-/**
- * Unified Subscription API service
- * All subscription-related API calls go through this service
- */
 class SubscriptionApi {
-  /**
-   * Get all subscriptions for current user
-   * @param {Object} params - Query parameters (page, limit, status, etc.)
-   * @returns {Promise<Object>} Subscriptions data
-   */
+  
   async getMySubscriptions(params = {}) {
     try {
       const queryParams = new URLSearchParams();

@@ -1269,70 +1269,161 @@ const AuthPage = () => {
   };
 
   // Handle signup submission
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: "", text: "" });
+  // const handleSignup = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setMessage({ type: "", text: "" });
 
-    if (!validateSignupForm()) {
-      setLoading(false);
-      return;
+  //   if (!validateSignupForm()) {
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+      
+  //     formData.append("firstName", signupData.firstName.trim());
+  //     formData.append("lastName", signupData.lastName.trim());
+  //     formData.append("email", signupData.email.trim().toLowerCase());
+  //     formData.append("phone", signupData.phone.trim());
+  //     formData.append("password", signupData.password);
+  //     formData.append("confirmPassword", signupData.confirmPassword);
+  //     formData.append("dob", signupData.dob);
+  //     formData.append("gender", signupData.gender);
+  //     formData.append("address", signupData.address.trim());
+  //     formData.append("city", signupData.city.trim());
+  //     formData.append("state", signupData.state);
+
+  //     if (signupData.profileImage) {
+  //       formData.append("profileImage", signupData.profileImage);
+  //     }
+
+  //     const geoJson = {
+  //       type: "Point",
+  //       coordinates: [
+  //         parseFloat(signupData.longitude),
+  //         parseFloat(signupData.latitude),
+  //       ],
+  //     };
+  //     formData.append("gps", JSON.stringify(geoJson));
+
+  //     await register(formData);
+      
+  //     setMessage({
+  //       type: "success",
+  //       text: "Registration successful! You will be redirected shortly.",
+  //     });
+
+  //     setTimeout(() => {
+  //       window.location.href = "/dashboard";
+  //     }, 1500);
+  //   } catch (error) {
+  //     console.error("Registration error:", error);
+      
+  //     let errorMessage = "Registration failed. Please try again.";
+      
+  //     if (error.response?.data?.message) {
+  //       errorMessage = error.response.data.message;
+  //     } else if (error.message) {
+  //       errorMessage = error.message;
+  //     }
+      
+  //     setMessage({ type: "error", text: errorMessage });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Handle signup submission
+const handleSignup = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: "", text: "" });
+
+  if (!validateSignupForm()) {
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    
+    // Append all fields
+    formData.append("firstName", signupData.firstName.trim());
+    formData.append("lastName", signupData.lastName.trim());
+    formData.append("email", signupData.email.trim().toLowerCase());
+    formData.append("phone", signupData.phone.trim());
+    formData.append("password", signupData.password);
+    formData.append("confirmPassword", signupData.confirmPassword);
+    formData.append("dob", signupData.dob);
+    formData.append("gender", signupData.gender);
+    formData.append("address", signupData.address.trim());
+    formData.append("city", signupData.city.trim());
+    formData.append("state", signupData.state);
+
+    // Append profile image if exists
+    if (signupData.profileImage) {
+      formData.append("profileImage", signupData.profileImage);
     }
 
-    try {
-      const formData = new FormData();
-      
-      formData.append("firstName", signupData.firstName.trim());
-      formData.append("lastName", signupData.lastName.trim());
-      formData.append("email", signupData.email.trim().toLowerCase());
-      formData.append("phone", signupData.phone.trim());
-      formData.append("password", signupData.password);
-      formData.append("confirmPassword", signupData.confirmPassword);
-      formData.append("dob", signupData.dob);
-      formData.append("gender", signupData.gender);
-      formData.append("address", signupData.address.trim());
-      formData.append("city", signupData.city.trim());
-      formData.append("state", signupData.state);
+    // Create and append GPS coordinates
+    const geoJson = {
+      type: "Point",
+      coordinates: [
+        parseFloat(signupData.longitude),
+        parseFloat(signupData.latitude),
+      ],
+    };
+    formData.append("gps", JSON.stringify(geoJson));
 
-      if (signupData.profileImage) {
-        formData.append("profileImage", signupData.profileImage);
+    // Log FormData contents for debugging
+    console.log("Submitting registration...");
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: File - ${value.name} (${value.type})`);
+      } else {
+        console.log(`${key}:`, value);
       }
+    }
 
-      const geoJson = {
-        type: "Point",
-        coordinates: [
-          parseFloat(signupData.longitude),
-          parseFloat(signupData.latitude),
-        ],
-      };
-      formData.append("gps", JSON.stringify(geoJson));
-
-      await register(formData);
-      
+    const result = await register(formData);
+    
+    console.log('Registration result:', result);
+    
+    if (result.success) {
       setMessage({
         type: "success",
-        text: "Registration successful! You will be redirected shortly.",
+        text: result.message || "Registration successful! You will be redirected shortly.",
       });
 
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1500);
-    } catch (error) {
-      console.error("Registration error:", error);
-      
-      let errorMessage = "Registration failed. Please try again.";
-      
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
+    } else {
+      // Handle validation errors
+      if (result.validationErrors) {
+        const firstError = Array.isArray(result.validationErrors) 
+          ? result.validationErrors[0] 
+          : result.validationErrors;
+        
+        setMessage({ 
+          type: "error", 
+          text: firstError?.msg || firstError || result.message 
+        });
+      } else {
+        setMessage({ type: "error", text: result.message });
       }
-      
-      setMessage({ type: "error", text: errorMessage });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Registration error:", error);
+    setMessage({ 
+      type: "error", 
+      text: error.message || "Registration failed. Please try again." 
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Switch forms
   const switchToLogin = () => {
