@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import UserSidebar from "./UserSidebar";
 import LoggedInNavBar from "../headers/LoggedInNavBar";
 import "./User.css";
+import UnifiedHeader from "../headers/UnifiedHeader";
 
 const UserLayout = () => {
   const [sidebarState, setSidebarState] = useState({
@@ -28,7 +29,7 @@ const UserLayout = () => {
           : "sidebar-expanded"
       }`}
     >
-      <LoggedInNavBar />
+      <UnifiedHeader />
       <div className="user-content">
         <div className="content-layout">
           <div className="user-sidebar-layout">

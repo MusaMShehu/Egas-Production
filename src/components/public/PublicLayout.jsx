@@ -2,6 +2,7 @@
 import { Outlet, } from "react-router-dom";
 import Header from "../headers/Header";
 import Footer from "../headers/Footer";
+import UnifiedHeader from "../headers/UnifiedHeader";
 // import "../styles/PublicLayout.css";
 
 const PublicLayout = () => {
@@ -9,7 +10,7 @@ const PublicLayout = () => {
 
   return (
     <div className="layout-container">
-      <Header/>
+      <UnifiedHeader/>
 
       <main className="main">
         <Outlet />
