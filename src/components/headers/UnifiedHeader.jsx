@@ -142,7 +142,7 @@ const UnifiedHeader = () => {
               </div>
             </>
           ) : (
-            <button className="signin-btn" onClick={handleLoginClick}>
+            <button className="header-signin-btn" onClick={handleLoginClick}>
               Sign In
             </button>
           )}

@@ -1,599 +1,580 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  FaSearch,
-  FaPlus,
-  FaTimes,
-  FaExclamationCircle,
-  FaWallet,
-  FaCalendarAlt,
-  FaChartLine,
-  FaReceipt,
-  FaChevronLeft,
-  FaChevronRight,
-  FaShoppingBag,
-  FaSync
-} from "react-icons/fa";
-import "./UserPayment.css";
-import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
-
-const Payments = () => {
-  const [paymentData, setPaymentData] = useState({
-    walletBalance: 0,
-    totalSpent: 0,
-    thisMonthSpent: 0,
-    orderTotal: 0,
-    subscriptionTotal: 0,
-    topupTotal: 0,
-    orderMonthly: 0,
-    subscriptionMonthly: 0,
-    topupMonthly: 0,
-    recentActivities: [],
-    spendingByMonth: []
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const [showTopUpModal, setShowTopUpModal] = useState(false);
-  const [topUpAmount, setTopUpAmount] = useState(5000);
-  const [error, setError] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("all"); // "all", "orders", "subscriptions", "wallet"
-  const [paginationInfo, setPaginationInfo] = useState({
-    current: 1,
-    pages: 1,
-    total: 0,
-    hasNext: false,
-    hasPrev: false,
-  });
-
-  const API_BASE_URL = "https://egas-server-1.onrender.com";
-
-  const getAuthToken = useCallback(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Authentication token not found. Please log in again.");
-      warningToast("Please log in to access payment features");
-      return null;
-    }
-    return token;
-  }, []);
-
-  const getHeaders = useCallback(() => {
-    const token = getAuthToken();
-    return {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }, [getAuthToken]);
-
-  // Fetch dashboard data which includes all payment information
-  const fetchPaymentData = useCallback(async () => {
-    try {
-      const token = getAuthToken();
-      if (!token) return;
-
-      infoToast("Loading your payment information...");
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/dashboard/overview`,
-        {
-          headers: getHeaders(),
-        }
-      );
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          const errorMsg = "Session expired. Please log in again.";
-          setError(errorMsg);
-          warningToast(errorMsg);
-          return;
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch payment data");
-      }
-
-      setPaymentData(data.data || {});
-
-      // Calculate pagination for activities
-      const activities = data.data.recentActivities || [];
-      setPaginationInfo({
-        current: 1,
-        pages: Math.ceil(activities.length / 10),
-        total: activities.length,
-        hasNext: activities.length > 10,
-        hasPrev: false,
-      });
-
-      successToast("Payment data loaded successfully!");
-
-    } catch (error) {
-      console.error("Error fetching payment data:", error);
-      const errorMsg = error.message || "Failed to load payment data";
-      setError(errorMsg);
-      errorToast(errorMsg);
-    }
-  }, [API_BASE_URL, getAuthToken, getHeaders]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      setError(""); // Clear previous errors
-      try {
-        await fetchPaymentData();
-      } catch (error) {
-        console.error("Error loading data:", error);
-        const errorMsg = "Failed to load payment data";
-        setError(errorMsg);
-        errorToast(errorMsg);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, [fetchPaymentData]);
-
-  // Handle Paystack Top-up
-  const handleTopUp = async () => {
-    if (topUpAmount < 1000) {
-      const errorMsg = "Minimum top-up amount is ₦1,000";
-      setError(errorMsg);
-      warningToast(errorMsg);
-      return;
-    }
-
-    setIsProcessing(true);
-    setError("");
-    infoToast(`Processing wallet top-up of ₦${topUpAmount.toLocaleString()}...`);
-
-    try {
-      const token = getAuthToken();
-      if (!token) {
-        const errorMsg = "Authentication required";
-        setError(errorMsg);
-        warningToast("Please log in to top up your wallet");
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/v1/payments/wallet/topup`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ amount: topUpAmount }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Top-up failed: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.message || "Top-up failed");
-      }
-
-      if (result.authorization_url) {
-        successToast("Redirecting to Paystack for payment...");
-        // Redirect to Paystack
-        setTimeout(() => {
-          window.location.href = result.authorization_url;
-        }, 1500);
-      } else {
-        throw new Error("Paystack authorization URL not received");
-      }
-    } catch (error) {
-      console.error("Error processing top-up:", error);
-      const errorMsg = error.message || "Failed to process top-up.";
-      setError(errorMsg);
-      errorToast(errorMsg);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Filter activities based on search term and active tab
-  const filteredActivities = paymentData.recentActivities
-    ?.filter((activity) => {
-      const matchesSearch =
-        activity.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.status?.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesTab =
-        activeTab === "all" ||
-        (activeTab === "orders" && activity.type === "order") ||
-        (activeTab === "subscriptions" && activity.type === "subscription") ||
-        (activeTab === "wallet" && activity.type === "wallet_transaction");
-
-      return matchesSearch && matchesTab;
-    }) || [];
-
-  const formatDate = (date) => {
-    if (!date) return 'N/A';
-    try {
-      return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const formatCurrency = (amount) => {
-    const numAmount = parseFloat(amount) || 0;
-    return `₦${numAmount.toLocaleString()}`;
-  };
-
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'order':
-        return <FaShoppingBag />;
-      case 'subscription':
-        return <FaSync />;
-      case 'wallet_transaction':
-        return <FaWallet />;
-      default:
-        return <FaReceipt />;
-    }
-  };
-
-  const getStatusColor = (status, type) => {
-    if (type === 'wallet_transaction') {
-      return status?.toLowerCase() === 'credit' ? 'success' : 'warning';
-    }
-
-    const statusLower = status?.toLowerCase();
-    if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'active') {
-      return 'success';
-    } else if (statusLower === 'pending' || statusLower === 'processing') {
-      return 'pending';
-    } else if (statusLower === 'failed' || statusLower === 'cancelled' || statusLower === 'expired') {
-      return 'failed';
-    }
-    return 'pending';
-  };
-
-  const handleOpenTopUpModal = () => {
-    setShowTopUpModal(true);
-    infoToast("Opening wallet top-up form...");
-  };
-
-  const handleCloseTopUpModal = () => {
-    if (!isProcessing) {
-      setShowTopUpModal(false);
-      infoToast("Top-up cancelled");
-    }
-  };
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    infoToast(`Showing ${tab === "all" ? "all transactions" : tab + " transactions"}`);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    if (e.target.value) {
-      infoToast(`Searching for "${e.target.value}"...`);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm("");
-    successToast("Search cleared");
-  };
-
-  const handleAmountChange = (e) => {
-    const value = Math.max(0, parseInt(e.target.value) || 0);
-    setTopUpAmount(value);
-
-    if (value > 0 && value < 1000) {
-      warningToast("Minimum top-up amount is ₦1,000");
-    }
-  };
-
-  const handleCancelTopUp = () => {
-    setShowTopUpModal(false);
-    infoToast("Top-up cancelled");
-  };
-
-  if (isLoading) {
-    return (
-      <div className="pay-payments-page loading">
-        <div className="pay-loading-spinner"></div>
-        <p>Loading payment information...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="pay-payments-page">
-      <div className="pay-dashboard-header">
-        <h1>Payment Management</h1>
-        <div className="pay-header-actions">
-          <div className="pay-search-bar">
-            <FaSearch className="pay-search-icon" />
-            <input
-              type="text"
-              placeholder="Search transactions..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-            {searchTerm && (
-              <button
-                className="pay-clear-search-btn"
-                onClick={handleClearSearch}
-                title="Clear search"
-              >
-                <FaTimes />
-              </button>
-            )}
-          </div>
-          <button
-            className="pay-btn-primary"
-            onClick={handleOpenTopUpModal}
-            disabled={isProcessing}
-          >
-            <FaPlus className="pay-btn-icon" />
-            Top Up Wallet
-          </button>
-        </div>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="pay-error-message">
-          <FaExclamationCircle className="pay-error-icon" />
-          <span>{error}</span>
-          <button onClick={() => setError("")} className="pay-close-error">
-            <FaTimes />
-          </button>
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="pay-stats-container">
-        <div className="pay-stat-card balance-card">
-          <div className="pay-stat-icon">
-            <FaWallet />
-          </div>
-          <h3>Wallet Balance</h3>
-          <div className="pay-value">{formatCurrency(paymentData.walletBalance)}</div>
-          <div className="pay-stat-note">Available for purchases</div>
-        </div>
-
-        <div className="pay-stat-card spending-card">
-          <div className="pay-stat-icon">
-            <FaCalendarAlt />
-          </div>
-          <h3>This Month Spending</h3>
-          <div className="pay-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
-          <div className="pay-stat-breakdown">
-            <span>Orders: {formatCurrency(paymentData.orderMonthly)}</span>
-            <span>Subscriptions: {formatCurrency(paymentData.subscriptionMonthly)}</span>
-          </div>
-        </div>
-
-        <div className="pay-stat-card spending-card">
-          <div className="pay-stat-icon">
-            <FaChartLine />
-          </div>
-          <h3>Total Spending</h3>
-          <div className="pay-value">{formatCurrency(paymentData.totalSpent)}</div>
-          <div className="pay-stat-breakdown">
-            <span>Orders: {formatCurrency(paymentData.orderTotal)}</span>
-            <span>Subscriptions: {formatCurrency(paymentData.subscriptionTotal)}</span>
-          </div>
-        </div>
-
-        <div className="pay-stat-card topup-card">
-          <div className="pay-stat-icon">
-            <FaPlus />
-          </div>
-          <h3>Total Top-ups</h3>
-          <div className="pay-value">{formatCurrency(paymentData.topupTotal)}</div>
-          <div className="pay-stat-breakdown">
-            <span>This month: {formatCurrency(paymentData.topupMonthly)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment History */}
-      <div className="pay-content-section">
-        <div className="pay-section-header">
-          <h2>Payment History</h2>
-          <div className="pay-tab-container">
-            <button
-              className={`pay-tab ${activeTab === "all" ? "active" : ""}`}
-              onClick={() => handleTabChange("all")}
-            >
-              All Transactions
-            </button>
-            <button
-              className={`pay-tab ${activeTab === "orders" ? "active" : ""}`}
-              onClick={() => handleTabChange("orders")}
-            >
-              Orders
-            </button>
-            <button
-              className={`pay-tab ${activeTab === "subscriptions" ? "active" : ""}`}
-              onClick={() => handleTabChange("subscriptions")}
-            >
-              Subscriptions
-            </button>
-            <button
-              className={`pay-tab ${activeTab === "wallet" ? "active" : ""}`}
-              onClick={() => handleTabChange("wallet")}
-            >
-              Wallet
-            </button>
-          </div>
-          <span className="pay-count-badge">{filteredActivities.length} transactions</span>
-        </div>
-
-        {filteredActivities.length > 0 ? (
-          <div className="pay-table-container">
-            <div className="pay-table-responsive">
-              <table className="pay-payments-table">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredActivities.map((activity, index) => (
-                    <tr key={`${activity.type}-${index}-${activity.createdAt}`}>
-                      <td data-label="Type">
-                        <div className="pay-activity-type">
-                          {getActivityIcon(activity.type)}
-                          <span className="pay-type-text">
-                            {activity.type === 'order' ? 'Order' :
-                             activity.type === 'subscription' ? 'Subscription' :
-                             'Wallet Transaction'}
-                          </span>
-                        </div>
-                      </td>
-                      <td data-label="Description" className="pay-activity-title">
-                        {activity.title || 'N/A'}
-                      </td>
-                      <td data-label="Date">{formatDate(activity.createdAt)}</td>
-                      <td data-label="Amount" className="pay-amount">
-                        {activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? '+' : ''}
-                        {formatCurrency(activity.amount)}
-                      </td>
-                      <td data-label="Status">
-                        <span className={`pay-status-badge pay-status-${getStatusColor(activity.status, activity.type)}`}>
-                          {activity.status || 'pending'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : (
-          <div className="pay-no-payments">
-            <FaReceipt className="pay-no-payments-icon" />
-            <p>No {activeTab !== "all" ? activeTab : ""} transactions found</p>
-            {searchTerm && (
-              <button
-                className="pay-clear-search"
-                onClick={handleClearSearch}
-              >
-                Clear search
-              </button>
-            )}
-            {!searchTerm && activeTab !== "all" && (
-              <button
-                className="pay-show-all"
-                onClick={() => handleTabChange("all")}
-              >
-                Show all transactions
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Top-up Modal */}
-      {showTopUpModal && (
-        <div className="pay-payment-modal-overlay">
-          <div className="pay-payment-modal-content">
-            <div className="pay-payment-modal-header">
-              <h2>Top Up Wallet</h2>
-              <button
-                className="pay-close-btn"
-                onClick={handleCloseTopUpModal}
-                disabled={isProcessing}
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="pay-payment-modal-body">
-              <div className="pay-form-group">
-                <label htmlFor="amount">Amount (₦)</label>
-                <input
-                  type="number"
-                  id="amount"
-                  value={topUpAmount}
-                  onChange={handleAmountChange}
-                  min="1000"
-                  step="500"
-                  disabled={isProcessing}
-                  placeholder="Enter amount"
-                />
-                <small>Minimum amount: ₦1,000</small>
-                {topUpAmount >= 1000 && (
-                  <div className="pay-amount-preview">
-                    You are topping up: <strong>{formatCurrency(topUpAmount)}</strong>
-                  </div>
-                )}
-              </div>
-              {isProcessing && (
-                <div className="pay-payment-processing-overlay">
-                  <div className="pay-payment-processing-spinner"></div>
-                  <p>Redirecting to Paystack...</p>
-                </div>
-              )}
-            </div>
-            <div className="pay-payment-modal-footer">
-              <button
-                type="button"
-                className="pay-btn-secondary"
-                onClick={handleCancelTopUp}
-                disabled={isProcessing}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="pay-btn-primary"
-                onClick={handleTopUp}
-                disabled={isProcessing || topUpAmount < 1000}
-              >
-                {isProcessing
-                  ? "Processing..."
-                  : `Top Up ${formatCurrency(topUpAmount)}`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Payments;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// import React, { useState, useEffect, useCallback } from "react";
+// import {
+//   FaSearch,
+//   FaPlus,
+//   FaTimes,
+//   FaExclamationCircle,
+//   FaWallet,
+//   FaCalendarAlt,
+//   FaChartLine,
+//   FaReceipt,
+//   FaChevronLeft,
+//   FaChevronRight,
+//   FaShoppingBag,
+//   FaSync
+// } from "react-icons/fa";
+// import "./UserPayment.css";
+// import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
+
+// const Payments = () => {
+//   const [paymentData, setPaymentData] = useState({
+//     walletBalance: 0,
+//     totalSpent: 0,
+//     thisMonthSpent: 0,
+//     orderTotal: 0,
+//     subscriptionTotal: 0,
+//     topupTotal: 0,
+//     orderMonthly: 0,
+//     subscriptionMonthly: 0,
+//     topupMonthly: 0,
+//     recentActivities: [],
+//     spendingByMonth: []
+//   });
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [showTopUpModal, setShowTopUpModal] = useState(false);
+//   const [topUpAmount, setTopUpAmount] = useState(5000);
+//   const [error, setError] = useState("");
+//   const [isProcessing, setIsProcessing] = useState(false);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [activeTab, setActiveTab] = useState("all"); // "all", "orders", "subscriptions", "wallet"
+//   const [paginationInfo, setPaginationInfo] = useState({
+//     current: 1,
+//     pages: 1,
+//     total: 0,
+//     hasNext: false,
+//     hasPrev: false,
+//   });
+
+//   const API_BASE_URL = "https://egas-server-1.onrender.com";
+
+//   const getAuthToken = useCallback(() => {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       setError("Authentication token not found. Please log in again.");
+//       warningToast("Please log in to access payment features");
+//       return null;
+//     }
+//     return token;
+//   }, []);
+
+//   const getHeaders = useCallback(() => {
+//     const token = getAuthToken();
+//     return {
+//       "Content-Type": "application/json",
+//       ...(token && { Authorization: `Bearer ${token}` }),
+//     };
+//   }, [getAuthToken]);
+
+//   // Fetch dashboard data which includes all payment information
+//   const fetchPaymentData = useCallback(async () => {
+//     try {
+//       const token = getAuthToken();
+//       if (!token) return;
+
+//       infoToast("Loading your payment information...");
+
+//       const response = await fetch(
+//         `${API_BASE_URL}/api/v1/dashboard/overview`,
+//         {
+//           headers: getHeaders(),
+//         }
+//       );
+
+//       if (!response.ok) {
+//         if (response.status === 401) {
+//           const errorMsg = "Session expired. Please log in again.";
+//           setError(errorMsg);
+//           warningToast(errorMsg);
+//           return;
+//         }
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+
+//       const data = await response.json();
+
+//       if (!data.success) {
+//         throw new Error(data.message || "Failed to fetch payment data");
+//       }
+
+//       setPaymentData(data.data || {});
+
+//       // Calculate pagination for activities
+//       const activities = data.data.recentActivities || [];
+//       setPaginationInfo({
+//         current: 1,
+//         pages: Math.ceil(activities.length / 10),
+//         total: activities.length,
+//         hasNext: activities.length > 10,
+//         hasPrev: false,
+//       });
+
+//       successToast("Payment data loaded successfully!");
+
+//     } catch (error) {
+//       console.error("Error fetching payment data:", error);
+//       const errorMsg = error.message || "Failed to load payment data";
+//       setError(errorMsg);
+//       errorToast(errorMsg);
+//     }
+//   }, [API_BASE_URL, getAuthToken, getHeaders]);
+
+//   useEffect(() => {
+//     const loadData = async () => {
+//       setIsLoading(true);
+//       setError(""); // Clear previous errors
+//       try {
+//         await fetchPaymentData();
+//       } catch (error) {
+//         console.error("Error loading data:", error);
+//         const errorMsg = "Failed to load payment data";
+//         setError(errorMsg);
+//         errorToast(errorMsg);
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+//     loadData();
+//   }, [fetchPaymentData]);
+
+//   // Handle Paystack Top-up
+//   const handleTopUp = async () => {
+//     if (topUpAmount < 1000) {
+//       const errorMsg = "Minimum top-up amount is ₦1,000";
+//       setError(errorMsg);
+//       warningToast(errorMsg);
+//       return;
+//     }
+
+//     setIsProcessing(true);
+//     setError("");
+//     infoToast(`Processing wallet top-up of ₦${topUpAmount.toLocaleString()}...`);
+
+//     try {
+//       const token = getAuthToken();
+//       if (!token) {
+//         const errorMsg = "Authentication required";
+//         setError(errorMsg);
+//         warningToast("Please log in to top up your wallet");
+//         return;
+//       }
+
+//       const response = await fetch(`${API_BASE_URL}/api/v1/payments/wallet/topup`, {
+//         method: "POST",
+//         headers: getHeaders(),
+//         body: JSON.stringify({ amount: topUpAmount }),
+//       });
+
+//       if (!response.ok) {
+//         const errorData = await response.json();
+//         throw new Error(errorData.message || `Top-up failed: ${response.status}`);
+//       }
+
+//       const result = await response.json();
+
+//       if (!result.success) {
+//         throw new Error(result.message || "Top-up failed");
+//       }
+
+//       if (result.authorization_url) {
+//         successToast("Redirecting to Paystack for payment...");
+//         // Redirect to Paystack
+//         setTimeout(() => {
+//           window.location.href = result.authorization_url;
+//         }, 1500);
+//       } else {
+//         throw new Error("Paystack authorization URL not received");
+//       }
+//     } catch (error) {
+//       console.error("Error processing top-up:", error);
+//       const errorMsg = error.message || "Failed to process top-up.";
+//       setError(errorMsg);
+//       errorToast(errorMsg);
+//     } finally {
+//       setIsProcessing(false);
+//     }
+//   };
+
+//   // Filter activities based on search term and active tab
+//   const filteredActivities = paymentData.recentActivities
+//     ?.filter((activity) => {
+//       const matchesSearch =
+//         activity.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//         activity.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//         activity.status?.toLowerCase().includes(searchTerm.toLowerCase());
+
+//       const matchesTab =
+//         activeTab === "all" ||
+//         (activeTab === "orders" && activity.type === "order") ||
+//         (activeTab === "subscriptions" && activity.type === "subscription") ||
+//         (activeTab === "wallet" && activity.type === "wallet_transaction");
+
+//       return matchesSearch && matchesTab;
+//     }) || [];
+
+//   const formatDate = (date) => {
+//     if (!date) return 'N/A';
+//     try {
+//       return new Date(date).toLocaleDateString("en-US", {
+//         year: "numeric",
+//         month: "short",
+//         day: "numeric",
+//         hour: "2-digit",
+//         minute: "2-digit"
+//       });
+//     } catch (error) {
+//       return 'Invalid Date';
+//     }
+//   };
+
+//   const formatCurrency = (amount) => {
+//     const numAmount = parseFloat(amount) || 0;
+//     return `₦${numAmount.toLocaleString()}`;
+//   };
+
+//   const getActivityIcon = (type) => {
+//     switch (type) {
+//       case 'order':
+//         return <FaShoppingBag />;
+//       case 'subscription':
+//         return <FaSync />;
+//       case 'wallet_transaction':
+//         return <FaWallet />;
+//       default:
+//         return <FaReceipt />;
+//     }
+//   };
+
+//   const getStatusColor = (status, type) => {
+//     if (type === 'wallet_transaction') {
+//       return status?.toLowerCase() === 'credit' ? 'success' : 'warning';
+//     }
+
+//     const statusLower = status?.toLowerCase();
+//     if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'active') {
+//       return 'success';
+//     } else if (statusLower === 'pending' || statusLower === 'processing') {
+//       return 'pending';
+//     } else if (statusLower === 'failed' || statusLower === 'cancelled' || statusLower === 'expired') {
+//       return 'failed';
+//     }
+//     return 'pending';
+//   };
+
+//   const handleOpenTopUpModal = () => {
+//     setShowTopUpModal(true);
+//     infoToast("Opening wallet top-up form...");
+//   };
+
+//   const handleCloseTopUpModal = () => {
+//     if (!isProcessing) {
+//       setShowTopUpModal(false);
+//       infoToast("Top-up cancelled");
+//     }
+//   };
+
+//   const handleTabChange = (tab) => {
+//     setActiveTab(tab);
+//     infoToast(`Showing ${tab === "all" ? "all transactions" : tab + " transactions"}`);
+//   };
+
+//   const handleSearchChange = (e) => {
+//     setSearchTerm(e.target.value);
+//     if (e.target.value) {
+//       infoToast(`Searching for "${e.target.value}"...`);
+//     }
+//   };
+
+//   const handleClearSearch = () => {
+//     setSearchTerm("");
+//     successToast("Search cleared");
+//   };
+
+//   const handleAmountChange = (e) => {
+//     const value = Math.max(0, parseInt(e.target.value) || 0);
+//     setTopUpAmount(value);
+
+//     if (value > 0 && value < 1000) {
+//       warningToast("Minimum top-up amount is ₦1,000");
+//     }
+//   };
+
+//   const handleCancelTopUp = () => {
+//     setShowTopUpModal(false);
+//     infoToast("Top-up cancelled");
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="pay-payments-page loading">
+//         <div className="pay-loading-spinner"></div>
+//         <p>Loading payment information...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="pay-payments-page">
+//       <div className="pay-dashboard-header">
+//         <h1>Payment Management</h1>
+//         <div className="pay-header-actions">
+//           <div className="pay-search-bar">
+//             <FaSearch className="pay-search-icon" />
+//             <input
+//               type="text"
+//               placeholder="Search transactions..."
+//               value={searchTerm}
+//               onChange={handleSearchChange}
+//             />
+//             {searchTerm && (
+//               <button
+//                 className="pay-clear-search-btn"
+//                 onClick={handleClearSearch}
+//                 title="Clear search"
+//               >
+//                 <FaTimes />
+//               </button>
+//             )}
+//           </div>
+//           <button
+//             className="pay-btn-primary"
+//             onClick={handleOpenTopUpModal}
+//             disabled={isProcessing}
+//           >
+//             <FaPlus className="pay-btn-icon" />
+//             Top Up Wallet
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* Error Message */}
+//       {error && (
+//         <div className="pay-error-message">
+//           <FaExclamationCircle className="pay-error-icon" />
+//           <span>{error}</span>
+//           <button onClick={() => setError("")} className="pay-close-error">
+//             <FaTimes />
+//           </button>
+//         </div>
+//       )}
+
+//       {/* Stats */}
+//       <div className="pay-stats-container">
+//         <div className="pay-stat-card balance-card">
+//           <div className="pay-stat-icon">
+//             <FaWallet />
+//           </div>
+//           <h3>Wallet Balance</h3>
+//           <div className="pay-value">{formatCurrency(paymentData.walletBalance)}</div>
+//           <div className="pay-stat-note">Available for purchases</div>
+//         </div>
+
+//         <div className="pay-stat-card spending-card">
+//           <div className="pay-stat-icon">
+//             <FaCalendarAlt />
+//           </div>
+//           <h3>This Month Spending</h3>
+//           <div className="pay-value">{formatCurrency(paymentData.thisMonthSpent)}</div>
+//           <div className="pay-stat-breakdown">
+//             <span>Orders: {formatCurrency(paymentData.orderMonthly)}</span>
+//             <span>Subscriptions: {formatCurrency(paymentData.subscriptionMonthly)}</span>
+//           </div>
+//         </div>
+
+//         <div className="pay-stat-card spending-card">
+//           <div className="pay-stat-icon">
+//             <FaChartLine />
+//           </div>
+//           <h3>Total Spending</h3>
+//           <div className="pay-value">{formatCurrency(paymentData.totalSpent)}</div>
+//           <div className="pay-stat-breakdown">
+//             <span>Orders: {formatCurrency(paymentData.orderTotal)}</span>
+//             <span>Subscriptions: {formatCurrency(paymentData.subscriptionTotal)}</span>
+//           </div>
+//         </div>
+
+//         <div className="pay-stat-card topup-card">
+//           <div className="pay-stat-icon">
+//             <FaPlus />
+//           </div>
+//           <h3>Total Top-ups</h3>
+//           <div className="pay-value">{formatCurrency(paymentData.topupTotal)}</div>
+//           <div className="pay-stat-breakdown">
+//             <span>This month: {formatCurrency(paymentData.topupMonthly)}</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Payment History */}
+//       <div className="pay-content-section">
+//         <div className="pay-section-header">
+//           <h2>Payment History</h2>
+//           <div className="pay-tab-container">
+//             <button
+//               className={`pay-tab ${activeTab === "all" ? "active" : ""}`}
+//               onClick={() => handleTabChange("all")}
+//             >
+//               All Transactions
+//             </button>
+//             <button
+//               className={`pay-tab ${activeTab === "orders" ? "active" : ""}`}
+//               onClick={() => handleTabChange("orders")}
+//             >
+//               Orders
+//             </button>
+//             <button
+//               className={`pay-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+//               onClick={() => handleTabChange("subscriptions")}
+//             >
+//               Subscriptions
+//             </button>
+//             <button
+//               className={`pay-tab ${activeTab === "wallet" ? "active" : ""}`}
+//               onClick={() => handleTabChange("wallet")}
+//             >
+//               Wallet
+//             </button>
+//           </div>
+//           <span className="pay-count-badge">{filteredActivities.length} transactions</span>
+//         </div>
+
+//         {filteredActivities.length > 0 ? (
+//           <div className="pay-table-container">
+//             <div className="pay-table-responsive">
+//               <table className="pay-payments-table">
+//                 <thead>
+//                   <tr>
+//                     <th>Type</th>
+//                     <th>Description</th>
+//                     <th>Date</th>
+//                     <th>Amount</th>
+//                     <th>Status</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {filteredActivities.map((activity, index) => (
+//                     <tr key={`${activity.type}-${index}-${activity.createdAt}`}>
+//                       <td data-label="Type">
+//                         <div className="pay-activity-type">
+//                           {getActivityIcon(activity.type)}
+//                           <span className="pay-type-text">
+//                             {activity.type === 'order' ? 'Order' :
+//                              activity.type === 'subscription' ? 'Subscription' :
+//                              'Wallet Transaction'}
+//                           </span>
+//                         </div>
+//                       </td>
+//                       <td data-label="Description" className="pay-activity-title">
+//                         {activity.title || 'N/A'}
+//                       </td>
+//                       <td data-label="Date">{formatDate(activity.createdAt)}</td>
+//                       <td data-label="Amount" className="pay-amount">
+//                         {activity.type === 'wallet_transaction' && activity.status?.toLowerCase() === 'credit' ? '+' : ''}
+//                         {formatCurrency(activity.amount)}
+//                       </td>
+//                       <td data-label="Status">
+//                         <span className={`pay-status-badge pay-status-${getStatusColor(activity.status, activity.type)}`}>
+//                           {activity.status || 'pending'}
+//                         </span>
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         ) : (
+//           <div className="pay-no-payments">
+//             <FaReceipt className="pay-no-payments-icon" />
+//             <p>No {activeTab !== "all" ? activeTab : ""} transactions found</p>
+//             {searchTerm && (
+//               <button
+//                 className="pay-clear-search"
+//                 onClick={handleClearSearch}
+//               >
+//                 Clear search
+//               </button>
+//             )}
+//             {!searchTerm && activeTab !== "all" && (
+//               <button
+//                 className="pay-show-all"
+//                 onClick={() => handleTabChange("all")}
+//               >
+//                 Show all transactions
+//               </button>
+//             )}
+//           </div>
+//         )}
+//       </div>
+
+//       {/* Top-up Modal */}
+//       {showTopUpModal && (
+//         <div className="pay-payment-modal-overlay">
+//           <div className="pay-payment-modal-content">
+//             <div className="pay-payment-modal-header">
+//               <h2>Top Up Wallet</h2>
+//               <button
+//                 className="pay-close-btn"
+//                 onClick={handleCloseTopUpModal}
+//                 disabled={isProcessing}
+//               >
+//                 <FaTimes />
+//               </button>
+//             </div>
+//             <div className="pay-payment-modal-body">
+//               <div className="pay-form-group">
+//                 <label htmlFor="amount">Amount (₦)</label>
+//                 <input
+//                   type="number"
+//                   id="amount"
+//                   value={topUpAmount}
+//                   onChange={handleAmountChange}
+//                   min="1000"
+//                   step="500"
+//                   disabled={isProcessing}
+//                   placeholder="Enter amount"
+//                 />
+//                 <small>Minimum amount: ₦1,000</small>
+//                 {topUpAmount >= 1000 && (
+//                   <div className="pay-amount-preview">
+//                     You are topping up: <strong>{formatCurrency(topUpAmount)}</strong>
+//                   </div>
+//                 )}
+//               </div>
+//               {isProcessing && (
+//                 <div className="pay-payment-processing-overlay">
+//                   <div className="pay-payment-processing-spinner"></div>
+//                   <p>Redirecting to Paystack...</p>
+//                 </div>
+//               )}
+//             </div>
+//             <div className="pay-payment-modal-footer">
+//               <button
+//                 type="button"
+//                 className="pay-btn-secondary"
+//                 onClick={handleCancelTopUp}
+//                 disabled={isProcessing}
+//               >
+//                 Cancel
+//               </button>
+//               <button
+//                 type="button"
+//                 className="pay-btn-primary"
+//                 onClick={handleTopUp}
+//                 disabled={isProcessing || topUpAmount < 1000}
+//               >
+//                 {isProcessing
+//                   ? "Processing..."
+//                   : `Top Up ${formatCurrency(topUpAmount)}`}
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Payments;
 
 // import React, { useEffect, useState } from 'react';
 // import { toast } from "react-toastify";
@@ -864,308 +845,292 @@ export default Payments;
 
 // export default Payments;
 
+// src/pages/UserPayment.jsx
+import React, { useState, useEffect } from "react";
+import ApiService from "../../../api/apiService";
+import { useAuth } from "../../../contexts/AuthContext";
+import {
+  FaWallet,
+  FaPlus,
+  FaHistory,
+  FaTimes,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaSpinner,
+} from "react-icons/fa";
+import { formatCurrency, formatDate } from "../../../utils/helpers";
+import "./UserPayment.css";
+import {
+  successToast,
+  errorToast,
+  infoToast,
+  warningToast,
+} from "../../../utils/toast";
 
+const Payments = () => {
+  const [paymentData, setPaymentData] = useState({
+    walletBalance: 0,
+    totalSpent: 0,
+    thisMonthSpent: 0,
+    orderTotal: 0,
+    subscriptionTotal: 0,
+    topupTotal: 0,
+    orderMonthly: 0,
+    subscriptionMonthly: 0,
+    topupMonthly: 0,
+    recentActivities: [],
+    spendingByMonth: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [showTopupModal, setShowTopupModal] = useState(false);
+  const [topupAmount, setTopupAmount] = useState(5000);
+  const [error, setError] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
+  const fetchPaymentData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await ApiService.dashboard.getOverview();
+      const data = response.data;
+      if (data.success) {
+        setPaymentData(data.data || {});
+        successToast("Payment data loaded successfully!");
+      }
+    } catch (error) {
+      console.error("Error fetching payment data:", error);
+      setError(error.message || "Failed to load payment data");
+      errorToast(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchPaymentData();
+  }, []);
 
+  const handleTopup = async () => {
+    if (topupAmount < 1000) {
+      warningToast("Minimum top-up amount is ₦1,000");
+      return;
+    }
 
+    setIsProcessing(true);
+    infoToast(
+      `Processing wallet top-up of ₦${topupAmount.toLocaleString()}...`,
+    );
 
+    try {
+      const response = await ApiService.payments.initiateTopup(topupAmount);
+      const data = response.data;
+      if (data.success && data.authorization_url) {
+        successToast("Redirecting to Paystack for payment...");
+        setTimeout(() => {
+          window.location.href = data.authorization_url;
+        }, 1500);
+      } else {
+        throw new Error(data.message || "Top-up failed");
+      }
+    } catch (error) {
+      console.error("Error processing top-up:", error);
+      setError(error.message || "Failed to process top-up.");
+      errorToast(error.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
+  const getStatusBadge = (status, type) => {
+    let className = "status-badge";
+    if (type === "wallet_transaction") {
+      className += status?.toLowerCase() === "credit" ? " success" : " info";
+    } else {
+      switch (status?.toLowerCase()) {
+        case "completed":
+        case "success":
+          className += " success";
+          break;
+        case "pending":
+          className += " warning";
+          break;
+        case "failed":
+        case "cancelled":
+          className += " error";
+          break;
+        default:
+          className += " default";
+      }
+    }
+    return <span className={className}>{status}</span>;
+  };
 
+  const getTransactionIcon = (type) => {
+    switch (type) {
+      case "order":
+        return "🛒";
+      case "subscription":
+        return "🔄";
+      case "wallet_transaction":
+        return "💰";
+      default:
+        return "💳";
+    }
+  };
 
+  if (isLoading && paymentData.recentActivities?.length === 0) {
+    return (
+      <div className="pay-payments-container loading">
+        <div className="pay-loading-spinner"></div>
+        <p>Loading payment information...</p>
+      </div>
+    );
+  }
 
+  return (
+    <div className="pay-payments-container">
+      <div className="pay-payments-header">
+        <h1>Payment Management</h1>
+        <button
+          className="pay-btn-primary"
+          onClick={() => setShowTopupModal(true)}
+          disabled={isProcessing}
+        >
+          <FaPlus /> Top Up Wallet
+        </button>
+      </div>
+      <div className="pay-wallet-card">
+        <div className="pay-wallet-icon">
+          <FaWallet />
+        </div>
+        <div className="pay-wallet-info">
+          <h3>Wallet Balance</h3>
+          <div className="pay-wallet-balance">
+            {formatCurrency(paymentData.walletBalance)}
+          </div>
+          <p className="pay-wallet-subtitle">
+            Available for purchases and subscriptions
+          </p>
+        </div>
+      </div>
+      <div className="pay-transactions-section">
+        <div className="pay-section-header">
+          <h2>
+            <FaHistory /> Transaction History
+          </h2>
+          {paymentData.recentActivities?.length > 0 && (
+            <span className="pay-transaction-count">
+              {paymentData.recentActivities.length} transactions
+            </span>
+          )}
+        </div>
+        {paymentData.recentActivities?.length === 0 ? (
+          <div className="pay-empty-state">
+            <p>No transactions yet</p>
+            <small>Your payment history will appear here</small>
+          </div>
+        ) : (
+          <>
+            <div className="pay-transactions-list">
+              {paymentData.recentActivities.map((transaction, index) => (
+                <div
+                  key={`${transaction.type}-${index}-${transaction.createdAt}`}
+                  className="pay-transaction-item"
+                >
+                  <div className="pay-transaction-icon">
+                    {getTransactionIcon(transaction.type)}
+                  </div>
+                  <div className="pay-transaction-details">
+                    <div className="pay-transaction-title">
+                      {transaction.title || transaction.description}
+                    </div>
+                    <div className="pay-transaction-meta">
+                      <span className="pay-transaction-date">
+                        {formatDate(transaction.createdAt)}
+                      </span>
+                      {getStatusBadge(transaction.status, transaction.type)}
+                    </div>
+                  </div>
+                  <div className="pay-transaction-amount">
+                    {transaction.type === "wallet_transaction" &&
+                    transaction.status?.toLowerCase() === "credit"
+                      ? "+"
+                      : ""}
+                    {formatCurrency(transaction.amount)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      {showTopupModal && (
+        <div className="pay-modal-overlay">
+          <div className="pay-modal">
+            <div className="pay-modal-header">
+              <h3>Top Up Wallet</h3>
+              <button
+                className="pay-close-button"
+                onClick={() => setShowTopupModal(false)}
+                disabled={isProcessing}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="pay-modal-body">
+              <div className="pay-form-group">
+                <label>Amount (₦)</label>
+                <input
+                  type="number"
+                  value={topupAmount}
+                  onChange={(e) =>
+                    setTopupAmount(parseInt(e.target.value) || 0)
+                  }
+                  min="1000"
+                  step="500"
+                  disabled={isProcessing}
+                />
+                <small>Minimum amount: ₦1,000</small>
+              </div>
+              <div className="pay-quick-amounts">
+                {[1000, 2000, 5000, 10000].map((amount) => (
+                  <button
+                    key={amount}
+                    className={`pay-quick-amount ${topupAmount === amount ? "active" : ""}`}
+                    onClick={() => setTopupAmount(amount)}
+                    disabled={isProcessing}
+                  >
+                    ₦{amount.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="pay-modal-footer">
+              <button
+                className="pay-btn-secondary"
+                onClick={() => setShowTopupModal(false)}
+                disabled={isProcessing}
+              >
+                Cancel
+              </button>
+              <button
+                className="pay-btn-primary"
+                onClick={handleTopup}
+                disabled={isProcessing || topupAmount < 1000}
+              >
+                {isProcessing ? (
+                  <>
+                    <FaSpinner className="pay-spin" /> Processing...
+                  </>
+                ) : (
+                  `Top Up ₦${topupAmount.toLocaleString()}`
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
-
-
-
-
-
-// // src/pages/UserPayment.jsx
-// import React, { useState, useEffect } from "react";
-// import ApiService from "../../../api/apiService";
-// import { useAuth } from "../../../contexts/AuthContext";
-// import {
-//   FaWallet,
-//   FaPlus,
-//   FaHistory,
-//   FaTimes,
-//   FaCheckCircle,
-//   FaExclamationTriangle,
-//   FaSpinner,
-// } from "react-icons/fa";
-// import { formatCurrency, formatDate } from "../../../utils/helpers";
-// import "./UserPayment.css";
-// import {
-//   successToast,
-//   errorToast,
-//   infoToast,
-//   warningToast,
-// } from "../../../utils/toast";
-
-// const Payments = () => {
-//   const [paymentData, setPaymentData] = useState({
-//     walletBalance: 0,
-//     totalSpent: 0,
-//     thisMonthSpent: 0,
-//     orderTotal: 0,
-//     subscriptionTotal: 0,
-//     topupTotal: 0,
-//     orderMonthly: 0,
-//     subscriptionMonthly: 0,
-//     topupMonthly: 0,
-//     recentActivities: [],
-//     spendingByMonth: [],
-//   });
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [showTopupModal, setShowTopupModal] = useState(false);
-//   const [topupAmount, setTopupAmount] = useState(5000);
-//   const [error, setError] = useState("");
-//   const [isProcessing, setIsProcessing] = useState(false);
-
-//   const fetchPaymentData = async () => {
-//     try {
-//       setIsLoading(true);
-//       const response = await ApiService.dashboard.getOverview();
-//       const data = response.data;
-//       if (data.success) {
-//         setPaymentData(data.data || {});
-//         successToast("Payment data loaded successfully!");
-//       }
-//     } catch (error) {
-//       console.error("Error fetching payment data:", error);
-//       setError(error.message || "Failed to load payment data");
-//       errorToast(error.message);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPaymentData();
-//   }, []);
-
-//   const handleTopup = async () => {
-//     if (topupAmount < 1000) {
-//       warningToast("Minimum top-up amount is ₦1,000");
-//       return;
-//     }
-
-//     setIsProcessing(true);
-//     infoToast(
-//       `Processing wallet top-up of ₦${topupAmount.toLocaleString()}...`,
-//     );
-
-//     try {
-//       const response = await ApiService.payments.initiateTopup(topupAmount);
-//       const data = response.data;
-//       if (data.success && data.authorization_url) {
-//         successToast("Redirecting to Paystack for payment...");
-//         setTimeout(() => {
-//           window.location.href = data.authorization_url;
-//         }, 1500);
-//       } else {
-//         throw new Error(data.message || "Top-up failed");
-//       }
-//     } catch (error) {
-//       console.error("Error processing top-up:", error);
-//       setError(error.message || "Failed to process top-up.");
-//       errorToast(error.message);
-//     } finally {
-//       setIsProcessing(false);
-//     }
-//   };
-
-//   const getStatusBadge = (status, type) => {
-//     let className = "status-badge";
-//     if (type === "wallet_transaction") {
-//       className += status?.toLowerCase() === "credit" ? " success" : " info";
-//     } else {
-//       switch (status?.toLowerCase()) {
-//         case "completed":
-//         case "success":
-//           className += " success";
-//           break;
-//         case "pending":
-//           className += " warning";
-//           break;
-//         case "failed":
-//         case "cancelled":
-//           className += " error";
-//           break;
-//         default:
-//           className += " default";
-//       }
-//     }
-//     return <span className={className}>{status}</span>;
-//   };
-
-//   const getTransactionIcon = (type) => {
-//     switch (type) {
-//       case "order":
-//         return "🛒";
-//       case "subscription":
-//         return "🔄";
-//       case "wallet_transaction":
-//         return "💰";
-//       default:
-//         return "💳";
-//     }
-//   };
-
-//   if (isLoading && paymentData.recentActivities?.length === 0) {
-//     return (
-//       <div className="pay-payments-container loading">
-//         <div className="pay-loading-spinner"></div>
-//         <p>Loading payment information...</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="pay-payments-container">
-//       <div className="pay-payments-header">
-//         <h1>Payment Management</h1>
-//         <button
-//           className="pay-btn-primary"
-//           onClick={() => setShowTopupModal(true)}
-//           disabled={isProcessing}
-//         >
-//           <FaPlus /> Top Up Wallet
-//         </button>
-//       </div>
-//       <div className="pay-wallet-card">
-//         <div className="pay-wallet-icon">
-//           <FaWallet />
-//         </div>
-//         <div className="pay-wallet-info">
-//           <h3>Wallet Balance</h3>
-//           <div className="pay-wallet-balance">
-//             {formatCurrency(paymentData.walletBalance)}
-//           </div>
-//           <p className="pay-wallet-subtitle">
-//             Available for purchases and subscriptions
-//           </p>
-//         </div>
-//       </div>
-//       <div className="pay-transactions-section">
-//         <div className="pay-section-header">
-//           <h2>
-//             <FaHistory /> Transaction History
-//           </h2>
-//           {paymentData.recentActivities?.length > 0 && (
-//             <span className="pay-transaction-count">
-//               {paymentData.recentActivities.length} transactions
-//             </span>
-//           )}
-//         </div>
-//         {paymentData.recentActivities?.length === 0 ? (
-//           <div className="pay-empty-state">
-//             <p>No transactions yet</p>
-//             <small>Your payment history will appear here</small>
-//           </div>
-//         ) : (
-//           <>
-//             <div className="pay-transactions-list">
-//               {paymentData.recentActivities.map((transaction, index) => (
-//                 <div
-//                   key={`${transaction.type}-${index}-${transaction.createdAt}`}
-//                   className="pay-transaction-item"
-//                 >
-//                   <div className="pay-transaction-icon">
-//                     {getTransactionIcon(transaction.type)}
-//                   </div>
-//                   <div className="pay-transaction-details">
-//                     <div className="pay-transaction-title">
-//                       {transaction.title || transaction.description}
-//                     </div>
-//                     <div className="pay-transaction-meta">
-//                       <span className="pay-transaction-date">
-//                         {formatDate(transaction.createdAt)}
-//                       </span>
-//                       {getStatusBadge(transaction.status, transaction.type)}
-//                     </div>
-//                   </div>
-//                   <div className="pay-transaction-amount">
-//                     {transaction.type === "wallet_transaction" &&
-//                     transaction.status?.toLowerCase() === "credit"
-//                       ? "+"
-//                       : ""}
-//                     {formatCurrency(transaction.amount)}
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-//           </>
-//         )}
-//       </div>
-//       {showTopupModal && (
-//         <div className="pay-modal-overlay">
-//           <div className="pay-modal">
-//             <div className="pay-modal-header">
-//               <h3>Top Up Wallet</h3>
-//               <button
-//                 className="pay-close-button"
-//                 onClick={() => setShowTopupModal(false)}
-//                 disabled={isProcessing}
-//               >
-//                 <FaTimes />
-//               </button>
-//             </div>
-//             <div className="pay-modal-body">
-//               <div className="pay-form-group">
-//                 <label>Amount (₦)</label>
-//                 <input
-//                   type="number"
-//                   value={topupAmount}
-//                   onChange={(e) =>
-//                     setTopupAmount(parseInt(e.target.value) || 0)
-//                   }
-//                   min="1000"
-//                   step="500"
-//                   disabled={isProcessing}
-//                 />
-//                 <small>Minimum amount: ₦1,000</small>
-//               </div>
-//               <div className="pay-quick-amounts">
-//                 {[1000, 2000, 5000, 10000].map((amount) => (
-//                   <button
-//                     key={amount}
-//                     className={`pay-quick-amount ${topupAmount === amount ? "active" : ""}`}
-//                     onClick={() => setTopupAmount(amount)}
-//                     disabled={isProcessing}
-//                   >
-//                     ₦{amount.toLocaleString()}
-//                   </button>
-//                 ))}
-//               </div>
-//             </div>
-//             <div className="pay-modal-footer">
-//               <button
-//                 className="pay-btn-secondary"
-//                 onClick={() => setShowTopupModal(false)}
-//                 disabled={isProcessing}
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 className="pay-btn-primary"
-//                 onClick={handleTopup}
-//                 disabled={isProcessing || topupAmount < 1000}
-//               >
-//                 {isProcessing ? (
-//                   <>
-//                     <FaSpinner className="pay-spin" /> Processing...
-//                   </>
-//                 ) : (
-//                   `Top Up ₦${topupAmount.toLocaleString()}`
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Payments;
+export default Payments;
