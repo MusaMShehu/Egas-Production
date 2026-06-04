@@ -27,7 +27,7 @@ const MobileBottomTabs = () => {
     },
     {
       id: 'refill',
-      label: 'Refill',
+      label: 'Buy Gas',
       icon: <FaGasPump />,
       path: '/subscription-plan',
       activeIcon: <FaFire style={{ color: '#FF6B35' }} />

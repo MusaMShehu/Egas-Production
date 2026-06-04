@@ -1841,7 +1841,8 @@ const DashboardMobile = () => {
   const HeroBanner = () => (
     <div className="mobdash-mobile-hero-banner">
       <div className="mobdash-hero-content">
-        <h1>Fast & Reliable Gas Delivery!</h1>
+        <h1>e-GAS</h1>
+        <h3>Fast & Reliable Gas Delivery!</h3>
         <div className="mobdash-hero-features">
           <div className="mobdash-hero-feature">
             <FaPercentage />
@@ -2034,7 +2035,7 @@ const DashboardMobile = () => {
     <div className="mobdash-mobile-dashboard-container">
       <div className="mobdash-mobile-dashboard-header">
         <div className="mobdash-header-content">
-          <h1>e-Gas Dashboard</h1>
+          <h1>e-Gas</h1>
           <button
             className="mobdash-mobile-refresh-btn"
             onClick={handleRefresh}

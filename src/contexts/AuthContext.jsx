@@ -433,25 +433,67 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('auth:logout', handleLogout);
   }, []);
 
+  // const login = async (email, password) => {
+  //   const response = await ApiService.auth.login({ email, password });
+  //     const data = response.data;
+  //     if (data.success && (data.user || data.data)) {
+  //     const userData = data.user || data.data;
+  //     setUser(userData);
+  //     setIsAuthenticated(true);
+  //     localStorage.setItem('user', JSON.stringify({
+  //       id: userData.id || userData._id,
+  //       firstName: userData.firstName,
+  //       lastName: userData.lastName,
+  //       email: userData.email,
+  //       role: userData.role,
+  //       profileImage: userData.profileImage
+  //     }));
+  //     return response;
+  //   }
+  //   throw new Error(response.message || 'Login failed');
+  // };
+
   const login = async (email, password) => {
-    const response = await ApiService.auth.login({ email, password });
-      const data = response.data;
-      if (data.success && (data.user || data.data)) {
-      const userData = data.user || data.data;
-      setUser(userData);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify({
+  // Login first
+  const loginResponse = await ApiService.auth.login({
+    email,
+    password,
+  });
+
+  if (!loginResponse.data.success) {
+    throw new Error(
+      loginResponse.data.message || "Login failed"
+    );
+  }
+
+  // Immediately fetch full profile
+  const meResponse = await ApiService.auth.getMe();
+
+  const meData = meResponse.data;
+
+  if (meData.success && (meData.user || meData.data)) {
+    const userData = meData.user || meData.data;
+
+    setUser(userData);
+    setIsAuthenticated(true);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
         id: userData.id || userData._id,
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
         role: userData.role,
-        profileImage: userData.profileImage
-      }));
-      return response;
-    }
-    throw new Error(response.message || 'Login failed');
-  };
+        profileImage: userData.profileImage,
+      })
+    );
+
+    return userData;
+  }
+
+  throw new Error("Failed to load user profile");
+};
 
   const logout = async () => {
     try {

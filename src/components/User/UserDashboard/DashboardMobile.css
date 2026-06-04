@@ -219,8 +219,9 @@
 }
 
 .mobdash-action-btn.mobdash-quaternary {
-  background: #6c757d;
-  color: white;
+  background: #ffffff;
+  color: rgb(14, 19, 24);
+  border: 1px solid #d0d0d0;
 }
 
 .mobdash-action-btn svg {

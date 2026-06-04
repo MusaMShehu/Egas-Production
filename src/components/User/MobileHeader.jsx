@@ -17,7 +17,7 @@ const MobileHeader = () => {
     return 'eGas';
   };
   
-  const showBackButton = !['/user/dashboard', '/user'].includes(location.pathname);
+  const showBackButton = !['/dashboard', '/'].includes(location.pathname);
 
   return (
     <header className="mobile-header">

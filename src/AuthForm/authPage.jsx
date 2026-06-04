@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff, MapPin, Crosshair } from 'lucide-react';
 import "./authPage.css";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const { login, register } = useAuth();
@@ -12,6 +13,7 @@ const AuthPage = () => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   // Password visibility states
   const [showPassword, setShowPassword] = useState({
@@ -189,7 +191,8 @@ const AuthPage = () => {
       setMessage({ type: "success", text: "Welcome back!" });
       
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        // window.location.href = "/dashboard";
+        navigate("/dashboard");
       }, 1000);
     } catch (err) {
       setMessage({

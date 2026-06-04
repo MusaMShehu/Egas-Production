@@ -31,7 +31,7 @@
 //       biometricAuth: false
 //     }
 //   });
-  
+
 //   const [activeTab, setActiveTab] = useState('general');
 //   const [isLoading, setIsLoading] = useState(false);
 //   const [isSaving, setIsSaving] = useState(false);
@@ -77,9 +77,9 @@
 //   };
 
 //   const handleSettingChange = (key, value) => {
-//     setSettings(prev => ({ 
-//       ...prev, 
-//       [key]: value 
+//     setSettings(prev => ({
+//       ...prev,
+//       [key]: value
 //     }));
 //   };
 
@@ -97,7 +97,7 @@
 //     setIsSaving(true);
 //     setError('');
 //     setSuccess('');
-    
+
 //     try {
 //       const token = localStorage.getItem('token');
 //       const response = await fetch(`${API_BASE_URL}/settings`, {
@@ -135,7 +135,7 @@
 //   const confirmAccountAction = async () => {
 //     try {
 //       const token = localStorage.getItem('token');
-      
+
 //       if (modalAction === 'password') {
 //         navigate('/change-password');
 //       } else if (modalAction === 'email') {
@@ -156,7 +156,7 @@
 
 //   const downloadPersonalData = async () => {
 //     infoToast('Downloading your data...');
-    
+
 //     try {
 //       const token = localStorage.getItem('token');
 //       const response = await fetch(`${API_BASE_URL}/settings/export-data`, {
@@ -174,7 +174,7 @@
 //       link.click();
 //       link.remove();
 //       window.URL.revokeObjectURL(url);
-      
+
 //       successToast('Data downloaded successfully');
 //     } catch (err) {
 //       console.error('Download error:', err);
@@ -189,7 +189,7 @@
 //     }
 
 //     warningToast('Deleting account...');
-    
+
 //     try {
 //       const token = localStorage.getItem('token');
 //       const response = await fetch(`${API_BASE_URL}/users/me`, {
@@ -235,7 +235,7 @@
 //       {/* Header */}
 //       <div className="mobset-settings-header">
 //         <h1>Settings</h1>
-//         <button 
+//         <button
 //           className="mobset-save-btn"
 //           onClick={handleSaveSettings}
 //           disabled={isSaving}
@@ -276,31 +276,31 @@
 
 //       {/* Settings Tabs */}
 //       <div className="mobset-settings-tabs">
-//         <button 
+//         <button
 //           className={`mobset-settings-tab ${activeTab === 'general' ? 'mobset-active' : ''}`}
 //           onClick={() => setActiveTab('general')}
 //         >
 //           <FaLanguage className="mobset-tab-icon" />
 //           <span>General</span>
 //         </button>
-        
-//         <button 
+
+//         <button
 //           className={`mobset-settings-tab ${activeTab === 'notifications' ? 'mobset-active' : ''}`}
 //           onClick={() => setActiveTab('notifications')}
 //         >
 //           <FaBell className="mobset-tab-icon" />
 //           <span>Notifications</span>
 //         </button>
-        
-//         <button 
+
+//         <button
 //           className={`mobset-settings-tab ${activeTab === 'privacy' ? 'mobset-active' : ''}`}
 //           onClick={() => setActiveTab('privacy')}
 //         >
 //           <FaShieldAlt className="mobset-tab-icon" />
 //           <span>Privacy</span>
 //         </button>
-        
-//         <button 
+
+//         <button
 //           className={`mobset-settings-tab ${activeTab === 'account' ? 'mobset-active' : ''}`}
 //           onClick={() => setActiveTab('account')}
 //         >
@@ -318,13 +318,13 @@
 //               <FaLanguage />
 //               General Settings
 //             </h2>
-            
+
 //             <div className="mobset-setting-group">
 //               <label className="mobset-setting-label">
 //                 <FaLanguage className="mobset-label-icon" />
 //                 <span>Language</span>
 //               </label>
-//               <select 
+//               <select
 //                 className="mobset-setting-select"
 //                 value={settings.language}
 //                 onChange={(e) => handleSettingChange('language', e.target.value)}
@@ -342,7 +342,7 @@
 //                 <FaMoneyBill className="mobset-label-icon" />
 //                 <span>Currency</span>
 //               </label>
-//               <select 
+//               <select
 //                 className="mobset-setting-select"
 //                 value={settings.currency}
 //                 onChange={(e) => handleSettingChange('currency', e.target.value)}
@@ -372,7 +372,7 @@
 
 //             <div className="mobset-setting-group">
 //               <h3 className="mobset-sub-title">Channels</h3>
-              
+
 //               <div className="mobset-toggle-group">
 //                 <div className="mobset-toggle-item">
 //                   <div className="mobset-toggle-label">
@@ -380,7 +380,7 @@
 //                     <span>Email Notifications</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.email}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'email', e.target.checked)}
@@ -396,7 +396,7 @@
 //                     <span>SMS Notifications</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.sms}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'sms', e.target.checked)}
@@ -412,7 +412,7 @@
 //                     <span>Push Notifications</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.push}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'push', e.target.checked)}
@@ -426,7 +426,7 @@
 
 //             <div className="mobset-setting-group">
 //               <h3 className="mobset-sub-title">Notification Types</h3>
-              
+
 //               <div className="mobset-toggle-group">
 //                 <div className="mobset-toggle-item">
 //                   <div className="mobset-toggle-label">
@@ -434,7 +434,7 @@
 //                     <span>Order Updates</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.orderUpdates}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'orderUpdates', e.target.checked)}
@@ -450,7 +450,7 @@
 //                     <span>Delivery Notifications</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.deliveryNotifications}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'deliveryNotifications', e.target.checked)}
@@ -466,7 +466,7 @@
 //                     <span>Promotional Offers</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.promotionalOffers}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'promotionalOffers', e.target.checked)}
@@ -482,7 +482,7 @@
 //                     <span>Newsletter</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.notifications.newsletter}
 //                       onChange={(e) => handleNestedSettingChange('notifications', 'newsletter', e.target.checked)}
@@ -506,14 +506,14 @@
 
 //             <div className="mobset-setting-group">
 //               <h3 className="mobset-sub-title">Privacy Settings</h3>
-              
+
 //               <div className="mobset-select-group">
 //                 <div className="mobset-setting-item">
 //                   <label className="mobset-setting-label">
 //                     <FaEye className="mobset-label-icon" />
 //                     <span>Profile Visibility</span>
 //                   </label>
-//                   <select 
+//                   <select
 //                     className="mobset-setting-select"
 //                     value={settings.privacy.profileVisibility}
 //                     onChange={(e) => handleNestedSettingChange('privacy', 'profileVisibility', e.target.value)}
@@ -532,7 +532,7 @@
 //                       <span>Data Sharing for Analytics</span>
 //                     </div>
 //                     <label className="mobset-toggle-switch">
-//                       <input 
+//                       <input
 //                         type="checkbox"
 //                         checked={settings.privacy.dataSharing}
 //                         onChange={(e) => handleNestedSettingChange('privacy', 'dataSharing', e.target.checked)}
@@ -548,7 +548,7 @@
 //                       <span>Location Sharing (for delivery)</span>
 //                     </div>
 //                     <label className="mobset-toggle-switch">
-//                       <input 
+//                       <input
 //                         type="checkbox"
 //                         checked={settings.privacy.locationSharing}
 //                         onChange={(e) => handleNestedSettingChange('privacy', 'locationSharing', e.target.checked)}
@@ -564,7 +564,7 @@
 //                       <span>Personalized Advertising</span>
 //                     </div>
 //                     <label className="mobset-toggle-switch">
-//                       <input 
+//                       <input
 //                         type="checkbox"
 //                         checked={settings.privacy.personalizedAds}
 //                         onChange={(e) => handleNestedSettingChange('privacy', 'personalizedAds', e.target.checked)}
@@ -579,7 +579,7 @@
 
 //             <div className="mobset-setting-group">
 //               <h3 className="mobset-sub-title">Security Settings</h3>
-              
+
 //               <div className="mobset-toggle-group">
 //                 <div className="mobset-toggle-item">
 //                   <div className="mobset-toggle-label">
@@ -587,7 +587,7 @@
 //                     <span>Two-Factor Authentication</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.security.twoFactor}
 //                       onChange={(e) => handleNestedSettingChange('security', 'twoFactor', e.target.checked)}
@@ -603,7 +603,7 @@
 //                     <span>Login Alerts</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.security.loginAlerts}
 //                       onChange={(e) => handleNestedSettingChange('security', 'loginAlerts', e.target.checked)}
@@ -619,7 +619,7 @@
 //                     <span>Biometric Authentication</span>
 //                   </div>
 //                   <label className="mobset-toggle-switch">
-//                     <input 
+//                     <input
 //                       type="checkbox"
 //                       checked={settings.security.biometricAuth}
 //                       onChange={(e) => handleNestedSettingChange('security', 'biometricAuth', e.target.checked)}
@@ -634,7 +634,7 @@
 //                     <FaHourglassHalf className="mobset-label-icon" />
 //                     <span>Session Timeout</span>
 //                   </label>
-//                   <select 
+//                   <select
 //                     className="mobset-setting-select"
 //                     value={settings.security.sessionTimeout}
 //                     onChange={(e) => handleNestedSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
@@ -662,9 +662,9 @@
 
 //             <div className="mobset-setting-group">
 //               <h3 className="mobset-sub-title">Account Management</h3>
-              
+
 //               <div className="mobset-action-list">
-//                 <button 
+//                 <button
 //                   className="mobset-action-item"
 //                   onClick={() => handleAccountAction('password')}
 //                   disabled={isSaving}
@@ -679,7 +679,7 @@
 //                   <FaChevronRight className="mobset-action-arrow" />
 //                 </button>
 
-//                 <button 
+//                 <button
 //                   className="mobset-action-item"
 //                   onClick={() => handleAccountAction('email')}
 //                   disabled={isSaving}
@@ -694,7 +694,7 @@
 //                   <FaChevronRight className="mobset-action-arrow" />
 //                 </button>
 
-//                 <button 
+//                 <button
 //                   className="mobset-action-item"
 //                   onClick={() => handleAccountAction('download')}
 //                   disabled={isSaving}
@@ -716,13 +716,13 @@
 //                 <FaExclamationTriangle />
 //                 Danger Zone
 //               </h3>
-              
+
 //               <div className="mobset-danger-warning">
 //                 <FaExclamationTriangle className="mobset-warning-icon" />
 //                 <p>These actions are irreversible. Please proceed with caution.</p>
 //               </div>
-              
-//               <button 
+
+//               <button
 //                 className="mobset-danger-action"
 //                 onClick={() => handleAccountAction('delete')}
 //                 disabled={isSaving}
@@ -741,7 +741,7 @@
 //           <div className="mobset-confirm-modal">
 //             <div className="mobset-modal-header">
 //               <h3>Confirm Action</h3>
-//               <button 
+//               <button
 //                 className="mobset-close-modal"
 //                 onClick={() => {
 //                   setShowConfirmModal(false);
@@ -751,7 +751,7 @@
 //                 <FaTimes />
 //               </button>
 //             </div>
-            
+
 //             <div className="mobset-modal-body">
 //               {modalAction === 'delete' ? (
 //                 <>
@@ -767,9 +767,9 @@
 //                 <p>Continue with this action?</p>
 //               )}
 //             </div>
-            
+
 //             <div className="mobset-modal-actions">
-//               <button 
+//               <button
 //                 className="mobset-modal-btn mobset-secondary"
 //                 onClick={() => {
 //                   setShowConfirmModal(false);
@@ -778,7 +778,7 @@
 //               >
 //                 Cancel
 //               </button>
-//               <button 
+//               <button
 //                 className="mobset-modal-btn mobset-primary"
 //                 onClick={confirmAccountAction}
 //               >
@@ -794,162 +794,824 @@
 
 // export default MobileSettings;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // src/pages/MobileUserSettings.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ApiService from '../../../api/apiService';
-import './MobileUserSettings.css';
-import { FaCog, FaBell, FaShieldAlt, FaUser, FaSave, FaTimes, FaLanguage, FaMoneyBill, FaEnvelope, FaSms, FaMobileAlt, FaBox, FaTruck, FaTag, FaNewspaper, FaEye, FaShareAlt, FaMapMarkerAlt, FaAd, FaLock, FaExclamationTriangle, FaUserShield, FaHourglassHalf, FaFingerprint, FaDownload, FaTrash, FaChevronRight, FaCheck } from 'react-icons/fa';
-import { successToast, errorToast, infoToast, warningToast } from "../../../utils/toast";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ApiService from "../../../api/apiService";
+import "./MobileUserSettings.css";
+import {
+  FaCog,
+  FaBell,
+  FaShieldAlt,
+  FaUser,
+  FaSave,
+  FaTimes,
+  FaLanguage,
+  FaMoneyBill,
+  FaEnvelope,
+  FaSms,
+  FaMobileAlt,
+  FaBox,
+  FaTruck,
+  FaTag,
+  FaNewspaper,
+  FaEye,
+  FaShareAlt,
+  FaMapMarkerAlt,
+  FaAd,
+  FaLock,
+  FaExclamationTriangle,
+  FaUserShield,
+  FaHourglassHalf,
+  FaFingerprint,
+  FaDownload,
+  FaTrash,
+  FaChevronRight,
+  FaCheck,
+} from "react-icons/fa";
+import {
+  successToast,
+  errorToast,
+  infoToast,
+  warningToast,
+} from "../../../utils/toast";
 
 const MobileSettings = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
-    language: 'english', currency: 'NGN',
-    notifications: { email: true, sms: true, push: true, orderUpdates: true, deliveryNotifications: true, promotionalOffers: false, newsletter: false },
-    privacy: { profileVisibility: 'private', dataSharing: false, locationSharing: true, personalizedAds: false },
-    security: { twoFactor: false, loginAlerts: true, sessionTimeout: 30, biometricAuth: false }
+    language: "english",
+    currency: "NGN",
+    notifications: {
+      email: true,
+      sms: true,
+      push: true,
+      orderUpdates: true,
+      deliveryNotifications: true,
+      promotionalOffers: false,
+      newsletter: false,
+    },
+    privacy: {
+      profileVisibility: "private",
+      dataSharing: false,
+      locationSharing: true,
+      personalizedAds: false,
+    },
+    security: {
+      twoFactor: false,
+      loginAlerts: true,
+      sessionTimeout: 30,
+      biometricAuth: false,
+    },
   });
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState("general");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [modalAction, setModalAction] = useState('');
+  const [modalAction, setModalAction] = useState("");
 
-  useEffect(() => { fetchSettings(); }, []);
+  useEffect(() => {
+    fetchSettings();
+  }, []);
 
   const fetchSettings = async () => {
     setIsLoading(true);
-    setError('');
+    setError("");
     try {
       const response = await ApiService.settings.get();
-      setSettings(response);
+      const data = response.data
+      setSettings(data);
     } catch (err) {
-      console.error('Error fetching settings:', err);
-      setError(err.message || 'Failed to load settings');
+      console.error("Error fetching settings:", err);
+      setError(err.message || "Failed to load settings");
       errorToast(err.message);
-    } finally { setIsLoading(false); }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSettingChange = (key, value) => setSettings(prev => ({ ...prev, [key]: value }));
-  const handleNestedSettingChange = (category, key, value) => setSettings(prev => ({ ...prev, [category]: { ...prev[category], [key]: value } }));
+  const handleSettingChange = (key, value) =>
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  const handleNestedSettingChange = (category, key, value) =>
+    setSettings((prev) => ({
+      ...prev,
+      [category]: { ...prev[category], [key]: value },
+    }));
 
   const handleSaveSettings = async () => {
     setIsSaving(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     try {
       await ApiService.settings.update(settings);
-      setSuccess('Settings saved successfully!');
-      successToast('Settings saved');
-      setTimeout(() => setSuccess(''), 3000);
+      setSuccess("Settings saved successfully!");
+      successToast("Settings saved");
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      console.error('Error saving settings:', err);
-      setError(err.message || 'Failed to save settings');
+      console.error("Error saving settings:", err);
+      setError(err.message || "Failed to save settings");
       errorToast(err.message);
-    } finally { setIsSaving(false); }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const downloadPersonalData = async () => {
-    infoToast('Downloading your data...');
+    infoToast("Downloading your data...");
     try {
       const blob = await ApiService.settings.exportData();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'personal-data.json';
+      link.download = "personal-data.json";
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      successToast('Data downloaded successfully');
+      successToast("Data downloaded successfully");
     } catch (err) {
-      console.error('Download error:', err);
-      errorToast('Failed to download data');
+      console.error("Download error:", err);
+      errorToast("Failed to download data");
     }
   };
 
   const deleteAccount = async () => {
-    if (!window.confirm('This will permanently delete your account. Are you sure?')) { infoToast('Account deletion cancelled'); return; }
-    warningToast('Deleting account...');
+    if (
+      !window.confirm(
+        "This will permanently delete your account. Are you sure?",
+      )
+    ) {
+      infoToast("Account deletion cancelled");
+      return;
+    }
+    warningToast("Deleting account...");
     try {
       await ApiService.settings.deleteAccount();
       await ApiService.auth.logout();
-      localStorage.removeItem('user');
-      successToast('Account deleted successfully');
-      setTimeout(() => navigate('/login'), 1500);
+      localStorage.removeItem("user");
+      successToast("Account deleted successfully");
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      console.error('Delete error:', err);
-      errorToast('Failed to delete account');
+      console.error("Delete error:", err);
+      errorToast("Failed to delete account");
     }
   };
 
-  const handleAccountAction = (action) => { setModalAction(action); setShowConfirmModal(true); };
+  const handleAccountAction = (action) => {
+    setModalAction(action);
+    setShowConfirmModal(true);
+  };
   const confirmAccountAction = () => {
-    if (modalAction === 'password') navigate('/change-password');
-    else if (modalAction === 'email') navigate('/update-email');
-    else if (modalAction === 'download') downloadPersonalData();
-    else if (modalAction === 'delete') deleteAccount();
+    if (modalAction === "password") navigate("/change-password");
+    else if (modalAction === "email") navigate("/update-email");
+    else if (modalAction === "download") downloadPersonalData();
+    else if (modalAction === "delete") deleteAccount();
     setShowConfirmModal(false);
-    setModalAction('');
+    setModalAction("");
   };
 
   const getCurrencySymbol = (currency) => {
     switch (currency) {
-      case 'NGN': return '₦';
-      case 'USD': return '$';
-      case 'EUR': return '€';
-      case 'GBP': return '£';
-      case 'JPY': return '¥';
-      case 'INR': return '₹';
-      default: return currency;
+      case "NGN":
+        return "₦";
+      case "USD":
+        return "$";
+      case "EUR":
+        return "€";
+      case "GBP":
+        return "£";
+      case "JPY":
+        return "¥";
+      case "INR":
+        return "₹";
+      default:
+        return currency;
     }
   };
 
-  if (isLoading) return (<div className="mobset-mobile-settings mobset-loading"><div className="mobset-loading-spinner"></div><p>Loading settings...</p></div>);
+  if (isLoading)
+    return (
+      <div className="mobset-mobile-settings mobset-loading">
+        <div className="mobset-loading-spinner"></div>
+        <p>Loading settings...</p>
+      </div>
+    );
 
   return (
     <div className="mobset-mobile-settings">
-      <div className="mobset-settings-header"><h1>Settings</h1><button className="mobset-save-btn" onClick={handleSaveSettings} disabled={isSaving}>{isSaving ? (<><div className="mobset-save-spinner"></div>Saving...</>) : (<><FaSave /> Save</>)}</button></div>
-      {error && (<div className="mobset-error-message"><FaTimes /><span>{error}</span><button onClick={() => setError('')} className="mobset-close-error"><FaTimes /></button></div>)}
-      {success && (<div className="mobset-success-message"><FaCheck /><span>{success}</span><button onClick={() => setSuccess('')} className="mobset-close-success"><FaTimes /></button></div>)}
+      <div className="mobset-settings-header">
+        <h1>Settings</h1>
+        <button
+          className="mobset-save-btn"
+          onClick={handleSaveSettings}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <>
+              <div className="mobset-save-spinner"></div>Saving...
+            </>
+          ) : (
+            <>
+              <FaSave /> Save
+            </>
+          )}
+        </button>
+      </div>
+      {error && (
+        <div className="mobset-error-message">
+          <FaTimes />
+          <span>{error}</span>
+          <button onClick={() => setError("")} className="mobset-close-error">
+            <FaTimes />
+          </button>
+        </div>
+      )}
+      {success && (
+        <div className="mobset-success-message">
+          <FaCheck />
+          <span>{success}</span>
+          <button
+            onClick={() => setSuccess("")}
+            className="mobset-close-success"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
       <div className="mobset-settings-tabs">
-        <button className={`mobset-settings-tab ${activeTab === 'general' ? 'mobset-active' : ''}`} onClick={() => setActiveTab('general')}><FaLanguage className="mobset-tab-icon" /><span>General</span></button>
-        <button className={`mobset-settings-tab ${activeTab === 'notifications' ? 'mobset-active' : ''}`} onClick={() => setActiveTab('notifications')}><FaBell className="mobset-tab-icon" /><span>Notifications</span></button>
-        <button className={`mobset-settings-tab ${activeTab === 'privacy' ? 'mobset-active' : ''}`} onClick={() => setActiveTab('privacy')}><FaShieldAlt className="mobset-tab-icon" /><span>Privacy</span></button>
-        <button className={`mobset-settings-tab ${activeTab === 'account' ? 'mobset-active' : ''}`} onClick={() => setActiveTab('account')}><FaUser className="mobset-tab-icon" /><span>Account</span></button>
+        <button
+          className={`mobset-settings-tab ${activeTab === "general" ? "mobset-active" : ""}`}
+          onClick={() => setActiveTab("general")}
+        >
+          <FaLanguage className="mobset-tab-icon" />
+          <span>General</span>
+        </button>
+        <button
+          className={`mobset-settings-tab ${activeTab === "notifications" ? "mobset-active" : ""}`}
+          onClick={() => setActiveTab("notifications")}
+        >
+          <FaBell className="mobset-tab-icon" />
+          <span>Notifications</span>
+        </button>
+        <button
+          className={`mobset-settings-tab ${activeTab === "privacy" ? "mobset-active" : ""}`}
+          onClick={() => setActiveTab("privacy")}
+        >
+          <FaShieldAlt className="mobset-tab-icon" />
+          <span>Privacy</span>
+        </button>
+        <button
+          className={`mobset-settings-tab ${activeTab === "account" ? "mobset-active" : ""}`}
+          onClick={() => setActiveTab("account")}
+        >
+          <FaUser className="mobset-tab-icon" />
+          <span>Account</span>
+        </button>
       </div>
       <div className="mobset-settings-content">
-        {activeTab === 'general' && (<div className="mobset-settings-section"><h2 className="mobset-section-title"><FaLanguage /> General Settings</h2><div className="mobset-setting-group"><label className="mobset-setting-label"><FaLanguage className="mobset-label-icon" /><span>Language</span></label><select className="mobset-setting-select" value={settings.language} onChange={(e) => handleSettingChange('language', e.target.value)} disabled={isSaving}><option value="english">English</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option></select></div><div className="mobset-setting-group"><label className="mobset-setting-label"><FaMoneyBill className="mobset-label-icon" /><span>Currency</span></label><select className="mobset-setting-select" value={settings.currency} onChange={(e) => handleSettingChange('currency', e.target.value)} disabled={isSaving}><option value="NGN">Nigerian Naira (₦)</option><option value="USD">US Dollar ($)</option><option value="EUR">Euro (€)</option><option value="GBP">British Pound (£)</option><option value="JPY">Japanese Yen (¥)</option><option value="INR">Indian Rupee (₹)</option></select><div className="mobset-setting-hint">Current: {getCurrencySymbol(settings.currency)}</div></div></div>)}
-        {activeTab === 'notifications' && (<div className="mobset-settings-section"><h2 className="mobset-section-title"><FaBell /> Notification Settings</h2><div className="mobset-setting-group"><h3 className="mobset-sub-title">Channels</h3><div className="mobset-toggle-group"><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaEnvelope className="mobset-toggle-icon" /><span>Email Notifications</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.email} onChange={(e) => handleNestedSettingChange('notifications', 'email', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaSms className="mobset-toggle-icon" /><span>SMS Notifications</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.sms} onChange={(e) => handleNestedSettingChange('notifications', 'sms', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaMobileAlt className="mobset-toggle-icon" /><span>Push Notifications</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.push} onChange={(e) => handleNestedSettingChange('notifications', 'push', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div></div></div><div className="mobset-setting-group"><h3 className="mobset-sub-title">Notification Types</h3><div className="mobset-toggle-group"><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaBox className="mobset-toggle-icon" /><span>Order Updates</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.orderUpdates} onChange={(e) => handleNestedSettingChange('notifications', 'orderUpdates', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaTruck className="mobset-toggle-icon" /><span>Delivery Notifications</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.deliveryNotifications} onChange={(e) => handleNestedSettingChange('notifications', 'deliveryNotifications', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaTag className="mobset-toggle-icon" /><span>Promotional Offers</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.promotionalOffers} onChange={(e) => handleNestedSettingChange('notifications', 'promotionalOffers', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaNewspaper className="mobset-toggle-icon" /><span>Newsletter</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.notifications.newsletter} onChange={(e) => handleNestedSettingChange('notifications', 'newsletter', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div></div></div></div>)}
-        {activeTab === 'privacy' && (<div className="mobset-settings-section"><h2 className="mobset-section-title"><FaShieldAlt /> Privacy & Security</h2><div className="mobset-setting-group"><h3 className="mobset-sub-title">Privacy Settings</h3><div className="mobset-select-group"><div className="mobset-setting-item"><label className="mobset-setting-label"><FaEye className="mobset-label-icon" /><span>Profile Visibility</span></label><select className="mobset-setting-select" value={settings.privacy.profileVisibility} onChange={(e) => handleNestedSettingChange('privacy', 'profileVisibility', e.target.value)} disabled={isSaving}><option value="public">Public</option><option value="friends">Friends Only</option><option value="private">Private</option></select></div><div className="mobset-toggle-group"><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaShareAlt className="mobset-toggle-icon" /><span>Data Sharing for Analytics</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.privacy.dataSharing} onChange={(e) => handleNestedSettingChange('privacy', 'dataSharing', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaMapMarkerAlt className="mobset-toggle-icon" /><span>Location Sharing (for delivery)</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.privacy.locationSharing} onChange={(e) => handleNestedSettingChange('privacy', 'locationSharing', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaAd className="mobset-toggle-icon" /><span>Personalized Advertising</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.privacy.personalizedAds} onChange={(e) => handleNestedSettingChange('privacy', 'personalizedAds', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div></div></div></div><div className="mobset-setting-group"><h3 className="mobset-sub-title">Security Settings</h3><div className="mobset-toggle-group"><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaLock className="mobset-toggle-icon" /><span>Two-Factor Authentication</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.security.twoFactor} onChange={(e) => handleNestedSettingChange('security', 'twoFactor', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaUserShield className="mobset-toggle-icon" /><span>Login Alerts</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.security.loginAlerts} onChange={(e) => handleNestedSettingChange('security', 'loginAlerts', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-toggle-item"><div className="mobset-toggle-label"><FaFingerprint className="mobset-toggle-icon" /><span>Biometric Authentication</span></div><label className="mobset-toggle-switch"><input type="checkbox" checked={settings.security.biometricAuth} onChange={(e) => handleNestedSettingChange('security', 'biometricAuth', e.target.checked)} disabled={isSaving} /><span className="mobset-toggle-slider"></span></label></div><div className="mobset-setting-item"><label className="mobset-setting-label"><FaHourglassHalf className="mobset-label-icon" /><span>Session Timeout</span></label><select className="mobset-setting-select" value={settings.security.sessionTimeout} onChange={(e) => handleNestedSettingChange('security', 'sessionTimeout', parseInt(e.target.value))} disabled={isSaving}><option value={15}>15 minutes</option><option value={30}>30 minutes</option><option value={60}>1 hour</option><option value={120}>2 hours</option><option value={0}>Never</option></select></div></div></div></div>)}
-        {activeTab === 'account' && (<div className="mobset-settings-section"><h2 className="mobset-section-title"><FaUser /> Account Settings</h2><div className="mobset-setting-group"><h3 className="mobset-sub-title">Account Management</h3><div className="mobset-action-list"><button className="mobset-action-item" onClick={() => handleAccountAction('password')} disabled={isSaving}><div className="mobset-action-content"><FaLock className="mobset-action-icon" /><div className="mobset-action-text"><span className="mobset-action-title">Change Password</span><span className="mobset-action-description">Update your account password</span></div></div><FaChevronRight className="mobset-action-arrow" /></button><button className="mobset-action-item" onClick={() => handleAccountAction('email')} disabled={isSaving}><div className="mobset-action-content"><FaEnvelope className="mobset-action-icon" /><div className="mobset-action-text"><span className="mobset-action-title">Update Email</span><span className="mobset-action-description">Change your email address</span></div></div><FaChevronRight className="mobset-action-arrow" /></button><button className="mobset-action-item" onClick={() => handleAccountAction('download')} disabled={isSaving}><div className="mobset-action-content"><FaDownload className="mobset-action-icon" /><div className="mobset-action-text"><span className="mobset-action-title">Download Personal Data</span><span className="mobset-action-description">Export all your account data</span></div></div><FaChevronRight className="mobset-action-arrow" /></button></div></div><div className="mobset-setting-group mobset-danger-zone"><h3 className="mobset-sub-title mobset-danger"><FaExclamationTriangle /> Danger Zone</h3><div className="mobset-danger-warning"><FaExclamationTriangle className="mobset-warning-icon" /><p>These actions are irreversible. Please proceed with caution.</p></div><button className="mobset-danger-action" onClick={() => handleAccountAction('delete')} disabled={isSaving}><FaTrash className="mobset-danger-icon" /><span>Delete Account</span></button></div></div>)}
+        {activeTab === "general" && (
+          <div className="mobset-settings-section">
+            <h2 className="mobset-section-title">
+              <FaLanguage /> General Settings
+            </h2>
+            <div className="mobset-setting-group">
+              <label className="mobset-setting-label">
+                <FaLanguage className="mobset-label-icon" />
+                <span>Language</span>
+              </label>
+              <select
+                className="mobset-setting-select"
+                value={settings?.language}
+                onChange={(e) =>
+                  handleSettingChange("language", e.target.value)
+                }
+                disabled={isSaving}
+              >
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="german">German</option>
+              </select>
+            </div>
+            <div className="mobset-setting-group">
+              <label className="mobset-setting-label">
+                <FaMoneyBill className="mobset-label-icon" />
+                <span>Currency</span>
+              </label>
+              <select
+                className="mobset-setting-select"
+                value={settings?.currency}
+                onChange={(e) =>
+                  handleSettingChange("currency", e.target.value)
+                }
+                disabled={isSaving}
+              >
+                <option value="NGN">Nigerian Naira (₦)</option>
+                <option value="USD">US Dollar ($)</option>
+                <option value="EUR">Euro (€)</option>
+                <option value="GBP">British Pound (£)</option>
+                <option value="JPY">Japanese Yen (¥)</option>
+                <option value="INR">Indian Rupee (₹)</option>
+              </select>
+              <div className="mobset-setting-hint">
+                Current: {getCurrencySymbol(settings.currency)}
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === "notifications" && (
+          <div className="mobset-settings-section">
+            <h2 className="mobset-section-title">
+              <FaBell /> Notification Settings
+            </h2>
+            <div className="mobset-setting-group">
+              <h3 className="mobset-sub-title">Channels</h3>
+              <div className="mobset-toggle-group">
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaEnvelope className="mobset-toggle-icon" />
+                    <span>Email Notifications</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.email}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "email",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaSms className="mobset-toggle-icon" />
+                    <span>SMS Notifications</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.sms}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "sms",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaMobileAlt className="mobset-toggle-icon" />
+                    <span>Push Notifications</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.push}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "push",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="mobset-setting-group">
+              <h3 className="mobset-sub-title">Notification Types</h3>
+              <div className="mobset-toggle-group">
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaBox className="mobset-toggle-icon" />
+                    <span>Order Updates</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.orderUpdates}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "orderUpdates",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaTruck className="mobset-toggle-icon" />
+                    <span>Delivery Notifications</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.deliveryNotifications}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "deliveryNotifications",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaTag className="mobset-toggle-icon" />
+                    <span>Promotional Offers</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.promotionalOffers}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "promotionalOffers",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaNewspaper className="mobset-toggle-icon" />
+                    <span>Newsletter</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.notifications?.newsletter}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "notifications",
+                          "newsletter",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === "privacy" && (
+          <div className="mobset-settings-section">
+            <h2 className="mobset-section-title">
+              <FaShieldAlt /> Privacy & Security
+            </h2>
+            <div className="mobset-setting-group">
+              <h3 className="mobset-sub-title">Privacy Settings</h3>
+              <div className="mobset-select-group">
+                <div className="mobset-setting-item">
+                  <label className="mobset-setting-label">
+                    <FaEye className="mobset-label-icon" />
+                    <span>Profile Visibility</span>
+                  </label>
+                  <select
+                    className="mobset-setting-select"
+                    value={settings?.privacy?.profileVisibility}
+                    onChange={(e) =>
+                      handleNestedSettingChange(
+                        "privacy",
+                        "profileVisibility",
+                        e.target.value,
+                      )
+                    }
+                    disabled={isSaving}
+                  >
+                    <option value="public">Public</option>
+                    <option value="friends">Friends Only</option>
+                    <option value="private">Private</option>
+                  </select>
+                </div>
+                <div className="mobset-toggle-group">
+                  <div className="mobset-toggle-item">
+                    <div className="mobset-toggle-label">
+                      <FaShareAlt className="mobset-toggle-icon" />
+                      <span>Data Sharing for Analytics</span>
+                    </div>
+                    <label className="mobset-toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={settings?.privacy?.dataSharing}
+                        onChange={(e) =>
+                          handleNestedSettingChange(
+                            "privacy",
+                            "dataSharing",
+                            e.target.checked,
+                          )
+                        }
+                        disabled={isSaving}
+                      />
+                      <span className="mobset-toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div className="mobset-toggle-item">
+                    <div className="mobset-toggle-label">
+                      <FaMapMarkerAlt className="mobset-toggle-icon" />
+                      <span>Location Sharing (for delivery)</span>
+                    </div>
+                    <label className="mobset-toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={settings?.privacy?.locationSharing}
+                        onChange={(e) =>
+                          handleNestedSettingChange(
+                            "privacy",
+                            "locationSharing",
+                            e.target.checked,
+                          )
+                        }
+                        disabled={isSaving}
+                      />
+                      <span className="mobset-toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div className="mobset-toggle-item">
+                    <div className="mobset-toggle-label">
+                      <FaAd className="mobset-toggle-icon" />
+                      <span>Personalized Advertising</span>
+                    </div>
+                    <label className="mobset-toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={settings?.privacy?.personalizedAds}
+                        onChange={(e) =>
+                          handleNestedSettingChange(
+                            "privacy",
+                            "personalizedAds",
+                            e.target.checked,
+                          )
+                        }
+                        disabled={isSaving}
+                      />
+                      <span className="mobset-toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mobset-setting-group">
+              <h3 className="mobset-sub-title">Security Settings</h3>
+              <div className="mobset-toggle-group">
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaLock className="mobset-toggle-icon" />
+                    <span>Two-Factor Authentication</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.security?.twoFactor}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "security",
+                          "twoFactor",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaUserShield className="mobset-toggle-icon" />
+                    <span>Login Alerts</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.security?.loginAlerts}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "security",
+                          "loginAlerts",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-toggle-item">
+                  <div className="mobset-toggle-label">
+                    <FaFingerprint className="mobset-toggle-icon" />
+                    <span>Biometric Authentication</span>
+                  </div>
+                  <label className="mobset-toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={settings?.security?.biometricAuth}
+                      onChange={(e) =>
+                        handleNestedSettingChange(
+                          "security",
+                          "biometricAuth",
+                          e.target.checked,
+                        )
+                      }
+                      disabled={isSaving}
+                    />
+                    <span className="mobset-toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="mobset-setting-item">
+                  <label className="mobset-setting-label">
+                    <FaHourglassHalf className="mobset-label-icon" />
+                    <span>Session Timeout</span>
+                  </label>
+                  <select
+                    className="mobset-setting-select"
+                    value={settings?.security?.sessionTimeout}
+                    onChange={(e) =>
+                      handleNestedSettingChange(
+                        "security",
+                        "sessionTimeout",
+                        parseInt(e.target.value),
+                      )
+                    }
+                    disabled={isSaving}
+                  >
+                    <option value={15}>15 minutes</option>
+                    <option value={30}>30 minutes</option>
+                    <option value={60}>1 hour</option>
+                    <option value={120}>2 hours</option>
+                    <option value={0}>Never</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === "account" && (
+          <div className="mobset-settings-section">
+            <h2 className="mobset-section-title">
+              <FaUser /> Account Settings
+            </h2>
+            <div className="mobset-setting-group">
+              <h3 className="mobset-sub-title">Account Management</h3>
+              <div className="mobset-action-list">
+                <button
+                  className="mobset-action-item"
+                  onClick={() => handleAccountAction("password")}
+                  disabled={isSaving}
+                >
+                  <div className="mobset-action-content">
+                    <FaLock className="mobset-action-icon" />
+                    <div className="mobset-action-text">
+                      <span className="mobset-action-title">
+                        Change Password
+                      </span>
+                      <span className="mobset-action-description">
+                        Update your account password
+                      </span>
+                    </div>
+                  </div>
+                  <FaChevronRight className="mobset-action-arrow" />
+                </button>
+                <button
+                  className="mobset-action-item"
+                  onClick={() => handleAccountAction("email")}
+                  disabled={isSaving}
+                >
+                  <div className="mobset-action-content">
+                    <FaEnvelope className="mobset-action-icon" />
+                    <div className="mobset-action-text">
+                      <span className="mobset-action-title">Update Email</span>
+                      <span className="mobset-action-description">
+                        Change your email address
+                      </span>
+                    </div>
+                  </div>
+                  <FaChevronRight className="mobset-action-arrow" />
+                </button>
+                <button
+                  className="mobset-action-item"
+                  onClick={() => handleAccountAction("download")}
+                  disabled={isSaving}
+                >
+                  <div className="mobset-action-content">
+                    <FaDownload className="mobset-action-icon" />
+                    <div className="mobset-action-text">
+                      <span className="mobset-action-title">
+                        Download Personal Data
+                      </span>
+                      <span className="mobset-action-description">
+                        Export all your account data
+                      </span>
+                    </div>
+                  </div>
+                  <FaChevronRight className="mobset-action-arrow" />
+                </button>
+              </div>
+            </div>
+            <div className="mobset-setting-group mobset-danger-zone">
+              <h3 className="mobset-sub-title mobset-danger">
+                <FaExclamationTriangle /> Danger Zone
+              </h3>
+              <div className="mobset-danger-warning">
+                <FaExclamationTriangle className="mobset-warning-icon" />
+                <p>
+                  These actions are irreversible. Please proceed with caution.
+                </p>
+              </div>
+              <button
+                className="mobset-danger-action"
+                onClick={() => handleAccountAction("delete")}
+                disabled={isSaving}
+              >
+                <FaTrash className="mobset-danger-icon" />
+                <span>Delete Account</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-      {showConfirmModal && (<div className="mobset-confirm-modal-overlay"><div className="mobset-confirm-modal"><div className="mobset-modal-header"><h3>Confirm Action</h3><button className="mobset-close-modal" onClick={() => { setShowConfirmModal(false); setModalAction(''); }}><FaTimes /></button></div><div className="mobset-modal-body">{modalAction === 'delete' ? (<><FaExclamationTriangle className="mobset-modal-icon mobset-danger" /><p>Are you sure you want to delete your account? This action cannot be undone.</p></>) : modalAction === 'download' ? (<><FaDownload className="mobset-modal-icon" /><p>Download your personal data as a JSON file?</p></>) : (<p>Continue with this action?</p>)}</div><div className="mobset-modal-actions"><button className="mobset-modal-btn mobset-secondary" onClick={() => { setShowConfirmModal(false); setModalAction(''); }}>Cancel</button><button className="mobset-modal-btn mobset-primary" onClick={confirmAccountAction}>Confirm</button></div></div></div>)}
+      {showConfirmModal && (
+        <div className="mobset-confirm-modal-overlay">
+          <div className="mobset-confirm-modal">
+            <div className="mobset-modal-header">
+              <h3>Confirm Action</h3>
+              <button
+                className="mobset-close-modal"
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setModalAction("");
+                }}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="mobset-modal-body">
+              {modalAction === "delete" ? (
+                <>
+                  <FaExclamationTriangle className="mobset-modal-icon mobset-danger" />
+                  <p>
+                    Are you sure you want to delete your account? This action
+                    cannot be undone.
+                  </p>
+                </>
+              ) : modalAction === "download" ? (
+                <>
+                  <FaDownload className="mobset-modal-icon" />
+                  <p>Download your personal data as a JSON file?</p>
+                </>
+              ) : (
+                <p>Continue with this action?</p>
+              )}
+            </div>
+            <div className="mobset-modal-actions">
+              <button
+                className="mobset-modal-btn mobset-secondary"
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setModalAction("");
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="mobset-modal-btn mobset-primary"
+                onClick={confirmAccountAction}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

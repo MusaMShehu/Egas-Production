@@ -50,7 +50,7 @@ html, body {
 .content-layout {
   display: flex;
   background-color: #f3f4f6;
-  margin-top: 80px;
+  /* margin-top: 80px; */
   transition: all 0.4s ease;
 }
 
