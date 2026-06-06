@@ -180,7 +180,7 @@ function App() {
                   <Route path="/subscription-plan" element={<SubscriptionPlans />} />
                   <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
                   <Route path="/subscriptions/success" element={<SubscriptionSuccess />} />
-                  <Route path="/subscriptions/wallet-success" element={<WalletPaymentSuccess />} />
+                  <Route path="/subscriptions/payment-success" element={<WalletPaymentSuccess />} />
 
                   <Route path="/auth" element={<AuthPage />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
