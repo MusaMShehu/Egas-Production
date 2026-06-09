@@ -20,10 +20,10 @@
 //   useEffect(() => {
 //     // Check if user is logged in on mount
 //     checkAuthStatus();
-    
+
 //     // Listen for logout events
 //     window.addEventListener('auth:logout', handleLogout);
-    
+
 //     return () => {
 //       window.removeEventListener('auth:logout', handleLogout);
 //     };
@@ -48,13 +48,13 @@
 //   const login = async (email, password) => {
 //     try {
 //       const response = await apiClient.post('/auth/login', { email, password });
-      
+
 //       if (response.success) {
 //         setUser(response.data.user);
 //         setIsAuthenticated(true);
 //         return { success: true, data: response.data };
 //       }
-      
+
 //       throw new Error('Login failed');
 //     } catch (error) {
 //       console.error('Login error:', error);
@@ -80,13 +80,13 @@
 //           'Content-Type': 'multipart/form-data',
 //         },
 //       });
-      
+
 //       if (response.success) {
 //         setUser(response.data.user);
 //         setIsAuthenticated(true);
 //         return { success: true, data: response.data };
 //       }
-      
+
 //       throw new Error('Registration failed');
 //     } catch (error) {
 //       console.error('Registration error:', error);
@@ -116,19 +116,6 @@
 //   );
 // };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // // contexts/AuthContext.jsx
 // import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 // import apiClient from '../api/apiClient'; // Fixed import path
@@ -153,9 +140,9 @@
 //     try {
 //       console.log('Checking auth status...');
 //       const response = await apiClient.get('/auth/me');
-      
+
 //       console.log('Auth check response:', response);
-      
+
 //       // Handle different response structures
 //       if (response) {
 //         // Case 1: { success: true, data: userObject }
@@ -196,15 +183,15 @@
 
 //   useEffect(() => {
 //     checkAuthStatus();
-    
+
 //     // Listen for logout events
 //     const handleLogout = () => {
 //       setUser(null);
 //       setIsAuthenticated(false);
 //     };
-    
+
 //     window.addEventListener('auth:logout', handleLogout);
-    
+
 //     return () => {
 //       window.removeEventListener('auth:logout', handleLogout);
 //     };
@@ -214,12 +201,12 @@
 //     try {
 //       console.log('Attempting login...');
 //       const response = await apiClient.post('/auth/login', { email, password });
-      
+
 //       console.log('Login response:', response);
-      
+
 //       // Extract user data from response
 //       let userData = null;
-      
+
 //       if (response.success && response.data?.user) {
 //         userData = response.data.user;
 //       } else if (response.data?.user) {
@@ -229,21 +216,21 @@
 //       } else if (response._id || response.id) {
 //         userData = response;
 //       }
-      
+
 //       if (userData) {
 //         setUser(userData);
 //         setIsAuthenticated(true);
-        
+
 //         // Double-check auth status to ensure cookie is working
 //         await checkAuthStatus();
-        
-//         return { 
-//           success: true, 
+
+//         return {
+//           success: true,
 //           data: userData,
-//           message: 'Login successful' 
+//           message: 'Login successful'
 //         };
 //       }
-      
+
 //       throw new Error(response.message || 'Login failed - invalid response structure');
 //     } catch (error) {
 //       console.error('Login error details:', {
@@ -252,7 +239,7 @@
 //         data: error.data,
 //         validationErrors: error.validationErrors
 //       });
-      
+
 //       return {
 //         success: false,
 //         message: error.message || 'Login failed',
@@ -278,7 +265,7 @@
 //   const register = async (formData) => {
 //     try {
 //       console.log('Attempting registration...');
-      
+
 //       // Ensure formData is actually FormData
 //       const dataToSend = formData instanceof FormData ? formData : (() => {
 //         const fd = new FormData();
@@ -289,14 +276,14 @@
 //         });
 //         return fd;
 //       })();
-      
+
 //       const response = await apiClient.post('/auth/register', dataToSend);
-      
+
 //       console.log('Registration response:', response);
-      
+
 //       // Extract user data from response
 //       let userData = null;
-      
+
 //       if (response.success && response.data?.user) {
 //         userData = response.data.user;
 //       } else if (response.data?.user) {
@@ -306,21 +293,21 @@
 //       } else if (response._id || response.id) {
 //         userData = response;
 //       }
-      
+
 //       if (userData) {
 //         setUser(userData);
 //         setIsAuthenticated(true);
-        
+
 //         // Double-check auth status
 //         await checkAuthStatus();
-        
-//         return { 
-//           success: true, 
+
+//         return {
+//           success: true,
 //           data: userData,
-//           message: response.message || 'Registration successful' 
+//           message: response.message || 'Registration successful'
 //         };
 //       }
-      
+
 //       throw new Error(response.message || 'Registration failed - invalid response structure');
 //     } catch (error) {
 //       console.error('Registration error details:', {
@@ -329,7 +316,7 @@
 //         data: error.data,
 //         validationErrors: error.validationErrors
 //       });
-      
+
 //       return {
 //         success: false,
 //         message: error.message || 'Registration failed',
@@ -356,26 +343,22 @@
 //   );
 // };
 
-
-
-
-
-
-
-
-
-
-
 // src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import ApiService from '../api/apiService';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import ApiService from "../api/apiService";
 
 const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };
@@ -391,28 +374,31 @@ export const AuthProvider = ({ children }) => {
       const response = await ApiService.auth.getMe();
       const data = response.data;
       if (data.success && (data.user || data.data)) {
-      const userData = data.user || data.data;
-      setUser(userData);
-      setIsAuthenticated(true);
+        const userData = data.user || data.data;
+        setUser(userData);
+        setIsAuthenticated(true);
         // Store minimal user info for quick access (NO TOKEN)
-        localStorage.setItem('user', JSON.stringify({
-          id: userData.id || userData._id,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          role: userData.role,
-          profileImage: userData.profileImage
-        }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            id: userData.id || userData._id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            role: userData.role,
+            profileImage: userData.profileImage,
+          }),
+        );
       } else {
         setUser(null);
         setIsAuthenticated(false);
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Auth check failed:", error);
       setUser(null);
       setIsAuthenticated(false);
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
     } finally {
       setIsLoading(false);
     }
@@ -427,83 +413,61 @@ export const AuthProvider = ({ children }) => {
     const handleLogout = () => {
       setUser(null);
       setIsAuthenticated(false);
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
     };
-    window.addEventListener('auth:logout', handleLogout);
-    return () => window.removeEventListener('auth:logout', handleLogout);
+    window.addEventListener("auth:logout", handleLogout);
+    return () => window.removeEventListener("auth:logout", handleLogout);
   }, []);
 
-  // const login = async (email, password) => {
-  //   const response = await ApiService.auth.login({ email, password });
-  //     const data = response.data;
-  //     if (data.success && (data.user || data.data)) {
-  //     const userData = data.user || data.data;
-  //     setUser(userData);
-  //     setIsAuthenticated(true);
-  //     localStorage.setItem('user', JSON.stringify({
-  //       id: userData.id || userData._id,
-  //       firstName: userData.firstName,
-  //       lastName: userData.lastName,
-  //       email: userData.email,
-  //       role: userData.role,
-  //       profileImage: userData.profileImage
-  //     }));
-  //     return response;
-  //   }
-  //   throw new Error(response.message || 'Login failed');
-  // };
-
   const login = async (email, password) => {
-  // Login first
-  const loginResponse = await ApiService.auth.login({
-    email,
-    password,
-  });
+    // Login first
+    const loginResponse = await ApiService.auth.login({
+      email,
+      password,
+    });
 
-  if (!loginResponse.data.success) {
-    throw new Error(
-      loginResponse.data.message || "Login failed"
-    );
-  }
+    if (!loginResponse.data.success) {
+      throw new Error(loginResponse.data.message || "Login failed");
+    }
 
-  // Immediately fetch full profile
-  const meResponse = await ApiService.auth.getMe();
+    // Immediately fetch full profile
+    const meResponse = await ApiService.auth.getMe();
 
-  const meData = meResponse.data;
+    const meData = meResponse.data;
 
-  if (meData.success && (meData.user || meData.data)) {
-    const userData = meData.user || meData.data;
+    if (meData.success && (meData.user || meData.data)) {
+      const userData = meData.user || meData.data;
 
-    setUser(userData);
-    setIsAuthenticated(true);
+      setUser(userData);
+      setIsAuthenticated(true);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        id: userData.id || userData._id,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        role: userData.role,
-        profileImage: userData.profileImage,
-      })
-    );
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: userData.id || userData._id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          role: userData.role,
+          profileImage: userData.profileImage,
+        }),
+      );
 
-    return userData;
-  }
+      return userData;
+    }
 
-  throw new Error("Failed to load user profile");
-};
+    throw new Error("Failed to load user profile");
+  };
 
   const logout = async () => {
     try {
       await ApiService.auth.logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       setUser(null);
       setIsAuthenticated(false);
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       sessionStorage.clear();
     }
   };
@@ -511,21 +475,28 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     const response = await ApiService.auth.register(formData);
     const data = response.data;
-      if (data.success && (data.user || data.data)) {
+    if (data.success && (data.user || data.data)) {
       const userData = data.user || data.data;
       setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify({
-        id: userData.id || userData._id,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        role: userData.role,
-        profileImage: userData.profileImage
-      }));
-      return response;
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: userData.id || userData._id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          role: userData.role,
+          profileImage: userData.profileImage,
+        }),
+      );
+      // return response;
+      return {
+        success: true,
+        user: userData,
+      };
     }
-    throw new Error(response.message || 'Registration failed');
+    throw new Error(response.message || "Registration failed");
   };
 
   const updateProfile = async (profileData) => {
@@ -533,15 +504,18 @@ export const AuthProvider = ({ children }) => {
     const data = response.data;
     if (data.success && data.data) {
       const userData = data.user || data.data;
-      setUser(prev => ({ ...prev, ...data.data }));
-      localStorage.setItem('user', JSON.stringify({
-        ...data.data,
-        // id: data.data.id || data.data._id
-        id: userData.id || userData._id,
-      }));
+      setUser((prev) => ({ ...prev, ...data.data }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...data.data,
+          // id: data.data.id || data.data._id
+          id: userData.id || userData._id,
+        }),
+      );
       return response;
     }
-    throw new Error(response.message || 'Profile update failed');
+    throw new Error(response.message || "Profile update failed");
   };
 
   const updatePassword = async (currentPassword, newPassword) => {
@@ -549,17 +523,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isLoading,
-      isAuthenticated,
-      login,
-      logout,
-      register,
-      updateProfile,
-      updatePassword,
-      checkAuth
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthenticated,
+        login,
+        logout,
+        register,
+        updateProfile,
+        updatePassword,
+        checkAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

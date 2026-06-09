@@ -84,16 +84,16 @@ const Footer = () => {
           <h3>Contact Us</h3>
           <div className="footer-contact">
             <p>
-              <FaMapMarkerAlt /> 123 Gas Street, Maiduguri
+              <FaMapMarkerAlt /> Suite B2 Mataji Express Mall Opposite Atal Hospital Polo Maiduguri, Borno State
             </p>
             <p>
               <FaPhoneAlt /> +2348036109468
             </p>
             <p>
-              <FaEnvelope /> info@egas.com
+              <FaEnvelope /> egas.onlinelimited@gmail.com
             </p>
             <p>
-              <FaClock /> Mon-Fri: 8AM - 6PM
+              <FaClock /> Mon-Sat: 8AM - 6PM
             </p>
           </div>
         </div>

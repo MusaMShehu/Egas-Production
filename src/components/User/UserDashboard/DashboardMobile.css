@@ -204,18 +204,21 @@
 }
 
 .mobdash-action-btn.mobdash-primary {
-  background: #ff6b35;
-  color: white;
+  background: white;
+  color: #111827;
+  border: 1px solid #d0d0d0;
 }
 
 .mobdash-action-btn.mobdash-secondary {
-  background: #28a745;
-  color: white;
+  background: white;
+  color: #111827;
+  border: 1px solid #d0d0d0;
 }
 
 .mobdash-action-btn.mobdash-tertiary {
-  background: #17a2b8;
-  color: white;
+  background: white;
+  color: #111827;
+  border: 1.2px solid #adacac;
 }
 
 .mobdash-action-btn.mobdash-quaternary {
