@@ -1,0 +1,66 @@
+/* ============================================================
+   ERROR PAGES — Not Found / Unauthorized / Server Error
+   ============================================================ */
+
+.egas-error-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--sp-6) var(--page-gutter);
+  background:
+    radial-gradient(800px 400px at 10% 0%, var(--egas-primary-light), transparent 60%),
+    radial-gradient(700px 400px at 100% 100%, var(--egas-accent-soft), transparent 60%),
+    var(--egas-bg);
+}
+
+.egas-error-card {
+  width: 100%;
+  max-width: 540px;
+  background: var(--egas-surface);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--sp-8) var(--sp-6);
+  text-align: center;
+  display: grid; gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .egas-error-card { padding: var(--sp-10) var(--sp-9); }
+}
+
+.egas-error-code {
+  display: inline-grid; place-items: center;
+  min-width: 64px; height: 64px; padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--egas-primary-light);
+  color: var(--egas-primary);
+  font-size: var(--fs-xl); font-weight: var(--fw-bold);
+  letter-spacing: -.02em;
+  margin: 0 auto;
+}
+.egas-error-code--warn { background: var(--egas-warning-soft); color: var(--egas-warning); }
+.egas-error-code--danger { background: var(--egas-error-soft); color: var(--egas-error); }
+
+.egas-error-title {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -.02em;
+  margin: 0;
+  color: var(--egas-text);
+}
+.egas-error-desc {
+  color: var(--egas-text-secondary);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  margin: 0 auto;
+  max-width: 420px;
+}
+.egas-error-actions {
+  display: flex; justify-content: center; gap: var(--sp-3);
+  flex-wrap: wrap; margin-top: var(--sp-3);
+}
+.egas-error-foot {
+  color: var(--egas-text-muted);
+  font-size: var(--fs-xs);
+  margin-top: var(--sp-5);
+}

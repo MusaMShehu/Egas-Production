@@ -1,0 +1,90 @@
+/* ============================================================
+   PAYMENT CALLBACKS — verification / success / failure states
+   ============================================================ */
+
+.egas-pay-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--sp-6) var(--page-gutter);
+  background:
+    radial-gradient(900px 400px at 50% 0%, var(--egas-primary-light), transparent 60%),
+    var(--egas-bg);
+}
+
+.egas-pay-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--egas-surface);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--sp-8) var(--sp-6);
+  display: grid; gap: var(--sp-5);
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .egas-pay-card { padding: var(--sp-9) var(--sp-8); }
+}
+
+.egas-pay-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: grid; place-items: center; margin: 0 auto;
+}
+.egas-pay-icon.is-pending { background: var(--egas-info-soft); color: var(--egas-info); }
+.egas-pay-icon.is-success { background: var(--egas-success-soft); color: var(--egas-success); }
+.egas-pay-icon.is-failed  { background: var(--egas-error-soft);   color: var(--egas-error); }
+.egas-pay-icon.is-warn    { background: var(--egas-warning-soft); color: var(--egas-warning); }
+
+.egas-pay-title {
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -.02em;
+  margin: 0;
+  color: var(--egas-text);
+}
+.egas-pay-desc {
+  color: var(--egas-text-secondary);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.egas-pay-spinner {
+  display: inline-block; width: 36px; height: 36px;
+  border: 3px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: egas-pay-spin .8s linear infinite;
+}
+@keyframes egas-pay-spin { to { transform: rotate(360deg); } }
+
+.egas-pay-details {
+  display: grid; gap: var(--sp-2);
+  padding: var(--sp-4);
+  background: var(--egas-bg);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+.egas-pay-details li {
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  list-style: none;
+}
+.egas-pay-details li span:first-child { color: var(--egas-text-secondary); }
+.egas-pay-details li span:last-child {
+  color: var(--egas-text); font-weight: var(--fw-medium);
+  text-align: right; word-break: break-all;
+}
+
+.egas-pay-actions {
+  display: flex; gap: var(--sp-3); flex-wrap: wrap;
+  justify-content: center;
+}
+
+.egas-pay-foot {
+  color: var(--egas-text-muted);
+  font-size: var(--fs-xs);
+}

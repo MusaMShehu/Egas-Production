@@ -1,0 +1,385 @@
+/* ============================================================
+   BATCH 7 — Wallet, History, Delivery Schedule, Remnant
+   ============================================================ */
+
+/* ---------- Wallet hero ---------- */
+.egas-wallet-hero {
+  display: grid;
+  gap: var(--sp-5);
+  padding: var(--sp-6);
+  background: linear-gradient(
+    135deg,
+    var(--egas-primary-dark),
+    var(--egas-primary) 55%,
+    var(--egas-accent)
+  );
+  color: #fff;
+  border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .egas-wallet-hero {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: var(--sp-7) var(--sp-8);
+  }
+}
+.egas-wallet-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -40% auto;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+.egas-wallet-hero__label {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: var(--fw-bold);
+  position: relative;
+}
+.egas-wallet-hero__amount {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.02em;
+  margin: 6px 0 4px;
+  position: relative;
+}
+.egas-wallet-hero__hint {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: var(--fs-sm);
+  position: relative;
+}
+.egas-wallet-hero__actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.egas-wallet-hero .egas-btn--primary {
+  background: #fff;
+  color: var(--egas-primary);
+}
+.egas-wallet-hero .egas-btn--primary:hover {
+  background: #fff;
+  filter: none;
+}
+.egas-wallet-hero .egas-btn--secondary {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.egas-wallet-hero .egas-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Transaction row ---------- */
+.egas-tx-row {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--egas-border);
+}
+.egas-tx-row:last-child {
+  border-bottom: 0;
+}
+.egas-tx-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.egas-tx-row__icon.is-credit {
+  background: var(--egas-success-soft);
+  color: var(--egas-success);
+}
+.egas-tx-row__icon.is-debit {
+  background: var(--egas-warning-soft);
+  color: var(--egas-warning);
+}
+.egas-tx-row__icon.is-failed {
+  background: var(--egas-error-soft);
+  color: var(--egas-error);
+}
+
+.egas-tx-row__title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--egas-text);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.egas-tx-row__meta {
+  font-size: var(--fs-sm);
+  color: var(--egas-text-secondary);
+  margin: 2px 0 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.egas-tx-row__amount {
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
+  color: var(--egas-text);
+  white-space: nowrap;
+}
+.egas-tx-row__amount.is-credit {
+  color: var(--egas-success);
+}
+.egas-tx-row__amount.is-debit {
+  color: var(--egas-error);
+}
+
+/* ---------- Delivery agenda ---------- */
+.egas-agenda-day {
+  margin-bottom: var(--sp-6);
+}
+.egas-agenda-day__label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--egas-text-secondary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-3);
+}
+.egas-agenda-item {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: var(--sp-4);
+  background: var(--egas-surface);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--sp-3);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.egas-agenda-item:hover {
+  border-color: var(--egas-primary);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+.egas-agenda-item__time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 56px;
+}
+.egas-agenda-item__time-day {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--egas-text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.egas-agenda-item__time-month {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--egas-text-secondary);
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  font-weight: var(--fw-semibold);
+}
+.egas-agenda-item__body {
+  min-width: 0;
+}
+.egas-agenda-item__title {
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-base);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.egas-agenda-item__meta {
+  color: var(--egas-text-secondary);
+  font-size: var(--fs-sm);
+  margin: 2px 0 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Remnant summary tiles ---------- */
+.egas-remnant-hero {
+  display: grid;
+  gap: var(--sp-5);
+  padding: var(--sp-6);
+  background: var(--egas-surface);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+}
+@media (min-width: 768px) {
+  .egas-remnant-hero {
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+  }
+}
+.egas-remnant-hero__amount {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.02em;
+  color: var(--egas-text);
+  margin: 6px 0;
+}
+.egas-remnant-hero__amount small {
+  font-size: 0.5em;
+  font-weight: var(--fw-semibold);
+  color: var(--egas-primary);
+  margin-left: 4px;
+}
+.egas-remnant-progress {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--egas-border);
+  overflow: hidden;
+}
+.egas-remnant-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--egas-primary), var(--egas-accent));
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.egas-remnant-eligibility {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-4);
+  background: var(--egas-success-soft);
+  color: var(--egas-success);
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+.egas-remnant-eligibility.is-blocked {
+  background: var(--egas-warning-soft);
+  color: var(--egas-warning);
+}
+.egas-remnant-eligibility.is-none {
+  background: var(--egas-info-soft);
+  color: var(--egas-info);
+}
+
+/* ---------- Cylinder chips ---------- */
+.egas-cylinder-chip {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--egas-surface);
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-lg);
+}
+.egas-cylinder-chip__tag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--egas-primary);
+  padding: 4px 8px;
+  background: var(--egas-primary-light);
+  border-radius: var(--radius-md);
+}
+.egas-cylinder-chip__meta {
+  font-size: var(--fs-sm);
+  color: var(--egas-text-secondary);
+  margin: 0;
+}
+
+/* ---------- History type chip (reuses .egas-tab) ---------- */
+
+/* ---------- Pagination ---------- */
+.egas-pagination {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--sp-6);
+  flex-wrap: wrap;
+}
+.egas-pagination__btn {
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-md);
+  background: var(--egas-surface);
+  color: var(--egas-text);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  padding: 0 12px;
+}
+.egas-pagination__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.egas-pagination__btn.is-active {
+  background: var(--egas-primary);
+  color: #fff;
+  border-color: var(--egas-primary);
+}
+
+/* ---------- Misc ---------- */
+.egas-tab-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.egas-tab-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* Add to the bottom of src/pages/customer/batch7.css */
+
+.egas-agenda-item__time {
+  border-radius: var(--radius-md);
+  padding: 8px;
+  transition: background 0.2s;
+}
+.egas-agenda-item__time.is-upcoming {
+  background: var(--egas-primary-light);
+  color: var(--egas-primary);
+}
+.egas-agenda-item__time.is-overdue {
+  background: var(--egas-warning-soft);
+  color: var(--egas-warning);
+}
+.egas-agenda-item__time.is-delivered {
+  background: var(--egas-success-soft);
+  color: var(--egas-success);
+}
+.egas-agenda-item__time.is-failed {
+  background: var(--egas-error-soft);
+  color: var(--egas-error);
+}
+.egas-agenda-item__time-day {
+  color: inherit;
+}
+.egas-agenda-item__time-month {
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Modal responsive grid on mobile */
+@media (max-width: 500px) {
+  /* assuming the modal content uses inline styles, we can override via a class if needed, 
+     but the grid works fine on mobile if columns collapse */
+}

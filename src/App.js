@@ -10,122 +10,91 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NotificationProvider } from './contexts/FirebaseNotificationContext';
 
-// Public Pages
-import PublicLayout from "./components/public/PublicLayout";
-import HomeDesktop from "./components/Home/Home";
-import HomeMobile from "./components/Home/HomeMobile";
-// Home Nested Routes of public pages
-import LearnMore from "./pages/Learn More/learnMore";
-import DomesticSolutions from "./pages/Domestic_Solutions/DomesticSolutions";
-import RestaurantSolutions from "./pages/Restaurant_Solutions/RestaurantSolutions";
-import BusinessSolutions from "./pages/Business_Solutions/BusinessSolutions";
-import OpportunitiesLayout from "./components/Layout/opportunitiesLayout";
 
-import DeliveryTeam from './pages/Delivery_Team/delivery-team';
-import MaintenanceServices from './pages/Maintenance_Services/MaintenanceServices';
-import SafetyGuidelines from './pages/Safety_Guidelines/SafetyGuidelines';
-import PricingPlans from './pages/Pricing_Plans/PricingPlans';
-import CustomerTestimonials from './pages/Customer_Testimonials/CustomerTestimonials';
-import FAQ from './pages/FAQ/FAQ';
-import Blog from './pages/blogs/Blog';
-import Article from './pages/blogs/Article';
-import Careers from './pages/Careers/Careers';
+// Layouts (Batch 2 + 4)
+import PublicLayout from './components/layout/PublicLayout';
+import CustomerLayout from './components/layout/CustomerLayout';
 
-import Products from "./components/Products";
-import Services from "./components/Services";
-import Contact from "./components/Contact";
-import About from "./components/About";
-import Business from "./pages/Business_Solutions/BusinessSolutions";
-import TermsOfService from "./pages/Others/TermsOfService";
-import PrivacyPolicy from "./pages/Others/PrivacyPolicy";
+// Guards
+// import ProtectedRoute from './components/ProtectedRoute';
+
+// Public pages (Batch 2)
+import HomePage from './pages/public/HomePage';
+import AboutPage from './pages/public/AboutPage';
+import ServicesPage from './pages/public/ServicesPage';
+import PricingPage from './pages/public/PricingPage';
+import ContactPage from './pages/public/ContactPage';
+import FaqPage from './pages/public/FaqPage';
+
+// Auth pages (Batch 3)
+import { AuthGateway, ForgotPasswordPage } from './pages/auth';
+
+// Customer pages (Batches 5–8)
+import {
+  DashboardOverviewPage,
+  MyOrdersPage,
+  OrderDetailsPage,
+  OrderTrackingPage,
+  OrderGasPage,
+  PlansPage,
+  SubscriptionsPage,
+  WalletPage,
+  HistoryPage,
+  DeliverySchedulePage,
+  RemnantPage,
+  ProfilePage,
+  SettingsPage,
+  NotificationsPage,
+  SupportPage,
+} from './pages/customer';
+
+// Payment callbacks (Batch 9)
+import {
+  PaymentCallbackPage,
+  WalletSuccessPage,
+  SubscriptionVerifyPage,
+  PaymentSuccessPage,
+} from './pages/payments';
+
+// Errors (Batch 9)
+import { NotFoundPage, UnauthorizedPage, ServerErrorPage } from './pages/errors';
+
+
+
+// import TermsOfService from "./pages/Others/TermsOfService";
+// import PrivacyPolicy from "./pages/Others/PrivacyPolicy";
 
 import "./App.css";
+import './styles/design-system.css';
+import './styles/primitives.css';
+import './styles/layout.css';
+import './pages/public/public-pages.css';
+import './pages/auth/auth-pages.css';
+import './components/layout/customer-layout.css';
+import './pages/customer/customer-pages.css';
+import './pages/customer/order-flow.css';
+import './pages/customer/batch7.css';
+import './pages/customer/batch8.css';
+import './pages/errors/errors.css';
+import './pages/payments/payments.css';
+import './components/orders/orders.css'; 
+import './components/subscriptions/subscriptions.css';
+import './pages/customer/order-gas-v2.css';
 
-// Authentication
-import AuthPage from "./AuthForm/authPage";
-import ForgotPassword from './AuthForm/forgotPassword';
 
-// Order Section
-import OrderSummary from "./components/User/UserOrders/OrderSummary";
-import ProductCart from "./components/Products/ProductCart";
-import VerifyOrder from "./components/Products/verifyOrder";
 
-// Subscription Section
-import SubscriptionVerify from './components/Subscription/SubscriptionVerify';
-import SubscriptionSuccess from './components/Subscription/SubscriptionSuccess';
-import WalletPaymentSuccess from "./components/Subscription/WalletPaymentSuccess";
 
-// Desktop Subscription and Product Selection Pages from Server
-import ProductSelection from "./components/Products/ProductSelectionServer";
-import DesktopSubscriptionPlans from "./components/Subscription/SubscriptionPlans";
-
-// Mobile Subscription and Product Selection Pages from Server
-import MobileSubscriptionPlans from "./components/Subscription/MobileSubscriptionPlans";
-
-// Layouts
-import MobileLayout from './components/User/MobileLayout';
-import DesktopLayout from "./components/User/DestopLayout";
-
-// USER PANEL DESKTOP
-import DesktopDashboardOverview from "./components/User/UserDashboard/DashboardOverview";
-import DesktopUserOrders from "./components/User/UserOrders/UserOrders";
-import DesktopUserSubscriptions from "./components/User/UserSubscriptions/UserSubscriptions";
-import DesktopUserHistory from "./components/User/UserHistory/UserHistory";
-import DesktopUserPayment from "./components/User/UserPayment/UserPayment";
-import DesktopUserProfile from "./components/User/UserProfile/UserProfile";
-import DesktopUserSupport from "./components/User/UserSupport/UserSupport";
-import DesktopUserSettings from "./components/User/UserSettings/UserSettings";
-import DesktopCustomerDeliverySchedule from "./components/User/UserDelivery/CustomerDeliverySchedule";
-import DesktopDeliveryRemnant from "./components/User/UserDelivery/DeliveryRemnant";
-
-// USER PANEL MOBILE VIEW
-import MobileDashboardOverview from "./components/User/UserDashboard/DashboardMobile";
-import MobileUserOrders from "./components/User/UserOrders/MobileUserOrders";
-import MobileUserSubscriptions from "./components/User/UserSubscriptions/MobileUserSubscriptions";
-import MobileUserHistory from "./components/User/UserHistory/MobileUserHistory";
-import MobileUserPayment from "./components/User/UserPayment/MobileUserPayment";
-import MobileUserProfile from "./components/User/UserProfile/MobileUserProfile";
-import MobileUserSupport from "./components/User/UserSupport/MobileUserSupport";
-import MobileUserSettings from "./components/User/UserSettings/MobileUserSettings";
-import MobileCustomerDeliverySchedule from "./components/User/UserDelivery/MobileCustomerDeliverySchedule";
-import MobileDeliveryRemnant from "./components/User/UserDelivery/MobileDeliveryRemnant";
 
 import { PaymentProvider } from './contexts/paymentContext';
 
 // Wallet Topup verify/Callback
-import WalletTopupCallback from './components/payments/walletTopupCallback';
+// import WalletTopupCallback from './components/payments/walletTopupCallback';
 
 // Create Query Client
 const queryClient = new QueryClient();
 
 function App() {
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Choose components based on device
-  const Home = isMobile ? HomeMobile : HomeDesktop;
-  const CustomerDeliverySchedule = isMobile ? MobileCustomerDeliverySchedule : DesktopCustomerDeliverySchedule;
-  const UserHistory = isMobile ? MobileUserHistory : DesktopUserHistory;
-  const UserPayment = isMobile ? MobileUserPayment : DesktopUserPayment;
-  const UserProfile = isMobile ? MobileUserProfile : DesktopUserProfile;
-  const UserSubscriptions = isMobile ? MobileUserSubscriptions : DesktopUserSubscriptions;
-  const UserOrders = isMobile ? MobileUserOrders : DesktopUserOrders;
-  const DashboardOverview = isMobile ? MobileDashboardOverview : DesktopDashboardOverview;
-  const UserSupport = isMobile ? MobileUserSupport : DesktopUserSupport;
-  const UserSettings = isMobile ? MobileUserSettings : DesktopUserSettings;
-  const UserLayout = isMobile ? MobileLayout : DesktopLayout;
-  const SubscriptionPlans = isMobile ? MobileSubscriptionPlans : DesktopSubscriptionPlans;
-  const DeliveryRemnant = isMobile ? MobileDeliveryRemnant : DesktopDeliveryRemnant;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -141,67 +110,79 @@ function App() {
                   pauseOnHover
                   closeOnClick
                 />
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<PublicLayout />}>
-                    <Route index element={<Navigate to="home" replace />} />
-                    <Route path="home" element={<Home />} />
-                    <Route path="/opportunities" element={<OpportunitiesLayout />}>
-                      <Route index element={<Navigate to="learn-more" replace />} />
-                      <Route path="learn-more" element={<LearnMore />} />
-                      <Route path="domestic-opportunities" element={<DomesticSolutions />} />
-                      <Route path="restaurant-opportunities" element={<RestaurantSolutions />} />
-                      <Route path="business-opportunities" element={<BusinessSolutions />} />
-                    </Route>
-                    <Route path="delivery-team" element={<DeliveryTeam />} />
-                    <Route path="maintenance-services" element={<MaintenanceServices />} />
-                    <Route path="safety-guidelines" element={<SafetyGuidelines />} />
-                    <Route path="pricing-plans" element={<PricingPlans />} />
-                    <Route path="customer-testimonials" element={<CustomerTestimonials />} />
-                    <Route path="faq" element={<FAQ />} />
-                    <Route path="blog" element={<Blog />} />
-                    <Route path="/blog/:id" element={<Article />} />
-                    <Route path="careers" element={<Careers />} />
-                    <Route path="products" element={<Products />} />
-                    <Route path="services" element={<Services />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="about" element={<About />} />
-                    <Route path="business" element={<Business />} />
-                    <Route path="select_product" element={<ProductSelection />} />
-                    <Route path="subscription-plans" element={<SubscriptionPlans />} />
-                    <Route path="order_summary" element={<OrderSummary />} />
-                    <Route path="/terms_of_service" element={<TermsOfService />} />
-                    <Route path="/privacy_policy" element={<PrivacyPolicy />} />
-                  </Route>
 
-                  <Route path="/cart" element={<ProductCart />} />
+
+
+                <Routes>
+        {/* -------- Public -------- */}
+        <Route element={<PublicLayout />}>
+          <Route path="/"         element={<HomePage />} />
+          <Route path="/about"    element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/pricing"  element={<PricingPage />} />
+          <Route path="/contact"  element={<ContactPage />} />
+          <Route path="/faq"      element={<FaqPage />} />
+        </Route>
+
+        {/* -------- Auth -------- */}
+        <Route path="/auth"                  element={<AuthGateway />} />
+        <Route path="/forgot-password"       element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ForgotPasswordPage />} />
+
+        {/* -------- Customer dashboard (protected) -------- */}
+        {/* <Route element={<ProtectedRoute />}> */}
+          <Route path="/dashboard" element={<CustomerLayout />}>
+            <Route index element={<Navigate to="/dashboard/overview" replace />} />
+
+            <Route path="overview"       element={<DashboardOverviewPage />} />
+            <Route path="order"          element={<OrderGasPage />} />
+            <Route path="plans"          element={<PlansPage />} />
+            <Route path="orders"         element={<MyOrdersPage />} />
+            <Route path="orders/:id"     element={<OrderDetailsPage />} />
+            <Route path="orders/:id/track" element={<OrderTrackingPage />} />
+
+            <Route path="subscriptions"  element={<SubscriptionsPage />} />
+            <Route path="delivery"       element={<DeliverySchedulePage />} />
+            <Route path="remnant"        element={<RemnantPage />} />
+            <Route path="payments"       element={<WalletPage />} />
+            <Route path="history"        element={<HistoryPage />} />
+            <Route path="profile"        element={<ProfilePage />} />
+            <Route path="settings"       element={<SettingsPage />} />
+            <Route path="notifications"  element={<NotificationsPage />} />
+            <Route path="support"        element={<SupportPage />} />
+          </Route>
+        {/* </Route> */}
+
+        {/* -------- Payment callbacks (public) -------- */}
+        <Route path="/payments/callback"          element={<PaymentCallbackPage />} />
+        <Route path="/wallet/callback"            element={<WalletSuccessPage />} />
+        <Route path="/payment/wallet-success"     element={<WalletSuccessPage />} />
+        <Route path="/subscriptions/verify"       element={<SubscriptionVerifyPage />} />
+        <Route path="/subscriptions/payment-success" element={<PaymentSuccessPage />} />
+        <Route path="/payments/wallet/callback"   element={<PaymentCallbackPage />} />
+
+        {/* -------- Errors -------- */}
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/server-error" element={<ServerErrorPage />} />
+        <Route path="*"             element={<NotFoundPage />} />
+    
+
+          
+
+                  {/* <Route path="/cart" element={<ProductCart />} />
                   <Route path="/orders/verify" element={<VerifyOrder />} />
 
                   <Route path="/subscription-plan" element={<SubscriptionPlans />} />
                   <Route path="/subscriptions/verify" element={<SubscriptionVerify />} />
                   <Route path="/subscriptions/success" element={<SubscriptionSuccess />} />
-                  <Route path="/subscriptions/payment-success" element={<WalletPaymentSuccess />} />
+                  <Route path="/subscriptions/payment-success" element={<WalletPaymentSuccess />} /> */}
 
-                  <Route path="/auth" element={<AuthPage />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                 
 
                   {/* Wallet Topup callback/verify route */}
-                  <Route path="/payment/wallet-topup/verify" element={<WalletTopupCallback />} />
+                  {/* <Route path="/payment/wallet-topup/verify" element={<WalletTopupCallback />} /> */}
 
-                  {/* User Panel Routes - Protected by AuthProvider */}
-                  <Route path="/dashboard" element={<UserLayout />}>
-                    <Route index element={<Navigate to="overview" replace />} />
-                    <Route path="overview" element={<DashboardOverview />} />
-                    <Route path="orders" element={<UserOrders />} />
-                    <Route path="subscriptions" element={<UserSubscriptions />} />
-                    <Route path="history" element={<UserHistory />} />
-                    <Route path="payments" element={<UserPayment />} />
-                    <Route path="profile" element={<UserProfile />} />
-                    <Route path="support" element={<UserSupport />} />
-                    <Route path="settings" element={<UserSettings />} />
-                    <Route path="delivery" element={<CustomerDeliverySchedule />} />
-                    <Route path="remnant" element={<DeliveryRemnant />} />
-                  </Route>
+                 
                 </Routes>
               </div>
             </SnackbarProvider>
@@ -213,3 +194,4 @@ function App() {
 }
 
 export default App;
+

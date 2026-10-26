@@ -1,0 +1,164 @@
+/* ============================================================
+   e-GAS DESIGN SYSTEM
+   Single source of truth for tokens across the whole app.
+   ============================================================ */
+
+:root {
+  /* ---------- Brand palette ---------- */
+  --egas-primary:        #0759D9;
+  --egas-primary-dark:   #063B91;
+  --egas-primary-bright: #0B73EF;
+  --egas-primary-light:  #EAF2FF;
+  --egas-accent:         #18B7AD;   /* turquoise */
+  --egas-accent-soft:    #E6F8F7;
+
+  /* ---------- Neutrals ---------- */
+  --egas-bg:             #F6F8FC;
+  --egas-surface:        #FFFFFF;
+  --egas-surface-alt:    #FBFCFE;
+  --egas-text:           #10213D;
+  --egas-text-secondary: #77859B;
+  --egas-text-muted:     #A3AEC1;
+  --egas-border:         #E8EDF5;
+  --egas-border-strong:  #D6DEEB;
+
+  /* ---------- Status ---------- */
+  --egas-success:        #0E9C76;
+  --egas-success-soft:   #E3F6F0;
+  --egas-warning:        #D99115;
+  --egas-warning-soft:   #FCF3DF;
+  --egas-error:          #D94747;
+  --egas-error-soft:     #FCE7E7;
+  --egas-info:           #0B73EF;
+  --egas-info-soft:      #E7F1FE;
+
+  /* ---------- Typography ---------- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Roboto, Oxygen, Ubuntu, sans-serif;
+  --fs-xs:   0.75rem;   /* 12 */
+  --fs-sm:   0.8125rem; /* 13 */
+  --fs-base: 0.9375rem; /* 15 */
+  --fs-md:   1rem;      /* 16 */
+  --fs-lg:   1.125rem;  /* 18 */
+  --fs-xl:   1.375rem;  /* 22 */
+  --fs-2xl:  1.75rem;   /* 28 */
+  --fs-3xl:  2.25rem;   /* 36 */
+  --fs-4xl:  3rem;      /* 48 */
+  --fs-5xl:  3.75rem;   /* 60 */
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold:600;
+  --fw-bold:    700;
+
+  --lh-tight: 1.15;
+  --lh-snug:  1.35;
+  --lh-base:  1.55;
+
+  /* ---------- Spacing scale (4px) ---------- */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  32px;
+  --sp-8:  40px;
+  --sp-9:  48px;
+  --sp-10: 64px;
+  --sp-11: 80px;
+  --sp-12: 96px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-2xl:  28px;
+  --radius-full: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-xs: 0 1px 2px rgba(16,33,61,0.05);
+  --shadow-sm: 0 1px 3px rgba(16,33,61,0.06), 0 1px 2px rgba(16,33,61,0.04);
+  --shadow-md: 0 4px 12px rgba(16,33,61,0.06), 0 2px 4px rgba(16,33,61,0.04);
+  --shadow-lg: 0 12px 32px rgba(16,33,61,0.08), 0 4px 8px rgba(16,33,61,0.04);
+  --shadow-xl: 0 24px 48px rgba(16,33,61,0.10);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  /* ---------- Layout ---------- */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1200px;
+  --container-2xl: 1320px;
+  --page-gutter: 16px;
+  --page-gutter-md: 24px;
+  --page-gutter-lg: 40px;
+
+  --header-h: 64px;
+  --bottom-nav-h: 64px;
+  --sidebar-w: 260px;
+}
+
+/* Wider gutter on larger screens */
+@media (min-width: 768px)  { :root { --page-gutter: var(--page-gutter-md); } }
+@media (min-width: 1200px) { :root { --page-gutter: var(--page-gutter-lg); } }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  color: var(--egas-text);
+  background: var(--egas-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg, video { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--egas-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Focus ring (accessible, consistent) */
+:focus-visible {
+  outline: 2px solid var(--egas-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Container ---------- */
+.egas-container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+.egas-container--wide { max-width: var(--container-2xl); }
+.egas-container--narrow { max-width: var(--container-md); }
+
+/* ---------- Utility: visually hidden ---------- */
+.egas-sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

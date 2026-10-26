@@ -7,7 +7,7 @@ import axios from 'axios';
 class ApiClient {
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.REACT_APP_API_URL,
+      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1',
       timeout: 30000,
       withCredentials: true,
       headers: {

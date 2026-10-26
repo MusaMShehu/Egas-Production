@@ -1,0 +1,197 @@
+/* ============================================================
+   CUSTOMER LAYOUT — sidebar, topbar, drawer, bottom nav, menus
+   Extends layout.css
+   ============================================================ */
+
+/* ---------- Shell scroll lock when drawer open ---------- */
+body.egas-scroll-locked { overflow: hidden; }
+
+/* ---------- Topbar brand / search slot ---------- */
+.egas-topbar-brand {
+  display: inline-flex; align-items: center; gap: 10px;
+}
+@media (min-width: 1024px) {
+  .egas-topbar-brand { display: none; } /* sidebar already shows logo */
+}
+
+.egas-topbar-title {
+  display: none;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--egas-text);
+  letter-spacing: -.01em;
+}
+@media (min-width: 768px) {
+  .egas-topbar-title { display: inline; }
+}
+
+/* ---------- Profile button (topbar) ---------- */
+.egas-profile-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 10px 6px 6px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--egas-text); cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+.egas-profile-btn:hover { background: var(--egas-bg); border-color: var(--egas-border); }
+.egas-profile-btn__avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--egas-primary), var(--egas-accent));
+  color: #fff; display: grid; place-items: center;
+  font-weight: var(--fw-bold); font-size: var(--fs-sm);
+  overflow: hidden; flex-shrink: 0;
+}
+.egas-profile-btn__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.egas-profile-btn__name {
+  display: none;
+  font-size: var(--fs-sm); font-weight: var(--fw-medium);
+  color: var(--egas-text); max-width: 140px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+@media (min-width: 640px) {
+  .egas-profile-btn__name { display: inline-block; }
+}
+
+/* ---------- Dropdown menu ---------- */
+.egas-menu-wrap { position: relative; }
+.egas-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  max-width: min(320px, calc(100vw - 24px));
+  background: #fff;
+  border: 1px solid var(--egas-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 60;
+  animation: egas-menu-in 160ms var(--ease-out);
+}
+@keyframes egas-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.egas-menu__header {
+  padding: 10px 12px 12px;
+  border-bottom: 1px solid var(--egas-border);
+  margin-bottom: 6px;
+}
+.egas-menu__name  { font-weight: var(--fw-semibold); color: var(--egas-text); }
+.egas-menu__email { font-size: var(--fs-sm); color: var(--egas-text-secondary); word-break: break-all; }
+.egas-menu__item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none; border: none;
+  text-align: left; text-decoration: none;
+  color: var(--egas-text);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-base); font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.egas-menu__item:hover { background: var(--egas-bg); text-decoration: none; }
+.egas-menu__item--danger { color: var(--egas-error); }
+.egas-menu__item--danger:hover { background: var(--egas-error-soft); }
+.egas-menu__divider {
+  height: 1px; background: var(--egas-border);
+  margin: 6px 4px;
+}
+
+/* ---------- Notifications badge ---------- */
+.egas-notif-count {
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 999px;
+  background: var(--egas-error); color: #fff;
+  display: inline-grid; place-items: center;
+  font-size: 10px; font-weight: var(--fw-bold);
+  line-height: 1;
+}
+
+/* ---------- Sidebar footer (profile chip) ---------- */
+.egas-customer-sidebar__foot {
+  margin-top: auto; padding-top: var(--sp-4);
+  border-top: 1px solid var(--egas-border);
+}
+.egas-sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.egas-sidebar-user:hover { background: var(--egas-bg); }
+.egas-sidebar-user__avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--egas-primary), var(--egas-accent));
+  color: #fff; display: grid; place-items: center;
+  font-weight: var(--fw-bold); font-size: var(--fs-sm);
+  overflow: hidden; flex-shrink: 0;
+}
+.egas-sidebar-user__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.egas-sidebar-user__name {
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  color: var(--egas-text); line-height: 1.2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.egas-sidebar-user__role {
+  font-size: 11px; color: var(--egas-text-secondary);
+  line-height: 1.2;
+}
+.is-collapsed .egas-sidebar-user__name,
+.is-collapsed .egas-sidebar-user__role { display: none; }
+
+/* ---------- Sidebar section label ---------- */
+.egas-customer-sidebar__label {
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  color: var(--egas-text-muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: var(--sp-4) 12px var(--sp-2);
+}
+.is-collapsed .egas-customer-sidebar__label { display: none; }
+
+/* ---------- Sidebar collapse button ---------- */
+.egas-sidebar-collapse {
+  width: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-top: var(--sp-4);
+  background: transparent;
+  border: 1px dashed var(--egas-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--egas-text-secondary);
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.egas-sidebar-collapse:hover {
+  background: var(--egas-bg);
+  color: var(--egas-text);
+}
+
+/* ---------- Drawer footer ---------- */
+.egas-drawer__foot {
+  margin-top: auto; padding-top: var(--sp-5);
+  border-top: 1px solid var(--egas-border);
+  display: grid; gap: var(--sp-2);
+}
+
+/* ---------- Welcome / skeleton fade-in for content ---------- */
+.egas-customer-shell__content > * {
+  animation: egas-fade-up 220ms var(--ease-out) both;
+}
+@keyframes egas-fade-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Prevent content from hiding under bottom nav ---------- */
+@media (max-width: 1023px) {
+  .egas-customer-shell__content {
+    padding-bottom: calc(var(--bottom-nav-h) + var(--sp-8));
+  }
+}
